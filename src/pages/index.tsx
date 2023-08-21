@@ -1,118 +1,184 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import React from "react";
+import Button from "@/components/Elements/Button";
+import Menu from "@/components/Elements/Menu";
+import Search from "@/components/Elements/Search";
+import Select from "@/components/Elements/Select";
+import Table from "@/components/Elements/Table";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import dynamic from "next/dynamic";
+import useModal from "@/stores/modal";
+import Modal from "@/components/Elements/Modal";
+import InputText from "@/components/Elements/InputText";
+import Label from "@/components/Elements/Label";
+import DatePicker from "@/components/Elements/DatePicker";
+import TextArea from "@/components/Elements/TextArea";
+import Radio from "@/components/Elements/Radio";
+import Upload from "@/components/Elements/Upload";
 
-const inter = Inter({ subsets: ['latin'] })
+const BarChart = dynamic(
+  () => import("@/components/Elements/BarChart"),
+  {ssr: false}
+);
 
 export default function Home() {
-  return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+  const { setModal } = useModal();
+  const [recordSelected, setRecordSelected] = React.useState<number | undefined>(undefined);
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+  return (
+    <>
+      <div className="flex gap-4 p-2">
+        <Button
+          text="Add New Group"
+          icon={<FontAwesomeIcon icon={["fas", "user-plus"]}
+          className="text-solitude" />}
+          onClick={() => setModal(
+            <Modal className="w-1/3" title="Add New Group" type="info" onDone={() => setModal(null)}>
+              <form className="flex flex-col gap-3">
+                <div className="flex items-center gap-4">
+                  <Label name="Name" className="basis-1/3" />
+                  <InputText placeholder="Enter Customer Group Name" className="basis-2/3" />
+                </div>
+                <div className="flex items-center gap-4">
+                  <Label name="Description" className="basis-1/3" />
+                  <InputText placeholder="Enter Description" className="basis-2/3" />
+                </div>
+              </form>
+            </Modal>
+          )}
+        />
+        <Button
+          variant="outlined"
+          text="Import"
+          icon={<FontAwesomeIcon icon={["fas", "file-arrow-down"]} />}
+          onClick={() => setModal(
+            <Modal className="w-1/3" title="Import Data" type="import" onDone={() => setModal(null)}>
+              <form className="flex flex-col gap-3">
+                <div className="flex items-center gap-4">
+                  <Label name="File type" className="basis-1/3" />
+                  <Select
+                    value={0}
+                    options={["Excel"]}
+                    onChange={() => {}}
+                    className="basis-2/3"
+                  />
+                </div>
+              </form>
+            </Modal>
+          )}
         />
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      <div className="bg-primary w-2/12 py-3">
+        <Menu items={[
+          {name: "Dashboard", icon: <FontAwesomeIcon icon={["fas", "chart-simple"]} />},
+          {name: "Master Data", icon: <FontAwesomeIcon icon={["fas", "database"]} />, subItems: [
+            {name: "Business Partner", subSubItems: [
+              {name: "Customer Group"},
+              {name: "Customers"},
+            ]},
+            {name: "Master Route"},
+            {name: "Master Port"}
+          ]},
+          {name: "Marketing", icon: <FontAwesomeIcon icon={["fas", "chart-line"]} />},
+          {name: "Operational", icon: <FontAwesomeIcon icon={["fas", "gear"]} />},
+          {name: "Purchasing", icon: <FontAwesomeIcon icon={["fas", "cart-shopping"]} />},
+          {name: "Inventory", icon: <FontAwesomeIcon icon={["fas", "home"]} />},
+          {name: "Finance & Accounting", icon: <FontAwesomeIcon icon={["fas", "money-bill"]} />, subItems: [
+            {name: "Business Partner"},
+            {name: "Master Route"},
+            {name: "Master Port"}
+          ]},
+          {name: "HRD", icon: <FontAwesomeIcon icon={["fas", "users"]} />}
+        ]} />
       </div>
-    </main>
-  )
+      <div className="w-2/5">
+        <BarChart datas={[
+          {x: "January", firstValue: 220},
+          {x: "February", firstValue: 170},
+          {x: "March", firstValue: 160},
+          {x: "April", firstValue: 180}
+        ]} />
+      </div>
+      <div className="p-2">
+        <Search />
+      </div>
+      <div className="p-2">
+        <Table
+          fields={[
+            {type: "option"},
+            {name: "Date", type: "date"},
+            {name: "Link", type: "link"},
+            {name: "Text", type: "text"},
+            {name: "Status", type: "status"},
+            {name: "Sortable", type: "text", isSortable: true},
+            {name: "Group", type: "group", fields: [
+              {name: "Sub Date", type: "date"},
+              {name: "Sub Link", type: "link"},
+              {name: "Sub Text", type: "text"},
+              {name: "Sub Status", type: "status"},
+              {name: "Sub Sortable", type: "text", isSortable: true},
+            ]}
+          ]}
+          records={[
+            [recordSelected === 0, new Date(), "CGC0001", "Hadi Yusuf Al Ghifari", true, "XXX", [
+              new Date(), "CGC0001", "Hadi Yusuf Al Ghifari", true, "XXX"
+            ]],
+            [recordSelected === 1, new Date(), "CGC0002", "Rina Setiawan", true, "XXX", [
+              new Date(), "CGC0002", "Rina Setiawan", true, "XXX"
+            ]],
+            [recordSelected === 2, new Date(), "CGC0003", "Aditya Wardhana", false, "XXX", [
+              new Date(), "CGC0003", "Aditya Wardhana", false, "XXX"
+            ]],
+            [recordSelected === 3, new Date(), "CGC0004", "Desi Rahayu", false, "XXX", [
+              new Date(), "CGC0004", "Desi Rahayu", false, "XXX"
+            ]],
+            [recordSelected === 4, new Date(), "CGC0005", "Maya Putri", true, "XXX", [
+              new Date(), "CGC0005", "Maya Putri", true, "XXX"
+            ]],
+            [recordSelected === 5, new Date(), "CGC0006", "Adi Kusuma", false, "XXX", [
+              new Date(), "CGC0006", "Adi Kusuma", false, "XXX"
+            ]]
+          ]}
+          onOptionClicked={(recordIndex, _, value) => {
+            if (value) setRecordSelected(recordIndex);
+          }}
+        />
+      </div>
+      <div className="p-2 flex flex-col gap-4">
+        <Label name="Label" />
+        <div className="flex items-center gap-4">
+          <Label name="Text" />
+          <InputText placeholder="Text" />
+        </div>
+        <div className="flex items-center gap-4">
+          <Label name="Disabled Text" />
+          <InputText placeholder="Disabled Text" disabled={true} />
+        </div>
+        <div className="flex items-center gap-4">
+          <Label name="Date Picker" />
+          <DatePicker />
+        </div>
+        <div className="flex items-center gap-4">
+          <Label name="Text Area" />
+          <TextArea placeholder="Text Area" />
+        </div>
+        <div className="flex items-center gap-4">
+          <Label name="Select" />
+          <Select
+            value={0}
+            options={["2023", "2022", "2021", "2020"]}
+            onChange={(value) => {}}
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <Label name="Radio" />
+          <Radio name="option" value="Option 1" />
+          <Radio name="option" value="Option 2" />
+        </div>
+        <div className="flex items-center gap-4">
+          <Label name="Upload" />
+          <Upload placeholder="Choose file" />
+        </div>
+      </div>
+    </>
+  );
 }
