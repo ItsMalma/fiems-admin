@@ -3,16 +3,16 @@ import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import "@fortawesome/fontawesome-svg-core/styles.css"
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import clsx from "clsx";
 import useModal from "@/stores/modal";
 
 const { library, config } = require("@fortawesome/fontawesome-svg-core");
 
-config.autoAddCss = false
+config.autoAddCss = false;
 library.add(fas, far);
 
-const inter = Inter({subsets: ["latin"]});
+const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <style jsx global>
         {`
           * {
-            font-family: ${inter.style.fontFamily}
+            font-family: ${inter.style.fontFamily};
           }
         `}
       </style>

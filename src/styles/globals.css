@@ -4,4 +4,9 @@
 
 * {
     animation-duration: 0s !important;
+    scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
 }

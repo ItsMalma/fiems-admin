@@ -1,9 +1,9 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { create } from "zustand";
 
 interface ModalState {
-  current: ReactNode | null,
-  setModal: (newModal: ReactNode | null) => void;
+  current: React.ReactNode | null,
+  setModal: (newModal: React.ReactNode | null) => void;
 }
 
 const useModal = create<ModalState>()(set => ({
