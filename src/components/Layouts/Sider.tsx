@@ -26,15 +26,15 @@ export default function Sider() {
                   },
                   {
                     name: "Customers",
-                    url: "/master_data/business_partner/customers",
+                    url: "/master_data/business_partner/customers/reports",
                   },
                 ],
               },
-              { name: "Master Route", url: "/master_data/master_route" },
-              { name: "Master Port", url: "/master_data/master_port" },
-              { name: "Master Sales", url: "/master_data/master_sales" },
-              { name: "Master Vehicle", url: "/master_data/master_vehicle" },
-              { name: "Master Vessel", url: "/master_data/master_vessel" },
+              { name: "Master Route", url: "/master_data/route/reports" },
+              { name: "Master Port", url: "/master_data/port/reports" },
+              { name: "Master Sales", url: "/master_data/sales/reports" },
+              { name: "Master Vehicle", url: "/master_data/vehicle/reports" },
+              { name: "Master Vessel", url: "/master_data/vessel" },
               {
                 name: "Master Price",
                 subSubItems: [
