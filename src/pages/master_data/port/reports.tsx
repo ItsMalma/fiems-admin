@@ -8,16 +8,19 @@ import Table from '@/components/Elements/Table'
 import VerticalLine from '@/components/Icons/VerticalLine'
 import MainLayout from '@/components/Layouts/MainLayout'
 import useMenu from '@/stores/menu'
-import useModal from '@/stores/modal'
+import useHeader from '@/stores/header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
+import useModal from '@/stores/modal'
 
 export default function MasterPort() {
-
-  const {setModal} = useModal(); 
+ 
   const {setIndex} = useMenu();
+  const { setModal } = useModal();
+  const { setTitle } = useHeader();
 
   React.useEffect(() => {
+    setTitle("Master Port");
     setIndex(1, 2, 0);
   }, []);
 

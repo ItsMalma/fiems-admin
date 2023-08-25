@@ -9,12 +9,15 @@ import useMenu from "@/stores/menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
+import useHeader from "@/stores/header";
 
 export default function CustomerGroup() {
   const { setIndex } = useMenu();
   const { setModal } = useModal();
+  const { setTitle } = useHeader();
 
   React.useEffect(() => {
+    setTitle("Customers")
     setIndex(1, 0, 1);
   }, []);
 
@@ -101,55 +104,55 @@ export default function CustomerGroup() {
             />
           </div>
         </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "text", name: "Customer Type", isSortable: true },
-            { type: "link", name: "Group Code", isSortable: true },
-            { type: "text", name: "Name", isSortable: true },
-            { type: "text", name: "Group", isSortable: true },
-            { type: "text", name: "Address", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Country", isSortable: true },
-            { type: "text", name: "Telephone", isSortable: true },
-            { type: "text", name: "Fax", isSortable: true },
-            { type: "text", name: "Email", isSortable: true },
-            { type: "group", name: "Purchasing", isSortable: true, fields: [
-              { type: "text", name: "Phone Number"},
-              { type: "text", name: "Telephone"},
-              { type: "text", name: "Fax"},
-              { type: "text", name: "Email"},
-            ] },
-            { type: "group", name: "Operation", isSortable: true, fields: [
-              { type: "text", name: "Phone Number"},
-              { type: "text", name: "Telephone"},
-              { type: "text", name: "Fax"},
-              { type: "text", name: "Email"},
-            ] },
-            { type: "group", name: "Finance", isSortable: true, fields: [
-              { type: "text", name: "Phone Number"},
-              { type: "text", name: "Telephone"},
-              { type: "text", name: "Fax"},
-              { type: "text", name: "Email"},
-            ] },
-            { type: "text", name: "Description" },
-          ]}
-          records={[
-            [false, new Date(), "Vendor","CVC00001", "Customer Name", "Customer Group", "Customer Address No.55", "Tangerang", "Indonesia", "Telephone Number", "Fax Number", "email@email.com", 
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"]],
-            [false, new Date(), "Factory","CFC00001", "Customer Name", "Customer Group", "Customer Address No.55", "Tangerang", "Indonesia", "Telephone Number", "Fax Number", "email@email.com", 
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"]],
-            [false, new Date(), "Shipping","CSC00001", "Customer Name", "Customer Group", "Customer Address No.55", "Tangerang", "Indonesia", "Telephone Number", "Fax Number", "email@email.com", 
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
-            ["081234567890", "Telephone Number", "Fax Number", "email@email.com"]],
-          ]}
-        />
+          <Table
+            fields={[
+              { type: "option" },
+              { type: "date", name: "Create Date", isSortable: true },
+              { type: "text", name: "Customer Type", isSortable: true },
+              { type: "link", name: "Group Code", isSortable: true },
+              { type: "text", name: "Name", isSortable: true },
+              { type: "text", name: "Group", isSortable: true },
+              { type: "text", name: "Address", isSortable: true },
+              { type: "text", name: "City", isSortable: true },
+              { type: "text", name: "Country", isSortable: true },
+              { type: "text", name: "Telephone", isSortable: true },
+              { type: "text", name: "Fax", isSortable: true },
+              { type: "text", name: "Email", isSortable: true },
+              { type: "group", name: "Purchasing", isSortable: true, fields: [
+                { type: "text", name: "Phone Number"},
+                { type: "text", name: "Telephone"},
+                { type: "text", name: "Fax"},
+                { type: "text", name: "Email"},
+              ] },
+              { type: "group", name: "Operation", isSortable: true, fields: [
+                { type: "text", name: "Phone Number"},
+                { type: "text", name: "Telephone"},
+                { type: "text", name: "Fax"},
+                { type: "text", name: "Email"},
+              ] },
+              { type: "group", name: "Finance", isSortable: true, fields: [
+                { type: "text", name: "Phone Number"},
+                { type: "text", name: "Telephone"},
+                { type: "text", name: "Fax"},
+                { type: "text", name: "Email"},
+              ] },
+              { type: "text", name: "Description" },
+            ]}
+            records={[
+              [false, new Date(), "Vendor","CVC00001", "Customer Name", "Customer Group", "Customer Address No.55", "Tangerang", "Indonesia", "Telephone Number", "Fax Number", "email@email.com", 
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"]],
+              [false, new Date(), "Factory","CFC00001", "Customer Name", "Customer Group", "Customer Address No.55", "Tangerang", "Indonesia", "Telephone Number", "Fax Number", "email@email.com", 
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"]],
+              [false, new Date(), "Shipping","CSC00001", "Customer Name", "Customer Group", "Customer Address No.55", "Tangerang", "Indonesia", "Telephone Number", "Fax Number", "email@email.com", 
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"],
+              ["081234567890", "Telephone Number", "Fax Number", "email@email.com"]],
+            ]}
+          />
         <div className="flex">
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>

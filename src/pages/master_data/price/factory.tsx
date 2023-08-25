@@ -7,19 +7,18 @@ import Select from '@/components/Elements/Select'
 import Table from '@/components/Elements/Table'
 import VerticalLine from '@/components/Icons/VerticalLine'
 import MainLayout from '@/components/Layouts/MainLayout'
-import useMenu from '@/stores/menu'
 import useHeader from '@/stores/header'
+import useMenu from '@/stores/menu'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 
-export default function MasterSales() {
-
+export default function MasterVehicle() {
   const {setIndex} = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Sales");
-    setIndex(1, 3, 0);
+    setTitle("Price Factory")
+    setIndex(1, 6, 0);
   }, []);
 
   return (
@@ -84,20 +83,21 @@ export default function MasterSales() {
                     fields={[
                         {type: "option"},
                         {type: "date", name: "Create Date", isSortable: true},
-                        {type: "text", name: "Job Position", isSortable: true},
-                        {type: "link", name: "Sales Code", isSortable: true},
-                        {type: "text", name: "Sales Name", isSortable: true},
-                        {type: "text", name: "NIK", isSortable: true},
-                        {type: "text", name: "Cabang", isSortable: true},
-                        {type: "text", name: "Phone Number", isSortable: true},
-                        {type: "text", name: "Telephone", isSortable: true},
-                        {type: "text", name: "Fax", isSortable: true},
-                        {type: "text", name: "Email", isSortable: true},
-                        {type: "text", name: "Description"},
+                        {type: "link", name: "Truck Number", isSortable: true},
+                        {type: "date", name: "Effective Date", isSortable: true},
+                        {type: "text", name: "Factory Name", isSortable: true},
+                        {type: "text", name: "Route", isSortable: true},
+                        {type: "text", name: "Container Size", isSortable: true},
+                        {type: "text", name: "Via Port", isSortable: true},
+                        {type: "text", name: "City", isSortable: true},
+                        {type: "text", name: "Province", isSortable: true},
+                        {type: "text", name: "Etc. Cost", isSortable: true},
+                        {type: "text", name: "HPP", isSortable: true},
+                        {type: "text", name: "HPP after Etc. Cost", isSortable: true},
+                        {type: "status", name: "Status"},
                     ]}
                     records={[
-                        [false, new Date(), "Direktur", "SC00001", "Marketing Name", "NIK", "Cabang", "08123456789", "Telephone", "Fax", "email@email.com"],
-                        [false, new Date(), "Marketing", "SC00001", "Marketing Name", "NIK", "Cabang", "08123456789", "Telephone", "Fax", "email@email.com"],
+                        [false, new Date(), "Truck Number", new Date(), "Factory Name", "Tangerang - Jakarta", "20 ft", "Tangerang", "Tangerang", "Banten", "Rp1.000.000", "Rp1.000.000", "Rp1.000.000"],
                     ]}
                 />
                 <div className="flex">

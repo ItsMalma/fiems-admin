@@ -9,12 +9,15 @@ import useMenu from "@/stores/menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
+import useHeader from "@/stores/header";
 
 export default function CustomerGroup() {
   const { setIndex } = useMenu();
   const { setModal } = useModal();
+  const { setTitle } = useHeader();
 
   React.useEffect(() => {
+    setTitle("Customer Group")
     setIndex(1, 0, 0);
   }, []);
 
@@ -25,7 +28,7 @@ export default function CustomerGroup() {
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Group"
-            icon={<FontAwesomeIcon icon={["fas", "user-plus"]} />}
+            icon={<FontAwesomeIcon icon={["fas", "user-group"]} />}
             variant="filled"
             onClick={() =>
               setModal(

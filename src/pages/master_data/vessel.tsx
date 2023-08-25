@@ -7,6 +7,7 @@ import Select from '@/components/Elements/Select'
 import Table from '@/components/Elements/Table'
 import VerticalLine from '@/components/Icons/VerticalLine'
 import MainLayout from '@/components/Layouts/MainLayout'
+import useHeader from '@/stores/header'
 import useMenu from '@/stores/menu'
 import useModal from '@/stores/modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,8 +17,10 @@ export default function MasterVessel() {
 
   const {setModal} = useModal(); 
   const {setIndex} = useMenu();
+  const { setTitle } = useHeader();
 
   React.useEffect(() => {
+    setTitle("Master Vessel");
     setIndex(1, 4, 0);
   }, []);
 
@@ -29,7 +32,7 @@ export default function MasterVessel() {
                 <div className='flex gap-4'>
                     <Button 
                         text='Add New Route' 
-                        icon={<FontAwesomeIcon icon={["fas", "route"]}/>} 
+                        icon={<FontAwesomeIcon icon={["fas", "box-open"]}/>} 
                         variant='filled'
                         onClick={() => setModal(
                             <Modal className='w-1/4' title="Add New Route" type="save" onDone={() => {}}>

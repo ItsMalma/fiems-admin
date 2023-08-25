@@ -164,8 +164,8 @@ export default function Table(props: TableProps) {
   const hasGroup = props.fields.some(field => field.type === "group");
 
   return (
-    <div className="overflow-auto">
-      <table className="w-full rounded-t-xl whitespace-nowrap">
+    <div className="overflow-auto flex-auto">
+      <table className="w-full rounded-t-xl overflow-hidden whitespace-nowrap">
         <thead className="bg-gray-100">
           <tr>
             {props.fields.map((field, fieldIndex) => (

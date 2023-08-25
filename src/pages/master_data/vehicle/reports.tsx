@@ -7,17 +7,17 @@ import Select from '@/components/Elements/Select'
 import Table from '@/components/Elements/Table'
 import VerticalLine from '@/components/Icons/VerticalLine'
 import MainLayout from '@/components/Layouts/MainLayout'
+import useHeader from '@/stores/header'
 import useMenu from '@/stores/menu'
-import useModal from '@/stores/modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 
 export default function MasterVehicle() {
-
-  const {setModal} = useModal(); 
   const {setIndex} = useMenu();
+  const { setTitle } = useHeader();
 
   React.useEffect(() => {
+    setTitle("Master Vehicle")
     setIndex(1, 4, 0);
   }, []);
 
