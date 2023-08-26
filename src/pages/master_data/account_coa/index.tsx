@@ -11,14 +11,14 @@ import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
 
-export default function CustomerGroup() {
+export default function MasterAccountCOA() {
   const { setIndex } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Data | Customer Group");
-    setIndex(1, 0, 0);
+    setTitle("Master Data | Account COA");
+    setIndex(1, 10, 0);
   }, []);
 
   return (
@@ -27,14 +27,14 @@ export default function CustomerGroup() {
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Group"
-            icon={<FontAwesomeIcon icon={["fas", "user-group"]} />}
+            text="Add New Account COA"
+            icon={<FontAwesomeIcon icon={["fas", "user-plus"]} />}
             variant="filled"
             onClick={() =>
               setModal(
                 <Modal
                   className="w-1/4"
-                  title="Add New Customer Group"
+                  title="Add New Account COA"
                   type="save"
                   onDone={() => {}}
                 >
@@ -42,6 +42,11 @@ export default function CustomerGroup() {
                 </Modal>
               )
             }
+          />
+          <Button
+            text="Export"
+            icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
+            variant="outlined"
           />
         </div>
       </div>
@@ -98,21 +103,49 @@ export default function CustomerGroup() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Group Code", isSortable: true },
-            { type: "text", name: "Name", isSortable: true },
-            { type: "text", name: "Description" },
+            { type: "text", name: "Main COA", isSortable: true },
+            { type: "text", name: "Sub COA1", isSortable: true },
+            { type: "text", name: "Sub COA2", isSortable: true },
+            { type: "link", name: "Account Number", isSortable: true },
+            { type: "text", name: "Account Type", isSortable: true },
+            { type: "text", name: "Category", isSortable: true },
+            { type: "text", name: "Transaction", isSortable: true },
+            { type: "text", name: "Currency", isSortable: true },
           ]}
           records={[
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
+            [
+              false,
+              new Date(),
+              "Aktiva",
+              "",
+              "",
+              "100000",
+              "Aktiva",
+              "Aktiva",
+              "IDR",
+            ],
+            [
+              false,
+              new Date(),
+              "Aktiva",
+              "Aktiva Lancar",
+              "",
+              "101000",
+              "Aktiva",
+              "Aktiva",
+              "IDR",
+            ],
+            [
+              false,
+              new Date(),
+              "Aktiva",
+              "Aktiva Lancar",
+              "Kas Besar",
+              "101010",
+              "Aktiva",
+              "Kas",
+              "IDR",
+            ],
           ]}
         />
         <div className="flex mt-auto">

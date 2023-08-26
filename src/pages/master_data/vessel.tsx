@@ -29,7 +29,7 @@ export default function MasterVessel() {
         <Search placeholder="Search Route Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Route"
+            text="Add New Vessel"
             icon={<FontAwesomeIcon icon={["fas", "box-open"]} />}
             variant="filled"
             onClick={() =>
@@ -102,11 +102,6 @@ export default function MasterVessel() {
             }
           />
           <Button
-            text="Import"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-down"]} />}
-            variant="outlined"
-          />
-          <Button
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"
@@ -132,8 +127,9 @@ export default function MasterVessel() {
               className="!border-gray-300 !text-gray-300"
             />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <Select
+              className="w-40"
               icon={<FontAwesomeIcon icon={["fas", "calendar"]} />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}
@@ -141,6 +137,7 @@ export default function MasterVessel() {
               onChange={() => {}}
             />
             <Select
+              className="w-40"
               icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}

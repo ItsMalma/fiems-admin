@@ -44,11 +44,6 @@ export default function Customers() {
             }
           />
           <Button
-            text="Import"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-down"]} />}
-            variant="outlined"
-          />
-          <Button
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"

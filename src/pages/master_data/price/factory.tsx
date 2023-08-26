@@ -9,7 +9,7 @@ import useMenu from "@/stores/menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-export default function MasterVehicle() {
+export default function PriceFactory() {
   const { setIndex } = useMenu();
   const { setTitle } = useHeader();
 
@@ -24,15 +24,10 @@ export default function MasterVehicle() {
         <Search placeholder="Search Route Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Route"
-            icon={<FontAwesomeIcon icon={["fas", "route"]} />}
+            text="Add New Price"
+            icon={<FontAwesomeIcon icon={["fas", "money-bills"]} />}
             variant="filled"
             onClick={() => {}}
-          />
-          <Button
-            text="Import"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-down"]} />}
-            variant="outlined"
           />
           <Button
             text="Export"
@@ -60,8 +55,9 @@ export default function MasterVehicle() {
               className="!border-gray-300 !text-gray-300"
             />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <Select
+              className="w-40"
               icon={<FontAwesomeIcon icon={["fas", "calendar"]} />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}
@@ -69,6 +65,7 @@ export default function MasterVehicle() {
               onChange={() => {}}
             />
             <Select
+              className="w-40"
               icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}
@@ -91,13 +88,12 @@ export default function MasterVehicle() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Truck Number", isSortable: true },
+            { type: "link", name: "Quotation Number", isSortable: true },
             { type: "date", name: "Effective Date", isSortable: true },
             { type: "text", name: "Factory Name", isSortable: true },
             { type: "text", name: "Route", isSortable: true },
             { type: "text", name: "Container Size", isSortable: true },
             { type: "text", name: "Via Port", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
             { type: "text", name: "Province", isSortable: true },
             { type: "text", name: "Etc. Cost", isSortable: true },
             { type: "text", name: "HPP", isSortable: true },
@@ -108,12 +104,11 @@ export default function MasterVehicle() {
             [
               false,
               new Date(),
-              "Truck Number",
+              "REQ0001",
               new Date(),
               "Factory Name",
               "Tangerang - Jakarta",
               "20 ft",
-              "Tangerang",
               "Tangerang",
               "Banten",
               "Rp1.000.000",

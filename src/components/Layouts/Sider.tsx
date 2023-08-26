@@ -54,13 +54,29 @@ export default function Sider() {
               },
               {
                 name: "Master Uang Jalan",
-                url: "/master_data/master_uang_jalan",
+                url: "/master_data/uang_jalan",
               },
               {
                 name: "Master Product Category",
-                url: "/master_data/master_product_category",
+                url: "/master_data/product_category",
               },
-              { name: "Master Product", url: "/master_data/master_product" },
+              {
+                name: "Master Product",
+                subSubItems: [
+                  {
+                    name: "Product",
+                    url: "/master_data/items/product",
+                  },
+                  {
+                    name: "Sparepart",
+                    url: "/master_data/items/sparepart",
+                  },
+                  {
+                    name: "ATK",
+                    url: "/master_data/items/atk",
+                  },
+                ],
+              },
               { name: "Account COA", url: "/master_data/account_coa" },
             ],
           },

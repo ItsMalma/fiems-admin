@@ -7,36 +7,36 @@ import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import MainLayout from "@/components/Layouts/MainLayout";
-import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import useModal from "@/stores/modal";
 
-export default function MasterPort() {
-  const { setIndex } = useMenu();
+export default function MasterProductCategory() {
   const { setModal } = useModal();
+  const { setIndex } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Data | Master Port");
-    setIndex(1, 2, 0);
+    setTitle("Master Data | Master Product Category");
+    setIndex(1, 8, 0);
   }, []);
 
   return (
     <MainLayout>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Port Code" />
+        <Search placeholder="Search Route Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Port"
-            icon={<FontAwesomeIcon icon={["fas", "building"]} />}
+            text="Add New Category"
+            icon={<FontAwesomeIcon icon={["fas", "hand-holding-dollar"]} />}
             variant="filled"
             onClick={() =>
               setModal(
                 <Modal
                   className="w-1/4"
-                  title="Add New Port"
+                  title="Add New Category"
                   type="save"
                   onDone={() => {}}
                 >
@@ -50,11 +50,18 @@ export default function MasterPort() {
                       />
                     </div>
                     <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Port Code" />
+                      <Label className="basis-1/5" name="Shipping Name" />
+                      <Select
+                        className="basis-2/5"
+                        placeholder="Enter Code"
+                        options={["CSC00001", "CSC00002", "CSC00003"]}
+                        value={0}
+                        onChange={() => {}}
+                      />
                       <InputText
-                        className="basis-2/3"
+                        className="basis-2/5"
                         disabled
-                        value="PC00001"
+                        value="Shipping Name"
                       />
                     </div>
                     <div className="flex items-center gap-4">
@@ -74,22 +81,25 @@ export default function MasterPort() {
                       />
                     </div>
                     <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Port Name" />
+                      <Label className="basis-1/3" name="Route Description" />
                       <InputText
                         className="basis-2/3"
                         value=""
-                        placeholder="Port Name"
+                        placeholder="Enter route description"
+                      />
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Label className="basis-1/3" name="" />
+                      <InputText
+                        className="basis-2/3"
+                        value=""
+                        placeholder="Enter route description"
                       />
                     </div>
                   </form>
                 </Modal>
               )
             }
-          />
-          <Button
-            text="Export"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
-            variant="outlined"
           />
         </div>
       </div>
@@ -145,22 +155,16 @@ export default function MasterPort() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Port Code", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Port Name" },
+            { type: "link", name: "Reff Category", isSortable: true },
+            { type: "text", name: "Product Category", isSortable: true },
           ]}
           records={[
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
+            [
+              false,
+              new Date(),
+              "No. Reff",
+              "Category",
+            ],
           ]}
         />
         <div className="flex mt-auto">
