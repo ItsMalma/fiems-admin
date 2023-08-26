@@ -17,18 +17,27 @@ type TableField = {
 type TableRecord = any[];
 
 type TableProps = {
+  className?: string;
   fields: TableField[];
   records: TableRecord[];
-  onOptionClicked?: (recordIndex: number, fieldIndex: number, value: boolean) => void;
+  onOptionClicked?: (
+    recordIndex: number,
+    fieldIndex: number,
+    value: boolean
+  ) => void;
 };
 
-type TableFieldSort = {
-  index: number;
-  direction: "asc" | "desc";
-} | undefined;
+type TableFieldSort =
+  | {
+      index: number;
+      direction: "asc" | "desc";
+    }
+  | undefined;
 
 function isSortable(fieldType: TableFieldType): boolean {
-  return fieldType !== "group" && fieldType !== "option" && fieldType !== "status";
+  return (
+    fieldType !== "group" && fieldType !== "option" && fieldType !== "status"
+  );
 }
 
 type TableHeadProps = {
@@ -45,7 +54,11 @@ type TableDataProps = {
   fieldIndex: number;
   record: TableRecord;
   recordIndex: number;
-  onOptionClicked?: (recordIndex: number, fieldIndex: number, value: boolean) => void;
+  onOptionClicked?: (
+    recordIndex: number,
+    fieldIndex: number,
+    value: boolean
+  ) => void;
   isInGroup: boolean;
 };
 
@@ -54,10 +67,20 @@ function TableHead(props: TableHeadProps) {
     <th
       className={clsx(
         "text-gray-400",
-        props.hasGroup && (props.field.type === "group" || props.isInGroup) ? "px-3 py-0.5" : "p-3"
+        props.hasGroup && (props.field.type === "group" || props.isInGroup)
+          ? "px-3 py-0.5"
+          : "p-3"
       )}
-      rowSpan={props.hasGroup && !(props.field.type === "group" || props.isInGroup) ? 2 : 1}
-      colSpan={props.field.type === "group" || props.isInGroup ? props.field.fields?.length : 1}
+      rowSpan={
+        props.hasGroup && !(props.field.type === "group" || props.isInGroup)
+          ? 2
+          : 1
+      }
+      colSpan={
+        props.field.type === "group" || props.isInGroup
+          ? props.field.fields?.length
+          : 1
+      }
     >
       <div
         className={clsx(
@@ -69,7 +92,8 @@ function TableHead(props: TableHeadProps) {
           <p
             className={clsx(
               "font-semibold",
-              (props.field.type === "group" || props.isInGroup) && "w-full text-center",
+              (props.field.type === "group" || props.isInGroup) &&
+                "w-full text-center",
               props.field.type === "group" && "border-b border-b-gray-300"
             )}
           >
@@ -78,56 +102,91 @@ function TableHead(props: TableHeadProps) {
         )}
         {props.field.isSortable && isSortable(props.field.type) && (
           <FontAwesomeIcon
-            icon={["fas", props.fieldSort?.index === props.fieldIndex && props.fieldSort?.direction === "desc" ? "arrow-down-wide-short" : "arrow-down-short-wide"]}
+            icon={[
+              "fas",
+              props.fieldSort?.index === props.fieldIndex &&
+              props.fieldSort?.direction === "desc"
+                ? "arrow-down-wide-short"
+                : "arrow-down-short-wide",
+            ]}
             className="cursor-pointer"
             onClick={() => {
               if (props.fieldSort?.index === props.fieldIndex) {
                 switch (props.fieldSort.direction) {
                   case "asc":
-                    props.setFieldSort({index: props.fieldSort.index, direction: "desc"});
+                    props.setFieldSort({
+                      index: props.fieldSort.index,
+                      direction: "desc",
+                    });
                     break;
                   case "desc":
                     props.setFieldSort(undefined);
-                  break;
+                    break;
                 }
               } else {
-                props.setFieldSort({index: props.fieldIndex, direction: "asc"});
+                props.setFieldSort({
+                  index: props.fieldIndex,
+                  direction: "asc",
+                });
               }
             }}
           />
         )}
       </div>
     </th>
-  )
+  );
 }
 
 function TableData(props: TableDataProps) {
   switch (props.field.type) {
-    case "text": 
+    case "text":
       return (
-        <td key={props.fieldIndex} className="text-gray-700 font-medium p-3" align={props.isInGroup ? "center" : "left"}>
+        <td
+          key={props.fieldIndex}
+          className="text-gray-700 font-medium p-3"
+          align={props.isInGroup ? "center" : "left"}
+        >
           {props.record[props.fieldIndex]}
         </td>
       );
     case "option":
       return (
-        <td key={props.fieldIndex} className="text-gray-400 p-3" align={props.isInGroup ? "center" : "left"}>
+        <td
+          key={props.fieldIndex}
+          className="text-gray-400 p-3"
+          align={props.isInGroup ? "center" : "left"}
+        >
           <FontAwesomeIcon
             icon={[props.record[props.fieldIndex] ? "fas" : "far", "square"]}
             className="cursor-pointer"
-            onClick={() => props.onOptionClicked && props.onOptionClicked(props.recordIndex, props.fieldIndex, !props.record[props.fieldIndex])}
+            onClick={() =>
+              props.onOptionClicked &&
+              props.onOptionClicked(
+                props.recordIndex,
+                props.fieldIndex,
+                !props.record[props.fieldIndex]
+              )
+            }
           />
         </td>
       );
     case "link":
       return (
-        <td key={props.fieldIndex} className="p-3" align={props.isInGroup ? "center" : "left"}>
+        <td
+          key={props.fieldIndex}
+          className="p-3"
+          align={props.isInGroup ? "center" : "left"}
+        >
           <a className="text-primaryActive">{props.record[props.fieldIndex]}</a>
         </td>
       );
     case "date":
       return (
-        <td key={props.fieldIndex} className="text-gray-700 p-3" align={props.isInGroup ? "center" : "left"}>
+        <td
+          key={props.fieldIndex}
+          className="text-gray-700 p-3"
+          align={props.isInGroup ? "center" : "left"}
+        >
           {moment(props.record[props.fieldIndex]).format("DD/MM/YYYY")}
         </td>
       );
@@ -137,13 +196,15 @@ function TableData(props: TableDataProps) {
           key={props.fieldIndex}
           className={clsx(
             "font-medium p-3",
-            props.record[props.fieldIndex] ? "text-statusActive" : "text-statusInactive"
+            props.record[props.fieldIndex]
+              ? "text-statusActive"
+              : "text-statusInactive"
           )}
           align={props.isInGroup ? "center" : "left"}
         >
           {props.record[props.fieldIndex] ? "Active" : "Inactive"}
         </td>
-      )
+      );
     case "group":
       return (props.field.fields ?? []).map((subField, subFieldIndex) => (
         <TableData
@@ -161,10 +222,10 @@ function TableData(props: TableDataProps) {
 export default function Table(props: TableProps) {
   const [fieldSort, setFieldSort] = React.useState<TableFieldSort>(undefined);
 
-  const hasGroup = props.fields.some(field => field.type === "group");
+  const hasGroup = props.fields.some((field) => field.type === "group");
 
   return (
-    <div className="overflow-auto flex-auto">
+    <div className={clsx("flex overflow-auto", props.className)}>
       <table className="w-full rounded-t-xl overflow-hidden whitespace-nowrap">
         <thead className="bg-gray-100">
           <tr>
@@ -182,21 +243,25 @@ export default function Table(props: TableProps) {
           </tr>
           {hasGroup && (
             <tr>
-              {props.fields.filter(field => field.type === "group").map(field => field.fields).reduce((prev, next) => (prev ?? []).concat(next ?? []))?.map((subField, subFieldIndex) => (
-                <TableHead
-                  key={subFieldIndex}
-                  field={subField}
-                  fieldIndex={subFieldIndex}
-                  fieldSort={fieldSort}
-                  setFieldSort={setFieldSort}
-                  hasGroup={hasGroup}
-                  isInGroup={true}
-                />
-              ))}
+              {props.fields
+                .filter((field) => field.type === "group")
+                .map((field) => field.fields)
+                .reduce((prev, next) => (prev ?? []).concat(next ?? []))
+                ?.map((subField, subFieldIndex) => (
+                  <TableHead
+                    key={subFieldIndex}
+                    field={subField}
+                    fieldIndex={subFieldIndex}
+                    fieldSort={fieldSort}
+                    setFieldSort={setFieldSort}
+                    hasGroup={hasGroup}
+                    isInGroup={true}
+                  />
+                ))}
             </tr>
           )}
         </thead>
-        <tbody>
+        <tbody className="overflow-auto">
           {props.records.map((record, recordIndex) => (
             <tr key={recordIndex} className="border-b border-b-gray-300">
               {props.fields.map((field, fieldIndex) => (

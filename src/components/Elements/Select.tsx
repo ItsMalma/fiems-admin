@@ -55,7 +55,7 @@ function Control({ children, ...props }: ControlProps<SelectOption>) {
     <components.Control
       {...props}
       className={clsx(
-        "!px-3 !py-0.5 !border-[1.5px] !border-gray-300 !rounded-lg !shadow-none",
+        "h-full !px-3 !py-0.5 !border-[1.5px] !border-gray-300 !rounded-lg !shadow-none",
         props.menuIsOpen &&
           (value === "top"
             ? "!border-t-0 !rounded-t-none"
@@ -130,7 +130,7 @@ function Menu({ children, ...props }: MenuProps<SelectOption>) {
     <components.Menu
       {...props}
       className={clsx(
-        "!top-[99%] !m-0 !pb-0 !border-[1.5px] !border-solitude2 !rounded-xl !shadow-none !overflow-hidden",
+        "!m-0 !pb-0 !border-[1.5px] !border-solitude2 !rounded-xl !shadow-none !overflow-hidden",
         props.placement === "top"
           ? "!border-b-0 !rounded-b-none"
           : "!border-t-0 !rounded-t-none"
@@ -195,7 +195,8 @@ export default function Select({
         isMulti={multi}
         isSearchable={search}
         hideSelectedOptions={false}
-        closeMenuOnSelect={false}
+        closeMenuOnSelect={multi ? false : true}
+        closeMenuOnScroll={true}
         menuPlacement="auto"
         options={props.options.map((option, index) => ({
           label: option,

@@ -4,18 +4,18 @@ import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import MainLayout from "@/components/Layouts/MainLayout";
-import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import useHeader from "@/stores/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-export default function MasterVehicle() {
+export default function MasterSales() {
   const { setIndex } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Data | Price Factory");
-    setIndex(1, 6, 0);
+    setTitle("Master Data | Master Sales");
+    setIndex(1, 3, 0);
   }, []);
 
   return (
@@ -91,34 +91,43 @@ export default function MasterVehicle() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Truck Number", isSortable: true },
-            { type: "date", name: "Effective Date", isSortable: true },
-            { type: "text", name: "Factory Name", isSortable: true },
-            { type: "text", name: "Route", isSortable: true },
-            { type: "text", name: "Container Size", isSortable: true },
-            { type: "text", name: "Via Port", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "Etc. Cost", isSortable: true },
-            { type: "text", name: "HPP", isSortable: true },
-            { type: "text", name: "HPP after Etc. Cost", isSortable: true },
-            { type: "status", name: "Status" },
+            { type: "text", name: "Job Position", isSortable: true },
+            { type: "link", name: "Sales Code", isSortable: true },
+            { type: "text", name: "Sales Name", isSortable: true },
+            { type: "text", name: "NIK", isSortable: true },
+            { type: "text", name: "Cabang", isSortable: true },
+            { type: "text", name: "Phone Number", isSortable: true },
+            { type: "text", name: "Telephone", isSortable: true },
+            { type: "text", name: "Fax", isSortable: true },
+            { type: "text", name: "Email", isSortable: true },
+            { type: "text", name: "Description" },
           ]}
           records={[
             [
               false,
               new Date(),
-              "Truck Number",
+              "Direktur",
+              "SC00001",
+              "Marketing Name",
+              "NIK",
+              "Cabang",
+              "08123456789",
+              "Telephone",
+              "Fax",
+              "email@email.com",
+            ],
+            [
+              false,
               new Date(),
-              "Factory Name",
-              "Tangerang - Jakarta",
-              "20 ft",
-              "Tangerang",
-              "Tangerang",
-              "Banten",
-              "Rp1.000.000",
-              "Rp1.000.000",
-              "Rp1.000.000",
+              "Marketing",
+              "SC00001",
+              "Marketing Name",
+              "NIK",
+              "Cabang",
+              "08123456789",
+              "Telephone",
+              "Fax",
+              "email@email.com",
             ],
           ]}
         />

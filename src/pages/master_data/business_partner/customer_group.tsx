@@ -17,7 +17,7 @@ export default function CustomerGroup() {
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Customer Group")
+    setTitle("Master Data | Customer Group");
     setIndex(1, 0, 0);
   }, []);
 
@@ -125,7 +125,7 @@ export default function CustomerGroup() {
             [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
           ]}
         />
-        <div className="flex">
+        <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>
       </div>

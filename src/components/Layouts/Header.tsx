@@ -3,7 +3,6 @@ import React from "react";
 import useHeader from "@/stores/header";
 
 export default function Header() {
-
   const { title } = useHeader();
 
   return (
@@ -12,7 +11,7 @@ export default function Header() {
         <h1 className="text-white text-[18px] 2xl:text-2xl font-bold">FIEMS</h1>
       </div>
       <h1 className="text-blue-200 text-[18px] 2xl:text-2xl font-bold">
-        Master Data | {title}
+        {title}
       </h1>
       <div className="flex gap-3 2xl:gap-4 items-center text-white">
         <FontAwesomeIcon

@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 * {
-    animation-duration: 0s !important;
-    scrollbar-width: none;
+  animation-duration: 0s !important;
+  scrollbar-width: none;
 }
 
 *::-webkit-scrollbar {
-    display: none;
+  display: none;
 }

@@ -7,20 +7,20 @@ import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import MainLayout from "@/components/Layouts/MainLayout";
-import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
-import useModal from "@/stores/modal";
+import useHeader from "@/stores/header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import useModal from "@/stores/modal";
 
-export default function MasterVessel() {
+export default function MasterRoute() {
   const { setModal } = useModal();
-  const { setIndex } = useMenu();
   const { setTitle } = useHeader();
+  const { setIndex } = useMenu();
 
   React.useEffect(() => {
-    setTitle("Master Data | Master Vessel");
-    setIndex(1, 5, 0);
+    setTitle("Master Data | Master Route");
+    setIndex(1, 1, 0);
   }, []);
 
   return (
@@ -30,7 +30,7 @@ export default function MasterVessel() {
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Route"
-            icon={<FontAwesomeIcon icon={["fas", "box-open"]} />}
+            icon={<FontAwesomeIcon icon={["fas", "route"]} />}
             variant="filled"
             onClick={() =>
               setModal(
@@ -50,18 +50,11 @@ export default function MasterVessel() {
                       />
                     </div>
                     <div className="flex items-center gap-4">
-                      <Label className="basis-1/5" name="Shipping Name" />
-                      <Select
-                        className="basis-2/5"
-                        placeholder="Enter Code"
-                        options={["CSC00001", "CSC00002", "CSC00003"]}
-                        value={0}
-                        onChange={() => {}}
-                      />
+                      <Label className="basis-1/3" name="Route Code" />
                       <InputText
-                        className="basis-2/5"
+                        className="basis-2/3"
                         disabled
-                        value="Shipping Name"
+                        value="RC00001"
                       />
                     </div>
                     <div className="flex items-center gap-4">
@@ -132,7 +125,7 @@ export default function MasterVessel() {
               className="!border-gray-300 !text-gray-300"
             />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <Select
               icon={<FontAwesomeIcon icon={["fas", "calendar"]} />}
               placeholder="Date Range"
@@ -141,6 +134,7 @@ export default function MasterVessel() {
               onChange={() => {}}
             />
             <Select
+              className="w-36"
               icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}
@@ -163,49 +157,91 @@ export default function MasterVessel() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "text", name: "Vendor Name", isSortable: true },
-            { type: "link", name: "Truck Number", isSortable: true },
-            { type: "text", name: "Merk", isSortable: true },
-            { type: "text", name: "Truck Type", isSortable: true },
-            { type: "text", name: "Mesin Number", isSortable: true },
-            { type: "text", name: "Rangka Number", isSortable: true },
-            { type: "text", name: "Silinder", isSortable: true },
-            { type: "text", name: "Color", isSortable: true },
-            { type: "date", name: "STNK Expired", isSortable: true },
-            { type: "date", name: "Pajak Expired", isSortable: true },
-            { type: "date", name: "Keur Expired", isSortable: true },
+            { type: "link", name: "Route Code", isSortable: true },
+            { type: "text", name: "City", isSortable: true },
+            { type: "text", name: "Province", isSortable: true },
             { type: "text", name: "Description" },
           ]}
           records={[
             [
               false,
               new Date(),
-              "Vendor Name",
-              "VHC00001",
-              "Merk",
-              "Truck Type",
-              "Mesin Number",
-              "Rangka Number",
-              "Silinder",
-              "Color",
-              new Date(),
-              new Date(),
-              new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
             ],
             [
               false,
               new Date(),
-              "Vendor Name",
-              "VHC00001",
-              "Merk",
-              "Truck Type",
-              "Mesin Number",
-              "Rangka Number",
-              "Silinder",
-              "Color",
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
               new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
               new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
               new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
+              new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
+              new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
+              new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
+              new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
+            ],
+            [
+              false,
+              new Date(),
+              "RC00001",
+              "Banten",
+              "Tangerang",
+              "Jakarta - Tangerang",
             ],
           ]}
         />

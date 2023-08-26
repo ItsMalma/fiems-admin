@@ -11,7 +11,7 @@ export default function Sider() {
           {
             name: "Dashboard",
             icon: <FontAwesomeIcon icon={["fas", "chart-simple"]} />,
-            url: "/dashboard",
+            url: "/",
           },
           {
             name: "Master Data",
@@ -26,29 +26,29 @@ export default function Sider() {
                   },
                   {
                     name: "Customers",
-                    url: "/master_data/business_partner/customers/reports",
+                    url: "/master_data/business_partner/customers",
                   },
                 ],
               },
-              { name: "Master Route", url: "/master_data/route/reports" },
-              { name: "Master Port", url: "/master_data/port/reports" },
-              { name: "Master Sales", url: "/master_data/sales/reports" },
-              { name: "Master Vehicle", url: "/master_data/vehicle/reports" },
+              { name: "Master Route", url: "/master_data/route" },
+              { name: "Master Port", url: "/master_data/port" },
+              { name: "Master Sales", url: "/master_data/sales" },
+              { name: "Master Vehicle", url: "/master_data/vehicle" },
               { name: "Master Vessel", url: "/master_data/vessel" },
               {
                 name: "Master Price",
                 subSubItems: [
                   {
                     name: "Price Factory",
-                    url: "/master_data/master_price/factory",
+                    url: "/master_data/price/factory",
                   },
                   {
                     name: "Price Vendor",
-                    url: "/master_data/master_price/vendor",
+                    url: "/master_data/price/vendor",
                   },
                   {
                     name: "Price Shipping",
-                    url: "/master_data/master_price/shipping",
+                    url: "/master_data/price/shipping",
                   },
                 ],
               },

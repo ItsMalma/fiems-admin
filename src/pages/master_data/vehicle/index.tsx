@@ -1,4 +1,7 @@
 import Button from "@/components/Elements/Button";
+import InputText from "@/components/Elements/InputText";
+import Label from "@/components/Elements/Label";
+import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
@@ -14,8 +17,8 @@ export default function MasterVehicle() {
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Data | Price Factory");
-    setIndex(1, 6, 0);
+    setTitle("Master Data | Master Vehicle");
+    setIndex(1, 4, 0);
   }, []);
 
   return (
@@ -91,34 +94,49 @@ export default function MasterVehicle() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
+            { type: "text", name: "Vendor Name", isSortable: true },
             { type: "link", name: "Truck Number", isSortable: true },
-            { type: "date", name: "Effective Date", isSortable: true },
-            { type: "text", name: "Factory Name", isSortable: true },
-            { type: "text", name: "Route", isSortable: true },
-            { type: "text", name: "Container Size", isSortable: true },
-            { type: "text", name: "Via Port", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "Etc. Cost", isSortable: true },
-            { type: "text", name: "HPP", isSortable: true },
-            { type: "text", name: "HPP after Etc. Cost", isSortable: true },
-            { type: "status", name: "Status" },
+            { type: "text", name: "Merk", isSortable: true },
+            { type: "text", name: "Truck Type", isSortable: true },
+            { type: "text", name: "Mesin Number", isSortable: true },
+            { type: "text", name: "Rangka Number", isSortable: true },
+            { type: "text", name: "Silinder", isSortable: true },
+            { type: "text", name: "Color", isSortable: true },
+            { type: "date", name: "STNK Expired", isSortable: true },
+            { type: "date", name: "Pajak Expired", isSortable: true },
+            { type: "date", name: "Keur Expired", isSortable: true },
+            { type: "text", name: "Description" },
           ]}
           records={[
             [
               false,
               new Date(),
-              "Truck Number",
+              "Vendor Name",
+              "VHC00001",
+              "Merk",
+              "Truck Type",
+              "Mesin Number",
+              "Rangka Number",
+              "Silinder",
+              "Color",
               new Date(),
-              "Factory Name",
-              "Tangerang - Jakarta",
-              "20 ft",
-              "Tangerang",
-              "Tangerang",
-              "Banten",
-              "Rp1.000.000",
-              "Rp1.000.000",
-              "Rp1.000.000",
+              new Date(),
+              new Date(),
+            ],
+            [
+              false,
+              new Date(),
+              "Vendor Name",
+              "VHC00001",
+              "Merk",
+              "Truck Type",
+              "Mesin Number",
+              "Rangka Number",
+              "Silinder",
+              "Color",
+              new Date(),
+              new Date(),
+              new Date(),
             ],
           ]}
         />
