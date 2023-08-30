@@ -11,10 +11,13 @@ import ReactSelect, {
   SingleValueProps,
   ValueContainerProps,
   CoercedMenuPlacement,
+  MultiValue,
+  SingleValue,
 } from "react-select";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
+import lodash from "lodash";
 
 const MenuPlacementContext = React.createContext<{
   value: CoercedMenuPlacement | undefined;
@@ -37,7 +40,7 @@ type SelectProps = {
   search?: boolean;
   placeholder?: string;
   icon?: React.ReactNode;
-  onChange: (value?: number | number[]) => void;
+  onChange: (index?: number | number[]) => void;
 };
 
 function SelectContainer({ children, ...props }: ContainerProps<SelectOption>) {
@@ -130,7 +133,7 @@ function Menu({ children, ...props }: MenuProps<SelectOption>) {
     <components.Menu
       {...props}
       className={clsx(
-        "!m-0 !pb-0 !border-[1.5px] !border-solitude2 !rounded-xl !shadow-none !overflow-hidden",
+        "!m-0 !pb-0 !border-[1.5px] !border-solitude2 !rounded-xl !shadow-none",
         props.placement === "top"
           ? "!border-b-0 !rounded-b-none"
           : "!border-t-0 !rounded-t-none"
@@ -143,7 +146,7 @@ function Menu({ children, ...props }: MenuProps<SelectOption>) {
 
 function MenuList({ children, ...props }: MenuListProps<SelectOption>) {
   return (
-    <components.MenuList {...props} className="!p-0">
+    <components.MenuList {...props} className="!p-0 !max-h-32">
       {children}
     </components.MenuList>
   );
@@ -155,18 +158,10 @@ function Option({ children, ...props }: OptionProps<SelectOption>) {
       {...props}
       className={clsx(
         "!flex items-center gap-x-1 !text-gray-700 !px-3 !py-0.5 hover:!bg-primaryHover",
-        props.isSelected &&
-          !props.isMulti &&
-          "!bg-primaryActive !text-solitudeActive",
-        props.isSelected &&
-          props.isMulti &&
-          "!bg-inherit hover:!bg-primaryHover"
+        props.isSelected && "!bg-primaryActive !text-solitudeActive"
       )}
     >
       <div>{children}</div>
-      {props.isSelected && props.isMulti && (
-        <FontAwesomeIcon icon={["fas", "check"]} className="ml-auto" />
-      )}
     </components.Option>
   );
 }
@@ -237,6 +232,25 @@ export default function Select({
           Menu,
           MenuList,
           Option,
+        }}
+        onChange={(selectedValue) => {
+          if (
+            lodash.isArray<{
+              label: string;
+              value: number;
+            }>(selectedValue)
+          ) {
+            props.onChange(selectedValue.flatMap((v) => v.value));
+          } else {
+            props.onChange(
+              (
+                selectedValue as SingleValue<{
+                  label: string;
+                  value: number;
+                }>
+              )?.value
+            );
+          }
         }}
       />
     </MenuPlacementContext.Provider>

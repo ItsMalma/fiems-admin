@@ -2,17 +2,35 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import moment from "moment";
+import lodash from "lodash";
 
 type TableFieldType = "text" | "option" | "link" | "date" | "status" | "group";
+
+type TableSubField = Omit<TableField, "type" | "fields"> & {
+  type: Exclude<TableFieldType, "option" | "group">;
+};
 
 type TableField = {
   type: TableFieldType;
   name?: string;
   isSortable?: boolean;
-  fields?: (Omit<TableField, "type" | "fields"> & {
-    type: Exclude<TableFieldType, "option" | "group">;
-  })[];
+  isHide?: boolean;
+  fields?: TableSubField[];
 };
+
+function getFieldIndex(
+  tableField: TableField,
+  tableFields: TableField[]
+): number {
+  return tableFields
+    .flatMap<TableField | TableSubField[] | undefined>((v) => {
+      if (v.type === "group") {
+        return v.fields;
+      }
+      return v;
+    })
+    .findIndex((v) => v === tableField);
+}
 
 type TableRecord = any[];
 
@@ -206,16 +224,19 @@ function TableData(props: TableDataProps) {
         </td>
       );
     case "group":
-      return (props.field.fields ?? []).map((subField, subFieldIndex) => (
-        <TableData
-          field={subField}
-          fieldIndex={subFieldIndex}
-          record={props.record[props.fieldIndex]}
-          recordIndex={props.recordIndex}
-          onOptionClicked={props.onOptionClicked}
-          isInGroup={true}
-        />
-      ));
+      console.log(props.record);
+      return (props.field.fields ?? [])
+        .filter((field) => !field.isHide)
+        .map((subField, subFieldIndex) => (
+          <TableData
+            field={subField}
+            fieldIndex={subFieldIndex}
+            record={props.record[props.fieldIndex]}
+            recordIndex={props.recordIndex}
+            onOptionClicked={props.onOptionClicked}
+            isInGroup={true}
+          />
+        ));
   }
 }
 
@@ -229,51 +250,56 @@ export default function Table(props: TableProps) {
       <table className="w-full rounded-t-xl overflow-hidden whitespace-nowrap">
         <thead className="bg-gray-100">
           <tr>
-            {props.fields.map((field, fieldIndex) => (
-              <TableHead
-                key={fieldIndex}
-                field={field}
-                fieldIndex={fieldIndex}
-                fieldSort={fieldSort}
-                setFieldSort={setFieldSort}
-                hasGroup={hasGroup}
-                isInGroup={false}
-              />
-            ))}
+            {props.fields
+              .filter((field) => !field.isHide)
+              .map((field) => (
+                <TableHead
+                  key={getFieldIndex(field, props.fields)}
+                  field={field}
+                  fieldIndex={getFieldIndex(field, props.fields)}
+                  fieldSort={fieldSort}
+                  setFieldSort={setFieldSort}
+                  hasGroup={hasGroup}
+                  isInGroup={false}
+                />
+              ))}
           </tr>
           {hasGroup && (
             <tr>
               {props.fields
-                .filter((field) => field.type === "group")
-                .map((field) => field.fields)
-                .reduce((prev, next) => (prev ?? []).concat(next ?? []))
-                ?.map((subField, subFieldIndex) => (
-                  <TableHead
-                    key={subFieldIndex}
-                    field={subField}
-                    fieldIndex={subFieldIndex}
-                    fieldSort={fieldSort}
-                    setFieldSort={setFieldSort}
-                    hasGroup={hasGroup}
-                    isInGroup={true}
-                  />
-                ))}
+                .filter((field) => field.type === "group" && !field.isHide)
+                .map((field) => {
+                  return (field.fields ?? []).map((subField) => (
+                    <TableHead
+                      key={getFieldIndex(subField, props.fields)}
+                      field={subField}
+                      fieldIndex={getFieldIndex(subField, props.fields)}
+                      fieldSort={fieldSort}
+                      setFieldSort={setFieldSort}
+                      hasGroup={hasGroup}
+                      isInGroup={true}
+                    />
+                  ));
+                })}
             </tr>
           )}
         </thead>
         <tbody className="overflow-auto">
           {props.records.map((record, recordIndex) => (
             <tr key={recordIndex} className="border-b border-b-gray-300">
-              {props.fields.map((field, fieldIndex) => (
-                <TableData
-                  field={field}
-                  fieldIndex={fieldIndex}
-                  record={record}
-                  recordIndex={recordIndex}
-                  onOptionClicked={props.onOptionClicked}
-                  isInGroup={false}
-                />
-              ))}
+              {props.fields
+                .filter((field) => !field.isHide)
+                .map((field) => (
+                  <TableData
+                    key={getFieldIndex(field, props.fields)}
+                    field={field}
+                    fieldIndex={getFieldIndex(field, props.fields)}
+                    record={record}
+                    recordIndex={recordIndex}
+                    onOptionClicked={props.onOptionClicked}
+                    isInGroup={false}
+                  />
+                ))}
             </tr>
           ))}
         </tbody>

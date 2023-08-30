@@ -28,7 +28,7 @@ export default function Button({
       onClick={() => props.onClick && props.onClick()}
     >
       {iconPosition === "left" && props.icon}
-      <p>{text}</p>
+      <p className="text-sm 2xl:text-base">{text}</p>
       {iconPosition === "right" && props.icon}
     </button>
   );

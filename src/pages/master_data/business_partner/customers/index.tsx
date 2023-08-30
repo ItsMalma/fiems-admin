@@ -1,20 +1,21 @@
 import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import MainLayout from "@/components/Layouts/MainLayout";
-import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
+import lodash from "lodash";
+import { useRouter } from "next/router";
 
 export default function Customers() {
+  const router = useRouter();
   const { setIndex } = useMenu();
-  const { setModal } = useModal();
   const { setTitle } = useHeader();
+  const [filter, setFilter] = React.useState<number[]>([]);
 
   React.useEffect(() => {
     setTitle("Master Data | Customers");
@@ -24,23 +25,14 @@ export default function Customers() {
   return (
     <MainLayout>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Group Code" />
+        <Search placeholder="Search Customer Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Group"
+            text="Add New Customer"
             icon={<FontAwesomeIcon icon={["fas", "user-plus"]} />}
             variant="filled"
             onClick={() =>
-              setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Customer Group"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form></form>
-                </Modal>
-              )
+              router.push("/master_data/business_partner/customers/save")
             }
           />
           <Button
@@ -79,12 +71,30 @@ export default function Customers() {
               onChange={() => {}}
             />
             <Select
-              className="w-36"
+              className="w-40"
               icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
+              options={[
+                "Create Date",
+                "Customer Type",
+                "Customer Code",
+                "Name",
+                "Group",
+                "Address",
+                "City",
+                "Country",
+                "Telephone",
+                "Fax",
+                "Email",
+                "Purchasing Information",
+                "Operation Information",
+                "Finance Information",
+                "Description Information",
+              ]}
               value={0}
-              onChange={() => {}}
+              onChange={(value) =>
+                setFilter(lodash.isArray(value) ? value : value ? [value] : [])
+              }
               multi={true}
             />
             <Select
@@ -102,21 +112,77 @@ export default function Customers() {
         <Table
           fields={[
             { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "text", name: "Customer Type", isSortable: true },
-            { type: "link", name: "Group Code", isSortable: true },
-            { type: "text", name: "Name", isSortable: true },
-            { type: "text", name: "Group", isSortable: true },
-            { type: "text", name: "Address", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Country", isSortable: true },
-            { type: "text", name: "Telephone", isSortable: true },
-            { type: "text", name: "Fax", isSortable: true },
-            { type: "text", name: "Email", isSortable: true },
+            {
+              type: "date",
+              name: "Create Date",
+              isSortable: true,
+              isHide: !filter.includes(0),
+            },
+            {
+              type: "text",
+              name: "Customer Type",
+              isSortable: true,
+              isHide: !filter.includes(1),
+            },
+            {
+              type: "link",
+              name: "Customer Code",
+              isSortable: true,
+              isHide: !filter.includes(2),
+            },
+            {
+              type: "text",
+              name: "Name",
+              isSortable: true,
+              isHide: !filter.includes(3),
+            },
+            {
+              type: "text",
+              name: "Group",
+              isSortable: true,
+              isHide: !filter.includes(4),
+            },
+            {
+              type: "text",
+              name: "Address",
+              isSortable: true,
+              isHide: !filter.includes(5),
+            },
+            {
+              type: "text",
+              name: "City",
+              isSortable: true,
+              isHide: !filter.includes(6),
+            },
+            {
+              type: "text",
+              name: "Country",
+              isSortable: true,
+              isHide: !filter.includes(7),
+            },
+            {
+              type: "text",
+              name: "Telephone",
+              isSortable: true,
+              isHide: !filter.includes(8),
+            },
+            {
+              type: "text",
+              name: "Fax",
+              isSortable: true,
+              isHide: !filter.includes(9),
+            },
+            {
+              type: "text",
+              name: "Email",
+              isSortable: true,
+              isHide: !filter.includes(10),
+            },
             {
               type: "group",
               name: "Purchasing",
               isSortable: true,
+              isHide: !filter.includes(11),
               fields: [
                 { type: "text", name: "Phone Number" },
                 { type: "text", name: "Telephone" },
@@ -128,6 +194,7 @@ export default function Customers() {
               type: "group",
               name: "Operation",
               isSortable: true,
+              isHide: !filter.includes(12),
               fields: [
                 { type: "text", name: "Phone Number" },
                 { type: "text", name: "Telephone" },
@@ -139,6 +206,7 @@ export default function Customers() {
               type: "group",
               name: "Finance",
               isSortable: true,
+              isHide: !filter.includes(13),
               fields: [
                 { type: "text", name: "Phone Number" },
                 { type: "text", name: "Telephone" },
@@ -146,7 +214,11 @@ export default function Customers() {
                 { type: "text", name: "Email" },
               ],
             },
-            { type: "text", name: "Description" },
+            {
+              type: "text",
+              name: "Description",
+              isHide: !filter.includes(14),
+            },
           ]}
           records={[
             [

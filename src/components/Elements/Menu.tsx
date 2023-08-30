@@ -110,24 +110,24 @@ export default function Menu({ items = [], ...props }: MenuProps) {
   const router = useRouter();
   const { itemIndex, subItemIndex, subSubItemIndex, setIndex } = useMenu();
 
-  React.useEffect(() => {
-    if (
-      itemIndex === undefined ||
-      subItemIndex === undefined ||
-      subSubItemIndex === undefined
-    ) {
-      return;
-    }
+  // React.useEffect(() => {
+  //   if (
+  //     itemIndex === undefined ||
+  //     subItemIndex === undefined ||
+  //     subSubItemIndex === undefined
+  //   ) {
+  //     return;
+  //   }
 
-    const item = items[itemIndex];
-    const subItem = item.subItems && item.subItems[subItemIndex];
-    const subSubItem =
-      subItem?.subSubItems && subItem.subSubItems[subSubItemIndex];
+  //   const item = items[itemIndex];
+  //   const subItem = item.subItems && item.subItems[subItemIndex];
+  //   const subSubItem =
+  //     subItem?.subSubItems && subItem.subSubItems[subSubItemIndex];
 
-    if (subSubItem?.url) router.push(subSubItem.url);
-    else if (subItem?.url) router.push(subItem.url);
-    else if (item.url) router.push(item.url);
-  }, [itemIndex, subItemIndex, subSubItemIndex]);
+  //   if (subSubItem?.url) router.push(subSubItem.url);
+  //   else if (subItem?.url) router.push(subItem.url);
+  //   else if (item.url) router.push(item.url);
+  // }, [itemIndex, subItemIndex, subSubItemIndex]);
 
   return (
     <div
@@ -184,6 +184,7 @@ export default function Menu({ items = [], ...props }: MenuProps) {
                   mapSubIndexItem == subItemIndex &&
                   subItem.subSubItems.map((subSubItem, mapSubSubItemIndex) => (
                     <RCMenuSubSubItem
+                      key={mapSubSubItemIndex}
                       active={mapSubSubItemIndex === subSubItemIndex}
                       subSubItem={subSubItem}
                       onClick={() => {
