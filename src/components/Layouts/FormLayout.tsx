@@ -73,7 +73,7 @@ export default function FormLayout(props: FormLayoutProps) {
             {props.tabs.map((tab, tabIndex) => (
               <div
                 className={clsx(
-                  "flex flex-col gap-[18px] 2xl:gap-6 overflow-auto",
+                  "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
                   tabActive !== tabIndex && "hidden"
                 )}
               >

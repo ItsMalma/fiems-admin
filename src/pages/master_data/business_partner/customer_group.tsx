@@ -10,6 +10,55 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
+import Label from "@/components/Elements/Label";
+import InputText from "@/components/Elements/InputText";
+
+export function Save() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Customer Group"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date"/>
+            <InputText 
+              placeholder=""
+              disabled
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Group Code"/>
+            <InputText 
+              placeholder=""
+              disabled
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Name"/>
+            <InputText 
+              placeholder="Enter group name"
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Description"/>
+            <InputText 
+              placeholder="Enter group description"
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
 
 export default function CustomerGroup() {
   const { setIndex } = useMenu();
@@ -32,14 +81,7 @@ export default function CustomerGroup() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Customer Group"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form></form>
-                </Modal>
+                <Save/>
               )
             }
           />
