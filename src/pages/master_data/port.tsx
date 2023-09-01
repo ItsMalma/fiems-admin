@@ -34,12 +34,7 @@ export default function MasterPort() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Port"
-                  type="save"
-                  onDone={() => {}}
-                >
+                <Modal title="Add New Port" type="save" onDone={() => {}}>
                   <form className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
                       <Label className="basis-1/3" name="Create Date" />

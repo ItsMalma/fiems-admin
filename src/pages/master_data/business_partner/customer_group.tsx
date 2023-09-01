@@ -15,40 +15,24 @@ import InputText from "@/components/Elements/InputText";
 
 export function Save() {
   return (
-    <Modal
-      className="w-2/5"
-      title="Add New Customer Group"
-      type="save"
-      onDone={() => {}}
-    >
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Create Date"/>
-            <InputText 
-              placeholder=""
-              disabled
-              className="basis-2/3"
-            />
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Group Code"/>
-            <InputText 
-              placeholder=""
-              disabled
-              className="basis-2/3"
-            />
+            <Label name="Group Code" />
+            <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Name"/>
-            <InputText 
-              placeholder="Enter group name"
-              className="basis-2/3"
-            />
+            <Label name="Name" />
+            <InputText placeholder="Enter group name" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Description"/>
-            <InputText 
+            <Label name="Description" />
+            <InputText
               placeholder="Enter group description"
               className="basis-2/3"
             />
@@ -56,9 +40,8 @@ export function Save() {
         </div>
       </form>
     </Modal>
-  )
+  );
 }
-
 
 export default function CustomerGroup() {
   const { setIndex } = useMenu();
@@ -79,11 +62,7 @@ export default function CustomerGroup() {
             text="Add New Group"
             icon={<FontAwesomeIcon icon={["fas", "user-group"]} />}
             variant="filled"
-            onClick={() =>
-              setModal(
-                <Save/>
-              )
-            }
+            onClick={() => setModal(<Save />)}
           />
         </div>
       </div>

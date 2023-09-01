@@ -34,12 +34,7 @@ export default function MasterProductProduct() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Product"
-                  type="save"
-                  onDone={() => {}}
-                >
+                <Modal title="Add New Product" type="save" onDone={() => {}}>
                   <form className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
                       <Label className="basis-1/3" name="Create Date" />
@@ -169,22 +164,8 @@ export default function MasterProductProduct() {
               "Product Name",
               "Carton",
             ],
-            [
-              false,
-              new Date(),
-              "No. Reff",
-              "Category",
-              "Product Name",
-              "Pack",
-            ],
-            [
-              false,
-              new Date(),
-              "No. Reff",
-              "Category",
-              "Product Name",
-              "Kg",
-            ],
+            [false, new Date(), "No. Reff", "Category", "Product Name", "Pack"],
+            [false, new Date(), "No. Reff", "Category", "Product Name", "Kg"],
           ]}
         />
         <div className="flex mt-auto">

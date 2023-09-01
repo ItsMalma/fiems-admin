@@ -34,12 +34,7 @@ export default function MasterVessel() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Route"
-                  type="save"
-                  onDone={() => {}}
-                >
+                <Modal title="Add New Route" type="save" onDone={() => {}}>
                   <form className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
                       <Label className="basis-1/3" name="Create Date" />
@@ -50,19 +45,21 @@ export default function MasterVessel() {
                       />
                     </div>
                     <div className="flex items-center gap-4">
-                      <Label className="basis-1/5" name="Shipping Name" />
-                      <Select
-                        className="basis-2/5"
-                        placeholder="Enter Code"
-                        options={["CSC00001", "CSC00002", "CSC00003"]}
-                        value={0}
-                        onChange={() => {}}
-                      />
-                      <InputText
-                        className="basis-2/5"
-                        disabled
-                        value="Shipping Name"
-                      />
+                      <Label className="basis-1/3" name="Shipping Name" />
+                      <div className="basis-2/3 flex gap-4">
+                        <Select
+                          className="basis-4/5"
+                          placeholder="Enter Code"
+                          options={["CSC00001", "CSC00002", "CSC00003"]}
+                          value={0}
+                          onChange={() => {}}
+                        />
+                        <InputText
+                          className="w-fit"
+                          disabled
+                          value="Shipping Name"
+                        />
+                      </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <Label className="basis-1/3" name="City" />

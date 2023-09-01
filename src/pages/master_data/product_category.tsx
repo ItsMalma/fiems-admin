@@ -34,12 +34,7 @@ export default function MasterProductCategory() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Category"
-                  type="save"
-                  onDone={() => {}}
-                >
+                <Modal title="Add New Category" type="save" onDone={() => {}}>
                   <form className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
                       <Label className="basis-1/3" name="Create Date" />
@@ -158,14 +153,7 @@ export default function MasterProductCategory() {
             { type: "link", name: "Reff Category", isSortable: true },
             { type: "text", name: "Product Category", isSortable: true },
           ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "No. Reff",
-              "Category",
-            ],
-          ]}
+          records={[[false, new Date(), "No. Reff", "Category"]]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>

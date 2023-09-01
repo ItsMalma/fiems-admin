@@ -33,7 +33,6 @@ export default function MasterAccountCOA() {
             onClick={() =>
               setModal(
                 <Modal
-                  className="w-1/4"
                   title="Add New Account COA"
                   type="save"
                   onDone={() => {}}

@@ -34,12 +34,7 @@ export default function MasterProductATK() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Product"
-                  type="save"
-                  onDone={() => {}}
-                >
+                <Modal title="Add New Product" type="save" onDone={() => {}}>
                   <form className="flex flex-col gap-3">
                     <div className="flex items-center gap-4">
                       <Label className="basis-1/3" name="Create Date" />
@@ -155,32 +150,14 @@ export default function MasterProductATK() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "SKU Code", isSortable: true },          
+            { type: "link", name: "SKU Code", isSortable: true },
             { type: "text", name: "ATK Name", isSortable: true },
             { type: "text", name: "Satuan", isSortable: true },
           ]}
           records={[
-            [
-              false,
-              new Date(),
-              "No. Reff",              
-              "ATK Name",
-              "Pcs",
-            ],
-            [
-              false,
-              new Date(),
-              "No. Reff",              
-              "ATK Name",
-              "Pack",
-            ],
-            [
-              false,
-              new Date(),
-              "No. Reff",              
-              "ATK Name",
-              "Box",
-            ],
+            [false, new Date(), "No. Reff", "ATK Name", "Pcs"],
+            [false, new Date(), "No. Reff", "ATK Name", "Pack"],
+            [false, new Date(), "No. Reff", "ATK Name", "Box"],
           ]}
         />
         <div className="flex mt-auto">
