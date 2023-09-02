@@ -17,11 +17,12 @@ type FormLayoutProps = {
   tabs: FormLayoutTab[];
 };
 
+
 export default function FormLayout(props: FormLayoutProps) {
   const router = useRouter();
-
+  const [appends , setAppend] = React.useState<number[]>([]);
   const [tabActive, setTabActive] = React.useState(0);
-  const [appends, setAppend] = React.useState<number[]>([]);
+  const [appendActive, setAppendActive] = React.useState(0);
 
   return (
     <MainLayout>
@@ -72,7 +73,8 @@ export default function FormLayout(props: FormLayoutProps) {
               />
             ))}
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-6">   
+            {/* Khusus Append */}
             {props.tabs.map((tab, tabIndex) => (
               <div 
                 className={clsx(
@@ -88,7 +90,7 @@ export default function FormLayout(props: FormLayoutProps) {
                       icon={<FontAwesomeIcon icon={["fas", "circle-xmark"]} onClick={() => setAppend(appends.filter((append, appendIndex) => appendIndex !== indexx))}/>}
                       iconPosition="right"
                       variant="normal"  
-                      onClick={() => {}}
+                      onClick={() => setAppendActive(indexx)}
                       className="gap-12 !text-red-600"
                     />
                   ))}
@@ -103,6 +105,7 @@ export default function FormLayout(props: FormLayoutProps) {
                 }
               </div>
             ))}
+            {/* End Khusus Append */}
             <form className="grow overflow-auto">
               {props.tabs.map((tab, tabIndex) => (
                 <div
@@ -110,8 +113,20 @@ export default function FormLayout(props: FormLayoutProps) {
                     "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
                     tabActive !== tabIndex && "hidden"
                   )}
-                >
-                  {tab.component}
+                >                  
+                  {tab.isAppend ?
+                    <>
+                    {appends.map((index, indexx) => (
+                      <div className={clsx(appendActive !== indexx && "hidden")}>
+                      {tab.component}
+                      </div>
+                    ))}
+                    </>
+                    :
+                    <>
+                    {tab.component}
+                    </>
+                  }
                 </div>
               ))}
             </form>
