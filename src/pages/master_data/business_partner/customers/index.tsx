@@ -10,9 +10,38 @@ import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
 import lodash from "lodash";
 import { useRouter } from "next/router";
+import Modal from "@/components/Elements/Modal";
+import Label from "@/components/Elements/Label";
+import InputText from "@/components/Elements/InputText";
+import useModal from "@/stores/modal";
+
+export function Export() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Export Data"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>       
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="File Type"/>
+            <Select
+                    placeholder="Choose city"
+                    options={["Excel", "Tangerang", "Solo"]}
+                    value={1}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+      </form>
+    </Modal>
+  )
+}
 
 export default function Customers() {
   const router = useRouter();
+  const { setModal } = useModal();
   const { setIndex } = useMenu();
   const { setTitle } = useHeader();
   const [filter, setFilter] = React.useState<number[]>([]);
@@ -39,6 +68,7 @@ export default function Customers() {
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"
+            onClick={() => setModal(<Export/>)}
           />
         </div>
       </div>

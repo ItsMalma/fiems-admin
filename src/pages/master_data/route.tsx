@@ -13,6 +13,96 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import useModal from "@/stores/modal";
 
+export function Save() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Route"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date"/>
+            <InputText 
+              placeholder=""
+              disabled
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Route Code"/>
+            <InputText 
+              placeholder=""
+              disabled
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="City"/>
+            <Select
+                    placeholder="Choose city"
+                    options={["Jakarta", "Tangerang", "Solo"]}
+                    value={0}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Province"/>
+            <Select
+                    placeholder="Choose province"
+                    options={["Jawa Barat", "DKI Jakarta", "Banten"]}
+                    value={0}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Description"/>
+            <InputText 
+              placeholder="Enter route description"
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <div></div>
+            <InputText 
+              placeholder="..."
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
+export function Export() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Export Data"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>       
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="File Type"/>
+            <Select
+                    placeholder="Choose file type"
+                    options={["Excel", "Tangerang", "Solo"]}
+                    value={1}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+      </form>
+    </Modal>
+  )
+}
+
 export default function MasterRoute() {
   const { setModal } = useModal();
   const { setTitle } = useHeader();
@@ -34,63 +124,7 @@ export default function MasterRoute() {
             variant="filled"
             onClick={() =>
               setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Route"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Create Date" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="20/08/2023"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Route Code" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="RC00001"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="City" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter city"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Province" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter province"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Route Description" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                  </form>
-                </Modal>
+                <Save/>
               )
             }
           />
@@ -98,6 +132,7 @@ export default function MasterRoute() {
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"
+            onClick={() => setModal(<Export/>)}
           />
         </div>
       </div>

@@ -13,6 +13,79 @@ import useModal from "@/stores/modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
+
+export function Save() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Vessel"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date"/>
+            <InputText 
+              placeholder=""
+              disabled
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Shipping Name"/>
+            <Select
+                    placeholder="Shipping Name"
+                    options={["Jakarta", "Tangerang", "Solo"]}
+                    value={0}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Vessel Name"/>
+            <InputText 
+              placeholder="Enter vessel name"
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Capacity"/>
+            <InputText 
+              placeholder="Enter capacity"
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
+export function Export() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Export Data"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>       
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="File Type"/>
+            <Select
+                    placeholder="Choose file type"
+                    options={["Excel", "Tangerang", "Solo"]}
+                    value={1}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+      </form>
+    </Modal>
+  )
+}
+
 export default function MasterVessel() {
   const { setModal } = useModal();
   const { setIndex } = useMenu();
@@ -33,78 +106,14 @@ export default function MasterVessel() {
             icon={<FontAwesomeIcon icon={["fas", "box-open"]} />}
             variant="filled"
             onClick={() =>
-              setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Route"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Create Date" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="20/08/2023"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/5" name="Shipping Name" />
-                      <Select
-                        className="basis-2/5"
-                        placeholder="Enter Code"
-                        options={["CSC00001", "CSC00002", "CSC00003"]}
-                        value={0}
-                        onChange={() => {}}
-                      />
-                      <InputText
-                        className="basis-2/5"
-                        disabled
-                        value="Shipping Name"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="City" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter city"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Province" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter province"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Route Description" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                  </form>
-                </Modal>
-              )
+              setModal(<Save/>)
             }
           />
           <Button
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"
+            onClick={() => setModal(<Export/>)}
           />
         </div>
       </div>

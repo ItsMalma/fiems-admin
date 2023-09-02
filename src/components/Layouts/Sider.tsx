@@ -6,6 +6,26 @@ import Image from "next/image";
 export default function Sider() {
   return (
     <aside className="bg-primary pt-[18px] pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl basis-1/4 2xl:basis-1/6 sticky top-0 flex flex-col">
+      <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex items-center">
+        <div className="flex gap-[9px] 2xl:gap-3 items-center">
+          <Image
+            src="/SampleAvatar.jpeg"
+            alt="Sample Avatar"
+            width={0}
+            height={0}
+            sizes="100vh"
+            className="rounded-full w-10 h-10"
+          />
+          <div className="flex flex-col 2xl:gap-0.5">
+            <p className="text-white font-semibold">Hadi Yusuf</p>
+            <p className="text-neutral-200 text-xs">Human Resource</p>
+          </div>
+        </div>
+        <FontAwesomeIcon
+          icon={["fas", "info-circle"]}
+          className="text-white ml-auto cursor-pointer"
+        />
+      </div>
       <Menu
         items={[
           {
@@ -82,26 +102,7 @@ export default function Sider() {
           },
         ]}
       />
-      <div className="mt-auto px-[18px] py-[9px] 2xl:px-6 2xl:py-3 flex items-center">
-        <div className="flex gap-[9px] 2xl:gap-3 items-center">
-          <Image
-            src="/SampleAvatar.jpeg"
-            alt="Sample Avatar"
-            width={0}
-            height={0}
-            sizes="100vh"
-            className="rounded-full w-8 h-8"
-          />
-          <div className="flex flex-col 2xl:gap-0.5">
-            <p className="text-white font-semibold">Hadi Yusuf</p>
-            <p className="text-neutral-200 text-xs">Human Resource</p>
-          </div>
-        </div>
-        <FontAwesomeIcon
-          icon={["fas", "info-circle"]}
-          className="text-white ml-auto cursor-pointer"
-        />
-      </div>
+      
     </aside>
   );
 }

@@ -10,8 +10,35 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
+import { useRouter } from "next/router";
+import Label from "@/components/Elements/Label";
+
+export function Export() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Export Data"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>       
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="File Type"/>
+            <Select
+                    placeholder="Choose file type"
+                    options={["Excel", "Tangerang", "Solo"]}
+                    value={1}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+      </form>
+    </Modal>
+  )
+}
 
 export default function MasterAccountCOA() {
+  const router = useRouter();
   const { setIndex } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
@@ -30,23 +57,13 @@ export default function MasterAccountCOA() {
             text="Add New Account COA"
             icon={<FontAwesomeIcon icon={["fas", "user-plus"]} />}
             variant="filled"
-            onClick={() =>
-              setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Account COA"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form></form>
-                </Modal>
-              )
-            }
+            onClick={() => router.push("/master_data/account_coa/save")}
           />
           <Button
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"
+            onClick={() => setModal(<Export/>)}
           />
         </div>
       </div>

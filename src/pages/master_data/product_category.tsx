@@ -13,6 +13,44 @@ import useModal from "@/stores/modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
+export function Save() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Category"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date"/>
+            <InputText 
+              placeholder=""
+              disabled
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Reff Category"/>
+            <InputText 
+              placeholder="Enter reff number"
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Product Category"/>
+            <InputText 
+              placeholder="Enter category"
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  )
+}
+
 export default function MasterProductCategory() {
   const { setModal } = useModal();
   const { setIndex } = useMenu();
@@ -33,72 +71,7 @@ export default function MasterProductCategory() {
             icon={<FontAwesomeIcon icon={["fas", "hand-holding-dollar"]} />}
             variant="filled"
             onClick={() =>
-              setModal(
-                <Modal
-                  className="w-1/4"
-                  title="Add New Category"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Create Date" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="20/08/2023"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/5" name="Shipping Name" />
-                      <Select
-                        className="basis-2/5"
-                        placeholder="Enter Code"
-                        options={["CSC00001", "CSC00002", "CSC00003"]}
-                        value={0}
-                        onChange={() => {}}
-                      />
-                      <InputText
-                        className="basis-2/5"
-                        disabled
-                        value="Shipping Name"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="City" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter city"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Province" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter province"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Route Description" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                  </form>
-                </Modal>
-              )
+              setModal(<Save/>)
             }
           />
         </div>

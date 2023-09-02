@@ -1,4 +1,6 @@
 import Button from "@/components/Elements/Button";
+import Label from "@/components/Elements/Label";
+import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
@@ -6,10 +8,38 @@ import VerticalLine from "@/components/Icons/VerticalLine";
 import MainLayout from "@/components/Layouts/MainLayout";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
 import React from "react";
 
+export function Export() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Export Data"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>       
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="File Type"/>
+            <Select
+                    placeholder="Choose city"
+                    options={["Excel", "Tangerang", "Solo"]}
+                    value={1}
+                    onChange={() => {}}
+                    className="basis-2/3"
+            />
+          </div>
+      </form>
+    </Modal>
+  )
+}
+
 export default function PriceShipping() {
+  const router = useRouter();
+  const { setModal } = useModal();
   const { setIndex } = useMenu();
   const { setTitle } = useHeader();
 
@@ -27,12 +57,13 @@ export default function PriceShipping() {
             text="Add New Price"
             icon={<FontAwesomeIcon icon={["fas", "money-bills"]} />}
             variant="filled"
-            onClick={() => {}}
+            onClick={() => router.push("/master_data/price/save")}
           />
           <Button
             text="Export"
             icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
             variant="outlined"
+            onClick={() => setModal(<Export/>)}
           />
         </div>
       </div>
