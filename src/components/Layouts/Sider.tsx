@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Sider() {
   return (
-    <aside className="bg-primary pt-[18px] pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl basis-1/4 2xl:basis-1/6 sticky top-0 flex flex-col">
+    <aside className="bg-primary pt-[18px] pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl basis-[21%] 2xl:basis-1/6 sticky top-0 flex flex-col">
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex items-center">
         <div className="flex gap-[9px] 2xl:gap-3 items-center">
           <Image
@@ -98,6 +98,16 @@ export default function Sider() {
                 ],
               },
               { name: "Account COA", url: "/master_data/account_coa" },
+            ],
+          },
+          {
+            name: "Marketing",
+            icon: <FontAwesomeIcon icon={["fas", "magnifying-glass-dollar"]} />,
+            subItems: [
+              { name: "Price Calculation", url: "/marketing/price_calculation" },
+              { name: "Form Quotation", url: "/marketing/quotation" },
+              { name: "Inquiry Container", url: "/marketing/inquiry" },
+              { name: "Vessel Schedule", url: "/marketin/vessel_schedule" },
             ],
           },
         ]}

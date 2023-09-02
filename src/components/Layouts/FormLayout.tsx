@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 type FormLayoutTab = {
   name: string;
   component: React.ReactNode;
+  isAppend?: boolean;
+  append?: string;
 };
 
 type FormLayoutProps = {
@@ -19,6 +21,7 @@ export default function FormLayout(props: FormLayoutProps) {
   const router = useRouter();
 
   const [tabActive, setTabActive] = React.useState(0);
+  const [appends, setAppend] = React.useState<number[]>([]);
 
   return (
     <MainLayout>
@@ -69,18 +72,50 @@ export default function FormLayout(props: FormLayoutProps) {
               />
             ))}
           </div>
-          <form className="grow overflow-auto">
+          <div className="flex gap-6">
             {props.tabs.map((tab, tabIndex) => (
-              <div
+              <div 
                 className={clsx(
-                  "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
-                  tabActive !== tabIndex && "hidden"
-                )}
-              >
-                {tab.component}
+                "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                tabActive !== tabIndex && "hidden"
+              )}>
+                {tab.isAppend && 
+                <>
+                  {appends.map((index, indexx) => (
+                    <Button 
+                      text={`${tab.append} ${indexx+1}`}
+                      type="button"
+                      icon={<FontAwesomeIcon icon={["fas", "circle-xmark"]} onClick={() => setAppend(appends.filter((append, appendIndex) => appendIndex !== indexx))}/>}
+                      iconPosition="right"
+                      variant="normal"  
+                      onClick={() => {}}
+                      className="gap-12 !text-red-600"
+                    />
+                  ))}
+                  <Button 
+                    type="button"
+                    icon={<FontAwesomeIcon icon={["fas", "circle-plus"]}/>}
+                    variant="outlined"  
+                    onClick={() => setAppend([...appends, appends.length + 1])}
+                    className="gap-0 text-center px-20"
+                  />
+                </>
+                }
               </div>
             ))}
-          </form>
+            <form className="grow overflow-auto">
+              {props.tabs.map((tab, tabIndex) => (
+                <div
+                  className={clsx(
+                    "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                    tabActive !== tabIndex && "hidden"
+                  )}
+                >
+                  {tab.component}
+                </div>
+              ))}
+            </form>
+          </div>
         </div>
       </div>
     </MainLayout>
