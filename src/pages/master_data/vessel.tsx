@@ -20,6 +20,63 @@ import {
   Filter,
 } from "react-bootstrap-icons";
 
+export function Save() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Vessel"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Shipping Name" />
+            <Select
+              placeholder="Shipping Name"
+              options={["Jakarta", "Tangerang", "Solo"]}
+              value={0}
+              onChange={() => {}}
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Vessel Name" />
+            <InputText placeholder="Enter vessel name" className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Capacity" />
+            <InputText placeholder="Enter capacity" className="basis-2/3" />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export function Export() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 export default function MasterVessel() {
   const { setModal } = useModal();
   const { setActive } = useMenu();
@@ -39,71 +96,7 @@ export default function MasterVessel() {
             text="Add New Vessel"
             icon={<BoxFill />}
             variant="filled"
-            onClick={() =>
-              setModal(
-                <Modal title="Add New Route" type="save" onDone={() => {}}>
-                  <form className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Create Date" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="20/08/2023"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Shipping Name" />
-                      <div className="basis-2/3 flex gap-4">
-                        <Select
-                          className="basis-4/5"
-                          placeholder="Enter Code"
-                          options={["CSC00001", "CSC00002", "CSC00003"]}
-                          value={0}
-                          onChange={() => {}}
-                        />
-                        <InputText
-                          className="w-fit"
-                          disabled
-                          value="Shipping Name"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="City" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter city"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Province" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter province"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Route Description" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                  </form>
-                </Modal>
-              )
-            }
+            onClick={() => setModal(<Save />)}
           />
           <Button
             text="Import"
@@ -114,6 +107,7 @@ export default function MasterVessel() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>

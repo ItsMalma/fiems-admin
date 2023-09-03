@@ -6,6 +6,7 @@ import Button from "@/components/Elements/Button";
 import InputText from "@/components/Elements/InputText";
 import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
+import Radio from "@/components/Elements/Radio";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
@@ -19,6 +20,83 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+
+export function Save() {
+  const [type, setType] = React.useState(0);
+
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Product"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Type Barang" />
+            <Radio name="barang" value="Product" onChange={() => setType(0)} />
+            <Radio
+              name="barang"
+              value="SparePart"
+              onChange={() => setType(1)}
+            />
+            <Radio name="barang" value="ATK" onChange={() => setType(2)} />
+          </div>
+          <hr></hr>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="SKU Code" />
+            <InputText placeholder="Enter SKU code" className="basis-2/3" />
+          </div>
+          {type == 0 && (
+            <>
+              <div className="flex gap-6 items-center justify-between">
+                <Label name="Product Category" />
+                <Select
+                  placeholder="Choose Category"
+                  options={["Direktur", "Marketing"]}
+                  value={-1}
+                  onChange={() => {}}
+                  className="basis-2/3"
+                />
+              </div>
+              <div className="flex gap-6 items-center justify-between">
+                <Label name="Product Name" />
+                <InputText
+                  placeholder="Enter product name"
+                  className="basis-2/3"
+                />
+              </div>
+            </>
+          )}
+          {type == 1 && (
+            <>
+              <div className="flex gap-6 items-center justify-between">
+                <Label name="SparePart Name" />
+                <InputText
+                  placeholder="Enter sparepart name"
+                  className="basis-2/3"
+                />
+              </div>
+            </>
+          )}
+          {type == 2 && (
+            <>
+              <div className="flex gap-6 items-center justify-between">
+                <Label name="ATK Name" />
+                <InputText placeholder="Enter atk name" className="basis-2/3" />
+              </div>
+            </>
+          )}
+        </div>
+      </form>
+    </Modal>
+  );
+}
 
 export default function MasterProductSparepart() {
   const { setModal } = useModal();
@@ -39,69 +117,7 @@ export default function MasterProductSparepart() {
             text="Add New Product"
             icon={<BoxFill />}
             variant="filled"
-            onClick={() =>
-              setModal(
-                <Modal title="Add New Product" type="save" onDone={() => {}}>
-                  <form className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Create Date" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="20/08/2023"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/5" name="Shipping Name" />
-                      <Select
-                        className="basis-2/5"
-                        placeholder="Enter Code"
-                        options={["CSC00001", "CSC00002", "CSC00003"]}
-                        value={0}
-                        onChange={() => {}}
-                      />
-                      <InputText
-                        className="basis-2/5"
-                        disabled
-                        value="Shipping Name"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="City" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter city"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Province" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter province"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Route Description" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter route description"
-                      />
-                    </div>
-                  </form>
-                </Modal>
-              )
-            }
+            onClick={() => setModal(<Save />)}
           />
           <Button
             text="Import"

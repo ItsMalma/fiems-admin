@@ -1,4 +1,6 @@
 import React from "react";
+import { useRouter } from "next/router";
+import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
 import Button from "@/components/Elements/Button";
@@ -15,9 +17,32 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+import Label from "@/components/Elements/Label";
+import Modal from "@/components/Elements/Modal";
+
+export function Export() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
 
 export default function MasterSales() {
+  const router = useRouter();
   const { setActive } = useMenu();
+  const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
@@ -34,7 +59,7 @@ export default function MasterSales() {
             text="Add New Sales"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => {}}
+            onClick={() => router.push("/master_data/sales/save")}
           />
           <Button
             text="Import"
@@ -45,6 +70,7 @@ export default function MasterSales() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>

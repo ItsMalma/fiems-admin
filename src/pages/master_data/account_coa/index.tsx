@@ -2,6 +2,7 @@ import React from "react";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import useHeader from "@/stores/header";
+import { useRouter } from "next/router";
 import Button from "@/components/Elements/Button";
 import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
@@ -17,8 +18,29 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+import Label from "@/components/Elements/Label";
+
+export function Export() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
 
 export default function MasterAccountCOA() {
+  const router = useRouter();
   const { setActive } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
@@ -37,17 +59,7 @@ export default function MasterAccountCOA() {
             text="Add New Account COA"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() =>
-              setModal(
-                <Modal
-                  title="Add New Account COA"
-                  type="save"
-                  onDone={() => {}}
-                >
-                  <form></form>
-                </Modal>
-              )
-            }
+            onClick={() => router.push("/master_data/account_coa/save")}
           />
           <Button
             text="Import"
@@ -58,6 +70,7 @@ export default function MasterAccountCOA() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>

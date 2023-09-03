@@ -1,4 +1,6 @@
 import React from "react";
+import { useRouter } from "next/router";
+import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
 import Button from "@/components/Elements/Button";
@@ -15,8 +17,31 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+import Label from "@/components/Elements/Label";
+import Modal from "@/components/Elements/Modal";
+
+export function Export() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
 
 export default function MasterVehicle() {
+  const router = useRouter();
+  const { setModal } = useModal();
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
@@ -34,7 +59,7 @@ export default function MasterVehicle() {
             text="Add New Vehicle"
             icon={<TruckFrontFill />}
             variant="filled"
-            onClick={() => {}}
+            onClick={() => router.push("/master_data/vehicle/save")}
           />
           <Button
             text="Import"
@@ -45,6 +70,7 @@ export default function MasterVehicle() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>

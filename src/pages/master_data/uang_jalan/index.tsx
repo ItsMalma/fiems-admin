@@ -1,4 +1,6 @@
 import React from "react";
+import { useRouter } from "next/router";
+import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
 import Button from "@/components/Elements/Button";
@@ -15,8 +17,57 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+import Label from "@/components/Elements/Label";
+import Modal from "@/components/Elements/Modal";
+import Upload from "@/components/Elements/Upload";
+
+export function Export() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose city"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export function Import() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="File Type" />
+            <Select
+              placeholder="Choose file type"
+              options={["Excel", "Tangerang", "Solo"]}
+              value={1}
+              onChange={() => {}}
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Upload File" />
+            <Upload className="basis-2/3" />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
 
 export default function MasterUangJalan() {
+  const router = useRouter();
+  const { setModal } = useModal();
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
@@ -34,17 +85,19 @@ export default function MasterUangJalan() {
             text="Add New Uang Jalan"
             icon={<GeoAltFill />}
             variant="filled"
-            onClick={() => {}}
+            onClick={() => router.push("/master_data/uang_jalan/save")}
           />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
+            onClick={() => setModal(<Import />)}
           />
           <Button
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>

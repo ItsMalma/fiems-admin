@@ -7,6 +7,8 @@ import { XCircle, Download } from "react-bootstrap-icons";
 type FormLayoutTab = {
   name: string;
   component: React.ReactNode;
+  isAppend?: boolean;
+  append?: string;
 };
 
 type FormLayoutProps = {
@@ -14,10 +16,12 @@ type FormLayoutProps = {
   tabs: FormLayoutTab[];
 };
 
+
 export default function FormLayout(props: FormLayoutProps) {
   const router = useRouter();
-
+  const [appends , setAppend] = React.useState<number[]>([]);
   const [tabActive, setTabActive] = React.useState(0);
+  const [appendActive, setAppendActive] = React.useState(0);
 
   return (
     <>
@@ -52,18 +56,64 @@ export default function FormLayout(props: FormLayoutProps) {
               />
             ))}
           </div>
-          <form className="grow overflow-auto">
+          <div className="flex gap-6">   
+            {/* Khusus Append */}
             {props.tabs.map((tab, tabIndex) => (
-              <div
+              <div 
                 className={clsx(
-                  "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
-                  tabActive !== tabIndex && "hidden"
-                )}
-              >
-                {tab.component}
+                "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                tabActive !== tabIndex && "hidden"
+              )}>
+                {tab.isAppend && 
+                <>
+                  {appends.map((index, indexx) => (
+                    <Button 
+                      text={`${tab.append} ${indexx+1}`}
+                      type="button"
+                      icon={<FontAwesomeIcon icon={["fas", "circle-xmark"]} onClick={() => setAppend(appends.filter((append, appendIndex) => appendIndex !== indexx))}/>}
+                      iconPosition="right"
+                      variant="normal"  
+                      onClick={() => setAppendActive(indexx)}
+                      className="gap-12 !text-red-600"
+                    />
+                  ))}
+                  <Button 
+                    type="button"
+                    icon={<FontAwesomeIcon icon={["fas", "circle-plus"]}/>}
+                    variant="outlined"  
+                    onClick={() => setAppend([...appends, appends.length + 1])}
+                    className="gap-0 text-center px-20"
+                  />
+                </>
+                }
               </div>
             ))}
-          </form>
+            {/* End Khusus Append */}
+            <form className="grow overflow-auto">
+              {props.tabs.map((tab, tabIndex) => (
+                <div
+                  className={clsx(
+                    "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                    tabActive !== tabIndex && "hidden"
+                  )}
+                >                  
+                  {tab.isAppend ?
+                    <>
+                    {appends.map((index, indexx) => (
+                      <div className={clsx(appendActive !== indexx && "hidden")}>
+                      {tab.component}
+                      </div>
+                    ))}
+                    </>
+                    :
+                    <>
+                    {tab.component}
+                    </>
+                  }
+                </div>
+              ))}
+            </form>
+          </div>
         </div>
       </div>
     </>

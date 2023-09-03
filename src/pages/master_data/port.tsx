@@ -20,6 +20,73 @@ import {
   Filter,
 } from "react-bootstrap-icons";
 
+function Save() {
+  return (
+    <Modal
+      className="w-2/5"
+      title="Add New Customer Group"
+      type="save"
+      onDone={() => {}}
+    >
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Port Code" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="City" />
+            <Select
+              placeholder="Choose city"
+              options={["Jakarta", "Tangerang", "Solo"]}
+              value={0}
+              onChange={() => {}}
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Province" />
+            <Select
+              placeholder="Choose province"
+              options={["Jawa Barat", "DKI Jakarta", "Banten"]}
+              value={0}
+              onChange={() => {}}
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Port Name" />
+            <InputText placeholder="Enter port name" className="basis-2/3" />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export function Export() {
+  return (
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 export default function MasterPort() {
   const { setActive: setIndex } = useMenu();
   const { setModal } = useModal();
@@ -39,54 +106,7 @@ export default function MasterPort() {
             text="Add New Port"
             icon={<BuildingFillAdd />}
             variant="filled"
-            onClick={() =>
-              setModal(
-                <Modal title="Add New Port" type="save" onDone={() => {}}>
-                  <form className="flex flex-col gap-3">
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Create Date" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="20/08/2023"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Port Code" />
-                      <InputText
-                        className="basis-2/3"
-                        disabled
-                        value="PC00001"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="City" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter city"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Province" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Enter province"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Label className="basis-1/3" name="Port Name" />
-                      <InputText
-                        className="basis-2/3"
-                        value=""
-                        placeholder="Port Name"
-                      />
-                    </div>
-                  </form>
-                </Modal>
-              )
-            }
+            onClick={() => setModal(<Save />)}
           />
           <Button
             text="Import"
@@ -97,6 +117,7 @@ export default function MasterPort() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>

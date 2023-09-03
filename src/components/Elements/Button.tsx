@@ -3,6 +3,7 @@ import clsx from "clsx";
 
 type ButtonProps = {
   className?: string;
+  type?: string;
   variant?: "normal" | "filled" | "outlined";
   text?: string;
   icon?: ReactNode;
@@ -12,7 +13,7 @@ type ButtonProps = {
 
 export default function Button({
   variant = "normal",
-  text = "Click Me",
+  text = "",
   iconPosition = "right",
   ...props
 }: ButtonProps) {
