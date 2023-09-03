@@ -106,6 +106,17 @@ export default function Sider() {
               },
             ],
           },
+          {
+            name: "Marketing",
+            icon: BarChart,
+            activeIcon: BarChartFill,
+            childrens: [
+              {
+                name: "Price Calculation",
+                url: "/marketing/price_calculation",
+              },
+            ],
+          },
         ]}
       />
       <div className="mt-auto px-[18px] py-[9px] 2xl:px-6 2xl:py-3 flex items-center">
