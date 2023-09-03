@@ -109,7 +109,7 @@ export function CompletedTable() {
   );
 }
 
-export default function CustomerGroup() {
+export default function FormQuotation() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setModal } = useModal();

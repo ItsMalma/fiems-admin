@@ -119,6 +119,14 @@ export default function Sider() {
                 name: "Form Quotation",
                 url: "/marketing/quotation",
               },
+              {
+                name: "Inquiry Container",
+                url: "/marketing/inquiry_container",
+              },
+              {
+                name: "Vessel Schedule",
+                url: "/marketing/vessel_schedule",
+              },
             ]
           },
         ]}

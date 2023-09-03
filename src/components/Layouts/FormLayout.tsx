@@ -41,7 +41,7 @@ export default function FormLayout(props: FormLayoutProps) {
         </div>
       </div>
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
-        <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl overflow-auto">
+        <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl overflow-auto relative">
           <div className="flex gap-1.5 2xl:gap-2">
           {props.tabs.map((tab, tabIndex) => (
             <>
@@ -65,7 +65,7 @@ export default function FormLayout(props: FormLayoutProps) {
             </>
           ))}
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-6 overflow-auto">
             {/* Khusus Append */}
             {props.tabs.map((tab, tabIndex) => (
               <div
@@ -96,7 +96,7 @@ export default function FormLayout(props: FormLayoutProps) {
                         iconPosition="right"
                         variant="normal"
                         onClick={() => setAppendActive(indexx)}
-                        className="gap-12 !text-gray-500 hover:border hover:border-gray-300"
+                        className="!gap-12 !text-gray-500 hover:border hover:border-gray-300"
                       />
                     ))}
                     <Button

@@ -36,7 +36,7 @@ const DatePickerInput = React.forwardRef<
         readOnly={true}
         value={moment(props.value).format("DD/MM/YYYY")}
       />
-      <Calendar />
+      <Calendar className=""/>
     </div>
   );
 });
