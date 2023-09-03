@@ -15,9 +15,9 @@ import ReactSelect, {
   SingleValue,
 } from "react-select";
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import lodash from "lodash";
+import { CaretUpFill, CaretDownFill, X } from "react-bootstrap-icons";
 
 const MenuPlacementContext = React.createContext<{
   value: CoercedMenuPlacement | undefined;
@@ -106,10 +106,11 @@ function DropdownIndicator({
 }: DropdownIndicatorProps<SelectOption>) {
   return (
     <components.DropdownIndicator {...props} className="!p-0">
-      <FontAwesomeIcon
-        icon={["fas", props.selectProps.menuIsOpen ? "caret-up" : "caret-down"]}
-        className="text-gray-700"
-      />
+      {props.selectProps.menuIsOpen ? (
+        <CaretUpFill className="text-gray-700" />
+      ) : (
+        <CaretDownFill className="text-gray-700" />
+      )}
     </components.DropdownIndicator>
   );
 }
@@ -120,7 +121,7 @@ function ClearIndicator({
 }: ClearIndicatorProps<SelectOption>) {
   return (
     <components.ClearIndicator {...props}>
-      <FontAwesomeIcon icon={["fas", "xmark"]} />
+      <X />
     </components.ClearIndicator>
   );
 }

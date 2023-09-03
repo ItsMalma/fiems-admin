@@ -1,7 +1,28 @@
 import React from "react";
-import Menu from "@/components/Elements/Menu";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
+import {
+  Icon,
+  ChevronDown,
+  ChevronUp,
+  Grid1x2,
+  Grid1x2Fill,
+  Database,
+  DatabaseFill,
+  BarChart,
+  BarChartFill,
+  Gear,
+  GearFill,
+  Cart,
+  CartFill,
+  HouseDoor,
+  HouseDoorFill,
+  PiggyBank,
+  PiggyBankFill,
+  People,
+  PeopleFill,
+  InfoCircleFill,
+} from "react-bootstrap-icons";
+import Menu from "./Menu";
 
 export default function Sider() {
   return (
@@ -10,16 +31,18 @@ export default function Sider() {
         items={[
           {
             name: "Dashboard",
-            icon: <FontAwesomeIcon icon={["fas", "chart-simple"]} />,
+            icon: Grid1x2,
+            activeIcon: Grid1x2Fill,
             url: "/",
           },
           {
             name: "Master Data",
-            icon: <FontAwesomeIcon icon={["fas", "database"]} />,
-            subItems: [
+            icon: Database,
+            activeIcon: DatabaseFill,
+            childrens: [
               {
                 name: "Business Partner",
-                subSubItems: [
+                childrens: [
                   {
                     name: "Customer Group",
                     url: "/master_data/business_partner/customer_group",
@@ -30,22 +53,31 @@ export default function Sider() {
                   },
                 ],
               },
-              { name: "Master Route", url: "/master_data/route" },
-              { name: "Master Port", url: "/master_data/port" },
-              { name: "Master Sales", url: "/master_data/sales" },
-              { name: "Master Vehicle", url: "/master_data/vehicle" },
-              { name: "Master Vessel", url: "/master_data/vessel" },
+              {
+                name: "Master Route",
+                url: "/master_data/route",
+              },
+              {
+                name: "Master Port",
+                url: "/master_data/port",
+              },
+              {
+                name: "Master Sales",
+                url: "/master_data/sales",
+              },
+              {
+                name: "Master Vehicle",
+                url: "/master_data/vehicle",
+              },
+              {
+                name: "Master Vessel",
+                url: "/master_data/vessel",
+              },
               {
                 name: "Master Price",
-                subSubItems: [
-                  {
-                    name: "Price Factory",
-                    url: "/master_data/price/factory",
-                  },
-                  {
-                    name: "Price Vendor",
-                    url: "/master_data/price/vendor",
-                  },
+                childrens: [
+                  { name: "Price Factory", url: "/master_data/price/factory" },
+                  { name: "Price Vendor", url: "/master_data/price/vendor" },
                   {
                     name: "Price Shipping",
                     url: "/master_data/price/shipping",
@@ -62,22 +94,16 @@ export default function Sider() {
               },
               {
                 name: "Master Product",
-                subSubItems: [
-                  {
-                    name: "Product",
-                    url: "/master_data/items/product",
-                  },
-                  {
-                    name: "Sparepart",
-                    url: "/master_data/items/sparepart",
-                  },
-                  {
-                    name: "ATK",
-                    url: "/master_data/items/atk",
-                  },
+                childrens: [
+                  { name: "Product", url: "/master_data/items/product" },
+                  { name: "Sparepart", url: "/master_data/items/sparepart" },
+                  { name: "ATK", url: "/master_data/items/atk" },
                 ],
               },
-              { name: "Account COA", url: "/master_data/account_coa" },
+              {
+                name: "Account COA",
+                url: "/master_data/account_coa",
+              },
             ],
           },
         ]}
@@ -97,10 +123,7 @@ export default function Sider() {
             <p className="text-neutral-200 text-xs">Human Resource</p>
           </div>
         </div>
-        <FontAwesomeIcon
-          icon={["fas", "info-circle"]}
-          className="text-white ml-auto cursor-pointer"
-        />
+        <InfoCircleFill className="text-neutral-300 ml-auto cursor-pointer" />
       </div>
     </aside>
   );

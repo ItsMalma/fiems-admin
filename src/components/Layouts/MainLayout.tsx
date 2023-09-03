@@ -14,7 +14,7 @@ export default function MainLayout(props: MainLayoutProps) {
       <div className="pl-[18px] pr-6 py-3 2xl:pl-6 2xl:pr-8 2xl:py-4 flex gap-6 2xl:gap-8 grow overflow-auto">
         <Sider />
         <div className="basis-3/4 2xl:basis-5/6 flex-grow flex flex-col gap-[18px] 2xl:gap-6 overflow-auto">
-          {props.children ?? <div className="flex-grow"></div>}
+          {props.children}
           <Footer />
         </div>
       </div>

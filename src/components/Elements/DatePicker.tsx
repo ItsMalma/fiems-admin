@@ -1,10 +1,10 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import moment from "moment";
 import ReactDatePicker from "react-datepicker";
-import id from "date-fns/locale/id"
+import id from "date-fns/locale/id";
 import "react-datepicker/dist/react-datepicker.css";
+import { Calendar } from "react-bootstrap-icons";
 
 type DatePickerProps = {
   className?: string;
@@ -15,12 +15,12 @@ type DatePickerInputProps = DatePickerProps & {
   value: Date;
   setValue: (newValue: Date) => void;
   onClick?: () => void;
-}
+};
 
-const DatePickerInput = React.forwardRef<HTMLInputElement, DatePickerInputProps>(({
-  placeholder = "Choose date",
-  ...props
-}, ref) => {
+const DatePickerInput = React.forwardRef<
+  HTMLInputElement,
+  DatePickerInputProps
+>(({ placeholder = "Choose date", ...props }, ref) => {
   return (
     <div
       className={clsx(
@@ -36,22 +36,31 @@ const DatePickerInput = React.forwardRef<HTMLInputElement, DatePickerInputProps>
         readOnly={true}
         value={moment(props.value).format("DD/MM/YYYY")}
       />
-      <FontAwesomeIcon icon={["far", "calendar"]} />
+      <Calendar />
     </div>
   );
 });
 
-const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>((props, ref) => {
-  const [value, setValue] = React.useState(new Date());
+const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
+  (props, ref) => {
+    const [value, setValue] = React.useState(new Date());
 
-  return (
-    <ReactDatePicker
-      locale={id}
-      selected={value}
-      onChange={newValue => setValue(newValue ?? new Date())}
-      customInput={<DatePickerInput ref={ref} {...props} value={value} setValue={setValue} />}
-    />
-  );
-});
+    return (
+      <ReactDatePicker
+        locale={id}
+        selected={value}
+        onChange={(newValue) => setValue(newValue ?? new Date())}
+        customInput={
+          <DatePickerInput
+            ref={ref}
+            {...props}
+            value={value}
+            setValue={setValue}
+          />
+        }
+      />
+    );
+  }
+);
 
 export default DatePicker;

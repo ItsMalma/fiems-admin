@@ -6,31 +6,38 @@ import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
-import MainLayout from "@/components/Layouts/MainLayout";
 import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import useModal from "@/stores/modal";
+import {
+  GeoAltFill,
+  FileEarmarkArrowDownFill,
+  FileEarmarkArrowUpFill,
+  Pencil,
+  Trash,
+  Calendar,
+  Filter,
+} from "react-bootstrap-icons";
 
 export default function MasterRoute() {
   const { setModal } = useModal();
   const { setTitle } = useHeader();
-  const { setIndex } = useMenu();
+  const { setActive } = useMenu();
 
   React.useEffect(() => {
     setTitle("Master Data | Master Route");
-    setIndex(1, 1, 0);
+    setActive(1, 1, 0);
   }, []);
 
   return (
-    <MainLayout>
+    <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Route Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Route"
-            icon={<FontAwesomeIcon icon={["fas", "route"]} />}
+            icon={<GeoAltFill />}
             variant="filled"
             onClick={() =>
               setModal(
@@ -90,8 +97,13 @@ export default function MasterRoute() {
             }
           />
           <Button
+            text="Import"
+            icon={<FileEarmarkArrowDownFill />}
+            variant="outlined"
+          />
+          <Button
             text="Export"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
+            icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
           />
         </div>
@@ -101,7 +113,7 @@ export default function MasterRoute() {
           <div className="flex items-center">
             <Button
               text="Edit"
-              icon={<FontAwesomeIcon icon={["fas", "pencil"]} />}
+              icon={<Pencil />}
               iconPosition="left"
               variant="normal"
               className="!border-gray-300 !text-gray-300"
@@ -109,7 +121,7 @@ export default function MasterRoute() {
             <VerticalLine />
             <Button
               text="Delete"
-              icon={<FontAwesomeIcon icon={["fas", "trash"]} />}
+              icon={<Trash />}
               iconPosition="left"
               variant="normal"
               className="!border-gray-300 !text-gray-300"
@@ -118,7 +130,7 @@ export default function MasterRoute() {
           <div className="flex gap-4 items-center">
             <Select
               className="w-40"
-              icon={<FontAwesomeIcon icon={["fas", "calendar"]} />}
+              icon={<Calendar />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}
               value={0}
@@ -126,7 +138,7 @@ export default function MasterRoute() {
             />
             <Select
               className="w-40"
-              icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
+              icon={<Filter />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}
               value={0}
@@ -240,6 +252,6 @@ export default function MasterRoute() {
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

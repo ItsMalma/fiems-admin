@@ -4,13 +4,13 @@ import useMenu from "@/stores/menu";
 import React from "react";
 
 export default function Dashboard() {
-  const { setIndex } = useMenu();
   const { setTitle } = useHeader();
+  const { setActive } = useMenu();
 
   React.useEffect(() => {
-    setIndex(0, 0, 0);
     setTitle("Dashboard");
+    setActive(0, 0, 0);
   }, []);
 
-  return <MainLayout>{}</MainLayout>;
+  return <div className="flex-grow"></div>;
 }

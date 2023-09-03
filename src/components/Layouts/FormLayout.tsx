@@ -1,9 +1,8 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../Elements/Button";
-import MainLayout from "./MainLayout";
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { XCircle, Download } from "react-bootstrap-icons";
 
 type FormLayoutTab = {
   name: string;
@@ -21,7 +20,7 @@ export default function FormLayout(props: FormLayoutProps) {
   const [tabActive, setTabActive] = React.useState(0);
 
   return (
-    <MainLayout>
+    <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm items-center">
         <h2 className="text-gray-700  text-[15px] 2xl:text-xl font-bold">
           {props.title}
@@ -31,26 +30,10 @@ export default function FormLayout(props: FormLayoutProps) {
             className="!border-gray-300 !text-gray-500"
             variant="outlined"
             text="Cancel"
-            icon={
-              <FontAwesomeIcon
-                icon={["far", "xmark-circle"]}
-                width={20}
-                height={20}
-              />
-            }
+            icon={<XCircle />}
             onClick={() => router.back()}
           />
-          <Button
-            variant="filled"
-            text="Save"
-            icon={
-              <FontAwesomeIcon
-                icon={["fas", "file-arrow-down"]}
-                width={20}
-                height={20}
-              />
-            }
-          />
+          <Button variant="filled" text="Save" icon={<Download />} />
         </div>
       </div>
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
@@ -83,6 +66,6 @@ export default function FormLayout(props: FormLayoutProps) {
           </form>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }
