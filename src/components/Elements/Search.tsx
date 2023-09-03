@@ -1,4 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Search as SearchIcon } from "react-bootstrap-icons";
 
 type SearchProps = {
   placeholder?: string;
@@ -7,7 +7,7 @@ type SearchProps = {
 export default function Search(props: SearchProps) {
   return (
     <div className="px-3 py-[9px] 2xl:px-4 2xl:py-3 rounded-[10px] bg-gray-100 text-gray-400 flex items-center gap-3 2xl:gap-4">
-      <FontAwesomeIcon icon={["fas", "magnifying-glass"]} />
+      <SearchIcon />
       <input
         type="search"
         className="flex-grow outline-none bg-inherit"

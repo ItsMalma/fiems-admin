@@ -1,55 +1,52 @@
+import React from "react";
+import { useRouter } from "next/router";
+import useModal from "@/stores/modal";
+import useMenu from "@/stores/menu";
+import useHeader from "@/stores/header";
 import Button from "@/components/Elements/Button";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
-import MainLayout from "@/components/Layouts/MainLayout";
-import useMenu from "@/stores/menu";
-import useHeader from "@/stores/header";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-import { useRouter } from "next/router";
+import {
+  GeoAltFill,
+  FileEarmarkArrowDownFill,
+  FileEarmarkArrowUpFill,
+  Pencil,
+  Trash,
+  Calendar,
+  Filter,
+} from "react-bootstrap-icons";
 import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
-import useModal from "@/stores/modal";
 import Upload from "@/components/Elements/Upload";
 
 export function Export() {
   return (
-    <Modal
-      className="w-2/5"
-      title="Export Data"
-      type="save"
-      onDone={() => {}}
-    >
-      <form>       
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="File Type"/>
-            <Select
-                    placeholder="Choose city"
-                    options={["Excel", "Tangerang", "Solo"]}
-                    value={1}
-                    onChange={() => {}}
-                    className="basis-2/3"
-            />
-          </div>
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose city"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
       </form>
     </Modal>
-  )
+  );
 }
 
 export function Import() {
   return (
-    <Modal
-      className="w-2/5"
-      title="Export Data"
-      type="save"
-      onDone={() => {}}
-    >
-      <form>   
-        <div className="flex flex-col gap-3">    
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="File Type"/>
+            <Label name="File Type" />
             <Select
               placeholder="Choose file type"
               options={["Excel", "Tangerang", "Solo"]}
@@ -59,48 +56,48 @@ export function Import() {
             />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Upload File"/>
-            <Upload className="basis-2/3"/>
+            <Label name="Upload File" />
+            <Upload className="basis-2/3" />
           </div>
         </div>
       </form>
     </Modal>
-  )
+  );
 }
 
 export default function MasterUangJalan() {
   const router = useRouter();
   const { setModal } = useModal();
-  const { setIndex } = useMenu();
+  const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
     setTitle("Master Data | Master Uang Jalan");
-    setIndex(1, 7, 0);
+    setActive(1, 7, 0);
   }, []);
 
   return (
-    <MainLayout>
+    <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Route Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Uang Jalan"
-            icon={<FontAwesomeIcon icon={["fas", "route"]} />}
+            icon={<GeoAltFill />}
             variant="filled"
             onClick={() => router.push("/master_data/uang_jalan/save")}
           />
           <Button
             text="Import"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-down"]} />}
+            icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
-            onClick={() => setModal(<Import/>)}
+            onClick={() => setModal(<Import />)}
           />
           <Button
             text="Export"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
+            icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export/>)}
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>
@@ -109,7 +106,7 @@ export default function MasterUangJalan() {
           <div className="flex items-center">
             <Button
               text="Edit"
-              icon={<FontAwesomeIcon icon={["fas", "pencil"]} />}
+              icon={<Pencil />}
               iconPosition="left"
               variant="normal"
               className="!border-gray-300 !text-gray-300"
@@ -117,7 +114,7 @@ export default function MasterUangJalan() {
             <VerticalLine />
             <Button
               text="Delete"
-              icon={<FontAwesomeIcon icon={["fas", "trash"]} />}
+              icon={<Trash />}
               iconPosition="left"
               variant="normal"
               className="!border-gray-300 !text-gray-300"
@@ -126,7 +123,7 @@ export default function MasterUangJalan() {
           <div className="flex gap-4 items-center">
             <Select
               className="w-40"
-              icon={<FontAwesomeIcon icon={["fas", "calendar"]} />}
+              icon={<Calendar />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}
               value={0}
@@ -134,7 +131,7 @@ export default function MasterUangJalan() {
             />
             <Select
               className="w-40"
-              icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
+              icon={<Filter />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}
               value={0}
@@ -181,7 +178,7 @@ export default function MasterUangJalan() {
               "Rp1.000.00",
               "Rp1.000.00",
               "Rp1.000.00",
-              "Rp5.000.00",            
+              "Rp5.000.00",
             ],
           ]}
         />
@@ -189,6 +186,6 @@ export default function MasterUangJalan() {
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

@@ -1,3 +1,7 @@
+import React from "react";
+import useModal from "@/stores/modal";
+import useMenu from "@/stores/menu";
+import useHeader from "@/stores/header";
 import Button from "@/components/Elements/Button";
 import InputText from "@/components/Elements/InputText";
 import Label from "@/components/Elements/Label";
@@ -6,13 +10,15 @@ import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
-import MainLayout from "@/components/Layouts/MainLayout";
-import useHeader from "@/stores/header";
-import useMenu from "@/stores/menu";
-import useModal from "@/stores/modal";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-
+import {
+  BoxFill,
+  FileEarmarkArrowDownFill,
+  FileEarmarkArrowUpFill,
+  Pencil,
+  Trash,
+  Calendar,
+  Filter,
+} from "react-bootstrap-icons";
 
 export function Save() {
   return (
@@ -25,95 +31,83 @@ export function Save() {
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Create Date"/>
-            <InputText 
-              placeholder=""
-              disabled
-              className="basis-2/3"
-            />
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Shipping Name"/>
+            <Label name="Shipping Name" />
             <Select
-                    placeholder="Shipping Name"
-                    options={["Jakarta", "Tangerang", "Solo"]}
-                    value={0}
-                    onChange={() => {}}
-                    className="basis-2/3"
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Vessel Name"/>
-            <InputText 
-              placeholder="Enter vessel name"
+              placeholder="Shipping Name"
+              options={["Jakarta", "Tangerang", "Solo"]}
+              value={0}
+              onChange={() => {}}
               className="basis-2/3"
             />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Capacity"/>
-            <InputText 
-              placeholder="Enter capacity"
-              className="basis-2/3"
-            />
+            <Label name="Vessel Name" />
+            <InputText placeholder="Enter vessel name" className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Capacity" />
+            <InputText placeholder="Enter capacity" className="basis-2/3" />
           </div>
         </div>
       </form>
     </Modal>
-  )
+  );
 }
 
 export function Export() {
   return (
-    <Modal
-      className="w-2/5"
-      title="Export Data"
-      type="save"
-      onDone={() => {}}
-    >
-      <form>       
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="File Type"/>
-            <Select
-                    placeholder="Choose file type"
-                    options={["Excel", "Tangerang", "Solo"]}
-                    value={1}
-                    onChange={() => {}}
-                    className="basis-2/3"
-            />
-          </div>
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={["Excel", "Tangerang", "Solo"]}
+            value={1}
+            onChange={() => {}}
+            className="basis-2/3"
+          />
+        </div>
       </form>
     </Modal>
-  )
+  );
 }
 
 export default function MasterVessel() {
   const { setModal } = useModal();
-  const { setIndex } = useMenu();
+  const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
     setTitle("Master Data | Master Vessel");
-    setIndex(1, 5, 0);
+    setActive(1, 5, 0);
   }, []);
 
   return (
-    <MainLayout>
+    <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Route Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Vessel"
-            icon={<FontAwesomeIcon icon={["fas", "box-open"]} />}
+            icon={<BoxFill />}
             variant="filled"
-            onClick={() =>
-              setModal(<Save/>)
-            }
+            onClick={() => setModal(<Save />)}
+          />
+          <Button
+            text="Import"
+            icon={<FileEarmarkArrowDownFill />}
+            variant="outlined"
           />
           <Button
             text="Export"
-            icon={<FontAwesomeIcon icon={["fas", "file-arrow-up"]} />}
+            icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export/>)}
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>
@@ -122,7 +116,7 @@ export default function MasterVessel() {
           <div className="flex items-center">
             <Button
               text="Edit"
-              icon={<FontAwesomeIcon icon={["fas", "pencil"]} />}
+              icon={<Pencil />}
               iconPosition="left"
               variant="normal"
               className="!border-gray-300 !text-gray-300"
@@ -130,7 +124,7 @@ export default function MasterVessel() {
             <VerticalLine />
             <Button
               text="Delete"
-              icon={<FontAwesomeIcon icon={["fas", "trash"]} />}
+              icon={<Trash />}
               iconPosition="left"
               variant="normal"
               className="!border-gray-300 !text-gray-300"
@@ -139,7 +133,7 @@ export default function MasterVessel() {
           <div className="flex gap-4 items-center">
             <Select
               className="w-40"
-              icon={<FontAwesomeIcon icon={["fas", "calendar"]} />}
+              icon={<Calendar />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}
               value={0}
@@ -147,7 +141,7 @@ export default function MasterVessel() {
             />
             <Select
               className="w-40"
-              icon={<FontAwesomeIcon icon={["fas", "filter"]} />}
+              icon={<Filter />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}
               value={0}
@@ -219,6 +213,6 @@ export default function MasterVessel() {
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

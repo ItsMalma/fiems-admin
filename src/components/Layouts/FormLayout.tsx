@@ -1,9 +1,8 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../Elements/Button";
-import MainLayout from "./MainLayout";
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { XCircle, PlusCircle, Download } from "react-bootstrap-icons";
 
 type FormLayoutTab = {
   name: string;
@@ -17,15 +16,14 @@ type FormLayoutProps = {
   tabs: FormLayoutTab[];
 };
 
-
 export default function FormLayout(props: FormLayoutProps) {
   const router = useRouter();
-  const [appends , setAppend] = React.useState<number[]>([]);
+  const [appends, setAppend] = React.useState<number[]>([]);
   const [tabActive, setTabActive] = React.useState(0);
   const [appendActive, setAppendActive] = React.useState(0);
 
   return (
-    <MainLayout>
+    <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm items-center">
         <h2 className="text-gray-700  text-[15px] 2xl:text-xl font-bold">
           {props.title}
@@ -35,26 +33,10 @@ export default function FormLayout(props: FormLayoutProps) {
             className="!border-gray-300 !text-gray-500"
             variant="outlined"
             text="Cancel"
-            icon={
-              <FontAwesomeIcon
-                icon={["far", "xmark-circle"]}
-                width={20}
-                height={20}
-              />
-            }
+            icon={<XCircle />}
             onClick={() => router.back()}
           />
-          <Button
-            variant="filled"
-            text="Save"
-            icon={
-              <FontAwesomeIcon
-                icon={["fas", "file-arrow-down"]}
-                width={20}
-                height={20}
-              />
-            }
-          />
+          <Button variant="filled" text="Save" icon={<Download />} />
         </div>
       </div>
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
@@ -73,36 +55,50 @@ export default function FormLayout(props: FormLayoutProps) {
               />
             ))}
           </div>
-          <div className="flex gap-6">   
+          <div className="flex gap-6">
             {/* Khusus Append */}
             {props.tabs.map((tab, tabIndex) => (
-              <div 
+              <div
                 className={clsx(
-                "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
-                tabActive !== tabIndex && "hidden"
-              )}>
-                {tab.isAppend && 
-                <>
-                  {appends.map((index, indexx) => (
-                    <Button 
-                      text={`${tab.append} ${indexx+1}`}
+                  "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                  tabActive !== tabIndex && "hidden"
+                )}
+              >
+                {tab.isAppend && (
+                  <>
+                    {appends.map((index, indexx) => (
+                      <Button
+                        text={`${tab.append} ${indexx + 1}`}
+                        type="button"
+                        icon={
+                          <XCircle
+                            onClick={() =>
+                              setAppend(
+                                appends.filter(
+                                  (append, appendIndex) =>
+                                    appendIndex !== indexx
+                                )
+                              )
+                            }
+                          />
+                        }
+                        iconPosition="right"
+                        variant="normal"
+                        onClick={() => setAppendActive(indexx)}
+                        className="gap-12 !text-red-600"
+                      />
+                    ))}
+                    <Button
                       type="button"
-                      icon={<FontAwesomeIcon icon={["fas", "circle-xmark"]} onClick={() => setAppend(appends.filter((append, appendIndex) => appendIndex !== indexx))}/>}
-                      iconPosition="right"
-                      variant="normal"  
-                      onClick={() => setAppendActive(indexx)}
-                      className="gap-12 !text-red-600"
+                      icon={<PlusCircle />}
+                      variant="outlined"
+                      onClick={() =>
+                        setAppend([...appends, appends.length + 1])
+                      }
+                      className="gap-0 text-center px-20"
                     />
-                  ))}
-                  <Button 
-                    type="button"
-                    icon={<FontAwesomeIcon icon={["fas", "circle-plus"]}/>}
-                    variant="outlined"  
-                    onClick={() => setAppend([...appends, appends.length + 1])}
-                    className="gap-0 text-center px-20"
-                  />
-                </>
-                }
+                  </>
+                )}
               </div>
             ))}
             {/* End Khusus Append */}
@@ -113,26 +109,26 @@ export default function FormLayout(props: FormLayoutProps) {
                     "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
                     tabActive !== tabIndex && "hidden"
                   )}
-                >                  
-                  {tab.isAppend ?
+                >
+                  {tab.isAppend ? (
                     <>
-                    {appends.map((index, indexx) => (
-                      <div className={clsx(appendActive !== indexx && "hidden")}>
-                      {tab.component}
-                      </div>
-                    ))}
+                      {appends.map((index, indexx) => (
+                        <div
+                          className={clsx(appendActive !== indexx && "hidden")}
+                        >
+                          {tab.component}
+                        </div>
+                      ))}
                     </>
-                    :
-                    <>
-                    {tab.component}
-                    </>
-                  }
+                  ) : (
+                    <>{tab.component}</>
+                  )}
                 </div>
               ))}
             </form>
           </div>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 }

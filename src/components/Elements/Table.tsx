@@ -1,8 +1,13 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import moment from "moment";
 import lodash from "lodash";
+import {
+  SortAlphaDown,
+  SortAlphaDownAlt,
+  Square,
+  SquareFill,
+} from "react-bootstrap-icons";
 
 type TableFieldType = "text" | "option" | "link" | "date" | "status" | "group";
 
@@ -118,38 +123,58 @@ function TableHead(props: TableHeadProps) {
             {props.field.name}
           </p>
         )}
-        {props.field.isSortable && isSortable(props.field.type) && (
-          <FontAwesomeIcon
-            icon={[
-              "fas",
-              props.fieldSort?.index === props.fieldIndex &&
-              props.fieldSort?.direction === "desc"
-                ? "arrow-down-wide-short"
-                : "arrow-down-short-wide",
-            ]}
-            className="cursor-pointer"
-            onClick={() => {
-              if (props.fieldSort?.index === props.fieldIndex) {
-                switch (props.fieldSort.direction) {
-                  case "asc":
-                    props.setFieldSort({
-                      index: props.fieldSort.index,
-                      direction: "desc",
-                    });
-                    break;
-                  case "desc":
-                    props.setFieldSort(undefined);
-                    break;
+        {props.field.isSortable && isSortable(props.field.type) ? (
+          props.fieldSort?.index == props.fieldIndex &&
+          props.fieldSort?.direction === "desc" ? (
+            <SortAlphaDownAlt
+              className="cursor-pointer"
+              onClick={() => {
+                if (props.fieldSort?.index === props.fieldIndex) {
+                  switch (props.fieldSort.direction) {
+                    case "asc":
+                      props.setFieldSort({
+                        index: props.fieldSort.index,
+                        direction: "desc",
+                      });
+                      break;
+                    case "desc":
+                      props.setFieldSort(undefined);
+                      break;
+                  }
+                } else {
+                  props.setFieldSort({
+                    index: props.fieldIndex,
+                    direction: "asc",
+                  });
                 }
-              } else {
-                props.setFieldSort({
-                  index: props.fieldIndex,
-                  direction: "asc",
-                });
-              }
-            }}
-          />
-        )}
+              }}
+            />
+          ) : (
+            <SortAlphaDown
+              className="cursor-pointer"
+              onClick={() => {
+                if (props.fieldSort?.index === props.fieldIndex) {
+                  switch (props.fieldSort.direction) {
+                    case "asc":
+                      props.setFieldSort({
+                        index: props.fieldSort.index,
+                        direction: "desc",
+                      });
+                      break;
+                    case "desc":
+                      props.setFieldSort(undefined);
+                      break;
+                  }
+                } else {
+                  props.setFieldSort({
+                    index: props.fieldIndex,
+                    direction: "asc",
+                  });
+                }
+              }}
+            />
+          )
+        ) : undefined}
       </div>
     </th>
   );
@@ -174,18 +199,31 @@ function TableData(props: TableDataProps) {
           className="text-gray-400 p-3"
           align={props.isInGroup ? "center" : "left"}
         >
-          <FontAwesomeIcon
-            icon={[props.record[props.fieldIndex] ? "fas" : "far", "square"]}
-            className="cursor-pointer"
-            onClick={() =>
-              props.onOptionClicked &&
-              props.onOptionClicked(
-                props.recordIndex,
-                props.fieldIndex,
-                !props.record[props.fieldIndex]
-              )
-            }
-          />
+          {props.record[props.fieldIndex] ? (
+            <SquareFill
+              className="cursor-pointer"
+              onClick={() =>
+                props.onOptionClicked &&
+                props.onOptionClicked(
+                  props.recordIndex,
+                  props.fieldIndex,
+                  !props.record[props.fieldIndex]
+                )
+              }
+            />
+          ) : (
+            <Square
+              className="cursor-pointer"
+              onClick={() =>
+                props.onOptionClicked &&
+                props.onOptionClicked(
+                  props.recordIndex,
+                  props.fieldIndex,
+                  !props.record[props.fieldIndex]
+                )
+              }
+            />
+          )}
         </td>
       );
     case "link":

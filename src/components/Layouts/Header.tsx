@@ -1,6 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import useHeader from "@/stores/header";
+import { Moon, Bell } from "react-bootstrap-icons";
 
 export default function Header() {
   const { title } = useHeader();
@@ -14,24 +14,12 @@ export default function Header() {
         {title}
       </h1>
       <div className="flex gap-3 2xl:gap-4 items-center text-white">
-        <FontAwesomeIcon
-          icon={["far", "moon"]}
-          className="2xl:!hidden p-[9px] cursor-pointer"
-        />
-        <FontAwesomeIcon
-          icon={["far", "bell"]}
-          className="2xl:!hidden p-[9px] cursor-pointer"
-        />
-        <FontAwesomeIcon
-          icon={["far", "moon"]}
-          className="!hidden 2xl:!block p-3 cursor-pointer"
-          size="lg"
-        />
-        <FontAwesomeIcon
-          icon={["far", "bell"]}
-          className="!hidden 2xl:!block p-3 cursor-pointer"
-          size="lg"
-        />
+        <span className="p-[9px] 2xl:p-3">
+          <Moon className="cursor-pointer" />
+        </span>
+        <span className="p-[9px] 2xl:p-3">
+          <Bell className="cursor-pointer" />
+        </span>
       </div>
     </header>
   );
