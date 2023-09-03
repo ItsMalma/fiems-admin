@@ -7,7 +7,7 @@ type ButtonProps = {
   variant?: "normal" | "filled" | "outlined";
   text?: string;
   icon?: ReactNode;
-  iconPosition?: "left" | "right";
+  iconPosition?: "left" | "right" | "center";
   onClick?: () => void;
 };
 
@@ -29,7 +29,7 @@ export default function Button({
       onClick={() => props.onClick && props.onClick()}
     >
       {iconPosition === "left" && props.icon}
-      <p className="text-sm 2xl:text-base">{text}</p>
+      {iconPosition === "center" ? props.icon : (<p className="text-sm 2xl:text-base">{text}</p>)}
       {iconPosition === "right" && props.icon}
     </button>
   );

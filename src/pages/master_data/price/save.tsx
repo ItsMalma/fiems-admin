@@ -160,106 +160,279 @@ export function Vendor() {
           />
         </div>
         <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-      </div>
-      <hr></hr>
-      <div className="flex gap-[18px] 2xl:gap-6 items-center">
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Route" className="w-[35%]" />
-          <Select
-            placeholder=""
-            options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-            search
-          />
-        </div>
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Container Size" className="w-[35%]" />
-          <Select
-            placeholder="Choose container size"
-            options={["20ft", "40ft"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-          />
-        </div>
-      </div>
-      <div className="flex gap-[18px] 2xl:gap-6 items-center">
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Container Type" className="w-[35%]" />
-          <Select
-            placeholder=""
-            options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-            search
-          />
-        </div>
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Service Type" className="w-[35%]" />
-          <Select
-            placeholder="Choose container size"
-            options={["20ft", "40ft"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-          />
-        </div>
-      </div>
-      <hr></hr>
-      <div className="flex gap-[18px] 2xl:gap-6 items-center">
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Via Port" className="w-[35%]" />
-          <Select
-            placeholder="Choose port"
-            options={["Jakarta", "Tangerang"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-          />
-        </div>
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="HPP" className="w-[35%]" />
-          <InputText className="w-full" disabled />
-        </div>
-      </div>
-      <div className="flex gap-[18px] 2xl:gap-6 items-center">
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Province" className="w-[35%]" />
-          <Select
-            placeholder="Choose province"
-            options={["Jawa Barat", "DKI Jakarta"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-          />
-        </div>
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="Etc. Cost" className="w-[35%]" />
-          <InputText placeholder="Enter etc. cost" className="w-full" />
-        </div>
-      </div>
-      <div className="flex gap-[18px] 2xl:gap-6 items-center">
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="City" className="w-[35%]" />
-          <Select
-            placeholder="Choose city"
-            options={["Jakarta", "Tangerang"]}
-            value={-1}
-            onChange={() => {}}
-            className="w-full"
-          />
-        </div>
-        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-          <Label name="HPP after Etc. Cost" className="w-[35%]" />
-          <InputText className="w-full" disabled />
-        </div>
-      </div>
+      </div>      
     </>
   );
 }
+
+export function PriceVendor() {
+  return (
+    <>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Route" className="w-[35%]" />
+        <Select
+          placeholder=""
+          options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+          search
+        />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Container Size" className="w-[35%]" />
+        <Select
+          placeholder="Choose container size"
+          options={["20ft", "40ft"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+        />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Container Type" className="w-[35%]" />
+        <Select
+          placeholder=""
+          options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+          search
+        />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Service Type" className="w-[35%]" />
+        <Select
+          placeholder="Choose container size"
+          options={["20ft", "40ft"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+        />
+      </div>
+    </div>
+    <hr></hr>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Via Port" className="w-[35%]" />
+        <Select
+          placeholder="Choose port"
+          options={["Jakarta", "Tangerang"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+        />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="THC OPP" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Tracking Rate" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="BL Admin" className="w-[35%]" />
+        <InputText placeholder="Enter etc. cost" className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Buruh" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Cleaning Cont." className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="THC OPT" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Materai" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Grand Total" className="w-[35%]" />
+        <InputText className="w-full" disabled />
+      </div>
+    </div>
+  </>
+  )
+}
+
+export function Shipping() {
+  return (
+    <>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center">
+        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+          <Label name="Create Date" className="w-[35%]" />
+          <InputText className="w-full" disabled />
+        </div>
+        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+          <Label name="Effective Date" className="w-[35%]" />
+          <DatePicker className="w-full" />
+        </div>
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center">
+        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+          <Label name="Shipping Name" className="w-[35%]" />
+          <Select
+            placeholder=""
+            options={["Direktur", "Marketing"]}
+            value={-1}
+            onChange={() => {}}
+            className="w-full"
+            search
+          />
+        </div>
+        <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
+      </div>      
+    </>
+  );
+}
+
+export function PriceShipping() {
+  return (
+    <>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Route" className="w-[35%]" />
+        <Select
+          placeholder=""
+          options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+          search
+        />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Container Size" className="w-[35%]" />
+        <Select
+          placeholder="Choose container size"
+          options={["20ft", "40ft"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+        />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Container Type" className="w-[35%]" />
+        <Select
+          placeholder=""
+          options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+          search
+        />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Service Type" className="w-[35%]" />
+        <Select
+          placeholder="Choose container size"
+          options={["20ft", "40ft"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+        />
+      </div>
+    </div>
+    <hr></hr>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Via Port" className="w-[35%]" />
+        <Select
+          placeholder="Choose port"
+          options={["Jakarta", "Tangerang"]}
+          value={-1}
+          onChange={() => {}}
+          className="w-full"
+        />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Alih Kapal" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Freight" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Materai" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="THC OPT" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="LO/LO" className="w-[35%]" />
+        <InputText placeholder="Enter etc. cost" className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="THC OPP" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Segel" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="BL Admin" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="RC" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Cleaning Cont." className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="LSS" className="w-[35%]" />
+        <InputText className="w-full" />
+      </div>
+    </div>
+    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+      </div>
+      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+        <Label name="Grand Total" className="w-[35%]" />
+        <InputText className="w-full" disabled />
+      </div>
+    </div>
+  </>
+  )
+}
+
+
 
 export default function PriceSave() {
   const { setActive } = useMenu();
@@ -302,6 +475,7 @@ export default function PriceSave() {
               <hr></hr>
               {type === 0 && <Factory />}
               {type === 1 && <Vendor />}
+              {type === 2 && <Shipping />}
             </>
           ),
         },
@@ -310,9 +484,12 @@ export default function PriceSave() {
           isAppend: true,
           append: "Detail Price",
           name: "Detail Price",
-          component: 
-          (<>
-          </>),
+          component: (
+            <div className="flex flex-col gap-3">
+              {type === 1 && <PriceVendor/>}
+              {type === 2 && <PriceShipping/>}
+            </div>
+          ),
         },
       ]}
     />

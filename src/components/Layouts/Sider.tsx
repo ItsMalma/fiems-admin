@@ -115,7 +115,11 @@ export default function Sider() {
                 name: "Price Calculation",
                 url: "/marketing/price_calculation",
               },
-            ],
+              {
+                name: "Form Quotation",
+                url: "/marketing/quotation",
+              },
+            ]
           },
         ]}
       />
