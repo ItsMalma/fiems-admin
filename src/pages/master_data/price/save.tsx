@@ -284,6 +284,7 @@ export default function PriceSave() {
                     name="type"
                     value="Factory"
                     onChange={() => setType(0)}
+                    defaultChecked
                   />
                   <Radio
                     name="type"
@@ -305,8 +306,13 @@ export default function PriceSave() {
           ),
         },
         {
-          name: "General Information",
-          component: <></>,
+          isHide: type === 0,
+          isAppend: true,
+          append: "Detail Price",
+          name: "Detail Price",
+          component: 
+          (<>
+          </>),
         },
       ]}
     />

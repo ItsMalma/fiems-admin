@@ -100,7 +100,7 @@ export default function Customers() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-40"
+              className=""
               icon={<Calendar />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}

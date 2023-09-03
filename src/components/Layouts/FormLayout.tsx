@@ -7,6 +7,7 @@ import { XCircle, PlusCircle, Download } from "react-bootstrap-icons";
 type FormLayoutTab = {
   name: string;
   component: React.ReactNode;
+  isHide?: boolean;
   isAppend?: boolean;
   append?: string;
 };
@@ -42,18 +43,19 @@ export default function FormLayout(props: FormLayoutProps) {
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
         <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl overflow-auto">
           <div className="flex gap-1.5 2xl:gap-2">
-            {props.tabs.map((tab, tabIndex) => (
+        {props.tabs.map((tab, tabIndex) => (
               <Button
                 variant="normal"
                 text={tab.name}
                 className={clsx(
                   "font-normal !text-gray-500 !rounded-none",
                   tabActive === tabIndex &&
-                    "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800"
+                    "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800",
+                  tab.isHide ? "hidden" : "block"
                 )}
                 onClick={() => setTabActive(tabIndex)}
               />
-            ))}
+              ))}
           </div>
           <div className="flex gap-6">
             {/* Khusus Append */}
@@ -80,12 +82,13 @@ export default function FormLayout(props: FormLayoutProps) {
                                 )
                               )
                             }
+                            className="text-red-600"
                           />
                         }
                         iconPosition="right"
                         variant="normal"
                         onClick={() => setAppendActive(indexx)}
-                        className="gap-12 !text-red-600"
+                        className="gap-12 !text-gray-500 focus:border focus:border-gray-500 hover:border hover:border-gray-300"
                       />
                     ))}
                     <Button
@@ -95,7 +98,7 @@ export default function FormLayout(props: FormLayoutProps) {
                       onClick={() =>
                         setAppend([...appends, appends.length + 1])
                       }
-                      className="gap-0 text-center px-20"
+                      className="!gap-0 text-center !px-20"
                     />
                   </>
                 )}
@@ -128,6 +131,7 @@ export default function FormLayout(props: FormLayoutProps) {
             </form>
           </div>
         </div>
+        {/* MARK */}
       </div>
     </>
   );

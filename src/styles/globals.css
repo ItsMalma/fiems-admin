@@ -5,6 +5,7 @@
 * {
   animation-duration: 0s !important;
   scrollbar-width: none;
+  box-sizing: border-box;
 }
 
 *::-webkit-scrollbar {
