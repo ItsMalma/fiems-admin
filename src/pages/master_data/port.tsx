@@ -179,16 +179,7 @@ export default function MasterPort() {
             { type: "text", name: "Port Name" },
           ]}
           records={[
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
+            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name",],
           ]}
         />
         <div className="flex mt-auto">

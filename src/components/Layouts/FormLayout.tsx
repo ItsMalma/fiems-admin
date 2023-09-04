@@ -70,8 +70,9 @@ export default function FormLayout(props: FormLayoutProps) {
             {props.tabs.map((tab, tabIndex) => (
               <div
                 className={clsx(
-                  "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
-                  tabActive !== tabIndex && "hidden"
+                  "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto basis-0",
+                  tabActive !== tabIndex && "hidden",
+                  tab.isAppend && "!basis-1/5"
                 )}
               >
                 {tab.isAppend && (
@@ -90,13 +91,13 @@ export default function FormLayout(props: FormLayoutProps) {
                                 )
                               )
                             }
-                            className="text-red-600"
+                            className="text-red-600 ps-auto"
                           />
                         }
                         iconPosition="right"
                         variant="normal"
                         onClick={() => setAppendActive(indexx)}
-                        className="!gap-12 !text-gray-500 hover:border hover:border-gray-300"
+                        className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
                       />
                     ))}
                     <Button
@@ -107,7 +108,7 @@ export default function FormLayout(props: FormLayoutProps) {
                       onClick={() =>
                         setAppend([...appends, appends.length + 1])
                       }
-                      className="text-center !px-16"
+                      className="text-center"
                     />
                   </>
                 )}

@@ -29,7 +29,7 @@ export default function InquiryContainer() {
 
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, 0);
+    setActive(3, 0, 0);
   }, []);
 
   return (
@@ -37,12 +37,6 @@ export default function InquiryContainer() {
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
-          <Button
-            text="Add New Inquiry"
-            icon={<PersonFillAdd />}
-            variant="filled"
-            onClick={() => router.push("/marketing/inquiry_container/save")}
-          />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
@@ -131,10 +125,16 @@ export default function InquiryContainer() {
             { type: "text", name: "Voyage", isSortable: true },
             { type: "text", name: "ETD", isSortable: true },
             { type: "text", name: "ETA", isSortable: true },
-            { type: "text", name: "Description" },
+            { type: "tool", name: "Confirm" },
           ]}
           records={[
-            [false, new Date(), "REQ00001", "Hadi Ahmad Akbar", "Customer Name", "Customer Address", "Customer Group", "Purchase Name", "Purchase Address", "J.O Type", "Order Type", "Customer To", "City", "Route", "Service Type", "Container Type", "Container Size", "PPN", "Insurance", "PPFTZ", "Shipping", "Vessel Name", "Voyage", "", ""]
+            [false, new Date(), "REQ00001", "Hadi Ahmad Akbar", "Customer Name", "Customer Address", "Customer Group", "Purchase Name", "Purchase Address", "J.O Type", "Order Type", "Customer To", "City", "Route", "Service Type", "Container Type", "Container Size", "PPN", "Insurance", "PPFTZ", "Shipping", "Vessel Name", "Voyage", "", "", 
+              <Button
+                text="Confirm"
+                variant="filled"
+                onClick={() => router.push("/operation/job_order/confirm")}
+              />
+            ]
           ]}
         />
         <div className="flex mt-auto">

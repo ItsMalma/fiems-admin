@@ -108,21 +108,25 @@ export default function InquiryContainer() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Group Code", isSortable: true },
-            { type: "text", name: "Name", isSortable: true },
+            { type: "text", name: "Month", isSortable: true },
+            { type: "text", name: "Shipping Name", isSortable: true },
+            { type: "text", name: "Vessel Name", isSortable: true },
+            { type: "text", name: "Voyage", isSortable: true },
+            { type: "text", name: "Vessel Capacity", isSortable: true },
+            { type: "text", name: "Quota", isSortable: true },
+            { type: "text", name: "Port Asal", isSortable: true },
+            { type: "text", name: "Port Tujuan", isSortable: true },
+            { type: "date", name: "Open Stack Date", isSortable: true },
+            { type: "date", name: "Closing RC", isSortable: true },
+            { type: "text", name: "RC Closing Time", isSortable: true },
+            { type: "date", name: "Closing Date", isSortable: true },
+            { type: "text", name: "Vessel Closing Time", isSortable: true },
+            { type: "date", name: "ETD", isSortable: true },
+            { type: "date", name: "ETA", isSortable: true },
             { type: "text", name: "Description" },
           ]}
           records={[
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
+            [false, new Date(), "Month", "Shipping", "Vessel", "Voyage", "Vessel Capacity", "Quota", "Port", "Port", new Date(), new Date(), "", new Date(), "", new Date(), new Date()],
           ]}
         />
         <div className="flex mt-auto">
