@@ -28,8 +28,8 @@ export default function InquiryContainer() {
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Job Order");
-    setActive(3, 0, 0);
+    setTitle("Operationa | Delivery Report");
+    setActive(3, 1, 0);
   }, []);
 
   return (
@@ -37,6 +37,12 @@ export default function InquiryContainer() {
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
+          <Button
+            text="SPM & UJ"
+            variant="filled"
+            className="!px-6"
+            onClick={() => router.push("/operation/document/spmuj/save")}
+          />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
@@ -101,40 +107,27 @@ export default function InquiryContainer() {
         <Table
           fields={[
             { type: "option" },
-            { type: "date", name: "Inquiry Date", isSortable: true },
-            { type: "link", name: "Inquiry Number", isSortable: true },
-            { type: "text", name: "Sales Name", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true},
-            { type: "text", name: "Customer Group", isSortable: true},
-            { type: "text", name: "Customer Address", isSortable: true},
-            { type: "text", name: "Purchase", isSortable: true},
-            { type: "text", name: "Purchase Address", isSortable: true},
-            { type: "text", name: "Job Order Type", isSortable: true },
-            { type: "text", name: "Order Type", isSortable: true },
-            { type: "text", name: "Customer To", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
+            { type: "link", name: "Job Order Num.", isSortable: true },
+            { type: "link", name: "RO Num.", isSortable: true },
+            { type: "text", name: "Consignee", isSortable: true },
+            { type: "text", name: "Address", isSortable: true},
+            { type: "text", name: "Email", isSortable: true},
+            { type: "text", name: "Telephone", isSortable: true},
+            { type: "text", name: "Phone Number", isSortable: true},
+            { type: "date", name: "Stuffing Date", isSortable: true},
+            { type: "text", name: "Tracking Name", isSortable: true },
             { type: "text", name: "Route", isSortable: true },
-            { type: "text", name: "Service Type", isSortable: true },
-            { type: "text", name: "Cont. Type", isSortable: true },
-            { type: "text", name: "Cont. Size", isSortable: true },
-            { type: "text", name: "PPN", isSortable: true },
-            { type: "text", name: "Insurance", isSortable: true },
-            { type: "text", name: "PPFTZ", isSortable: true },
-            { type: "text", name: "Shipping", isSortable: true },
-            { type: "text", name: "Vessel Name", isSortable: true },
-            { type: "text", name: "Voyage", isSortable: true },
-            { type: "text", name: "ETD", isSortable: true },
-            { type: "text", name: "ETA", isSortable: true },
-            { type: "tool", name: "Confirm" },
+            { type: "text", name: "Truck Num.", isSortable: true },
+            { type: "text", name: "Truck Type", isSortable: true },
+            { type: "text", name: "Driver", isSortable: true },
+            { type: "text", name: "Phone Number", isSortable: true },
+            { type: "text", name: "Cont. Number", isSortable: true },
+            { type: "text", name: "Seal Number", isSortable: true },
+            { type: "text", name: "Cont. Number", isSortable: true },
+            { type: "text", name: "Seal Number", isSortable: true },
           ]}
           records={[
-            [false, new Date(), "REQ00001", "Hadi Ahmad Akbar", "Customer Name", "Customer Address", "Customer Group", "Purchase Name", "Purchase Address", "J.O Type", "Order Type", "Customer To", "City", "Route", "Service Type", "Container Type", "Container Size", "PPN", "Insurance", "PPFTZ", "Shipping", "Vessel Name", "Voyage", "", "", 
-              <Button
-                text="Confirm"
-                variant="filled"
-                onClick={() => router.push("/operation/job_order/confirm")}
-              />
-            ]
+            [false, "JO00001", "90122", "Consignee", "Address", "Email", "Telephone", "Phone Number", new Date(), "Tracking", "Route", "Truck Num", "Truck Type", "Driver Name", "Driver Phone Num.", "Cont. Num", "Seal Num.", "Cont. Num", "Seal Num.",]
           ]}
         />
         <div className="flex mt-auto">

@@ -138,6 +138,35 @@ export default function Sider() {
                 name: "Job Order",
                 url: "/operation/job_order",
               },
+              {
+                name: "Delivery Report",
+                url: "/operation/delivery_report"
+              },
+              {
+                name: "Operational Docs.",
+                childrens: [
+                  {
+                    name: "SPM Report",
+                    url: "/operation/document/spmuj",
+                  },
+                  {
+                    name: "Surat Jalan",
+                    url: "/operation/document/surat_jalan"
+                  },
+                  {
+                    name: "BAST Report",
+                    url: "/operation/document/bast"
+                  },
+                  {
+                    name: "Packing List",
+                    url: "/operation/document/packing"
+                  },
+                  {
+                    name: "Insurance",
+                    url: "/operation/document/insurance"
+                  },
+                ]
+              }
             ]
           },
         ]}

@@ -21,15 +21,45 @@ import {
 } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 
-export default function InquiryContainer() {
+export function Save() {
+  return (
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Group Code" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Name" />
+            <InputText placeholder="Enter group name" className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Description" />
+            <InputText
+              placeholder="Enter group description"
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export default function CustomerGroup() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Job Order");
-    setActive(3, 0, 0);
+    setTitle("Operational | Surat Jalan");
+    setActive(3, 2, 1);
   }, []);
 
   return (
@@ -37,6 +67,12 @@ export default function InquiryContainer() {
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
+          <Button
+            text="Add New Surat Jalan"
+            icon={<PersonFillAdd />}
+            variant="filled"
+            onClick={() => router.push("/operation/document/surat_jalan/save")}
+          />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
@@ -101,40 +137,16 @@ export default function InquiryContainer() {
         <Table
           fields={[
             { type: "option" },
-            { type: "date", name: "Inquiry Date", isSortable: true },
-            { type: "link", name: "Inquiry Number", isSortable: true },
-            { type: "text", name: "Sales Name", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true},
-            { type: "text", name: "Customer Group", isSortable: true},
-            { type: "text", name: "Customer Address", isSortable: true},
-            { type: "text", name: "Purchase", isSortable: true},
-            { type: "text", name: "Purchase Address", isSortable: true},
-            { type: "text", name: "Job Order Type", isSortable: true },
-            { type: "text", name: "Order Type", isSortable: true },
-            { type: "text", name: "Customer To", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Route", isSortable: true },
-            { type: "text", name: "Service Type", isSortable: true },
-            { type: "text", name: "Cont. Type", isSortable: true },
-            { type: "text", name: "Cont. Size", isSortable: true },
-            { type: "text", name: "PPN", isSortable: true },
-            { type: "text", name: "Insurance", isSortable: true },
-            { type: "text", name: "PPFTZ", isSortable: true },
-            { type: "text", name: "Shipping", isSortable: true },
-            { type: "text", name: "Vessel Name", isSortable: true },
-            { type: "text", name: "Voyage", isSortable: true },
-            { type: "text", name: "ETD", isSortable: true },
-            { type: "text", name: "ETA", isSortable: true },
-            { type: "tool", name: "Confirm" },
+            { type: "date", name: "Create Date", isSortable: true },
+            { type: "link", name: "SJ. Number", isSortable: true },
+            { type: "link", name: "JO. Number", isSortable: true },
+            { type: "text", name: "Customer", isSortable: true },
+            { type: "text", name: "Consignee", isSortable: true },
+            { type: "text", name: "Description" },
           ]}
           records={[
-            [false, new Date(), "REQ00001", "Hadi Ahmad Akbar", "Customer Name", "Customer Address", "Customer Group", "Purchase Name", "Purchase Address", "J.O Type", "Order Type", "Customer To", "City", "Route", "Service Type", "Container Type", "Container Size", "PPN", "Insurance", "PPFTZ", "Shipping", "Vessel Name", "Voyage", "", "", 
-              <Button
-                text="Confirm"
-                variant="filled"
-                onClick={() => router.push("/operation/job_order/confirm")}
-              />
-            ]
+            [false, new Date(), "SJ00001", "JO00001", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR",],
+            [false, new Date(), "SJ00002", "JO00010", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR",],
           ]}
         />
         <div className="flex mt-auto">

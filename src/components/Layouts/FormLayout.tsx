@@ -41,7 +41,7 @@ export default function FormLayout(props: FormLayoutProps) {
         </div>
       </div>
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
-        <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl overflow-auto relative">
+        <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl relative">
           <div className="flex gap-1.5 2xl:gap-2">
           {props.tabs.map((tab, tabIndex) => (
             <>
@@ -72,7 +72,7 @@ export default function FormLayout(props: FormLayoutProps) {
                 className={clsx(
                   "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto basis-0",
                   tabActive !== tabIndex && "hidden",
-                  tab.isAppend && "!basis-1/5"
+                  tab.isAppend && "!basis-[18%]"
                 )}
               >
                 {tab.isAppend && (
@@ -127,7 +127,7 @@ export default function FormLayout(props: FormLayoutProps) {
                     <>
                       {appends.map((index, indexx) => (
                         <div
-                          className={clsx("flex flex-col overflow-auto", appendActive !== indexx && "hidden")}
+                          className={clsx(appendActive !== indexx && "hidden")}
                         >
                           {tab.component}
                         </div>
