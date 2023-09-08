@@ -1,8 +1,21 @@
 import Button from '@/components/Elements/Button';
 import InputText from '@/components/Elements/InputText';
+import { useRouter } from 'next/router';
 import React from 'react';
 
+const router = useRouter();
+const initialUser = {
+  username: '',
+  password: '',
+};
+
+const dummyUsername = 'gtap';
+const dummyPassword = 'dev';
+
 export default function Login() {
+
+  const [user, setUser] = React.useState(initialUser); 
+
   return (
     <div className='flex'>
         <div className='bg-white text-center py-36 px-24 rounded-l-3xl'>
@@ -11,16 +24,19 @@ export default function Login() {
         </div>
         <div className='bg-primary grow rounded-r-3xl'>
             <div className='flex flex-col gap-3 px-16 h-full pt-20 pb-7'>
-                <form action="" className='flex flex-col gap-3 mb-auto'>
+                <form className='flex flex-col gap-3 mb-auto' onSubmit={() => {
+                  if (user.username == dummyUsername && user.password == dummyPassword) {
+                    router.push("/dashboard");
+                  }
+                }}>
                     <h1 className='text-white text-xl font-semibold'>Sign In</h1>    
-                    <InputText placeholder='Username' className='w-full'/>
-                    <InputText placeholder='Password' className='w-full' type="password"/>
+                    <InputText placeholder='Username' className='w-full' onChange={(e) => setUser({...user, username: e.target.value })}/>
+                    <InputText placeholder='Password' className='w-full' type="password" onChange={(e) => setUser({...user, password: e.target.value })}/>
                     <div className='flex justify-end w-full'>
                         <Button
                             text="Sign In"
                             variant="filled"
                             className='!bg-white !text-primary !py-2'
-                            onClick={() => {}}
                         />
                     </div>
                 </form>

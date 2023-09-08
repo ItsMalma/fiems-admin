@@ -41,7 +41,7 @@ export default function BASTSave() {
                       value={0}
                       onChange={() => {}}
                       className="w-full"
-                    />
+                  />
                 </div> 
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="JO. Num." className="w-[35%]" />
@@ -116,7 +116,37 @@ export default function BASTSave() {
           name: "Product Detail",
           component: (
             <>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3">                         
+                <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                    <Label name="Product" className="w-[35%]" />
+                    <Select
+                      placeholder="Choose product"
+                      options={["SKU0001-SABUN", "SKU0002-SHAMPOO"]}
+                      value={0}
+                      onChange={() => {}}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">                
+                  </div>
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                    <Label name="QTY" className="w-[35%]" />
+                    <InputText placeholder="Enter quantity" className="w-full"/>
+                  </div>
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">  
+                    <Label name="Warna" className="w-[35%]" />
+                    <Select
+                      placeholder="Choose satuan"
+                      options={["BOX", "Karton", "KG", "PCs"]}
+                      value={0}
+                      onChange={() => {}}
+                      className="w-full"
+                    />                
+                  </div>
+                </div>         
               </div>
             </>
           ),

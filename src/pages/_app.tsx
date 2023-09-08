@@ -5,7 +5,6 @@ import clsx from "clsx";
 import useModal from "@/stores/modal";
 import MainLayout from "@/components/Layouts/MainLayout";
 import { useRouter } from "next/router";
-import Login from "./login";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
       {router.asPath === '/login' ? (
         <div className="min-h-screen max-h-screen min-w-full max-w-full bg-neutral-200 flex justify-center items-center overflow-x-hidden">
-          <Login />
+          <Component {...pageProps} />
         </div>
     ) : (
       <MainLayout>
