@@ -1,7 +1,6 @@
-import NewSelect from "@/components/Elements/NewSelect";
+import React from "react";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
-import React from "react";
 
 export default function Dashboard() {
   const { setTitle } = useHeader();
@@ -13,12 +12,6 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="flex-grow flex flex-col bg-white rounded-[10px] p-4 shadow">
-      <NewSelect
-        className="w-1/6"
-        placeholder="Select your option"
-        options={["Ayam Goreng", "Nasi Goreng", "Telur Dadar"]}
-      />
-    </div>
+    <div className="flex-grow flex flex-col bg-white rounded-[10px] p-4 shadow"></div>
   );
 }

@@ -1,26 +1,59 @@
 import React from "react";
 import clsx from "clsx";
-import { CaretDownFill, CaretUpFill } from "react-bootstrap-icons";
+import { CaretDownFill, CaretUpFill, Icon } from "react-bootstrap-icons";
 
-type SelectProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  options: string[];
+type SelectOption = {
+  label: string;
+  value: any;
+};
+
+type SelectProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange"
+> & {
+  options: SelectOption[];
+
+  onChange: (option: SelectOption) => void;
+
+  isSearchable?: boolean;
+
+  /**
+   * value untuk option yang di-create adalah `"custom"`
+   */
+  isCreatable?: boolean;
+
+  icon?: Icon;
 };
 
 const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
-  ({ className, options, ...props }, ref) => {
-    const innerRef = React.useRef<HTMLInputElement>(null);
-    React.useImperativeHandle(ref, () => innerRef.current!);
+  (
+    { className, options, onChange, isSearchable, isCreatable, ...props },
+    ref
+  ) => {
+    // Ref untuk input text
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
-    const [active, setActive] = React.useState<number>();
+    // Untuk mengkombinasikan antar ref dari input text dan ref yang dari forward
+    React.useImperativeHandle(ref, () => inputRef.current!);
 
+    // State untuk menyimpan nilai dari input text
+    const [inputValue, setInputValue] = React.useState<string>("");
+
+    const [active, setActive] = React.useState<SelectOption>();
     const [expand, setExpand] = React.useState(false);
+    React.useEffect(() => {
+      if (active === undefined) {
+        return;
+      }
+
+      onChange(active);
+      setInputValue(active.label);
+    }, [active]);
 
     const menuRef = React.useRef<HTMLDivElement>(null);
-
     const [menuPosition, setMenuPosition] = React.useState<"top" | "bottom">(
       "bottom"
     );
-
     React.useLayoutEffect(() => {
       if (!menuRef.current || !expand) {
         return;
@@ -36,10 +69,35 @@ const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
       }
     }, [expand]);
 
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    React.useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          setExpand(false);
+        }
+      };
+
+      document.addEventListener("click", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, [containerRef]);
+
+    const [optionsDisplayed, setOptionsDisplayed] =
+      React.useState<SelectOption[]>(options);
+
     return (
-      <div className={clsx("relative", className)}>
+      <div
+        className={clsx("relative", className)}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div
-          className="bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-3 2xl:gap-4"
+          ref={containerRef}
+          className="bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-[9px] 2xl:gap-3"
           onClick={() => {
             setExpand(!expand);
             if (!expand) {
@@ -47,39 +105,84 @@ const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
             }
           }}
         >
+          {props.icon && (
+            <span className="pl-[9px] 2xl:pl-3">
+              <props.icon />
+            </span>
+          )}
           <input
-            ref={innerRef}
+            ref={inputRef}
             type="text"
             {...props}
-            className="pl-3 py-1.5 2xl:pl-4 2xl:py-2 overflow-auto grow bg-inherit outline-none border-none"
-            value={active !== undefined ? options[active] : ""}
+            className={clsx(
+              "py-1.5 2xl:py-2 overflow-auto grow bg-inherit outline-none border-none",
+              props.icon ? "" : "pl-[9px] 2xl:pl-3"
+            )}
+            value={inputValue}
+            onClick={(e) => {
+              if (expand) {
+                e.stopPropagation();
+              }
+            }}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setOptionsDisplayed(
+                options.filter((option) =>
+                  option.label
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase())
+                )
+              );
+            }}
+            readOnly={!isSearchable && !isCreatable}
           />
-          <span className="ml-auto pr-3 2xl:pr-4">
+          <span className="ml-auto pr-[9px] 2xl:pr-3">
             {expand ? <CaretUpFill /> : <CaretDownFill />}
           </span>
         </div>
-        <div
-          ref={menuRef}
-          className={clsx(
-            "absolute z-50 min-w-full bg-white flex flex-col border-[1.5px] border-gray-300 rounded-lg overflow-hidden",
-            expand ? "" : "hidden",
-            menuPosition === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
-          )}
-        >
-          {options.map((option, optionIndex) => (
-            <div
-              key={optionIndex}
-              className={clsx(
-                "px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap",
-                active === optionIndex &&
-                  "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
-              )}
-              onClick={() => setActive(optionIndex)}
-            >
-              {option}
-            </div>
-          ))}
-        </div>
+        {expand && (optionsDisplayed.length > 0 || isCreatable) && (
+          <div
+            ref={menuRef}
+            className={clsx(
+              "absolute z-50 min-w-full bg-white flex flex-col border-[1.5px] border-gray-300 rounded-lg overflow-hidden",
+              menuPosition === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
+            )}
+          >
+            {optionsDisplayed.map((option) => (
+              <div
+                key={option.value}
+                className={clsx(
+                  "px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap",
+                  active?.value === option.value &&
+                    "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
+                )}
+                onClick={() => setActive(option)}
+              >
+                {option.label}
+              </div>
+            ))}
+            {active?.value === "custom" && (
+              <div className="px-3 py-1.5 2xl:px-4 2xl:py-2 bg-primaryActive text-white font-semibold hover:!bg-primaryActive cursor-default whitespace-nowrap">
+                {active.label}
+              </div>
+            )}
+            {optionsDisplayed.length === 0 && isCreatable && (
+              <div
+                className="px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap"
+                onClick={() => {
+                  const creatableOption: SelectOption = {
+                    label: inputValue,
+                    value: "custom",
+                  };
+                  setOptionsDisplayed(options);
+                  setActive(creatableOption);
+                }}
+              >
+                Create
+              </div>
+            )}
+          </div>
+        )}
       </div>
     );
   }
