@@ -194,6 +194,7 @@ function MenuItemComponent(props: MenuItemProps) {
               </div>
             ) : (
               <SingleMenuItem
+                key={childrenIndex}
                 level={2}
                 name={children.name}
                 isActive={children.isActive!}

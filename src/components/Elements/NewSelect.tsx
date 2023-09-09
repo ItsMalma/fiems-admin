@@ -9,25 +9,47 @@ type SelectOption = {
 
 type SelectProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "onChange"
+  "onChange" | "defaultValue"
 > & {
   options: SelectOption[];
 
-  onChange: (option: SelectOption) => void;
-
   isSearchable?: boolean;
+
+  defaultValue?: SelectOption;
 
   /**
    * value untuk option yang di-create adalah `"custom"`
    */
   isCreatable?: boolean;
 
+  isMulti?: boolean;
+
   icon?: Icon;
-};
+} & (
+    | {
+        isMulti: true;
+
+        onChange: (option: SelectOption[]) => void;
+      }
+    | {
+        isMulti?: false;
+
+        onChange: (options: SelectOption) => void;
+      }
+  );
 
 const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
   (
-    { className, options, onChange, isSearchable, isCreatable, ...props },
+    {
+      className,
+      options,
+      defaultValue,
+      onChange,
+      isSearchable,
+      isCreatable,
+      isMulti,
+      ...props
+    },
     ref
   ) => {
     // Ref untuk input text
@@ -37,18 +59,27 @@ const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
     React.useImperativeHandle(ref, () => inputRef.current!);
 
     // State untuk menyimpan nilai dari input text
-    const [inputValue, setInputValue] = React.useState<string>("");
+    const [inputValue, setInputValue] = React.useState<string>(
+      isMulti ? props.placeholder ?? "Select" : ""
+    );
 
-    const [active, setActive] = React.useState<SelectOption>();
+    const [actives, setActives] = React.useState<SelectOption[]>(
+      defaultValue ? [defaultValue] : []
+    );
     const [expand, setExpand] = React.useState(false);
     React.useEffect(() => {
-      if (active === undefined) {
+      if (!actives || actives.length < 1) {
         return;
       }
 
-      onChange(active);
-      setInputValue(active.label);
-    }, [active]);
+      if (isMulti) {
+        onChange(actives);
+        setInputValue(props.placeholder ?? "Select");
+      } else {
+        onChange(actives[0]);
+        setInputValue(actives[0].label);
+      }
+    }, [actives]);
 
     const menuRef = React.useRef<HTMLDivElement>(null);
     const [menuPosition, setMenuPosition] = React.useState<"top" | "bottom">(
@@ -153,19 +184,34 @@ const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
                 key={option.value}
                 className={clsx(
                   "px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap",
-                  active?.value === option.value &&
+                  actives.find((active) => active.value === option.value) &&
                     "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
                 )}
-                onClick={() => setActive(option)}
+                onClick={() => {
+                  if (
+                    actives.find((active) => active.value === option.value) &&
+                    isMulti
+                  ) {
+                    // remove option from actives
+                    setActives(
+                      actives.filter((active) => active.value !== option.value)
+                    );
+                  } else {
+                    // add option to actives
+                    setActives(isMulti ? [...actives, option] : [option]);
+                  }
+                }}
               >
                 {option.label}
               </div>
             ))}
-            {active?.value === "custom" && (
-              <div className="px-3 py-1.5 2xl:px-4 2xl:py-2 bg-primaryActive text-white font-semibold hover:!bg-primaryActive cursor-default whitespace-nowrap">
-                {active.label}
-              </div>
-            )}
+            {actives
+              .filter((active) => active.value === "custom")
+              .map((active) => (
+                <div className="px-3 py-1.5 2xl:px-4 2xl:py-2 bg-primaryActive text-white font-semibold hover:!bg-primaryActive cursor-default whitespace-nowrap">
+                  {active.label}
+                </div>
+              ))}
             {optionsDisplayed.length === 0 && isCreatable && (
               <div
                 className="px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap"
@@ -175,7 +221,7 @@ const NewSelect = React.forwardRef<HTMLInputElement, SelectProps>(
                     value: "custom",
                   };
                   setOptionsDisplayed(options);
-                  setActive(creatableOption);
+                  setActives([...actives, creatableOption]);
                 }}
               >
                 Create
