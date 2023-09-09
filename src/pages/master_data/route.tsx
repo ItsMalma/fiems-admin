@@ -31,15 +31,15 @@ export function Save() {
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Create Date" />
+            <Label name="Create Date"  className="basis-1/3"/>
             <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Route Code" />
+            <Label name="Route Code"  className="basis-1/3"/>
             <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="City" />
+            <Label name="City"  className="basis-1/3"/>
             <Select
               placeholder="Choose city"
               options={["Jakarta", "Tangerang", "Solo"]}
@@ -49,7 +49,7 @@ export function Save() {
             />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Province" />
+            <Label name="Province"  className="basis-1/3"/>
             <Select
               placeholder="Choose province"
               options={["Jawa Barat", "DKI Jakarta", "Banten"]}
@@ -59,14 +59,14 @@ export function Save() {
             />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Description" />
+            <Label name="Description"  className="basis-1/3"/>
             <InputText
               placeholder="Enter route description"
               className="basis-2/3"
             />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <div></div>
+            <div className="basis-1/3"></div>
             <InputText placeholder="..." className="basis-2/3" />
           </div>
         </div>

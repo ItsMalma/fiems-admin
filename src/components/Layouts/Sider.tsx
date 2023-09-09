@@ -26,7 +26,7 @@ import Menu from "./Menu";
 
 export default function Sider() {
   return (
-    <aside className="bg-primary pt-[18px] pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl basis-1/4 2xl:basis-1/6 sticky top-0 flex flex-col">
+    <aside className="bg-primary pt-[18px] pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl 2xl:rounded-3xl basis-1/5 2xl:basis-1/6 sticky top-0 flex flex-col">
       <Menu
         items={[
           {
@@ -119,6 +119,54 @@ export default function Sider() {
                 name: "Form Quotation",
                 url: "/marketing/quotation",
               },
+              {
+                name: "Inquiry Container",
+                url: "/marketing/inquiry_container",
+              },
+              {
+                name: "Vessel Schedule",
+                url: "/marketing/vessel_schedule",
+              },
+            ]
+          },
+          {
+            name: "Operational",
+            icon: Gear,
+            activeIcon: GearFill,
+            childrens: [
+              {
+                name: "Job Order",
+                url: "/operation/job_order",
+              },
+              {
+                name: "Delivery Report",
+                url: "/operation/delivery_report"
+              },
+              {
+                name: "Operational Docs.",
+                childrens: [
+                  {
+                    name: "SPM Report",
+                    url: "/operation/document/spmuj",
+                  },
+                  {
+                    name: "Surat Jalan",
+                    url: "/operation/document/surat_jalan"
+                  },
+                  {
+                    name: "BAST Report",
+                    url: "/operation/document/bast"
+                  },
+                  {
+                    name: "Packing List",
+                    url: "/operation/document/packing"
+                  },
+                  {
+                    name: "Insurance",
+                    url: "/operation/document/insurance"
+                  },
+                ]
+              }
             ]
           },
         ]}

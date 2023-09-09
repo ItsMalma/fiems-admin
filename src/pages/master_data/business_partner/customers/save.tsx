@@ -124,6 +124,14 @@ export default function CustomerSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">Purchasing</h1>
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">Operation</h1>
+                </div>
+              </div>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Purchasing" className="w-[35%]" />
                   <InputText
                     placeholder="Enter purchasing name"
@@ -197,6 +205,12 @@ export default function CustomerSave() {
                 </div>
               </div>
               <hr></hr>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">Finance</h1>
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
+              </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Finance" className="w-[35%]" />

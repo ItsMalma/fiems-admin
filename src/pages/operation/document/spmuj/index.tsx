@@ -1,17 +1,17 @@
 import Button from "@/components/Elements/Button";
-import InputText from "@/components/Elements/InputText";
-import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
-import useMenu from "@/stores/menu";
-import useHeader from "@/stores/header";
-import React from "react";
 import useModal from "@/stores/modal";
+import useMenu from "@/stores/menu";
+import React from "react";
+import VerticalLine from "@/components/Icons/VerticalLine";
+import useHeader from "@/stores/header";
+import Label from "@/components/Elements/Label";
+import InputText from "@/components/Elements/InputText";
 import {
-  BuildingFillAdd,
+  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
   Pencil,
@@ -19,15 +19,11 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+import { useRouter } from "next/router";
 
-function Save() {
+export function Save() {
   return (
-    <Modal
-      className="w-2/5"
-      title="Add New Customer Group"
-      type="save"
-      onDone={() => {}}
-    >
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
@@ -35,32 +31,19 @@ function Save() {
             <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Port Code" />
+            <Label name="Group Code" />
             <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="City" />
-            <Select
-              placeholder="Choose city"
-              options={["Jakarta", "Tangerang", "Solo"]}
-              value={0}
-              onChange={() => {}}
-              className="basis-2/3"
-            />
+            <Label name="Name" />
+            <InputText placeholder="Enter group name" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Province" />
-            <Select
-              placeholder="Choose province"
-              options={["Jawa Barat", "DKI Jakarta", "Banten"]}
-              value={0}
-              onChange={() => {}}
+            <Label name="Description" />
+            <InputText
+              placeholder="Enter group description"
               className="basis-2/3"
             />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Port Name" />
-            <InputText placeholder="Enter port name" className="basis-2/3" />
           </div>
         </div>
       </form>
@@ -68,45 +51,27 @@ function Save() {
   );
 }
 
-export function Export() {
-  return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            placeholder="Choose file type"
-            options={["Excel", "Tangerang", "Solo"]}
-            value={1}
-            onChange={() => {}}
-            className="basis-2/3"
-          />
-        </div>
-      </form>
-    </Modal>
-  );
-}
-
-export default function MasterPort() {
-  const { setActive: setIndex } = useMenu();
+export default function CustomerGroup() {
+  const router = useRouter();
+  const { setActive } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Data | Master Port");
-    setIndex(1, 2, 0);
+    setTitle("Operational | SPM & UJ");
+    setActive(3, 2, 0);
   }, []);
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Port Code" />
+        <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Port"
-            icon={<BuildingFillAdd />}
+            text="Add New SPM"
+            icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => setModal(<Save />)}
+            onClick={() => router.push("/operation/document/spmuj/save")}
           />
           <Button
             text="Import"
@@ -117,7 +82,6 @@ export default function MasterPort() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>
@@ -142,7 +106,7 @@ export default function MasterPort() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
+              className="w-44"
               icon={<Calendar />}
               placeholder="Date Range"
               options={["Today", "Yesterday", "Weeks Ago"]}
@@ -150,7 +114,7 @@ export default function MasterPort() {
               onChange={() => {}}
             />
             <Select
-              className="w-40"
+              className="w-36"
               icon={<Filter />}
               placeholder="Filter"
               options={["Create", "Group Code", "Group Name", "Description"]}
@@ -159,6 +123,7 @@ export default function MasterPort() {
               multi={true}
             />
             <Select
+              className="w-44"
               options={[
                 "Show 10 entries",
                 "Show 25 entries",
@@ -173,13 +138,17 @@ export default function MasterPort() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Port Code", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Port Name" },
+            { type: "link", name: "SPM Number", isSortable: true },
+            { type: "link", name: "JO. Number", isSortable: true },
+            { type: "text", name: "Customer", isSortable: true },
+            { type: "text", name: "Consignee", isSortable: true },
+            { type: "text", name: "Route", isSortable: true },
+            { type: "text", name: "Nilai", isSortable: true },
+            { type: "text", name: "Description" },
           ]}
           records={[
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name",],
+            [false, new Date(), "SPM00001", "JO00001", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR", "Marunda - Cibitung", "825.000"],
+            [false, new Date(), "SPM00002", "JO00010", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR", "Marunda - Cibitung", "825.000"],
           ]}
         />
         <div className="flex mt-auto">
