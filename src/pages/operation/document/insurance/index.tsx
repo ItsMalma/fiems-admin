@@ -58,8 +58,8 @@ export default function CustomerGroup() {
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Packing List");
-    setActive(3, 2, 3);
+    setTitle("Operational | Insurance");
+    setActive(3, 2, 4);
   }, []);
 
   return (
@@ -68,10 +68,10 @@ export default function CustomerGroup() {
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Packing List"
+            text="Add New Insurance"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/operation/document/packing/save")}
+            onClick={() => router.push("/operation/document/insurance/save")}
           />
           <Button
             text="Import"

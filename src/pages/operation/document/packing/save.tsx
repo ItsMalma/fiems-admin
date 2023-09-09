@@ -40,7 +40,7 @@ export default function PackingSave() {
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="List Number" className="w-[35%]" />
+                  <Label name="Packing List Number" className="w-[35%]" />
                   <InputText placeholder="" className="w-full" disabled />
                 </div> 
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">

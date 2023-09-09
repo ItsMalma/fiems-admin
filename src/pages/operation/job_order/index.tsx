@@ -125,7 +125,7 @@ export default function InquiryContainer() {
             { type: "text", name: "Voyage", isSortable: true },
             { type: "text", name: "ETD", isSortable: true },
             { type: "text", name: "ETA", isSortable: true },
-            { type: "tool", name: "Confirm" },
+            { type: "tool", name: "Action" },
           ]}
           records={[
             [false, new Date(), "REQ00001", "Hadi Ahmad Akbar", "Customer Name", "Customer Address", "Customer Group", "Purchase Name", "Purchase Address", "J.O Type", "Order Type", "Customer To", "City", "Route", "Service Type", "Container Type", "Container Size", "PPN", "Insurance", "PPFTZ", "Shipping", "Vessel Name", "Voyage", "", "", 
