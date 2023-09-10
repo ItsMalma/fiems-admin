@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 type LabelProps = {
   className?: string;
-  name: string;
+  name: string | string[] | (string | string[])[][];
 };
 
 export default function Label(props: LabelProps) {
