@@ -31,7 +31,7 @@ export default function Login() {
                 }}>
                     <h1 className='text-white text-xl font-semibold'>Sign In</h1>    
                     <InputText placeholder='Username' className='w-full' onChange={(e) => setUser({...user, username: e.target.value })}/>
-                    <InputText placeholder='Password' className='w-full' type="password" onChange={(e) => setUser({...user, password: e.target.value })}/>
+                    <InputText placeholder='Password' className='w-full' onChange={(e) => setUser({...user, password: e.target.value })}/>
                     <div className='flex justify-end w-full'>
                         <Button
                             text="Sign In"
