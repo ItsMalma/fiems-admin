@@ -51,15 +51,15 @@ export function Save() {
   );
 }
 
-export default function SuratJalan() {
+export default function RequestReport() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Surat Jalan");
-    setActive(3, 2, 1);
+    setTitle("Operational | Request Report");
+    setActive(3, 2, 5);
   }, []);
 
   return (
@@ -68,10 +68,10 @@ export default function SuratJalan() {
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Surat Jalan"
+            text="Add New Request"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/operation/document/surat_jalan/save")}
+            onClick={() => router.push("/operation/document/request/save")}
           />
           <Button
             text="Import"
@@ -137,16 +137,13 @@ export default function SuratJalan() {
         <Table
           fields={[
             { type: "option" },
+            { type: "link", name: "Inquiry Code", isSortable: true },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "SJ. Number", isSortable: true },
-            { type: "link", name: "JO. Number", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true },
-            { type: "text", name: "Consignee", isSortable: true },
+            { type: "text", name: "Type", isSortable: true },
             { type: "text", name: "Description" },
           ]}
           records={[
-            [false, new Date(), "SJ00001", "JO00001", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR",],
-            [false, new Date(), "SJ00002", "JO00010", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR",],
+            [false,  "REQ00001", new Date(), "SPAREPART",],
           ]}
         />
         <div className="flex mt-auto">

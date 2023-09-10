@@ -1,12 +1,27 @@
+import Button from '@/components/Elements/Button';
+import InputText from '@/components/Elements/InputText';
 import Label from '@/components/Elements/Label';
 import Table from '@/components/Elements/Table'
+import useHeader from '@/stores/header';
+import useMenu from '@/stores/menu';
 import clsx from 'clsx';
+import { useRouter } from 'next/router';
 import React from 'react'
-import { ChevronUp, Square } from 'react-bootstrap-icons';
+import { ChevronUp, Download, Square, XCircle } from 'react-bootstrap-icons';
 
 export default function userAccess() {
+  const router = useRouter();
+  const { setActive } = useMenu();
+  const { setTitle } = useHeader();
 
-  const [all, setAll] = React.useState(-1);
+  React.useEffect(() => {
+    setTitle("User Access");
+    setActive(4, 0, 0);
+  }, []);
+
+  const [allSelected, setAllSelected] = React.useState<number[]>([]);
+  const [subAllSelected, setSubAllSelected] = React.useState<number[]>([]);
+  const [subChildrenAllSelected, setSubChildrenAllSelected] = React.useState<number[]>([]);
   const [selected, setSelected] = React.useState(-1);
   const [subSelected, setSubSelected] = React.useState(-1);
   // rows terdiri dari row, row dan children, subRow dan children 
@@ -35,6 +50,22 @@ export default function userAccess() {
 
   return (
     <>
+      <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
+        <div className='flex gap-3 2xl:gap-4 items-center'>
+          <Label className='text-2xl' name='User ID'/>
+          <InputText disabled/>
+        </div>
+        <div className="flex gap-3 2xl:gap-4 items-center">
+          <Button
+            className="!border-gray-300 !text-gray-500"
+            variant="outlined"
+            text="Cancel"
+            icon={<XCircle />}
+            onClick={() => router.back()}
+          />
+          <Button variant="filled" text="Save" icon={<Download />} />
+        </div>
+      </div>
       <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
         <form action="">
           <table className='w-full rounded-t-xl overflow-hidden whitespace-nowrap text-center'>
@@ -51,36 +82,75 @@ export default function userAccess() {
             <tbody className="overflow-auto text-gray-600">
               {rows.map((row, rowIndex) => (
                 <>
+                  {/* Main Row */}
                   {Array.isArray(row[1]) ? 
                   <>
                     <tr>
-                      <td className='p-3 cursor-pointer' onClick={() => setSelected(rowIndex)}>
+                      <td className='p-3 cursor-pointer' onClick={() => {if (selected == rowIndex) {setSelected(-1); setSubSelected(-1)} else {setSelected(rowIndex)} if (selected !== rowIndex) { setSubSelected(-1)}}}>
                         <div className='flex w-full'>
                         <Label name={row[0]} className=''/><ChevronUp className='float-right'/>
                         </div>
                       </td>
-                      <td className='p-3'><input type="checkbox" name="" id="" checked={all == rowIndex}/></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" checked={all == rowIndex}/></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" checked={all == rowIndex}/></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" checked={all == rowIndex}/></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" onChange={() => setAll(rowIndex)}/></td>
+                      {allSelected.includes(rowIndex) ?
+                      <>
+                        <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                        <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                        <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                        <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                      </>  
+                      :
+                      <>
+                        <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                        <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                        <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                        <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                      </>                    
+                      }
+                      <td className='p-3'><input type="checkbox" name="" id="" onChange={() => {
+                          if (allSelected.includes(rowIndex)) {
+                            setAllSelected(allSelected.filter((item) => item != rowIndex)) 
+                          } else {
+                            setAllSelected([...allSelected, rowIndex])
+                          }
+                        }}/>
+                      </td>
                     </tr>
+                    {/* Sub Row */}
                     {row[1].map((subRow, subRowIndex) => (
                       <>
                         {Array.isArray(subRow[1]) ? 
                         <>
                           <tr className={clsx("", selected !== rowIndex && "hidden")}>
-                            <td className='p-3' onClick={() => setSubSelected(subRowIndex)}>
+                            <td className='p-3' onClick={() => {if (subSelected == subRowIndex) {setSubSelected(-1)} else (setSubSelected(subRowIndex))}}>
                               <div className='flex w-full'>
                               <Label name={subRow[0]} className='pl-3'/><ChevronUp className='float-right'/>
                               </div>
                             </td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
+                            {subAllSelected.includes(subRowIndex) ?
+                              <>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                              </>  
+                              :
+                              <>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                              </>                    
+                            }
+                            <td className='p-3'><input type="checkbox" name="" id="" onChange={() => {
+                                if (subAllSelected.includes(subRowIndex)) {
+                                  setSubAllSelected(subAllSelected.filter((item) => item != subRowIndex)) 
+                                } else {
+                                  setSubAllSelected([...subAllSelected, subRowIndex])
+                                }
+                              }}/>
+                            </td>
                           </tr>
+                          {/* Sub Row Children */}
                           {subRow[1].map((lastRow, lastRowIndex) => (
                             <>
                               <tr className={clsx("", subSelected !== subRowIndex && "hidden")}>
@@ -89,11 +159,29 @@ export default function userAccess() {
                                   <Label name={lastRow} className='pl-6'/>
                                   </div>
                                 </td>
-                                <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                                <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                                <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                                <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                                <td className='p-3'><input type="checkbox" name="" id="" /></td>
+                                {subChildrenAllSelected.includes(lastRowIndex) ?
+                                  <>
+                                    <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                    <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                    <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                    <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                  </>  
+                                  :
+                                  <>
+                                    <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                    <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                    <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                    <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                  </>                    
+                                }
+                                <td className='p-3'><input type="checkbox" name="" id="" onChange={() => {
+                                    if (subChildrenAllSelected.includes(lastRowIndex)) {
+                                      setSubChildrenAllSelected(subChildrenAllSelected.filter((item) => item != lastRowIndex)) 
+                                    } else {
+                                      setSubChildrenAllSelected([...subChildrenAllSelected, lastRowIndex])
+                                    }
+                                  }}/>
+                                </td>
                               </tr>
                             </>
                           ))}
@@ -106,11 +194,29 @@ export default function userAccess() {
                               <Label name={subRow[0]} className='mr-auto pl-3'/>
                               </div>
                             </td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                            <td className='p-3'><input type="checkbox" name="" id="" /></td>
+                            {subAllSelected.includes(subRowIndex) ?
+                              <>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                                <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                              </>  
+                              :
+                              <>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                                <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                              </>                    
+                            }
+                            <td className='p-3'><input type="checkbox" name="" id="" onChange={() => {
+                                if (subAllSelected.includes(subRowIndex)) {
+                                  setSubAllSelected(subAllSelected.filter((item) => item != subRowIndex)) 
+                                } else {
+                                  setSubAllSelected([...subAllSelected, subRowIndex])
+                                }
+                              }}/>
+                            </td>
                           </tr>
                         </>
                         }
@@ -122,14 +228,32 @@ export default function userAccess() {
                     <tr>
                       <td className='p-3'>
                         <div className='flex'>
-                        <Label name={row[0]} className='mr-auto'/>
+                          <Label name={row[0]} className='mr-auto'/>
                         </div>
                       </td>
-                      <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" /></td>
-                      <td className='p-3'><input type="checkbox" name="" id="" /></td>
+                      {allSelected.includes(rowIndex) ?
+                        <>
+                          <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                          <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                          <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                          <td className='p-3'><input type="checkbox" name="" id="" checked={true}/></td>
+                        </>  
+                        :
+                        <>
+                          <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                          <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                          <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                          <td className='p-3'><input type="checkbox" name="" id=""/></td>
+                        </>                    
+                      }
+                      <td className='p-3'><input type="checkbox" name="" id="" onChange={() => {
+                          if (allSelected.includes(rowIndex)) {
+                            setAllSelected(allSelected.filter((item) => item != rowIndex)) 
+                          } else {
+                            setAllSelected([...allSelected, rowIndex])
+                          }
+                        }}/>
+                      </td>
                     </tr>
                   </>
                   }

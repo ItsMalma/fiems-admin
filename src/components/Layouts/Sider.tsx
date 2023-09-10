@@ -21,6 +21,8 @@ import {
   People,
   PeopleFill,
   InfoCircleFill,
+  PersonGear,
+  PersonFillGear,
 } from "react-bootstrap-icons";
 import Menu from "./Menu";
 
@@ -165,9 +167,19 @@ export default function Sider() {
                     name: "Insurance",
                     url: "/operation/document/insurance"
                   },
+                  {
+                    name: "Request",
+                    url: "/operation/document/request"
+                  },
                 ]
               }
             ]
+          },
+          {
+            name: "User Management",
+            icon: PersonGear,
+            activeIcon: PersonFillGear,
+            url: "/user",
           },
         ]}
       />

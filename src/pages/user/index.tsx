@@ -51,37 +51,27 @@ export function Save() {
   );
 }
 
-export default function SuratJalan() {
+export default function userManagement() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Surat Jalan");
-    setActive(3, 2, 1);
+    setTitle("User Management");
+    setActive(4, 0, 0);
   }, []);
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Group Code" />
+        <Search placeholder="Search User ID" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Surat Jalan"
+            text="Add New User"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/operation/document/surat_jalan/save")}
-          />
-          <Button
-            text="Import"
-            icon={<FileEarmarkArrowDownFill />}
-            variant="outlined"
-          />
-          <Button
-            text="Export"
-            icon={<FileEarmarkArrowUpFill />}
-            variant="outlined"
+            onClick={() => setModal(<Save />)}
           />
         </div>
       </div>
@@ -107,23 +97,6 @@ export default function SuratJalan() {
           <div className="flex gap-4 items-center">
             <Select
               className="w-44"
-              icon={<Calendar />}
-              placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
                 "Show 10 entries",
                 "Show 25 entries",
@@ -137,16 +110,22 @@ export default function SuratJalan() {
         <Table
           fields={[
             { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "SJ. Number", isSortable: true },
-            { type: "link", name: "JO. Number", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true },
-            { type: "text", name: "Consignee", isSortable: true },
+            { type: "link", name: "User ID", isSortable: true },
+            { type: "text", name: "User Name", isSortable: true },
+            { type: "text", name: "Email", isSortable: true },
+            { type: "text", name: "Position", isSortable: true },
+            { type: "text", name: "Department", isSortable: true },
+            { type: "tool", name: "Action"},
             { type: "text", name: "Description" },
           ]}
           records={[
-            [false, new Date(), "SJ00001", "JO00001", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR",],
-            [false, new Date(), "SJ00002", "JO00010", "PT SUGIH JAYA LOGISTIC", "PT INDOFOOD SUKSES MAKMUR",],
+            [false, "0001", "gtap-dev", "gtap@gtap.com", "Dev", "Department", 
+            <Button
+              text="Access"
+              variant="filled"
+              onClick={() => router.push("/user/access")}
+            />
+          ],
           ]}
         />
         <div className="flex mt-auto">
