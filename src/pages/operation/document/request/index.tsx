@@ -1,11 +1,15 @@
 import Button from "@/components/Elements/Button";
+import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
+import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
+import Label from "@/components/Elements/Label";
+import InputText from "@/components/Elements/InputText";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
@@ -17,14 +21,45 @@ import {
 } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 
-export default function SuratJalan() {
+export function Save() {
+  return (
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Group Code" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Name" />
+            <InputText placeholder="Enter group name" className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Description" />
+            <InputText
+              placeholder="Enter group description"
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export default function RequestReport() {
   const router = useRouter();
   const { setActive } = useMenu();
+  const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Surat Jalan");
-    setActive(3, 2, 1);
+    setTitle("Operational | Request Report");
+    setActive(3, 2, 5);
   }, []);
 
   return (
@@ -33,10 +68,10 @@ export default function SuratJalan() {
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Surat Jalan"
+            text="Add New Request"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/operation/document/surat_jalan/save")}
+            onClick={() => router.push("/operation/document/request/save")}
           />
           <Button
             text="Import"
@@ -85,11 +120,9 @@ export default function SuratJalan() {
               icon={Filter}
               placeholder="Filter"
               options={[
+                { label: "Inquiry Code", value: "inquiryCode" },
                 { label: "Create Date", value: "createDate" },
-                { label: "SJ. Number", value: "sjNumber" },
-                { label: "JO. Number", value: "joNumber" },
-                { label: "Customer", value: "customer" },
-                { label: "Consignee", value: "consignee" },
+                { label: "Type", value: "type" },
                 { label: "Description", value: "description" },
               ]}
               onChange={() => {}}
@@ -111,31 +144,12 @@ export default function SuratJalan() {
         <Table
           fields={[
             { type: "option" },
+            { type: "link", name: "Inquiry Code", isSortable: true },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "SJ. Number", isSortable: true },
-            { type: "link", name: "JO. Number", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true },
-            { type: "text", name: "Consignee", isSortable: true },
+            { type: "text", name: "Type", isSortable: true },
             { type: "text", name: "Description" },
           ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "SJ00001",
-              "JO00001",
-              "PT SUGIH JAYA LOGISTIC",
-              "PT INDOFOOD SUKSES MAKMUR",
-            ],
-            [
-              false,
-              new Date(),
-              "SJ00002",
-              "JO00010",
-              "PT SUGIH JAYA LOGISTIC",
-              "PT INDOFOOD SUKSES MAKMUR",
-            ],
-          ]}
+          records={[[false, "REQ00001", new Date(), "SPAREPART"]]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>

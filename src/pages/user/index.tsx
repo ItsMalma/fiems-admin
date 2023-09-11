@@ -1,52 +1,69 @@
 import Button from "@/components/Elements/Button";
+import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
+import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
-import {
-  PersonFillAdd,
-  FileEarmarkArrowDownFill,
-  FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
-} from "react-bootstrap-icons";
+import Label from "@/components/Elements/Label";
+import InputText from "@/components/Elements/InputText";
+import { PersonFillAdd, Pencil, Trash } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 
-export default function SuratJalan() {
+function Save() {
+  return (
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Create Date" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Group Code" />
+            <InputText placeholder="" disabled className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Name" />
+            <InputText placeholder="Enter group name" className="basis-2/3" />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Description" />
+            <InputText
+              placeholder="Enter group description"
+              className="basis-2/3"
+            />
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export default function userManagement() {
   const router = useRouter();
   const { setActive } = useMenu();
+  const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Surat Jalan");
-    setActive(3, 2, 1);
+    setTitle("User Management");
+    setActive(4, 0, 0);
   }, []);
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Group Code" />
+        <Search placeholder="Search User ID" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Surat Jalan"
+            text="Add New User"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/operation/document/surat_jalan/save")}
-          />
-          <Button
-            text="Import"
-            icon={<FileEarmarkArrowDownFill />}
-            variant="outlined"
-          />
-          <Button
-            text="Export"
-            icon={<FileEarmarkArrowUpFill />}
-            variant="outlined"
+            onClick={() => setModal(<Save />)}
           />
         </div>
       </div>
@@ -71,32 +88,6 @@ export default function SuratJalan() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "SJ. Number", value: "sjNumber" },
-                { label: "JO. Number", value: "joNumber" },
-                { label: "Customer", value: "customer" },
-                { label: "Consignee", value: "consignee" },
-                { label: "Description", value: "description" },
-              ]}
-              onChange={() => {}}
-              isMulti
-              isSearchable
-            />
-            <Select
               options={[
                 { label: "Show 10 entries", value: 10 },
                 { label: "Show 25 entries", value: 25 },
@@ -111,29 +102,27 @@ export default function SuratJalan() {
         <Table
           fields={[
             { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "SJ. Number", isSortable: true },
-            { type: "link", name: "JO. Number", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true },
-            { type: "text", name: "Consignee", isSortable: true },
+            { type: "link", name: "User ID", isSortable: true },
+            { type: "text", name: "User Name", isSortable: true },
+            { type: "text", name: "Email", isSortable: true },
+            { type: "text", name: "Position", isSortable: true },
+            { type: "text", name: "Department", isSortable: true },
+            { type: "tool", name: "Action" },
             { type: "text", name: "Description" },
           ]}
           records={[
             [
               false,
-              new Date(),
-              "SJ00001",
-              "JO00001",
-              "PT SUGIH JAYA LOGISTIC",
-              "PT INDOFOOD SUKSES MAKMUR",
-            ],
-            [
-              false,
-              new Date(),
-              "SJ00002",
-              "JO00010",
-              "PT SUGIH JAYA LOGISTIC",
-              "PT INDOFOOD SUKSES MAKMUR",
+              "0001",
+              "gtap-dev",
+              "gtap@gtap.com",
+              "Dev",
+              "Department",
+              <Button
+                text="Access"
+                variant="filled"
+                onClick={() => router.push("/user/access")}
+              />,
             ],
           ]}
         />

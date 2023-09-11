@@ -13,10 +13,10 @@
 }
 
 html {
-  font-size: 10px;
-}
+  font-size: 12px;
+} 
 
-@media (min-width: 1536px) {
+ @media (min-width: 1536px) {
   html {
     font-size: 16px;
   }

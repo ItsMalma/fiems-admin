@@ -40,7 +40,7 @@ export default function Login() {
               className="w-full"
               onChange={(e) => setUser({ ...user, username: e.target.value })}
             />
-            <InputPassword
+            <InputText
               placeholder="Password"
               className="w-full"
               onChange={(e) => setUser({ ...user, password: e.target.value })}

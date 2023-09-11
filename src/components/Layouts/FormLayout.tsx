@@ -19,9 +19,15 @@ type FormLayoutProps = {
 
 export default function FormLayout(props: FormLayoutProps) {
   const router = useRouter();
-  const [appends, setAppend] = React.useState<number[]>([]);
+  const [appends, setAppend] = React.useState<number[]>([0]);
+  const [appendForm, setAppendForm] = React.useState<number[]>([]);
   const [tabActive, setTabActive] = React.useState(0);
   const [appendActive, setAppendActive] = React.useState(0);
+  let nomor = 0;
+
+  React.useEffect(() => {
+    setAppendForm([...appends]);
+  }, [appends]);
 
   return (
     <>
@@ -72,37 +78,55 @@ export default function FormLayout(props: FormLayoutProps) {
               >
                 {tab.isAppend && (
                   <>
-                    {appends.map((_, index) => (
-                      <Button
-                        key={index}
-                        text={`${tab.append} ${index + 1}`}
-                        type="button"
-                        icon={
-                          <XCircle
-                            onClick={() =>
-                              setAppend(
-                                appends.filter(
-                                  (_, filterIndex) => filterIndex !== index
-                                )
-                              )
-                            }
-                            className="text-red-600 ps-auto"
-                          />
-                        }
-                        iconPosition="right"
-                        variant="normal"
-                        onClick={() => setAppendActive(index)}
-                        className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
-                      />
+                    {appends.map((index, indexx) => (
+                      <>
+                        {appends.length > 1 ? (
+                          <>
+                            <Button
+                              text={`${tab.append} ${indexx + 1}`}
+                              type="button"
+                              icon={
+                                <XCircle
+                                  onClick={() =>
+                                    setAppend(
+                                      appends.filter(
+                                        (append, appendIndex) =>
+                                          appendIndex !== indexx
+                                      )
+                                    )
+                                  }
+                                  className="text-red-600 ps-auto"
+                                />
+                              }
+                              iconPosition="right"
+                              variant="normal"
+                              onClick={() => setAppendActive(indexx)}
+                              className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              text={`${tab.append} ${indexx + 1}`}
+                              type="button"
+                              iconPosition="right"
+                              variant="normal"
+                              onClick={() => setAppendActive(indexx)}
+                              className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
+                            />
+                          </>
+                        )}
+                      </>
                     ))}
                     <Button
                       type="button"
                       icon={<PlusCircle />}
                       iconPosition="center"
                       variant="outlined"
-                      onClick={() =>
-                        setAppend([...appends, appends.length + 1])
-                      }
+                      onClick={() => {
+                        const maxNumber = Math.max(...appends);
+                        setAppend([...appends, maxNumber + 1]);
+                      }}
                       className="text-center"
                     />
                   </>
@@ -121,14 +145,18 @@ export default function FormLayout(props: FormLayoutProps) {
                 >
                   {tab.isAppend ? (
                     <>
-                      {appends.map((_, index) => (
-                        <div
-                          key={index}
-                          className={clsx(appendActive !== index && "hidden")}
-                        >
-                          {tab.component}
-                        </div>
-                      ))}
+                      {appends
+                        .filter(
+                          (item, index) => appendForm[index] == appends[index]
+                        )
+                        .map((index, indexx) => (
+                          <div
+                            key={index}
+                            className={clsx(appendActive !== index && "hidden")}
+                          >
+                            {tab.component}
+                          </div>
+                        ))}
                     </>
                   ) : (
                     <>{tab.component}</>

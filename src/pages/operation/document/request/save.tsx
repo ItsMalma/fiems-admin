@@ -5,19 +5,20 @@ import InputText from "@/components/Elements/InputText";
 import FormLayout from "@/components/Layouts/FormLayout";
 import Select from "@/components/Elements/Select";
 
-export default function PackingSave() {
+export default function RequestSave() {
   const { setActive } = useMenu();
+  const [type, setType] = React.useState(0);
 
   React.useEffect(() => {
-    setActive(3, 2, 3);
+    setActive(3, 2, 5);
   }, []);
 
   return (
     <FormLayout
-      title="Input Vehicle Data"
+      title="Form Request"
       tabs={[
         {
-          name: "General Information",
+          name: "Request Information",
           component: (
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
@@ -25,44 +26,13 @@ export default function PackingSave() {
                   <Label name="Create Date" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Vessel Name" className="basis-2/5" />
-                  <Select
-                    placeholder="Choose vessel name"
-                    options={[
-                      { label: "JO00001", value: 1 },
-                      { label: "JO00002", value: 2 },
-                    ]}
-                    onChange={() => {}}
-                    isSearchable
-                    className="basis-3/5"
-                  />
-                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Packing List Number" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Voyage" className="basis-2/5" />
+                  <Label name="Type Request" className="basis-2/5" />
                   <Select
-                    placeholder="Choose voyage"
-                    options={[
-                      { label: "JO00001", value: 1 },
-                      { label: "JO00002", value: 2 },
-                    ]}
-                    onChange={() => {}}
-                    isSearchable
-                    className="basis-3/5"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Shipping Name" className="basis-2/5" />
-                  <Select
-                    placeholder="Choose shipping"
+                    placeholder="Choose type request"
                     options={[
                       { label: "JO00001", value: 1 },
                       { label: "JO00002", value: 2 },
@@ -74,13 +44,20 @@ export default function PackingSave() {
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <Label name="Req. Num." className="basis-2/5" />
+                  <InputText placeholder="" className="basis-3/5" disabled />
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
+              </div>
             </>
           ),
         },
         {
           isAppend: true,
-          append: "Realisasi",
-          name: "Detail Realisasi",
+          append: "Request",
+          name: "Detail Request",
           component: (
             <>
               <div className="flex flex-col gap-3">
@@ -109,17 +86,9 @@ export default function PackingSave() {
                     />
                   </div>
                   <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                    <Label name="Satuan" className="basis-2/5" />
-                    <Select
-                      placeholder="Choose satuan"
-                      options={[
-                        { label: "BOX", value: 1 },
-                        { label: "Karton", value: 2 },
-                        { label: "KG", value: 3 },
-                        { label: "PCs", value: 4 },
-                      ]}
-                      onChange={() => {}}
-                      isSearchable
+                    <Label name="Remarks" className="basis-2/5" />
+                    <InputText
+                      placeholder="Enter description"
                       className="basis-3/5"
                     />
                   </div>
