@@ -66,9 +66,9 @@ export default function userAccess() {
           <Button variant="filled" text="Save" icon={<Download />} />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
+      <div className="flex flex-col text-2xl p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
         <form action="">
-          <table className='w-full rounded-t-xl overflow-hidden whitespace-nowrap text-center'>
+          <table className='w-full rounded-t-xl text-2xl overflow-hidden whitespace-nowrap text-center'>
             <thead className="bg-gray-100">
               <tr>
                 <th className='p-3 text-gray-400'>Form</th>
@@ -85,7 +85,7 @@ export default function userAccess() {
                   {/* Main Row */}
                   {Array.isArray(row[1]) ? 
                   <>
-                    <tr>
+                    <tr className='border-b border-b-gray-300'>
                       <td className='p-3 cursor-pointer' onClick={() => {if (selected == rowIndex) {setSelected(-1); setSubSelected(-1)} else {setSelected(rowIndex)} if (selected !== rowIndex) { setSubSelected(-1)}}}>
                         <div className='flex w-full'>
                         <Label name={row[0]} className=''/><ChevronUp className='float-right'/>
@@ -120,7 +120,7 @@ export default function userAccess() {
                       <>
                         {Array.isArray(subRow[1]) ? 
                         <>
-                          <tr className={clsx("", selected !== rowIndex && "hidden")}>
+                          <tr className={clsx("border-b border-b-gray-300", selected !== rowIndex && "hidden")}>
                             <td className='p-3' onClick={() => {if (subSelected == subRowIndex) {setSubSelected(-1)} else (setSubSelected(subRowIndex))}}>
                               <div className='flex w-full'>
                               <Label name={subRow[0]} className='pl-3'/><ChevronUp className='float-right'/>
@@ -153,7 +153,7 @@ export default function userAccess() {
                           {/* Sub Row Children */}
                           {subRow[1].map((lastRow, lastRowIndex) => (
                             <>
-                              <tr className={clsx("", subSelected !== subRowIndex && "hidden")}>
+                              <tr className={clsx("border-b border-b-gray-300", subSelected !== subRowIndex && "hidden")}>
                                 <td className='p-3'>
                                   <div className='flex'>
                                   <Label name={lastRow} className='pl-6'/>
@@ -188,7 +188,7 @@ export default function userAccess() {
                         </>
                         :
                         <>
-                          <tr className={clsx("", selected !== rowIndex && "hidden")}>
+                          <tr className={clsx("border-b border-b-gray-300", selected !== rowIndex && "hidden")}>
                             <td className='p-3'>
                               <div className='flex'>
                               <Label name={subRow[0]} className='mr-auto pl-3'/>
@@ -225,7 +225,7 @@ export default function userAccess() {
                   </>
                   :
                   <>
-                    <tr>
+                    <tr className='border-b border-b-gray-300'>
                       <td className='p-3'>
                         <div className='flex'>
                           <Label name={row[0]} className='mr-auto'/>

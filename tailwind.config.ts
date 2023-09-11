@@ -7,9 +7,9 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    fontSize: {
-        'base': '13px',
-    },
+    // fontSize: {
+    //     'base': '13px',
+    // },
     extend: {
       colors: {
         primary: "#266BAC",
