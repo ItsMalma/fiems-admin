@@ -1,8 +1,8 @@
 import React from "react";
-import { useRouter } from "next/router";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
+import { useRouter } from "next/router";
 import Button from "@/components/Elements/Button";
 import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
@@ -27,11 +27,10 @@ export function Export() {
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
           <Select
-            placeholder="Choose city"
-            options={["Excel", "Tangerang", "Solo"]}
-            value={1}
-            onChange={() => {}}
             className="basis-2/3"
+            placeholder="Choose city"
+            options={[{ label: "Excel", value: "excel" }]}
+            onChange={() => {}}
           />
         </div>
       </form>
@@ -40,15 +39,16 @@ export function Export() {
 }
 
 export default function PriceFactory() {
-  const router = useRouter();
-  const { setModal } = useModal();
-  const { setActive } = useMenu();
   const { setTitle } = useHeader();
-
+  const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Master Data | Price Factory");
     setActive(1, 6, 0);
   }, []);
+
+  const { setModal } = useModal();
+
+  const router = useRouter();
 
   return (
     <>
@@ -95,30 +95,45 @@ export default function PriceFactory() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Quotation Number", value: "quotationNumber" },
+                { label: "Effective Date", value: "effectiveDate" },
+                { label: "Factory Name", value: "factoryName" },
+                { label: "Route", value: "route" },
+                { label: "Container Size", value: "containerSize" },
+                { label: "Via Port", value: "viaPort" },
+                { label: "Province", value: "province" },
+                { label: "Etc. Cost", value: "etcCost" },
+                { label: "HPP", value: "hpp" },
+                { label: "HPP after Etc. Cost", value: "hppAfterEtcCost" },
+              ]}
               onChange={() => {}}
-              multi={true}
+              isMulti
+              isSearchable
             />
             <Select
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

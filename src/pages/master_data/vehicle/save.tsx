@@ -23,82 +23,88 @@ export default function VehicleSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Create Date" className="w-[35%]" />
-                  <InputText placeholder="" className="w-full" disabled />
+                  <Label name="Create Date" className="basis-2/5" />
+                  <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Number Rangka" className="w-[35%]" />
+                  <Label name="Number Rangka" className="basis-2/5" />
                   <InputText
                     placeholder="Enter rangka number"
-                    className="w-full"
+                    className="basis-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Vendor Name" className="w-[35%]" />
+                  <Label name="Vendor Name" className="basis-2/5" />
                   <Select
                     placeholder="Code"
-                    options={["Direktur", "Marketing"]}
-                    value={0}
+                    options={[
+                      { label: "Directur", value: "directur" },
+                      { label: "Marketing", value: "marketing" },
+                    ]}
                     onChange={() => {}}
-                    className="w-[30%] overflow-hidden whitespace-nowrap"
+                    isSearchable
+                    className="basis-3/5"
                   />
                   <InputText className="w-[65%]" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Silinder" className="w-[35%]" />
+                  <Label name="Silinder" className="basis-2/5" />
                   <InputText
                     placeholder="Enter jumlah silinder"
-                    className="w-full"
+                    className="basis-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Truck Number" className="w-[35%]" />
+                  <Label name="Truck Number" className="basis-2/5" />
                   <InputText
                     placeholder="Enter truck number"
-                    className="w-full"
+                    className="basis-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="STNK expired" className="w-[35%]" />
-                  <DatePicker className="w-full" />
+                  <Label name="STNK expired" className="basis-2/5" />
+                  <DatePicker className="basis-3/5" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Merk" className="w-[35%]" />
-                  <InputText placeholder="Enter merk" className="w-full" />
+                  <Label name="Merk" className="basis-2/5" />
+                  <InputText placeholder="Enter merk" className="basis-3/5" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Pajak expired" className="w-[35%]" />
-                  <DatePicker className="w-full" />
+                  <Label name="Pajak expired" className="basis-2/5" />
+                  <DatePicker className="basis-3/5" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Truck Type" className="w-[35%]" />
+                  <Label name="Truck Type" className="basis-2/5" />
                   <Select
                     placeholder="Choose truck type"
-                    options={["Direktur", "Marketing"]}
-                    value={0}
+                    options={[
+                      { label: "Directur", value: "directur" },
+                      { label: "Marketing", value: "marketing" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
+                    className="basis-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Pajak expired" className="w-[35%]" />
-                  <DatePicker className="w-full" />
+                  <Label name="Pajak expired" className="basis-2/5" />
+                  <DatePicker className="basis-3/5" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Machine Number" className="w-[35%]" />
+                  <Label name="Machine Number" className="basis-2/5" />
                   <InputText
                     placeholder="Enter machine number"
-                    className="w-full"
+                    className="basis-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>

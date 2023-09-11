@@ -43,12 +43,11 @@ export default function FormLayout(props: FormLayoutProps) {
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
         <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl relative">
           <div className="flex gap-1.5 2xl:gap-2">
-          {props.tabs.map((tab, tabIndex) => (
-            <>
-            {!tab.isHide 
-            ? (
-              <>
+            {props.tabs
+              .filter((tab) => !tab.isHide)
+              .map((tab, tabIndex) => (
                 <Button
+                  key={tabIndex}
                   variant="normal"
                   text={tab.name}
                   className={clsx(
@@ -58,17 +57,13 @@ export default function FormLayout(props: FormLayoutProps) {
                   )}
                   onClick={() => setTabActive(tabIndex)}
                 />
-              </>) 
-              : 
-                (null) 
-              }
-            </>
-          ))}
+              ))}
           </div>
-          <div className="flex gap-6 overflow-auto">
+          <div className="flex gap-6 overflow-auto grow">
             {/* Khusus Append */}
             {props.tabs.map((tab, tabIndex) => (
               <div
+                key={tabIndex}
                 className={clsx(
                   "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto basis-0",
                   tabActive !== tabIndex && "hidden",
@@ -77,17 +72,17 @@ export default function FormLayout(props: FormLayoutProps) {
               >
                 {tab.isAppend && (
                   <>
-                    {appends.map((index, indexx) => (
+                    {appends.map((_, index) => (
                       <Button
-                        text={`${tab.append} ${indexx + 1}`}
+                        key={index}
+                        text={`${tab.append} ${index + 1}`}
                         type="button"
                         icon={
                           <XCircle
                             onClick={() =>
                               setAppend(
                                 appends.filter(
-                                  (append, appendIndex) =>
-                                    appendIndex !== indexx
+                                  (_, filterIndex) => filterIndex !== index
                                 )
                               )
                             }
@@ -96,7 +91,7 @@ export default function FormLayout(props: FormLayoutProps) {
                         }
                         iconPosition="right"
                         variant="normal"
-                        onClick={() => setAppendActive(indexx)}
+                        onClick={() => setAppendActive(index)}
                         className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
                       />
                     ))}
@@ -118,16 +113,18 @@ export default function FormLayout(props: FormLayoutProps) {
             <form className="grow overflow-auto">
               {props.tabs.map((tab, tabIndex) => (
                 <div
+                  key={tabIndex}
                   className={clsx(
-                    "flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                    "h-full flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
                     tabActive !== tabIndex && "hidden"
                   )}
                 >
                   {tab.isAppend ? (
                     <>
-                      {appends.map((index, indexx) => (
+                      {appends.map((_, index) => (
                         <div
-                          className={clsx(appendActive !== indexx && "hidden")}
+                          key={index}
+                          className={clsx(appendActive !== index && "hidden")}
                         >
                           {tab.component}
                         </div>

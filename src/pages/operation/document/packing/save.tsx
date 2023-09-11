@@ -4,8 +4,6 @@ import Label from "@/components/Elements/Label";
 import InputText from "@/components/Elements/InputText";
 import FormLayout from "@/components/Layouts/FormLayout";
 import Select from "@/components/Elements/Select";
-import DatePicker from "@/components/Elements/DatePicker";
-import Radio from "@/components/Elements/Radio";
 
 export default function PackingSave() {
   const { setActive } = useMenu();
@@ -24,49 +22,57 @@ export default function PackingSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Create Date" className="w-[35%]" />
-                  <InputText placeholder="" className="w-full" disabled />
+                  <Label name="Create Date" className="basis-2/5" />
+                  <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">  
-                  <Label name="Vessel Name" className="w-[35%]" />
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <Label name="Vessel Name" className="basis-2/5" />
                   <Select
-                      placeholder="Choose vessel"
-                      options={["JO00001", "JO00002"]}
-                      value={0}
-                      onChange={() => {}}
-                      className="w-full"
-                  />                
+                    placeholder="Choose vessel name"
+                    options={[
+                      { label: "JO00001", value: 1 },
+                      { label: "JO00002", value: 2 },
+                    ]}
+                    onChange={() => {}}
+                    isSearchable
+                    className="basis-3/5"
+                  />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Packing List Number" className="w-[35%]" />
-                  <InputText placeholder="" className="w-full" disabled />
-                </div> 
+                  <Label name="Packing List Number" className="basis-2/5" />
+                  <InputText placeholder="" className="basis-3/5" disabled />
+                </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Voyage" className="w-[35%]" />
+                  <Label name="Voyage" className="basis-2/5" />
                   <Select
-                      placeholder="Choose voyage"
-                      options={["JO00001", "JO00002"]}
-                      value={0}
-                      onChange={() => {}}
-                      className="w-full"
+                    placeholder="Choose voyage"
+                    options={[
+                      { label: "JO00001", value: 1 },
+                      { label: "JO00002", value: 2 },
+                    ]}
+                    onChange={() => {}}
+                    isSearchable
+                    className="basis-3/5"
                   />
-                </div>                
+                </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="Shipping Name" className="w-[35%]" />
+                  <Label name="Shipping Name" className="basis-2/5" />
                   <Select
-                      placeholder="Choose shipping"
-                      options={["JO00001", "JO00002"]}
-                      value={0}
-                      onChange={() => {}}
-                      className="w-full"
+                    placeholder="Choose shipping"
+                    options={[
+                      { label: "JO00001", value: 1 },
+                      { label: "JO00002", value: 2 },
+                    ]}
+                    onChange={() => {}}
+                    isSearchable
+                    className="basis-3/5"
                   />
-                </div> 
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">                 
-                </div>                
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
             </>
           ),
@@ -77,37 +83,47 @@ export default function PackingSave() {
           name: "Detail Realisasi",
           component: (
             <>
-              <div className="flex flex-col gap-3">                         
+              <div className="flex flex-col gap-3">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                    <Label name="Product" className="w-[35%]" />
+                    <Label name="Product" className="basis-2/5" />
                     <Select
                       placeholder="Choose product"
-                      options={["SKU0001-SABUN", "SKU0002-SHAMPOO"]}
-                      value={0}
+                      options={[
+                        { label: "SKU0001-SABUN", value: 1 },
+                        { label: "SKU0002-SHAMPOO", value: 2 },
+                      ]}
                       onChange={() => {}}
-                      className="w-full"
+                      isSearchable
+                      className="basis-3/5"
                     />
                   </div>
-                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">                
-                  </div>
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                    <Label name="QTY" className="w-[35%]" />
-                    <InputText placeholder="Enter quantity" className="w-full"/>
+                    <Label name="QTY" className="basis-2/5" />
+                    <InputText
+                      placeholder="Enter quantity"
+                      className="basis-3/5"
+                    />
                   </div>
-                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">  
-                    <Label name="Warna" className="w-[35%]" />
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                    <Label name="Warna" className="basis-2/5" />
                     <Select
                       placeholder="Choose satuan"
-                      options={["BOX", "Karton", "KG", "PCs"]}
-                      value={0}
+                      options={[
+                        { label: "BOX", value: 1 },
+                        { label: "Karton", value: 2 },
+                        { label: "KG", value: 3 },
+                        { label: "PCs", value: 4 },
+                      ]}
                       onChange={() => {}}
-                      className="w-full"
-                    />                
+                      isSearchable
+                      className="basis-3/5"
+                    />
                   </div>
-                </div>         
+                </div>
               </div>
             </>
           ),

@@ -1,259 +1,240 @@
-import ReactSelect, {
-  ClearIndicatorProps,
-  components,
-  ContainerProps,
-  ControlProps,
-  DropdownIndicatorProps,
-  InputProps,
-  MenuListProps,
-  MenuProps,
-  OptionProps,
-  SingleValueProps,
-  ValueContainerProps,
-  CoercedMenuPlacement,
-  MultiValue,
-  SingleValue,
-} from "react-select";
 import React from "react";
 import clsx from "clsx";
-import lodash from "lodash";
-import { CaretUpFill, CaretDownFill, X } from "react-bootstrap-icons";
-
-const MenuPlacementContext = React.createContext<{
-  value: CoercedMenuPlacement | undefined;
-  setValue: (newValue: CoercedMenuPlacement | undefined) => void;
-}>({
-  value: undefined,
-  setValue: () => {},
-});
+import { CaretDownFill, CaretUpFill, Icon } from "react-bootstrap-icons";
 
 type SelectOption = {
   label: string;
-  value: number;
+  value: any;
 };
 
-type SelectProps = {
-  className?: string;
-  options: string[];
-  value: number;
-  multi?: boolean;
-  search?: boolean;
-  placeholder?: string;
-  icon?: React.ReactNode;
-  onChange: (index?: number | number[]) => void;
-};
+type SelectProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "defaultValue"
+> & {
+  options: SelectOption[];
 
-function SelectContainer({ children, ...props }: ContainerProps<SelectOption>) {
-  return (
-    <components.SelectContainer {...props}>
-      {children}
-    </components.SelectContainer>
+  isSearchable?: boolean;
+
+  defaultValue?: SelectOption;
+
+  /**
+   * value untuk option yang di-create adalah `"custom"`
+   */
+  isCreatable?: boolean;
+
+  isMulti?: boolean;
+
+  icon?: Icon;
+} & (
+    | {
+        isMulti: true;
+
+        onChange: (option: SelectOption[]) => void;
+      }
+    | {
+        isMulti?: false;
+
+        onChange: (options: SelectOption) => void;
+      }
   );
-}
 
-function Control({ children, ...props }: ControlProps<SelectOption>) {
-  const { value } = React.useContext(MenuPlacementContext);
+const Select = React.forwardRef<HTMLInputElement, SelectProps>(
+  (
+    {
+      className,
+      options,
+      defaultValue,
+      onChange,
+      isSearchable,
+      isCreatable,
+      isMulti,
+      ...props
+    },
+    ref
+  ) => {
+    // Ref untuk input text
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
-  return (
-    <components.Control
-      {...props}
-      className={clsx(
-        "h-full !px-3 !py-0.5 !border-[1.5px] !border-gray-300 !rounded-lg !shadow-none",
-        props.menuIsOpen &&
-          (value === "top"
-            ? "!border-t-0 !rounded-t-none"
-            : "!border-b-0 !rounded-b-none")
-      )}
-    >
-      {children}
-    </components.Control>
-  );
-}
+    // Untuk mengkombinasikan antar ref dari input text dan ref yang dari forward
+    React.useImperativeHandle(ref, () => inputRef.current!);
 
-function ValueContainer({
-  children,
-  ...props
-}: ValueContainerProps<SelectOption>) {
-  return (
-    <components.ValueContainer
-      {...props}
-      className="!flex !p-0 gap-x-2 !text-gray-700 !overflow-x-hidden"
-    >
-      {children}
-    </components.ValueContainer>
-  );
-}
+    // State untuk menyimpan nilai dari input text
+    const [inputValue, setInputValue] = React.useState<string>(
+      isMulti ? props.placeholder ?? "Select" : ""
+    );
 
-function SingleValue({ children, ...props }: SingleValueProps<SelectOption>) {
-  return (
-    <components.SingleValue {...props} className="!m-0 !text-gray-700">
-      {children}
-    </components.SingleValue>
-  );
-}
+    const [actives, setActives] = React.useState<SelectOption[]>(
+      defaultValue ? [defaultValue] : []
+    );
+    const [expand, setExpand] = React.useState(false);
+    React.useEffect(() => {
+      if (!actives || actives.length < 1) {
+        return;
+      }
 
-function Input({ children, ...props }: InputProps<SelectOption>) {
-  return (
-    <components.Input {...props} className="!m-0 !p-0">
-      {children}
-    </components.Input>
-  );
-}
+      if (isMulti) {
+        onChange(actives);
+        setInputValue(props.placeholder ?? "Select");
+      } else {
+        onChange(actives[0]);
+        setInputValue(actives[0].label);
+      }
+    }, [actives]);
 
-function DropdownIndicator({
-  children,
-  ...props
-}: DropdownIndicatorProps<SelectOption>) {
-  return (
-    <components.DropdownIndicator {...props} className="!p-0">
-      {props.selectProps.menuIsOpen ? (
-        <CaretUpFill className="text-gray-700" />
-      ) : (
-        <CaretDownFill className="text-gray-700" />
-      )}
-    </components.DropdownIndicator>
-  );
-}
+    const menuRef = React.useRef<HTMLDivElement>(null);
+    const [menuPosition, setMenuPosition] = React.useState<"top" | "bottom">(
+      "bottom"
+    );
+    React.useLayoutEffect(() => {
+      if (!menuRef.current || !expand) {
+        return;
+      }
 
-function ClearIndicator({
-  children,
-  ...props
-}: ClearIndicatorProps<SelectOption>) {
-  return (
-    <components.ClearIndicator {...props}>
-      <X />
-    </components.ClearIndicator>
-  );
-}
+      const menuRect = menuRef.current.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
 
-function Menu({ children, ...props }: MenuProps<SelectOption>) {
-  const { setValue } = React.useContext(MenuPlacementContext);
-  setValue(props.placement);
+      if (menuRect.y + menuRect.height >= bodyRect.height) {
+        setMenuPosition("top");
+      } else {
+        setMenuPosition("bottom");
+      }
+    }, [expand]);
 
-  return (
-    <components.Menu
-      {...props}
-      className={clsx(
-        "!m-0 !pb-0 !border-[1.5px] !border-solitude2 !rounded-xl !shadow-none",
-        props.placement === "top"
-          ? "!border-b-0 !rounded-b-none"
-          : "!border-t-0 !rounded-t-none"
-      )}
-    >
-      {children}
-    </components.Menu>
-  );
-}
-
-function MenuList({ children, ...props }: MenuListProps<SelectOption>) {
-  return (
-    <components.MenuList {...props} className="!p-0 !max-h-32">
-      {children}
-    </components.MenuList>
-  );
-}
-
-function Option({ children, ...props }: OptionProps<SelectOption>) {
-  return (
-    <components.Option
-      {...props}
-      className={clsx(
-        "!flex items-center gap-x-1 !text-gray-700 !px-3 !py-0.5 hover:!bg-primaryHover",
-        props.isSelected && "!bg-primaryActive !text-solitudeActive"
-      )}
-    >
-      <div>{children}</div>
-    </components.Option>
-  );
-}
-
-function None() {
-  return <></>;
-}
-
-export default function Select({
-  value = 0,
-  multi = false,
-  search = false,
-  ...props
-}: SelectProps) {
-  const [menuPlacementValue, setMenuPlacementValue] = React.useState<
-    CoercedMenuPlacement | undefined
-  >(undefined);
-
-  return (
-    <MenuPlacementContext.Provider
-      value={{ value: menuPlacementValue, setValue: setMenuPlacementValue }}
-    >
-      <ReactSelect
-        className={props.className}
-        instanceId={React.useId()}
-        isMulti={multi}
-        isSearchable={search}
-        hideSelectedOptions={false}
-        closeMenuOnSelect={multi ? false : true}
-        closeMenuOnScroll={true}
-        menuPlacement="auto"
-        options={props.options.map((option, index) => ({
-          label: option,
-          value: index,
-        }))}
-        defaultValue={
-          props.options.length > 0 && !props.placeholder
-            ? {
-                label: props.options[0],
-                value: 0,
-              }
-            : null
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    React.useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          setExpand(false);
         }
-        placeholder={props.placeholder && <p>{props.placeholder}</p>}
-        components={{
-          SelectContainer,
-          Control,
-          ValueContainer: ({ children, ...valueContainerProps }) => (
-            <ValueContainer {...valueContainerProps}>
-              {props.icon}
-              {props.placeholder &&
-                (!valueContainerProps.hasValue ||
-                  valueContainerProps.isMulti) && (
-                  <p className="!m-0 !text-gray-700 flex gap-x-2 items-center">
-                    {props.placeholder}
-                  </p>
+      };
+
+      document.addEventListener("click", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, [containerRef]);
+
+    const [optionsDisplayed, setOptionsDisplayed] =
+      React.useState<SelectOption[]>(options);
+    React.useEffect(() => {
+      setOptionsDisplayed(options);
+    }, [options]);
+
+    return (
+      <div
+        className={clsx("relative", className)}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          ref={containerRef}
+          className="bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-[9px] 2xl:gap-3"
+          onClick={() => {
+            setExpand(!expand);
+            if (!expand) {
+              setMenuPosition("bottom");
+            }
+          }}
+        >
+          {props.icon && (
+            <span className="pl-[9px] 2xl:pl-3">
+              <props.icon />
+            </span>
+          )}
+          <input
+            ref={inputRef}
+            type="text"
+            {...props}
+            className={clsx(
+              "py-1.5 2xl:py-2 overflow-auto grow bg-inherit outline-none border-none",
+              props.icon ? "" : "pl-[9px] 2xl:pl-3"
+            )}
+            value={inputValue}
+            onClick={(e) => {
+              if (expand) {
+                e.stopPropagation();
+              }
+            }}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setOptionsDisplayed(
+                options.filter((option) =>
+                  option.label
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase())
+                )
+              );
+            }}
+            readOnly={!isSearchable && !isCreatable}
+          />
+          <span className="ml-auto pr-[9px] 2xl:pr-3">
+            {expand ? <CaretUpFill /> : <CaretDownFill />}
+          </span>
+        </div>
+        {expand && (optionsDisplayed.length > 0 || isCreatable) && (
+          <div
+            ref={menuRef}
+            className={clsx(
+              "absolute z-50 min-w-full max-h-36 bg-white flex flex-col border-[1.5px] border-gray-300 rounded-lg overflow-auto",
+              menuPosition === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
+            )}
+          >
+            {optionsDisplayed.map((option) => (
+              <div
+                key={option.value}
+                className={clsx(
+                  "px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap",
+                  actives.find((active) => active.value === option.value) &&
+                    "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
                 )}
-              {children}
-            </ValueContainer>
-          ),
-          Placeholder: None,
-          SingleValue,
-          MultiValue: None,
-          Input,
-          IndicatorSeparator: None,
-          DropdownIndicator,
-          ClearIndicator,
-          Menu,
-          MenuList,
-          Option,
-        }}
-        onChange={(selectedValue) => {
-          if (
-            lodash.isArray<{
-              label: string;
-              value: number;
-            }>(selectedValue)
-          ) {
-            props.onChange(selectedValue.flatMap((v) => v.value));
-          } else {
-            props.onChange(
-              (
-                selectedValue as SingleValue<{
-                  label: string;
-                  value: number;
-                }>
-              )?.value
-            );
-          }
-        }}
-      />
-    </MenuPlacementContext.Provider>
-  );
-}
+                onClick={() => {
+                  if (
+                    actives.find((active) => active.value === option.value) &&
+                    isMulti
+                  ) {
+                    // remove option from actives
+                    setActives(
+                      actives.filter((active) => active.value !== option.value)
+                    );
+                  } else {
+                    // add option to actives
+                    setActives(isMulti ? [...actives, option] : [option]);
+                  }
+                }}
+              >
+                {option.label}
+              </div>
+            ))}
+            {actives
+              .filter((active) => active.value === "custom")
+              .map((active) => (
+                <div className="px-3 py-1.5 2xl:px-4 2xl:py-2 bg-primaryActive text-white font-semibold hover:!bg-primaryActive cursor-default whitespace-nowrap">
+                  {active.label}
+                </div>
+              ))}
+            {optionsDisplayed.length === 0 && isCreatable && (
+              <div
+                className="px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap"
+                onClick={() => {
+                  const creatableOption: SelectOption = {
+                    label: inputValue,
+                    value: "custom",
+                  };
+                  setOptionsDisplayed(options);
+                  setActives([...actives, creatableOption]);
+                }}
+              >
+                Create
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+);
+
+export default Select;

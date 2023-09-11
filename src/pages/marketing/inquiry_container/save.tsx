@@ -7,13 +7,12 @@ import Select from "@/components/Elements/Select";
 import DatePicker from "@/components/Elements/DatePicker";
 import Radio from "@/components/Elements/Radio";
 
-
 export default function InquirySave() {
   const { setActive } = useMenu();
   const [type, setType] = React.useState(0);
 
   React.useEffect(() => {
-    setActive(2, 2,);
+    setActive(2, 2);
   }, []);
 
   return (
@@ -26,27 +25,30 @@ export default function InquirySave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Inquiry Date" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Inquiry Date" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Inquiry Number" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Inquiry Number" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Sales Name" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Sales Name" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose sales"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
@@ -60,53 +62,58 @@ export default function InquirySave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer Name" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Customer Name" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose customer"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="Purchase Name" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Purchase Name" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose purchase customer"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer Group" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Customer Group" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Purchase Address" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Purchase Address" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Address" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Address" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Purchase City" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Purchase City" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="City" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
             </>
           ),
@@ -117,23 +124,29 @@ export default function InquirySave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="J.O Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="J.O Type" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="Order Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Order Type" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
@@ -148,123 +161,156 @@ export default function InquirySave() {
             <div className="flex flex-col gap-3">
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer To" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Customer To" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="Load Date" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Load Date" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="w-[35%]" />
+                  <Label className="basis-2/5" name="City" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="Vessel Name" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Vessel Name" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Route" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Route" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="Voyage" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Voyage" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Service Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Service Type" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="ETD" className="w-[35%]" />
+                  <Label className="basis-2/5" name="ETD" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Container Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Container Type" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                <Label name="ETA" className="w-[35%]" />
+                  <Label className="basis-2/5" name="ETA" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Container Size" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Container Size" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose job order type"
-                    options={["sales1", "sales2"]}
-                    value={-1}
+                    options={[
+                      { label: "Sales 1", value: 1 },
+                      { label: "Sales 2", value: 2 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
@@ -272,22 +318,22 @@ export default function InquirySave() {
               <hr></hr>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="PPN" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="PPN" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Insurance" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Insurance" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="PPFTZ" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="PPFTZ" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Shipping" className="w-[35%]" />
-                  <InputText className="w-full" disabled/>
+                  <Label className="basis-2/5" name="Shipping" />
+                  <InputText className="basis-3/5" disabled />
                 </div>
               </div>
             </div>

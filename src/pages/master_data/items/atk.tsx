@@ -25,12 +25,7 @@ export function Save() {
   const [type, setType] = React.useState(0);
 
   return (
-    <Modal
-      className="w-2/5"
-      title="Add New Product"
-      type="save"
-      onDone={() => {}}
-    >
+    <Modal title="Add New Product" type="save" onDone={() => {}}>
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
@@ -57,18 +52,21 @@ export function Save() {
               <div className="flex gap-6 items-center justify-between">
                 <Label name="Product Category" />
                 <Select
-                  placeholder="Choose Category"
-                  options={["Direktur", "Marketing"]}
-                  value={-1}
-                  onChange={() => {}}
                   className="basis-2/3"
+                  placeholder="Choose Category"
+                  options={[
+                    { label: "Directur", value: "directur" },
+                    { label: "Marketing", value: "marketing" },
+                  ]}
+                  onChange={() => {}}
+                  isSearchable
                 />
               </div>
               <div className="flex gap-6 items-center justify-between">
                 <Label name="Product Name" />
                 <InputText
-                  placeholder="Enter product name"
                   className="basis-2/3"
+                  placeholder="Enter product name"
                 />
               </div>
             </>
@@ -78,8 +76,8 @@ export function Save() {
               <div className="flex gap-6 items-center justify-between">
                 <Label name="SparePart Name" />
                 <InputText
-                  placeholder="Enter sparepart name"
                   className="basis-2/3"
+                  placeholder="Enter sparepart name"
                 />
               </div>
             </>
@@ -152,30 +150,38 @@ export default function MasterProductATK() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "SKU Code", value: "skuCode" },
+                { label: "ATK Name", value: "atkName" },
+                { label: "Satuan", value: "satuan" },
+              ]}
               onChange={() => {}}
-              multi={true}
+              isMulti
+              isSearchable
             />
             <Select
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

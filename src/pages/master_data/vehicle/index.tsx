@@ -28,7 +28,7 @@ export function Export() {
           <Label name="File Type" />
           <Select
             placeholder="Choose file type"
-            options={["Excel", "Tangerang", "Solo"]}
+            options={[{ label: "Excel", value: "excel" }]}
             value={1}
             onChange={() => {}}
             className="basis-2/3"
@@ -95,30 +95,47 @@ export default function MasterVehicle() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Vendor Name", value: "vendorName" },
+                { label: "Truck Number", value: "truckNumber" },
+                { label: "Merk", value: "merk" },
+                { label: "Truck Type", value: "truckType" },
+                { label: "Mesin Number", value: "mesinNumber" },
+                { label: "Rangka Number", value: "rangkaNumber" },
+                { label: "Silinder", value: "silinder" },
+                { label: "Color", value: "color" },
+                { label: "STNK Expired", value: "stnkExpired" },
+                { label: "Pajak Expired", value: "pajakExpired" },
+                { label: "Keur Expired", value: "keurExpired" },
+                { label: "Description", value: "description" },
+              ]}
               onChange={() => {}}
-              multi={true}
+              isSearchable
+              isMulti
             />
             <Select
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

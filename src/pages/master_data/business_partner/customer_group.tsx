@@ -1,15 +1,15 @@
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
-import Search from "@/components/Elements/Search";
-import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
 import React from "react";
-import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
+import Modal from "@/components/Elements/Modal";
 import Label from "@/components/Elements/Label";
 import InputText from "@/components/Elements/InputText";
+import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
+import Select from "@/components/Elements/Select";
+import Table from "@/components/Elements/Table";
+import VerticalLine from "@/components/Icons/VerticalLine";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
@@ -51,9 +51,9 @@ export function Save() {
 }
 
 export default function CustomerGroup() {
+  const { setTitle } = useHeader();
   const { setActive } = useMenu();
   const { setModal } = useModal();
-  const { setTitle } = useHeader();
 
   React.useEffect(() => {
     setTitle("Master Data | Customer Group");
@@ -104,31 +104,38 @@ export default function CustomerGroup() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Create", value: "create" },
+                { label: "Group Code", value: "groupCode" },
+                { label: "Group Name", value: "groupName" },
+                { label: "Description", value: "description" },
+              ]}
+              onChange={() => {}}
+              isSearchable
+              isMulti
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

@@ -28,7 +28,7 @@ export function Export() {
           <Label name="File Type" />
           <Select
             placeholder="Choose file type"
-            options={["Excel", "Tangerang", "Solo"]}
+            options={[{ label: "Excel", value: "excel" }]}
             value={1}
             onChange={() => {}}
             className="basis-2/3"
@@ -95,31 +95,43 @@ export default function MasterAccountCOA() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-40"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Main COA", value: "mainCOA" },
+                { label: "Sub COA1", value: "subCOA1" },
+                { label: "Sub COA2", value: "subCOA2" },
+                { label: "Account Number", value: "accountNumber" },
+                { label: "Account Type", value: "accountType" },
+                { label: "Category", value: "category" },
+                { label: "Transaction", value: "transaction" },
+                { label: "Currency", value: "currency" },
+              ]}
+              onChange={() => {}}
+              isSearchable
+              isMulti
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

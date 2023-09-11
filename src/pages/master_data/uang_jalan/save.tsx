@@ -22,85 +22,95 @@ export default function UJSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Create Date" className="w-[35%]" />
-                  <InputText disabled placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="Create Date" />
+                  <InputText className="basis-3/5" placeholder="Rp" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Toll" className="w-[35%]" />
-                  <InputText placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="Toll" />
+                  <InputText className="basis-3/5" placeholder="Rp" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer Name" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Customer Name" />
                   <Select
+                    className="basis-3/5"
                     placeholder=""
-                    options={["Direktur", "Marketing"]}
-                    value={0}
+                    options={[
+                      { label: "Directur", value: "directur" },
+                      { label: "Marketing", value: "marketing" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
-                    search
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="BBM" className="w-[35%]" />
-                  <InputText placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="BBM" />
+                  <InputText className="basis-3/5" placeholder="Rp" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Route" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Route" />
                   <Select
+                    className="basis-3/5"
                     placeholder=""
-                    options={["Jakarta-Tangerang", "Tangerang-Bekasi"]}
-                    value={0}
+                    options={[
+                      { label: "Jakarta - Tangerang", value: 0 },
+                      { label: "Tangerang - Bekasi", value: 1 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
-                    search
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Biaya Buruh" className="w-[35%]" />
-                  <InputText placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="Biaya Buruh" />
+                  <InputText className="basis-3/5" placeholder="Rp" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Truck Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Truck Type" />
                   <Select
-                    placeholder="Choose truck type"
-                    options={["Direktur", "Marketing"]}
-                    value={0}
+                    className="basis-3/5"
+                    placeholder=""
+                    options={[
+                      { label: "Directur", value: "directur" },
+                      { label: "Marketing", value: "marketing" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Meal" className="w-[35%]" />
-                  <InputText placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="Meal" />
+                  <InputText className="basis-3/5" placeholder="Rp" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Container Size" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Container Size" />
                   <Select
+                    className="basis-3/5"
                     placeholder="Choose container size"
-                    options={["20ft", "40ft"]}
-                    value={0}
+                    options={[
+                      { label: "20ft", value: 20 },
+                      { label: "40ft", value: 40 },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Etc." className="w-[35%]" />
-                  <InputText placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="Etc." />
+                  <InputText className="basis-3/5" placeholder="Rp" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Grand Total" className="w-[35%]" />
-                  <InputText disabled placeholder="Rp" className="w-full" />
+                  <Label className="basis-2/5" name="Grand Total" />
+                  <InputText className="basis-3/5" placeholder="Rp" disabled />
                 </div>
               </div>
             </>

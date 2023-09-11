@@ -1,15 +1,13 @@
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
+import React from "react";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import { useRouter } from "next/router";
+import clsx from "clsx";
 import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
-import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
-import useHeader from "@/stores/header";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
@@ -19,8 +17,6 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
-import clsx from "clsx";
-import { useRouter } from "next/router";
 
 export function QuotationTable() {
   return (
@@ -45,7 +41,24 @@ export function QuotationTable() {
         { type: "text", name: "Description" },
       ]}
       records={[
-        [false, new Date(), "CALC00001", "Service Type", "Shipping Name", "Jakarta-Tangerang", "Jl. in aja, Jakarta", "Jakarta", "Dry", "20ft", "Rp", "Rp", "Rp", "Rp", "Rp", "Rp"],
+        [
+          false,
+          new Date(),
+          "CALC00001",
+          "Service Type",
+          "Shipping Name",
+          "Jakarta-Tangerang",
+          "Jl. in aja, Jakarta",
+          "Jakarta",
+          "Dry",
+          "20ft",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+        ],
       ]}
     />
   );
@@ -74,7 +87,24 @@ export function ConfirmTable() {
         { type: "text", name: "Description" },
       ]}
       records={[
-        [false, new Date(), "CALC00001", "Service Type", "Shipping Name", "Jakarta-Tangerang", "Jl. in aja, Jakarta", "Jakarta", "Dry", "20ft", "Rp", "Rp", "Rp", "Rp", "Rp", "Rp"],
+        [
+          false,
+          new Date(),
+          "CALC00001",
+          "Service Type",
+          "Shipping Name",
+          "Jakarta-Tangerang",
+          "Jl. in aja, Jakarta",
+          "Jakarta",
+          "Dry",
+          "20ft",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+        ],
       ]}
     />
   );
@@ -103,17 +133,34 @@ export function CompletedTable() {
         { type: "text", name: "Description" },
       ]}
       records={[
-        [false, new Date(), "CALC00001", "Service Type", "Shipping Name", "Jakarta-Tangerang", "Jl. in aja, Jakarta", "Jakarta", "Dry", "20ft", "Rp", "Rp", "Rp", "Rp", "Rp", "Rp"],
+        [
+          false,
+          new Date(),
+          "CALC00001",
+          "Service Type",
+          "Shipping Name",
+          "Jakarta-Tangerang",
+          "Jl. in aja, Jakarta",
+          "Jakarta",
+          "Dry",
+          "20ft",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+          "Rp",
+        ],
       ]}
     />
   );
 }
 
 export default function FormQuotation() {
-  const router = useRouter();
-  const { setActive } = useMenu();
-  const { setModal } = useModal();
   const { setTitle } = useHeader();
+  const { setActive } = useMenu();
+
+  const router = useRouter();
 
   const [selectedTab, setSelectedTab] = React.useState(0);
 
@@ -150,19 +197,31 @@ export default function FormQuotation() {
           <Button
             variant="normal"
             text="Quotation"
-            className={clsx("font-normal !text-gray-500 !rounded-none", selectedTab == 0 && "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800")}
+            className={clsx(
+              "font-normal !text-gray-500 !rounded-none",
+              selectedTab == 0 &&
+                "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800"
+            )}
             onClick={() => setSelectedTab(0)}
           />
           <Button
             variant="normal"
             text="Confirm"
-            className={clsx("font-normal !text-gray-500 !rounded-none", selectedTab == 1 && "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800")}
+            className={clsx(
+              "font-normal !text-gray-500 !rounded-none",
+              selectedTab == 1 &&
+                "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800"
+            )}
             onClick={() => setSelectedTab(1)}
           />
           <Button
             variant="normal"
             text="Completed"
-            className={clsx("font-normal !text-gray-500 !rounded-none", selectedTab == 2 && "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800")}
+            className={clsx(
+              "font-normal !text-gray-500 !rounded-none",
+              selectedTab == 2 &&
+                "border-b-[3px] border-b-primaryActive !font-semibold !text-gray-800"
+            )}
             onClick={() => setSelectedTab(2)}
           />
         </div>
@@ -187,37 +246,56 @@ export default function FormQuotation() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Form Code", value: "formCode" },
+                { label: "Service Type", value: "serviceType" },
+                { label: "Shipping Name", value: "shippingName" },
+                { label: "Route", value: "route" },
+                { label: "Address", value: "address" },
+                { label: "Via Port", value: "viaPort" },
+                { label: "Cont. Type", value: "contType" },
+                { label: "Cont. Size", value: "contSize" },
+                { label: "Tracking Asal", value: "trackingAsal" },
+                { label: "Tracking Tujuan", value: "trackingTujuan" },
+                { label: "Shipping", value: "shipping" },
+                { label: "Other", value: "other" },
+                { label: "Summary", value: "summary" },
+                { label: "HPP", value: "hpp" },
+                { label: "Description", value: "description" },
+              ]}
+              onChange={() => {}}
+              isSearchable
+              isMulti
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
-        {selectedTab == 0 && <QuotationTable/>}
-        {selectedTab == 1 && <ConfirmTable/>}
-        {selectedTab == 2 && <CompletedTable/>}
+        {selectedTab == 0 && <QuotationTable />}
+        {selectedTab == 1 && <ConfirmTable />}
+        {selectedTab == 2 && <CompletedTable />}
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>

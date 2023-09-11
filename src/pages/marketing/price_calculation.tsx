@@ -6,7 +6,6 @@ import FormLayout from "@/components/Layouts/FormLayout";
 import Select from "@/components/Elements/Select";
 import useHeader from "@/stores/header";
 
-
 export default function PriceCalculation() {
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
@@ -26,28 +25,32 @@ export default function PriceCalculation() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Service Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Service Type" />
                   <Select
-                    placeholder="Choose "
-                    options={["Main COA", "Sub COA1", "Sub COA2"]}
-                    value={0}
+                    className="basis-3/5"
+                    placeholder="Choose Service Type"
+                    options={[
+                      { label: "Main COA", value: "main" },
+                      { label: "Sub COA1", value: "sub1" },
+                      { label: "Sub COA2", value: "sub2" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Form Number" className="w-[35%]" />
-                  <InputText placeholder="" disabled className="w-full" />
+                  <Label className="basis-2/5" name="Form Number" />
+                  <InputText className="basis-3/5" placeholder="" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Create Date" className="w-[35%]" />
-                  <InputText placeholder="" disabled className="w-full" />
+                  <Label className="basis-2/5" name="Create Date" />
+                  <InputText className="basis-3/5" placeholder="" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
@@ -62,37 +65,45 @@ export default function PriceCalculation() {
             <div className="flex flex-col gap-1">
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Service Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Service Type" />
                   <Select
-                    placeholder="Choose "
-                    options={["Main COA", "Sub COA1", "Sub COA2"]}
-                    value={0}
+                    className="basis-3/5"
+                    placeholder="Choose Service Type"
+                    options={[
+                      { label: "Main COA", value: "main" },
+                      { label: "Sub COA1", value: "sub1" },
+                      { label: "Sub COA2", value: "sub2" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Service Type" className="w-[35%]" />
+                  <Label className="basis-2/5" name="Service Type" />
                   <Select
-                    placeholder="Choose "
-                    options={["Main COA", "Sub COA1", "Sub COA2"]}
-                    value={0}
+                    className="basis-3/5"
+                    placeholder="Choose Service Type"
+                    options={[
+                      { label: "Main COA", value: "main" },
+                      { label: "Sub COA1", value: "sub1" },
+                      { label: "Sub COA2", value: "sub2" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Form Number" className="w-[35%]" />
-                  <InputText placeholder="" disabled className="w-full" />
+                  <Label className="basis-2/5" name="Form Number" />
+                  <InputText className="basis-3/5" placeholder="" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Create Date" className="w-[35%]" />
-                  <InputText placeholder="" disabled className="w-full" />
+                  <Label className="basis-2/5" name="Create Date" />
+                  <InputText className="basis-3/5" placeholder="" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>

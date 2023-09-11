@@ -22,16 +22,15 @@ import {
 
 export function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+    <Modal title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
           <Select
-            placeholder="Choose city"
-            options={["Excel", "Tangerang", "Solo"]}
-            value={1}
-            onChange={() => {}}
             className="basis-2/3"
+            placeholder="Choose city"
+            options={[{ label: "Excel", value: "excel" }]}
+            onChange={() => {}}
           />
         </div>
       </form>
@@ -95,30 +94,48 @@ export default function PriceVendor() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Effective Date", value: "effectiveDate" },
+                { label: "Vendor Name", value: "vendorName" },
+                { label: "Route", value: "route" },
+                { label: "Container Size", value: "containerSize" },
+                { label: "Via Port", value: "viaPort" },
+                { label: "Tracking", value: "tracking" },
+                { label: "Buruh", value: "buruh" },
+                { label: "THC OPT", value: "thcOpt" },
+                { label: "THC OPP", value: "thcOpp" },
+                { label: "BL Admin", value: "blAdmin" },
+                { label: "Cleaning Cont.", value: "cleaningCont" },
+                { label: "Materai", value: "materai" },
+                { label: "Grand Total", value: "grandTotal" },
+              ]}
               onChange={() => {}}
-              multi={true}
+              isMulti
+              isSearchable
             />
             <Select
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

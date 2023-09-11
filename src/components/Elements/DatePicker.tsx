@@ -1,64 +1,62 @@
 import React from "react";
 import clsx from "clsx";
+import { Calendar as CalendarIcon } from "react-bootstrap-icons";
 import moment from "moment";
-import ReactDatePicker from "react-datepicker";
-import id from "date-fns/locale/id";
-import "react-datepicker/dist/react-datepicker.css";
-import { Calendar } from "react-bootstrap-icons";
 
-type DatePickerProps = {
-  className?: string;
-  placeholder?: string;
-};
-
-type DatePickerInputProps = DatePickerProps & {
-  value: Date;
-  setValue: (newValue: Date) => void;
-  onClick?: () => void;
-};
-
-const DatePickerInput = React.forwardRef<
-  HTMLInputElement,
-  DatePickerInputProps
->(({ placeholder = "Choose date", ...props }, ref) => {
-  return (
-    <div
-      className={clsx(
-        "px-3 py-1.5 border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center gap-2",
-        props.className
-      )}
-      onClick={props.onClick}
-    >
-      <input
-        ref={ref}
-        placeholder={placeholder}
-        className="outline-none"
-        readOnly={true}
-        value={moment(props.value).format("DD/MM/YYYY")}
-      />
-      <Calendar className=""/>
-    </div>
-  );
-});
+type DatePickerProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type"
+>;
 
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-  (props, ref) => {
-    const [value, setValue] = React.useState(new Date());
+  ({ className, ...props }, ref) => {
+    const [inputValue, setInputValue] = React.useState(new Date());
+
+    const inputDateRef = React.useRef<HTMLInputElement>(null);
+    const [calendarVisibility, setCalendarVisibility] = React.useState(false);
+
+    React.useEffect(() => {
+      if (!inputDateRef.current) {
+        return;
+      }
+
+      if (calendarVisibility) {
+        inputDateRef.current.showPicker();
+      }
+    }, [calendarVisibility]);
 
     return (
-      <ReactDatePicker
-        locale={id}
-        selected={value}
-        onChange={(newValue) => setValue(newValue ?? new Date())}
-        customInput={
-          <DatePickerInput
+      <>
+        <div
+          className={clsx(
+            "px-3 py-1.5 2xl:px-4 2xl:py-2 border-[1.5px] bg-white text-gray-700 border-gray-300 rounded-lg overflow-hidden flex items-center gap-[9px] 2xl:gap-3",
+            props.disabled && "bg-gray-100",
+            className
+          )}
+          onClick={() => setCalendarVisibility(!calendarVisibility)}
+        >
+          <input
             ref={ref}
+            type="text"
+            className="cursor-default overflow-auto grow bg-inherit outline-none border-none"
+            value={moment(inputValue).format("DD/MM/YYYY")}
+            readOnly
             {...props}
-            value={value}
-            setValue={setValue}
           />
-        }
-      />
+          <span className="ml-auto">
+            <CalendarIcon />
+          </span>
+          <input
+            ref={inputDateRef}
+            type="date"
+            className="invisible absolute"
+            onChange={(e) => {
+              setInputValue(e.target.valueAsDate ?? new Date());
+              setCalendarVisibility(false);
+            }}
+          />
+        </div>
+      </>
     );
   }
 );

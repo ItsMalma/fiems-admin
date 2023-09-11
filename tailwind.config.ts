@@ -1,15 +1,12 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    fontSize: {
-        'base': '13px',
-    },
     extend: {
       colors: {
         primary: "#266BAC",
@@ -25,10 +22,10 @@ const config: Config = {
         solitudeActive: "#FFF",
 
         statusActive: "#37E549",
-        statusInactive: "#F50D0D"
-      }      
+        statusInactive: "#F50D0D",
+      },
     },
   },
   plugins: [],
-}
-export default config
+};
+export default config;

@@ -21,18 +21,17 @@ import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
 import Upload from "@/components/Elements/Upload";
 
-export function Export() {
+function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+    <Modal title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
           <Select
+            className="basis-3/5"
             placeholder="Choose city"
-            options={["Excel", "Tangerang", "Solo"]}
-            value={1}
+            options={[{ label: "Excel", value: "excel" }]}
             onChange={() => {}}
-            className="basis-2/3"
           />
         </div>
       </form>
@@ -40,19 +39,18 @@ export function Export() {
   );
 }
 
-export function Import() {
+function Import() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+    <Modal title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
             <Label name="File Type" />
             <Select
-              placeholder="Choose file type"
-              options={["Excel", "Tangerang", "Solo"]}
-              value={1}
-              onChange={() => {}}
               className="basis-2/3"
+              placeholder="Choose file type"
+              options={[{ label: "Excel", value: "excel" }]}
+              onChange={() => {}}
             />
           </div>
           <div className="flex gap-6 items-center justify-between">
@@ -122,30 +120,46 @@ export default function MasterUangJalan() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Customer Name", value: "customerName" },
+                { label: "Route", value: "route" },
+                { label: "Truck Type", value: "truckType" },
+                { label: "Container Size", value: "containerSize" },
+                { label: "BBM", value: "bbm" },
+                { label: "Toll", value: "toll" },
+                { label: "Buruh", value: "buruh" },
+                { label: "Meal", value: "meal" },
+                { label: "Etc.", value: "etc" },
+                { label: "Grand Total", value: "grandTotal" },
+                { label: "Description", value: "description" },
+              ]}
               onChange={() => {}}
-              multi={true}
+              isSearchable
+              isMulti
             />
             <Select
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>

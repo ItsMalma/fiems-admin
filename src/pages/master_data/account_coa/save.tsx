@@ -23,13 +23,17 @@ export default function COASave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="COA Type" className="w-[35%]" />
+                  <Label name="COA Type" className="w-2/5" />
                   <Select
+                    className="w-3/5"
                     placeholder="Choose COA type"
-                    options={["Main COA", "Sub COA1", "Sub COA2"]}
-                    value={0}
+                    options={[
+                      { label: "Main COA", value: "main" },
+                      { label: "Sub COA1", value: "sub1" },
+                      { label: "Sub COA2", value: "sub2" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
@@ -37,55 +41,58 @@ export default function COASave() {
               <hr></hr>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Create Date" className="w-[35%]" />
-                  <InputText placeholder="" className="w-full" disabled />
+                  <Label name="Create Date" className="w-2/5" />
+                  <InputText placeholder="" className="w-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Category" className="w-[35%]" />
+                  <Label name="Category" className="w-2/5" />
                   <InputText
                     placeholder="Enter account category"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Account Number" className="w-[35%]" />
-                  <InputText placeholder="" className="w-full" disabled />
+                  <Label name="Account Number" className="w-2/5" />
+                  <InputText placeholder="" className="w-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Transaction" className="w-[35%]" />
+                  <Label name="Transaction" className="w-2/5" />
                   <InputText
                     placeholder="Enter via transaction"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Account Name" className="w-[35%]" />
+                  <Label name="Account Name" className="w-2/5" />
                   <InputText
                     placeholder="Enter account name"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Currency" className="w-[35%]" />
+                  <Label name="Currency" className="w-2/5" />
                   <Select
+                    className="w-3/5"
                     placeholder="Choose currency"
-                    options={["IDR", "Sub COA1", "Sub COA2"]}
-                    value={0}
+                    options={[
+                      { label: "IDR", value: "idr" },
+                      { label: "USD", value: "usd" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Account Type" className="w-[35%]" />
+                  <Label name="Account Type" className="w-2/5" />
                   <InputText
                     placeholder="Enter account type"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
@@ -96,14 +103,14 @@ export default function COASave() {
                   <h1 className="font-bold text-2xl">Sub Account</h1>
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                      <Label name="Sub Acc. 1" className="w-[35%]" />
-                      <InputText placeholder="" className="w-full" disabled />
+                      <Label name="Sub Acc. 1" className="w-2/5" />
+                      <InputText placeholder="" className="w-3/5" disabled />
                     </div>
                     <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                      <Label name="Description" className="w-[35%]" />
+                      <Label name="Description" className="w-2/5" />
                       <InputText
                         placeholder="Enter account description"
-                        className="w-full"
+                        className="w-3/5"
                       />
                     </div>
                   </div>
@@ -114,27 +121,31 @@ export default function COASave() {
                   <h1 className="font-bold text-2xl">Sub Account</h1>
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                      <Label name="Sub Acc. 1" className="w-[35%]" />
+                      <Label name="Sub Acc. 1" className="w-2/5" />
                       <Select
+                        className="w-3/5"
                         placeholder="Choose sub account"
-                        options={["sub1", "sub2", "sub3"]}
-                        value={0}
+                        options={[
+                          { label: "Sub 1", value: "sub1" },
+                          { label: "Sub 2", value: "sub2" },
+                          { label: "Sub 3", value: "sub3" },
+                        ]}
                         onChange={() => {}}
-                        className="w-full"
+                        isSearchable
                       />
                     </div>
                     <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
                   </div>
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                      <Label name="Sub Acc. 2" className="w-[35%]" />
-                      <InputText placeholder="" className="w-full" disabled />
+                      <Label name="Sub Acc. 2" className="w-2/5" />
+                      <InputText placeholder="" className="w-3/5" disabled />
                     </div>
                     <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                      <Label name="Description" className="w-[35%]" />
+                      <Label name="Description" className="w-2/5" />
                       <InputText
                         placeholder="Enter account description"
-                        className="w-full"
+                        className="w-3/5"
                       />
                     </div>
                   </div>

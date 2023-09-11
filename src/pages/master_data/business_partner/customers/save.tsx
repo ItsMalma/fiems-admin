@@ -22,13 +22,17 @@ export default function CustomerSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer Type" className="w-[35%]" />
+                  <Label className="w-2/5" name="Customer Type" />
                   <Select
+                    className="w-3/5"
                     placeholder="Choose customer type"
-                    options={["Factory", "Vendor", "Shipping"]}
-                    value={0}
+                    options={[
+                      { label: "Factory", value: "factory" },
+                      { label: "Vendor", value: "vendor" },
+                      { label: "Shipping", value: "shipping" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
@@ -36,82 +40,86 @@ export default function CustomerSave() {
               <hr></hr>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Factory Name" className="w-[35%]" />
+                  <Label className="w-2/5" name="Factory Name" />
                   <InputText
+                    className="w-3/5"
                     placeholder="Enter factory name"
-                    className="w-full"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Country" className="w-[35%]" />
+                  <Label className="w-2/5" name="Country" />
                   <Select
+                    className="w-3/5"
                     placeholder="Choose country"
-                    options={["Bekasi", "Venus", "Bandung"]}
-                    value={0}
+                    options={[
+                      { label: "Indonesia", value: "id" },
+                      { label: "United States", value: "us" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Factory Group" className="w-[35%]" />
+                  <Label className="w-2/5" name="Factory Group" />
                   <InputText
                     placeholder="Enter factory group"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Telephone" className="w-[35%]" />
+                  <Label className="w-2/5" name="Telephone" />
                   <InputText
                     placeholder="Enter telephone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Address" className="w-[35%]" />
-                  <InputText placeholder="Enter address" className="w-full" />
+                  <Label className="w-2/5" name="Address" />
+                  <InputText className="w-3/5" placeholder="Enter address" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Fax" className="w-[35%]" />
-                  <InputText
-                    placeholder="Enter fax number"
-                    className="w-full"
-                  />
+                  <Label className="w-2/5" name="Fax" />
+                  <InputText className="w-3/5" placeholder="Enter fax number" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="w-[35%]" />
-                  <InputText placeholder="Enter city" className="w-full" />
+                  <Label className="w-2/5" name="City" />
+                  <InputText className="w-3/5" placeholder="Enter city" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Email" className="w-[35%]" />
-                  <InputText placeholder="Enter email" className="w-full" />
+                  <Label name="Email" className="w-2/5" />
+                  <InputText className="w-3/5" placeholder="Enter email" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Province" className="w-[35%]" />
-                  <InputText placeholder="Enter province" className="w-full" />
+                  <Label className="w-2/5" name="Province" />
+                  <InputText className="w-3/5" placeholder="Enter province" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="TOP" className="w-[35%]" />
-                  <InputText placeholder="Enter TOP" className="w-full" />
+                  <Label className="w-2/5" name="TOP" />
+                  <InputText className="w-3/5" placeholder="Enter TOP" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center justify-end">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Currency" className="w-[35%]" />
+                  <Label className="w-2/5" name="Currency" />
                   <Select
+                    className="w-3/5"
                     placeholder="Choose currency"
-                    options={["IDR", "USD", "MYR"]}
-                    value={0}
+                    options={[
+                      { label: "IDR", value: "idr" },
+                      { label: "USD", value: "usd" },
+                      { label: "MYR", value: "myr" },
+                    ]}
                     onChange={() => {}}
-                    className="w-full"
+                    isSearchable
                   />
                 </div>
               </div>
@@ -124,137 +132,134 @@ export default function CustomerSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">Purchasing</h1>
+                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">
+                    Purchasing
+                  </h1>
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">Operation</h1>
+                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">
+                    Operation
+                  </h1>
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Purchasing" className="w-[35%]" />
+                  <Label className="w-2/5" name="Purchasing" />
                   <InputText
                     placeholder="Enter purchasing name"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Operation" className="w-[35%]" />
+                  <Label className="w-2/5" name="Operation" />
                   <InputText
                     placeholder="Enter operation name"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Email" className="w-[35%]" />
-                  <InputText placeholder="Enter email" className="w-full" />
+                  <Label className="w-2/5" name="Email" />
+                  <InputText className="w-3/5" placeholder="Enter email" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Email" className="w-[35%]" />
-                  <InputText placeholder="Enter email" className="w-full" />
+                  <Label className="w-2/5" name="Email" />
+                  <InputText className="w-3/5" placeholder="Enter email" />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Phone Number" className="w-[35%]" />
+                  <Label className="w-2/5" name="Phone Number" />
                   <InputText
                     placeholder="Enter phone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Phone Number" className="w-[35%]" />
+                  <Label className="w-2/5" name="Phone Number" />
                   <InputText
                     placeholder="Enter phone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Telephone" className="w-[35%]" />
+                  <Label className="w-2/5" name="Telephone" />
                   <InputText
                     placeholder="Enter telephone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Telephone" className="w-[35%]" />
+                  <Label className="w-2/5" name="Telephone" />
                   <InputText
                     placeholder="Enter telephone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Fax" className="w-[35%]" />
-                  <InputText
-                    placeholder="Enter fax number"
-                    className="w-full"
-                  />
+                  <Label className="w-2/5" name="Fax" />
+                  <InputText className="w-3/5" placeholder="Enter fax number" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Fax" className="w-[35%]" />
-                  <InputText
-                    placeholder="Enter fax number"
-                    className="w-full"
-                  />
+                  <Label className="w-2/5" name="Fax" />
+                  <InputText className="w-3/5" placeholder="Enter fax number" />
                 </div>
               </div>
               <hr></hr>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">Finance</h1>
+                  <h1 className="text-gray-800 font-bold text-2xl mb-1.5">
+                    Finance
+                  </h1>
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Finance" className="w-[35%]" />
+                  <Label className="w-2/5" name="Finance" />
                   <InputText
                     placeholder="Enter finance name"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Email" className="w-[35%]" />
-                  <InputText placeholder="Enter email" className="w-full" />
+                  <Label className="w-2/5" name="Email" />
+                  <InputText className="w-3/5" placeholder="Enter email" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Phone Number" className="w-[35%]" />
+                  <Label className="w-2/5" name="Phone Number" />
                   <InputText
                     placeholder="Enter phone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Telephone" className="w-[35%]" />
+                  <Label className="w-2/5" name="Telephone" />
                   <InputText
                     placeholder="Enter telephone number"
-                    className="w-full"
+                    className="w-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Fax" className="w-[35%]" />
-                  <InputText
-                    placeholder="Enter fax number"
-                    className="w-full"
-                  />
+                  <Label className="w-2/5" name="Fax" />
+                  <InputText className="w-3/5" placeholder="Enter fax number" />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
