@@ -22,12 +22,7 @@ import {
 
 function Save() {
   return (
-    <Modal
-      className="w-2/5"
-      title="Add New Customer Group"
-      type="save"
-      onDone={() => {}}
-    >
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
@@ -42,9 +37,13 @@ function Save() {
             <Label name="City" />
             <Select
               placeholder="Choose city"
-              options={["Jakarta", "Tangerang", "Solo"]}
-              value={0}
+              options={[
+                { label: "Jakarta", value: 0 },
+                { label: "Tangerang", value: 1 },
+                { label: "Solo", value: 2 },
+              ]}
               onChange={() => {}}
+              isSearchable
               className="basis-2/3"
             />
           </div>
@@ -52,9 +51,13 @@ function Save() {
             <Label name="Province" />
             <Select
               placeholder="Choose province"
-              options={["Jawa Barat", "DKI Jakarta", "Banten"]}
-              value={0}
+              options={[
+                { label: "Jawa Barat", value: 0 },
+                { label: "Jakarta", value: 1 },
+                { label: "Banten", value: 2 },
+              ]}
               onChange={() => {}}
+              isSearchable
               className="basis-2/3"
             />
           </div>
@@ -70,15 +73,15 @@ function Save() {
 
 export function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+    <Modal title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
           <Select
             placeholder="Choose file type"
-            options={["Excel", "Tangerang", "Solo"]}
-            value={1}
+            options={[{ label: "Excel", value: "excel" }]}
             onChange={() => {}}
+            isSearchable
             className="basis-2/3"
           />
         </div>
@@ -142,30 +145,38 @@ export default function MasterPort() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Port Code", value: "portCode" },
+                { label: "Province", value: "province" },
+                { label: "City", value: "city" },
+              ]}
               onChange={() => {}}
-              multi={true}
+              isSearchable
+              isMulti
             />
             <Select
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -179,7 +190,7 @@ export default function MasterPort() {
             { type: "text", name: "Port Name" },
           ]}
           records={[
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name",],
+            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
           ]}
         />
         <div className="flex mt-auto">

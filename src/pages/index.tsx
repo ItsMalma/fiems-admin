@@ -1,7 +1,6 @@
-import MainLayout from "@/components/Layouts/MainLayout";
+import React from "react";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
-import React from "react";
 
 export default function Dashboard() {
   const { setTitle } = useHeader();
@@ -12,5 +11,7 @@ export default function Dashboard() {
     setActive(0, 0, 0);
   }, []);
 
-  return <div className="flex-grow"></div>;
+  return (
+    <div className="flex-grow flex flex-col bg-white rounded-[10px] p-4 shadow"></div>
+  );
 }

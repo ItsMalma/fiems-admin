@@ -1,17 +1,12 @@
 import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
   Pencil,
@@ -24,7 +19,6 @@ import { useRouter } from "next/router";
 export default function InquiryContainer() {
   const router = useRouter();
   const { setActive } = useMenu();
-  const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
@@ -76,31 +70,50 @@ export default function InquiryContainer() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Job Order Num.", value: "jobOrderNum" },
+                { label: "RO Num.", value: "roNum" },
+                { label: "Consignee", value: "consignee" },
+                { label: "Address", value: "address" },
+                { label: "Email", value: "email" },
+                { label: "Telephone", value: "telephone" },
+                { label: "Phone Number", value: "phoneNumber" },
+                { label: "Stuffing Date", value: "stuffingDate" },
+                { label: "Tracking Name", value: "trackingName" },
+                { label: "Route", value: "route" },
+                { label: "Truck Num.", value: "truckNum" },
+                { label: "Truck Type", value: "truckType" },
+                { label: "Driver", value: "driver" },
+                { label: "Phone Number", value: "phoneNumber" },
+                { label: "Cont. Number", value: "contNumber" },
+                { label: "Seal Number", value: "sealNumber" },
+              ]}
+              onChange={() => {}}
+              isMulti
+              isSearchable
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -110,11 +123,11 @@ export default function InquiryContainer() {
             { type: "link", name: "Job Order Num.", isSortable: true },
             { type: "link", name: "RO Num.", isSortable: true },
             { type: "text", name: "Consignee", isSortable: true },
-            { type: "text", name: "Address", isSortable: true},
-            { type: "text", name: "Email", isSortable: true},
-            { type: "text", name: "Telephone", isSortable: true},
-            { type: "text", name: "Phone Number", isSortable: true},
-            { type: "date", name: "Stuffing Date", isSortable: true},
+            { type: "text", name: "Address", isSortable: true },
+            { type: "text", name: "Email", isSortable: true },
+            { type: "text", name: "Telephone", isSortable: true },
+            { type: "text", name: "Phone Number", isSortable: true },
+            { type: "date", name: "Stuffing Date", isSortable: true },
             { type: "text", name: "Tracking Name", isSortable: true },
             { type: "text", name: "Route", isSortable: true },
             { type: "text", name: "Truck Num.", isSortable: true },
@@ -123,11 +136,29 @@ export default function InquiryContainer() {
             { type: "text", name: "Phone Number", isSortable: true },
             { type: "text", name: "Cont. Number", isSortable: true },
             { type: "text", name: "Seal Number", isSortable: true },
-            { type: "text", name: "Cont. Number", isSortable: true },
-            { type: "text", name: "Seal Number", isSortable: true },
           ]}
           records={[
-            [false, "JO00001", "90122", "Consignee", "Address", "Email", "Telephone", "Phone Number", new Date(), "Tracking", "Route", "Truck Num", "Truck Type", "Driver Name", "Driver Phone Num.", "Cont. Num", "Seal Num.", "Cont. Num", "Seal Num.",]
+            [
+              false,
+              "JO00001",
+              "90122",
+              "Consignee",
+              "Address",
+              "Email",
+              "Telephone",
+              "Phone Number",
+              new Date(),
+              "Tracking",
+              "Route",
+              "Truck Num",
+              "Truck Type",
+              "Driver Name",
+              "Driver Phone Num.",
+              "Cont. Num",
+              "Seal Num.",
+              "Cont. Num",
+              "Seal Num.",
+            ],
           ]}
         />
         <div className="flex mt-auto">

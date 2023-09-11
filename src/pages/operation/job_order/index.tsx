@@ -1,15 +1,11 @@
 import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
@@ -24,7 +20,6 @@ import { useRouter } from "next/router";
 export default function InquiryContainer() {
   const router = useRouter();
   const { setActive } = useMenu();
-  const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
@@ -70,31 +65,59 @@ export default function InquiryContainer() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Inquiry Date", value: "inquiryDate" },
+                { label: "Inquiry Number", value: "inquiryNumber" },
+                { label: "Sales Name", value: "salesName" },
+                { label: "Customer", value: "customer" },
+                { label: "Customer Group", value: "customerGroup" },
+                { label: "Customer Address", value: "customerAddress" },
+                { label: "Purchase", value: "purchase" },
+                { label: "Purchase Address", value: "purchaseAddress" },
+                { label: "Job Order Type", value: "jobOrderType" },
+                { label: "Order Type", value: "orderType" },
+                { label: "Customer To", value: "customerTo" },
+                { label: "City", value: "city" },
+                { label: "Route", value: "route" },
+                { label: "Service Type", value: "serviceType" },
+                { label: "Cont. Type", value: "contType" },
+                { label: "Cont. Size", value: "contSize" },
+                { label: "PPN", value: "ppn" },
+                { label: "Insurance", value: "insurance" },
+                { label: "PPFTZ", value: "ppftz" },
+                { label: "Shipping", value: "shipping" },
+                { label: "Vessel Name", value: "vesselName" },
+                { label: "Voyage", value: "voyage" },
+                { label: "ETD", value: "etd" },
+                { label: "ETA", value: "eta" },
+                { label: "Action", value: "action" },
+              ]}
+              onChange={() => {}}
+              isMulti
+              isSearchable
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -104,11 +127,11 @@ export default function InquiryContainer() {
             { type: "date", name: "Inquiry Date", isSortable: true },
             { type: "link", name: "Inquiry Number", isSortable: true },
             { type: "text", name: "Sales Name", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true},
-            { type: "text", name: "Customer Group", isSortable: true},
-            { type: "text", name: "Customer Address", isSortable: true},
-            { type: "text", name: "Purchase", isSortable: true},
-            { type: "text", name: "Purchase Address", isSortable: true},
+            { type: "text", name: "Customer", isSortable: true },
+            { type: "text", name: "Customer Group", isSortable: true },
+            { type: "text", name: "Customer Address", isSortable: true },
+            { type: "text", name: "Purchase", isSortable: true },
+            { type: "text", name: "Purchase Address", isSortable: true },
             { type: "text", name: "Job Order Type", isSortable: true },
             { type: "text", name: "Order Type", isSortable: true },
             { type: "text", name: "Customer To", isSortable: true },
@@ -128,13 +151,38 @@ export default function InquiryContainer() {
             { type: "tool", name: "Action" },
           ]}
           records={[
-            [false, new Date(), "REQ00001", "Hadi Ahmad Akbar", "Customer Name", "Customer Address", "Customer Group", "Purchase Name", "Purchase Address", "J.O Type", "Order Type", "Customer To", "City", "Route", "Service Type", "Container Type", "Container Size", "PPN", "Insurance", "PPFTZ", "Shipping", "Vessel Name", "Voyage", "", "", 
+            [
+              false,
+              new Date(),
+              "REQ00001",
+              "Hadi Ahmad Akbar",
+              "Customer Name",
+              "Customer Address",
+              "Customer Group",
+              "Purchase Name",
+              "Purchase Address",
+              "J.O Type",
+              "Order Type",
+              "Customer To",
+              "City",
+              "Route",
+              "Service Type",
+              "Container Type",
+              "Container Size",
+              "PPN",
+              "Insurance",
+              "PPFTZ",
+              "Shipping",
+              "Vessel Name",
+              "Voyage",
+              "",
+              "",
               <Button
                 text="Confirm"
                 variant="filled"
                 onClick={() => router.push("/operation/job_order/confirm")}
-              />
-            ]
+              />,
+            ],
           ]}
         />
         <div className="flex mt-auto">

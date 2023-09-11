@@ -1,13 +1,15 @@
-import Button from "@/components/Elements/Button";
+import React from "react";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
+import { useRouter } from "next/router";
 import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
+import Modal from "@/components/Elements/Modal";
+import Label from "@/components/Elements/Label";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import useMenu from "@/stores/menu";
-import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
-import useHeader from "@/stores/header";
-import lodash from "lodash";
-import { useRouter } from "next/router";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
@@ -17,10 +19,7 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
-import useModal from "@/stores/modal";
+import lodash from "lodash";
 
 export function Export() {
   return (
@@ -30,7 +29,7 @@ export function Export() {
           <Label name="File Type" />
           <Select
             placeholder="Choose city"
-            options={["Excel", "Tangerang", "Solo"]}
+            options={[{ label: "Excel", value: "excel" }]}
             value={1}
             onChange={() => {}}
             className="basis-2/3"
@@ -42,16 +41,16 @@ export function Export() {
 }
 
 export default function Customers() {
-  const router = useRouter();
-  const { setModal } = useModal();
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
-  const [filter, setFilter] = React.useState<number[]>([]);
-
   React.useEffect(() => {
     setTitle("Master Data | Customers");
     setActive(1, 0, 1);
   }, []);
+
+  const { setModal } = useModal();
+
+  const router = useRouter();
 
   return (
     <>
@@ -100,49 +99,58 @@ export default function Customers() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className=""
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
+              options={[
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
+              ]}
               onChange={() => {}}
+              isSearchable
             />
             <Select
-              className="w-40"
-              icon={<Filter />}
+              icon={Filter}
               placeholder="Filter"
               options={[
-                "Create Date",
-                "Customer Type",
-                "Customer Code",
-                "Name",
-                "Group",
-                "Address",
-                "City",
-                "Country",
-                "Telephone",
-                "Fax",
-                "Email",
-                "Purchasing Information",
-                "Operation Information",
-                "Finance Information",
-                "Description Information",
+                { label: "Create Date", value: "createDate" },
+                { label: "Customer Type", value: "customerType" },
+                { label: "Customer Code", value: "customerCode" },
+                { label: "Name", value: "name" },
+                { label: "Group", value: "group" },
+                { label: "Address", value: "address" },
+                { label: "City", value: "city" },
+                { label: "Country", value: "country" },
+                { label: "Telephone", value: "telephone" },
+                { label: "Fax", value: "fax" },
+                { label: "Email", value: "email" },
+                {
+                  label: "Purchasing Information",
+                  value: "purchasingInformation",
+                },
+                {
+                  label: "Operation Information",
+                  value: "operationInformation",
+                },
+                { label: "Finance Information", value: "financeInformation" },
+                {
+                  label: "Description Information",
+                  value: "descriptionInformation",
+                },
               ]}
-              value={0}
-              onChange={(value) =>
-                setFilter(lodash.isArray(value) ? value : value ? [value] : [])
-              }
-              multi={true}
+              onChange={() => {}}
+              isSearchable
+              isMulti
             />
             <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -153,73 +161,61 @@ export default function Customers() {
               type: "date",
               name: "Create Date",
               isSortable: true,
-              isHide: !filter.includes(0),
             },
             {
               type: "text",
               name: "Customer Type",
               isSortable: true,
-              isHide: !filter.includes(1),
             },
             {
               type: "link",
               name: "Customer Code",
               isSortable: true,
-              isHide: !filter.includes(2),
             },
             {
               type: "text",
               name: "Name",
               isSortable: true,
-              isHide: !filter.includes(3),
             },
             {
               type: "text",
               name: "Group",
               isSortable: true,
-              isHide: !filter.includes(4),
             },
             {
               type: "text",
               name: "Address",
               isSortable: true,
-              isHide: !filter.includes(5),
             },
             {
               type: "text",
               name: "City",
               isSortable: true,
-              isHide: !filter.includes(6),
             },
             {
               type: "text",
               name: "Country",
               isSortable: true,
-              isHide: !filter.includes(7),
             },
             {
               type: "text",
               name: "Telephone",
               isSortable: true,
-              isHide: !filter.includes(8),
             },
             {
               type: "text",
               name: "Fax",
               isSortable: true,
-              isHide: !filter.includes(9),
             },
             {
               type: "text",
               name: "Email",
               isSortable: true,
-              isHide: !filter.includes(10),
             },
             {
               type: "group",
               name: "Purchasing",
               isSortable: true,
-              isHide: !filter.includes(11),
               fields: [
                 { type: "text", name: "Phone Number" },
                 { type: "text", name: "Telephone" },
@@ -231,7 +227,6 @@ export default function Customers() {
               type: "group",
               name: "Operation",
               isSortable: true,
-              isHide: !filter.includes(12),
               fields: [
                 { type: "text", name: "Phone Number" },
                 { type: "text", name: "Telephone" },
@@ -243,7 +238,6 @@ export default function Customers() {
               type: "group",
               name: "Finance",
               isSortable: true,
-              isHide: !filter.includes(13),
               fields: [
                 { type: "text", name: "Phone Number" },
                 { type: "text", name: "Telephone" },
@@ -254,107 +248,9 @@ export default function Customers() {
             {
               type: "text",
               name: "Description",
-              isHide: !filter.includes(14),
             },
           ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "Vendor",
-              "CVC00001",
-              "Customer Name",
-              "Customer Group",
-              "Customer Address No.55",
-              "Tangerang",
-              "Indonesia",
-              "Telephone Number",
-              "Fax Number",
-              "email@email.com",
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-            ],
-            [
-              false,
-              new Date(),
-              "Factory",
-              "CFC00001",
-              "Customer Name",
-              "Customer Group",
-              "Customer Address No.55",
-              "Tangerang",
-              "Indonesia",
-              "Telephone Number",
-              "Fax Number",
-              "email@email.com",
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-            ],
-            [
-              false,
-              new Date(),
-              "Shipping",
-              "CSC00001",
-              "Customer Name",
-              "Customer Group",
-              "Customer Address No.55",
-              "Tangerang",
-              "Indonesia",
-              "Telephone Number",
-              "Fax Number",
-              "email@email.com",
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-              [
-                "081234567890",
-                "Telephone Number",
-                "Fax Number",
-                "email@email.com",
-              ],
-            ],
-          ]}
+          records={[]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>

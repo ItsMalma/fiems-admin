@@ -106,31 +106,38 @@ export default function RequestReport() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Inquiry Code", value: "inquiryCode" },
+                { label: "Create Date", value: "createDate" },
+                { label: "Type", value: "type" },
+                { label: "Description", value: "description" },
+              ]}
+              onChange={() => {}}
+              isMulti
+              isSearchable
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -142,9 +149,7 @@ export default function RequestReport() {
             { type: "text", name: "Type", isSortable: true },
             { type: "text", name: "Description" },
           ]}
-          records={[
-            [false,  "REQ00001", new Date(), "SPAREPART",],
-          ]}
+          records={[[false, "REQ00001", new Date(), "SPAREPART"]]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>

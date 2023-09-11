@@ -1,15 +1,12 @@
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
+import React from "react";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import { useRouter } from "next/router";
 import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
-import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
-import useHeader from "@/stores/header";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
@@ -19,18 +16,17 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
-import { useRouter } from "next/router";
 
 export default function InquiryContainer() {
-  const router = useRouter();
   const { setActive } = useMenu();
-  const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
     setTitle("Marketing | Vessel Schedule");
     setActive(2, 3, 0);
   }, []);
+
+  const router = useRouter();
 
   return (
     <>
@@ -76,31 +72,51 @@ export default function InquiryContainer() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
-              icon={<Calendar />}
+              icon={Calendar}
               placeholder="Date Range"
-              options={["Today", "Yesterday", "Weeks Ago"]}
-              value={0}
-              onChange={() => {}}
-            />
-            <Select
-              className="w-36"
-              icon={<Filter />}
-              placeholder="Filter"
-              options={["Create", "Group Code", "Group Name", "Description"]}
-              value={0}
-              onChange={() => {}}
-              multi={true}
-            />
-            <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Today", value: "today" },
+                { label: "Yesterday", value: "yesterday" },
+                { label: "Weeks Ago", value: "weeksAgo" },
               ]}
-              value={0}
               onChange={() => {}}
+              isSearchable
+            />
+            <Select
+              icon={Filter}
+              placeholder="Filter"
+              options={[
+                { label: "Create Date", value: "createDate" },
+                { label: "Month", value: "month" },
+                { label: "Shipping Name", value: "shippingName" },
+                { label: "Vessel Name", value: "vesselName" },
+                { label: "Voyage", value: "voyage" },
+                { label: "Vessel Capacity", value: "vesselCapacity" },
+                { label: "Quota", value: "quota" },
+                { label: "Port Asal", value: "portOrigin" },
+                { label: "Port Tujuan", value: "portDestination" },
+                { label: "Open Stack Date", value: "openStackDate" },
+                { label: "Closing RC", value: "closingRc" },
+                { label: "RC Closing Time", value: "rcClosingTime" },
+                { label: "Closing Date", value: "closingDate" },
+                { label: "Vessel Closing Time", value: "vesselClosingTime" },
+                { label: "ETD", value: "etd" },
+                { label: "ETA", value: "eta" },
+                { label: "Description", value: "description" },
+              ]}
+              onChange={() => {}}
+              isSearchable
+              isMulti
+            />
+            <Select
+              options={[
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
+              ]}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -126,7 +142,25 @@ export default function InquiryContainer() {
             { type: "text", name: "Description" },
           ]}
           records={[
-            [false, new Date(), "Month", "Shipping", "Vessel", "Voyage", "Vessel Capacity", "Quota", "Port", "Port", new Date(), new Date(), "", new Date(), "", new Date(), new Date()],
+            [
+              false,
+              new Date(),
+              "Month",
+              "Shipping",
+              "Vessel",
+              "Voyage",
+              "Vessel Capacity",
+              "Quota",
+              "Port",
+              "Port",
+              new Date(),
+              new Date(),
+              "",
+              new Date(),
+              "",
+              new Date(),
+              new Date(),
+            ],
           ]}
         />
         <div className="flex mt-auto">

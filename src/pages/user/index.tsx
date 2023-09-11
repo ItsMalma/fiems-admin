@@ -10,18 +10,10 @@ import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
 import Label from "@/components/Elements/Label";
 import InputText from "@/components/Elements/InputText";
-import {
-  PersonFillAdd,
-  FileEarmarkArrowDownFill,
-  FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
-} from "react-bootstrap-icons";
+import { PersonFillAdd, Pencil, Trash } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 
-export function Save() {
+function Save() {
   return (
     <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
       <form>
@@ -96,14 +88,14 @@ export default function userManagement() {
           </div>
           <div className="flex gap-4 items-center">
             <Select
-              className="w-44"
               options={[
-                "Show 10 entries",
-                "Show 25 entries",
-                "Show 50 entries",
+                { label: "Show 10 entries", value: 10 },
+                { label: "Show 25 entries", value: 25 },
+                { label: "Show 50 entries", value: 50 },
               ]}
-              value={0}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
+              isSearchable
             />
           </div>
         </div>
@@ -115,17 +107,23 @@ export default function userManagement() {
             { type: "text", name: "Email", isSortable: true },
             { type: "text", name: "Position", isSortable: true },
             { type: "text", name: "Department", isSortable: true },
-            { type: "tool", name: "Action"},
+            { type: "tool", name: "Action" },
             { type: "text", name: "Description" },
           ]}
           records={[
-            [false, "0001", "gtap-dev", "gtap@gtap.com", "Dev", "Department", 
-            <Button
-              text="Access"
-              variant="filled"
-              onClick={() => router.push("/user/access")}
-            />
-          ],
+            [
+              false,
+              "0001",
+              "gtap-dev",
+              "gtap@gtap.com",
+              "Dev",
+              "Department",
+              <Button
+                text="Access"
+                variant="filled"
+                onClick={() => router.push("/user/access")}
+              />,
+            ],
           ]}
         />
         <div className="flex mt-auto">
