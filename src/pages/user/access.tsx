@@ -59,7 +59,7 @@ export default function userAccess() {
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <div className="flex gap-3 2xl:gap-4 items-center">
-          <Label className="text-2xl" name="User ID" />
+          <Label className="text-lg" name="User ID" />
           <InputText disabled />
         </div>
         <div className="flex gap-3 2xl:gap-4 items-center">
@@ -73,9 +73,9 @@ export default function userAccess() {
           <Button variant="filled" text="Save" icon={<Download />} />
         </div>
       </div>
-      <div className="flex flex-col text-2xl p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
+      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
         <form action="">
-          <table className="w-full rounded-t-xl text-2xl overflow-hidden whitespace-nowrap text-center">
+          <table className="w-full rounded-t-xl text-lg overflow-hidden whitespace-nowrap text-center">
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-3 text-gray-400">Form</th>
