@@ -4,13 +4,12 @@ import Label from "@/components/Elements/Label";
 import InputText from "@/components/Elements/InputText";
 import FormLayout from "@/components/Layouts/FormLayout";
 import Select from "@/components/Elements/Select";
-import TextArea from "@/components/Elements/TextArea";
 
-export default function PackingSave() {
+export default function VehicleSave() {
   const { setActive } = useMenu();
 
   React.useEffect(() => {
-    setActive(3, 3, 3);
+    setActive(3, 2, 0);
   }, []);
 
   return (
@@ -30,7 +29,7 @@ export default function PackingSave() {
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Insurance Ref. Num." className="basis-2/5" />
+                  <Label name="SPM Number" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
@@ -58,7 +57,7 @@ export default function PackingSave() {
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Consignee" className="basis-2/5" />
+                  <Label name="Customer To" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
               </div>
@@ -74,76 +73,61 @@ export default function PackingSave() {
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="basis-2/5" />
+                  <Label name="Stuffing Date" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Truck Number" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
+              </div>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Shipping Name" className="basis-2/5" />
+                  <Label name="Tracking Route" className="basis-2/5" />
+                  <InputText placeholder="" className="basis-3/5" disabled />
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <Label name="Truck Type" className="basis-2/5" />
                   <InputText className="basis-3/5" disabled />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <Label name="Tracking Name" className="basis-2/5" />
+                  <InputText placeholder="" className="basis-3/5" disabled />
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Cont. Number" className="basis-2/5" />
                   <div className="flex gap-3 basis-3/5 items-center">
-                    <InputText placeholder="" className="basis-1/5" disabled />
-                    <Label name="Seal" className=""/>
-                    <InputText placeholder="" className="basis-1/5" disabled />
+                    <InputText placeholder="" className="basis-3/5" disabled />
+                    <Label name="Seal" />
+                    <InputText placeholder="" className="basis-3/5" disabled />
                   </div>
                 </div>
+              </div>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Vessel Name" className="basis-2/5" />
+                  <Label name="Driver Name" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <Label name="Cont. Number" className="basis-2/5" />
+                  <div className="flex gap-3 basis-3/5 items-center">
+                    <InputText placeholder="" className="basis-3/5" disabled />
+                    <Label name="Seal" />
+                    <InputText placeholder="" className="basis-3/5" disabled />
+                  </div>
+                </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Voyage" className="basis-2/5" />
+                  <Label name="Phone Number" className="basis-2/5" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
-              </div>
-              <hr></hr>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Nilai Tertanggung" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Premi" className="basis-2/5" />
-                  <InputText placeholder="Enter premi" className="basis-3/5" />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Premi dibayarkan" className="basis-2/5" />
+                  <Label name="Uang Jalan" className="basis-2/5 font-bold" />
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 basis-1/2">
-                  <Label name="Keterangan" className="basis-2/5" />
-                  <TextArea
-                    placeholder="Enter keterangan"
-                    className="basis-3/5"
-                  />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
             </>
           ),

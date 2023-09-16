@@ -24,7 +24,7 @@ export default function CustomerGroup() {
 
   React.useEffect(() => {
     setTitle("Operational | Insurance");
-    setActive(3, 2, 4);
+    setActive(3, 5, 4);
   }, []);
 
   return (

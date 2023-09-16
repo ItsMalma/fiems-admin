@@ -1,9 +1,7 @@
 import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
-import useModal from "@/stores/modal";
 import useMenu from "@/stores/menu";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
@@ -19,14 +17,14 @@ import {
 } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 
-export default function CustomerGroup() {
+export default function ShippingInstruction() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Packing List");
-    setActive(3, 3, 3);
+    setTitle("Operational | Shipping Instruction");
+    setActive(3, 4, 0);
   }, []);
 
   return (
@@ -35,10 +33,10 @@ export default function CustomerGroup() {
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Packing List"
+            text="Add New SPM"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/operation/document/packing/save")}
+            onClick={() => router.push("/operation/document/si/save")}
           />
           <Button
             text="Import"
@@ -87,9 +85,13 @@ export default function CustomerGroup() {
               icon={Filter}
               placeholder="Filter"
               options={[
-                { label: "Packing Number", value: "packingNumber" },
-                { label: "Tujuan", value: "tujuan" },
-                { label: "Nama Kapal", value: "namaKapal" },
+                { label: "Create Date", value: "createDate" },
+                { label: "SPM Number", value: "spmNumber" },
+                { label: "JO. Number", value: "joNumber" },
+                { label: "Customer", value: "customer" },
+                { label: "Consignee", value: "consignee" },
+                { label: "Route", value: "route" },
+                { label: "Nilai", value: "nilai" },
                 { label: "Description", value: "description" },
               ]}
               onChange={() => {}}
@@ -111,12 +113,37 @@ export default function CustomerGroup() {
         <Table
           fields={[
             { type: "option" },
-            { type: "link", name: "Packing Number", isSortable: true },
-            { type: "text", name: "Tujuan", isSortable: true },
-            { type: "text", name: "Nama Kapal", isSortable: true },
+            { type: "date", name: "Create Date", isSortable: true },
+            { type: "link", name: "SPM Number", isSortable: true },
+            { type: "link", name: "JO. Number", isSortable: true },
+            { type: "text", name: "Customer", isSortable: true },
+            { type: "text", name: "Consignee", isSortable: true },
+            { type: "text", name: "Route", isSortable: true },
+            { type: "text", name: "Nilai", isSortable: true },
             { type: "text", name: "Description" },
           ]}
-          records={[[false, "PACK00001", "Tujuan", "Nama Kapal"]]}
+          records={[
+            [
+              false,
+              new Date(),
+              "SPM00001",
+              "JO00001",
+              "PT SUGIH JAYA LOGISTIC",
+              "PT INDOFOOD SUKSES MAKMUR",
+              "Marunda - Cibitung",
+              "825.000",
+            ],
+            [
+              false,
+              new Date(),
+              "SPM00002",
+              "JO00010",
+              "PT SUGIH JAYA LOGISTIC",
+              "PT INDOFOOD SUKSES MAKMUR",
+              "Marunda - Cibitung",
+              "825.000",
+            ],
+          ]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>
