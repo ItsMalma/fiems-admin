@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../Elements/Button";
 import clsx from "clsx";
 import { useRouter } from "next/router";
@@ -20,14 +20,14 @@ type FormLayoutProps = {
 export default function FormLayout(props: FormLayoutProps) {
   const router = useRouter();
   const [appends, setAppend] = React.useState<number[]>([0]);
-  const [appendForm, setAppendForm] = React.useState<number[]>([]);
+  const [appendForm, setAppendForm] = React.useState<number[]>([0]);
   const [tabActive, setTabActive] = React.useState(0);
   const [appendActive, setAppendActive] = React.useState(0);
-  let nomor = 0;
+  const [maxNumber, setMaxNumber] = React.useState<number>(0);
 
-  React.useEffect(() => {
-    setAppendForm([...appends]);
-  }, [appends]);
+  useEffect(() => {
+    setMaxNumber(Math.max(...appends));
+  }, [appends])
 
   return (
     <>
@@ -88,19 +88,26 @@ export default function FormLayout(props: FormLayoutProps) {
                               icon={
                                 <XCircle
                                   onClick={() =>
-                                    setAppend(
+                                    {setAppend(
                                       appends.filter(
                                         (append, appendIndex) =>
                                           appendIndex !== indexx
                                       )
+                                    );
+                                    setAppendForm(
+                                      appendForm.filter(
+                                        (append, appendIndex) =>
+                                          appendIndex !== indexx
+                                      )
                                     )
+                                    }
                                   }
                                   className="text-red-600 ps-auto"
                                 />
                               }
                               iconPosition="right"
                               variant="normal"
-                              onClick={() => setAppendActive(indexx)}
+                              onClick={() => {if (appendForm[indexx] == indexx) {setAppendActive(indexx)} else {setAppendActive(indexx + maxNumber)}}}
                               className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
                             />
                           </>
@@ -111,7 +118,7 @@ export default function FormLayout(props: FormLayoutProps) {
                               type="button"
                               iconPosition="right"
                               variant="normal"
-                              onClick={() => setAppendActive(indexx)}
+                              onClick={() => {if (appendForm[indexx] == indexx) {setAppendActive(indexx)} else {setAppendActive(indexx + maxNumber)}}}
                               className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
                             />
                           </>
@@ -126,6 +133,7 @@ export default function FormLayout(props: FormLayoutProps) {
                       onClick={() => {
                         const maxNumber = Math.max(...appends);
                         setAppend([...appends, maxNumber + 1]);
+                        setAppendForm([...appendForm, maxNumber + 1]);
                       }}
                       className="text-center"
                     />
@@ -152,7 +160,7 @@ export default function FormLayout(props: FormLayoutProps) {
                         .map((index, indexx) => (
                           <div
                             key={index}
-                            className={clsx(appendActive !== index && "hidden")}
+                            className={clsx(appendForm[indexx] == indexx ? appendActive !== indexx && "hidden" : appendActive != indexx + maxNumber && "hidden" )}
                           >
                             {tab.component}
                           </div>
