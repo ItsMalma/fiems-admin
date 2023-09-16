@@ -30,7 +30,7 @@ export function Export() {
           <Select
             placeholder="Choose city"
             options={[{ label: "Excel", value: "excel" }]}
-            value={1}
+            defaultValue={1}
             onChange={() => {}}
             className="basis-2/3"
           />

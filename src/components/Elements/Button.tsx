@@ -29,7 +29,7 @@ export default function Button({
       onClick={() => props.onClick && props.onClick()}
     >
       {iconPosition === "left" && props.icon}
-      {iconPosition === "center" ? props.icon : (<p className="text-sm 2xl:text-base">{text}</p>)}
+      {iconPosition === "center" ? props.icon : <p>{text}</p>}
       {iconPosition === "right" && props.icon}
     </button>
   );
