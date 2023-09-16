@@ -19,6 +19,7 @@ import {
   Calendar,
   Filter,
 } from "react-bootstrap-icons";
+import PrintProvider from "@/components/Layouts/PrintProvider";
 
 export function Save() {
   return (
@@ -102,6 +103,8 @@ export default function MasterRoute() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
 
+  const [print, setPrint] = React.useState(false)
+
   React.useEffect(() => {
     setTitle("Master Data | Master Route");
     setActive(1, 1, 0);
@@ -128,6 +131,12 @@ export default function MasterRoute() {
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
             onClick={() => setModal(<Export />)}
+          />
+          <Button
+            text="Print"
+            icon={<FileEarmarkArrowUpFill />}
+            variant="outlined"
+            onClick={() => setPrint(true)}
           />
         </div>
       </div>
@@ -188,98 +197,98 @@ export default function MasterRoute() {
             />
           </div>
         </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Route Code", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "Description" },
-          ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-          ]}
-        />
+          <Table
+            fields={[
+              { type: "option" },
+              { type: "date", name: "Create Date", isSortable: true },
+              { type: "link", name: "Route Code", isSortable: true },
+              { type: "text", name: "City", isSortable: true },
+              { type: "text", name: "Province", isSortable: true },
+              { type: "text", name: "Description" },
+            ]}
+            records={[
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+              [
+                false,
+                new Date(),
+                "RC00001",
+                "Banten",
+                "Tangerang",
+                "Jakarta - Tangerang",
+              ],
+            ]}
+          />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>
         </div>

@@ -20,6 +20,7 @@ import {
   Filter,
 } from "react-bootstrap-icons";
 import lodash from "lodash";
+import PrintProvider from "@/components/Layouts/PrintProvider";
 
 export function Export() {
   return (
