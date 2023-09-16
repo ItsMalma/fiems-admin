@@ -15,8 +15,6 @@ type SelectProps = Omit<
 
   isSearchable?: boolean;
 
-  defaultValue?: SelectOption;
-
   /**
    * value untuk option yang di-create adalah `"custom"`
    */
@@ -29,12 +27,16 @@ type SelectProps = Omit<
     | {
         isMulti: true;
 
-        onChange: (option: SelectOption[]) => void;
+        defaultValue?: SelectOption[];
+
+        onChange: (options: any[]) => void;
       }
     | {
         isMulti?: false;
 
-        onChange: (options: SelectOption) => void;
+        defaultValue?: SelectOption;
+
+        onChange: (option: any) => void;
       }
   );
 
@@ -59,24 +61,27 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     React.useImperativeHandle(ref, () => inputRef.current!);
 
     // State untuk menyimpan nilai dari input text
-    const [inputValue, setInputValue] = React.useState<string>(
-      isMulti ? props.placeholder ?? "Select" : ""
-    );
+    const [inputValue, setInputValue] = React.useState<string>("");
+
+    const [expand, setExpand] = React.useState(false);
 
     const [actives, setActives] = React.useState<SelectOption[]>(
-      defaultValue ? [defaultValue] : []
+      isMulti ? defaultValue ?? [] : defaultValue ? [defaultValue] : []
     );
-    const [expand, setExpand] = React.useState(false);
     React.useEffect(() => {
-      if (!actives || actives.length < 1) {
+      if (isMulti) {
+        setInputValue("");
+        setOptionsDisplayed(options);
+      }
+
+      if (!actives || (!isMulti && actives.length < 1)) {
         return;
       }
 
       if (isMulti) {
-        onChange(actives);
-        setInputValue(props.placeholder ?? "Select");
+        onChange(actives.map((active) => active.value));
       } else {
-        onChange(actives[0]);
+        onChange(actives[0].value);
         setInputValue(actives[0].label);
       }
     }, [actives]);
@@ -102,7 +107,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
 
     const containerRef = React.useRef<HTMLDivElement>(null);
     React.useEffect(() => {
-      const handleClickOutside = (e: MouseEvent) => {
+      const handleMouseUp = (e: MouseEvent) => {
         if (
           containerRef.current &&
           !containerRef.current.contains(e.target as Node)
@@ -111,10 +116,10 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
         }
       };
 
-      document.addEventListener("click", handleClickOutside);
+      document.addEventListener("mouseup", handleMouseUp);
 
       return () => {
-        document.removeEventListener("click", handleClickOutside);
+        document.removeEventListener("mouseup", handleMouseUp);
       };
     }, [containerRef]);
 
@@ -126,11 +131,11 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
 
     return (
       <div
+        ref={containerRef}
         className={clsx("relative", className)}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          ref={containerRef}
           className="bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-[9px] 2xl:gap-3"
           onClick={() => {
             setExpand(!expand);
@@ -145,9 +150,9 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
             </span>
           )}
           <input
+            {...props}
             ref={inputRef}
             type="text"
-            {...props}
             className={clsx(
               "py-1.5 2xl:py-2 overflow-auto grow bg-inherit outline-none border-none",
               props.icon ? "" : "pl-[9px] 2xl:pl-3"
@@ -169,6 +174,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
               );
             }}
             readOnly={!isSearchable && !isCreatable}
+            placeholder={props.placeholder}
           />
           <span className="ml-auto pr-[9px] 2xl:pr-3">
             {expand ? <CaretUpFill /> : <CaretDownFill />}
