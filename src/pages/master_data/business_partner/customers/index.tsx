@@ -31,7 +31,7 @@ export function Export() {
           <Select
             placeholder="Choose city"
             options={[{ label: "Excel", value: "excel" }]}
-            defaultValue={1}
+            defaultValue={{label: "Excel", value: "excel"}}
             onChange={() => {}}
             className="basis-2/3"
           />
@@ -151,7 +151,6 @@ export default function Customers() {
               ]}
               defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
-              isSearchable
             />
           </div>
         </div>

@@ -23,12 +23,14 @@ import {
   InfoCircleFill,
   PersonGear,
   PersonFillGear,
+  Person,
+  PersonFill,
 } from "react-bootstrap-icons";
 import Menu from "./Menu";
 
 export default function Sider() {
   return (
-    <aside className="bg-primary pt-[18px] text-xl pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl 2xl:rounded-3xl basis-1/5 2xl:basis-1/6 sticky top-0 flex flex-col">
+    <aside className="bg-primary pt-[18px] text-lg pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl 2xl:rounded-3xl basis-1/5 2xl:basis-1/6 sticky top-0 flex flex-col">
       <Menu
         items={[
           {
@@ -180,6 +182,38 @@ export default function Sider() {
             ]
           },
           {
+            name: "HRD",
+            icon: Person,
+            activeIcon: PersonFill,
+            childrens: [
+              {
+                name: "Employee",
+                childrens: [
+                  {
+                    name: "Employee List",
+                    url: "/hrd/employee/list",
+                  },
+                  {
+                    name: "Attendance",
+                    url: "/hrd/employee/attendance"
+                  },
+                  {
+                    name: "Leave",
+                    url: "/hrd/employee/leave"
+                  },
+                ]
+              },
+              {
+                name: "Payroll",
+                url: "/marketing/quotation",
+              },
+              {
+                name: "Recruitment",
+                url: "/marketing/inquiry_container",
+              },
+            ]
+          },
+          {
             name: "User Management",
             icon: PersonGear,
             activeIcon: PersonFillGear,
@@ -199,7 +233,7 @@ export default function Sider() {
           />
           <div className="flex flex-col 2xl:gap-0.5">
             <p className="text-white font-semibold">Hadi Yusuf</p>
-            <p className="text-neutral-200 text-xs">Human Resource</p>
+            <p className="text-neutral-200 text-sm">Human Resource</p>
           </div>
         </div>
         <InfoCircleFill className="text-neutral-300 ml-auto cursor-pointer" />
