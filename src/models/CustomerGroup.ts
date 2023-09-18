@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 
-export interface CustomerGroups extends mongoose.Document {
+export type CustomerGroup = {
   name: string;
   description?: string;
   code: string;
   createDate: Date;
-}
+};
 
-const CustomerGroupSchema = new mongoose.Schema<CustomerGroups>(
+export type CustomerGroupDocument = CustomerGroup & mongoose.Document;
+
+const CustomerGroupSchema = new mongoose.Schema<CustomerGroupDocument>(
   {
     _id: {
       type: Number,
@@ -37,5 +39,5 @@ const CustomerGroupSchema = new mongoose.Schema<CustomerGroups>(
 );
 
 export default (mongoose.models
-  .CustomerGroup as mongoose.Model<CustomerGroups>) ||
-  mongoose.model<CustomerGroups>("CustomerGroup", CustomerGroupSchema);
+  .CustomerGroup as mongoose.Model<CustomerGroupDocument>) ||
+  mongoose.model<CustomerGroupDocument>("CustomerGroup", CustomerGroupSchema);

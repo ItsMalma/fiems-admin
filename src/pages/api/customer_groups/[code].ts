@@ -2,7 +2,7 @@ import { transformZodError } from "@/libs/error";
 import connect from "@/libs/mongodb";
 import CustomerGroup from "@/models/CustomerGroup";
 import { NextApiRequest, NextApiResponse } from "next";
-import { string, z } from "zod";
+import { z } from "zod";
 
 const codeSchema = z.object({
   code: z.string({
@@ -91,9 +91,9 @@ export default async function handler(
 
   switch (req.method) {
     case "PUT":
-      await update(parsedQuery.data.code, req, res);
+      return await update(parsedQuery.data.code, req, res);
     case "DELETE":
-      await remove(parsedQuery.data.code, req, res);
+      return await remove(parsedQuery.data.code, req, res);
     default:
       return res.status(405).json({
         error: "Method not allowed",

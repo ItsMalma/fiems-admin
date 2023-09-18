@@ -32,7 +32,7 @@ async function create(req: NextApiRequest, res: NextApiResponse) {
   customerGroup.name = parsedBody.data.name;
   customerGroup.description = parsedBody.data.description;
   customerGroup.code =
-    "CG" + ((await CustomerGroup.count()) + 1).toString().padStart(5, "0");
+    "CGC" + ((await CustomerGroup.count()) + 1).toString().padStart(5, "0");
 
   customerGroup = await customerGroup.save();
 
