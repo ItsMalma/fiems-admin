@@ -16,7 +16,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     const [calendarVisibility, setCalendarVisibility] = React.useState(false);
 
     React.useEffect(() => {
-      if (!inputDateRef.current) {
+      if (!inputDateRef.current || props.disabled || props.readOnly) {
         return;
       }
 
@@ -30,7 +30,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
         <div
           className={clsx(
             "px-3 py-1.5 2xl:px-4 2xl:py-2 border-[1.5px] bg-white text-gray-700 border-gray-300 rounded-lg overflow-hidden flex items-center gap-[9px] 2xl:gap-3",
-            props.disabled && "bg-gray-100",
+            (props.disabled || props.readOnly) && "!bg-gray-100",
             className
           )}
           onClick={() => setCalendarVisibility(!calendarVisibility)}

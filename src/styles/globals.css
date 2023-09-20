@@ -14,15 +14,16 @@
 
 html {
   font-size: 12px;
-} 
+}
 
- @media (min-width: 1536px) {
+@media (min-width: 1536px) {
   html {
     font-size: 16px;
   }
 }
 
-@page {
-  size: auto;
-  margin: 0;
+@layer components {
+  .react-tooltip {
+    @apply !bg-statusInactive !font-medium !text-white;
+  }
 }

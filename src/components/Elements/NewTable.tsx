@@ -17,6 +17,8 @@ import clsx from "clsx";
 import Button from "./Button";
 import VerticalLine from "../Icons/VerticalLine";
 import Select from "./Select";
+import useModal from "@/stores/modal";
+import Modal from "./Modal";
 
 const entriesOptions = [
   { label: "Show 10 entries", value: 10 },
@@ -67,8 +69,8 @@ type TableProps = {
 
   onSelectDateRange?: (option: DateRangeOption) => void;
 
-  onEdit?: (rowIndex: number) => void;
-  onDelete?: (rowIndex: number) => void;
+  onEdit?: (rowIndex: number) => void | Promise<void>;
+  onDelete?: (rowIndex: number) => void | Promise<void>;
 };
 
 type TableHeadProps = {
@@ -321,6 +323,8 @@ function getCellRows(
 }
 
 export default function Table(props: TableProps) {
+  const { setModal } = useModal();
+
   const [columns, setColumns] = React.useState(props.columns);
   React.useEffect(() => setColumns(props.columns), [props.columns]);
 
@@ -374,6 +378,13 @@ export default function Table(props: TableProps) {
   // State untuk menyimpan row yang di-select (index dari row-nya)
   const [rowSelected, setRowSelected] = React.useState<number>();
 
+  // Effect untuk mengtrigger function props.onSelect ketika state rowSelected berubah
+  React.useEffect(() => {
+    if (props.onSelect && rowSelected !== undefined) {
+      props.onSelect(rowSelected);
+    }
+  }, [props.onSelect, rowSelected]);
+
   return (
     <div
       className={clsx(
@@ -411,8 +422,23 @@ export default function Table(props: TableProps) {
                 : "!border-gray-700 !text-gray-700 cursor-pointer"
             )}
             onClick={() => {
-              if (rowSelected !== undefined && props.onDelete) {
-                props.onDelete(rowSelected);
+              if (rowSelected !== undefined) {
+                setModal(
+                  <Modal
+                    type="confirm"
+                    title="Delete"
+                    onDone={async () => {
+                      if (props.onDelete) {
+                        await Promise.resolve(props.onDelete(rowSelected));
+                      }
+                    }}
+                    closeOnDone
+                  >
+                    <p className="text-lg text-gray-700 font-medium">
+                      Are you sure want to delete this row?
+                    </p>
+                  </Modal>
+                );
               }
             }}
           />
@@ -466,7 +492,7 @@ export default function Table(props: TableProps) {
         {columns.length < 1 ? (
           <></>
         ) : (
-          <table className="w-full rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate">
+          <table className="w-full h-fit rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate">
             <thead className="sticky top-0">
               {headerRows.map((headerRow, headerRowIndex) => (
                 <tr key={headerRowIndex}>

@@ -4,44 +4,156 @@ import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import Modal from "@/components/Elements/Modal";
 import Label from "@/components/Elements/Label";
+import DatePicker from "@/components/Elements/DatePicker";
 import InputText from "@/components/Elements/InputText";
 import Search from "@/components/Elements/Search";
 import Button from "@/components/Elements/Button";
-import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
 } from "react-bootstrap-icons";
+import { SubmitHandler, useForm } from "react-hook-form";
+import moment from "moment";
+import useSWR, { useSWRConfig } from "swr";
+import { fetcher } from "@/libs/fetcher";
+import Table from "@/components/Elements/NewTable";
+import { CustomerGroup } from "@/models/CustomerGroup";
 
-export function Save() {
+function useNextCustomerGroupCode() {
+  const { data, error, isLoading } = useSWR(
+    "/api/customer_groups/next",
+    fetcher
+  );
+
+  return {
+    code: data === undefined ? undefined : data.data,
+    error,
+    isLoading,
+  };
+}
+
+function useCustomerGroups(deps: React.DependencyList) {
+  const { data, error, isLoading, mutate } = useSWR(
+    "/api/customer_groups",
+    fetcher
+  );
+
+  React.useEffect(() => {
+    mutate();
+  }, deps);
+
+  return {
+    groups: data === undefined ? undefined : data.data,
+    error,
+    isLoading,
+  };
+}
+
+type SaveInputs = {
+  createDate: string;
+  groupCode: string;
+  name: string;
+  description?: string;
+};
+
+type SaveProps = {
+  customer?: CustomerGroup;
+};
+
+export function Save(props: SaveProps) {
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const { register, handleSubmit, formState } = useForm<SaveInputs>();
+
+  const onSubmit: SubmitHandler<SaveInputs> = async (data) => {
+    await fetch(
+      props.customer
+        ? `/api/customer_groups/${props.customer.code}`
+        : "/api/customer_groups",
+      {
+        method: props.customer ? "PUT" : "POST",
+        body: JSON.stringify({
+          name: data.name,
+          description: data.description,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  };
+
+  const defaultCreateDate = React.useMemo(
+    () => props.customer?.createDate ?? new Date(),
+    []
+  );
+
+  const { code, error, isLoading } = useNextCustomerGroupCode();
+
+  const [defaultGroupCode, setDefaultGroupCode] = React.useState<string>();
+  React.useEffect(() => {
+    if (props.customer?.code) {
+      setDefaultGroupCode(props.customer.code);
+    } else {
+      setDefaultGroupCode(code);
+    }
+  }, [code, props.customer?.code]);
+
+  if (isLoading) {
+    return <></>;
+  }
+  if (error) {
+    throw error;
+  }
+
   return (
-    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
-      <form>
+    <Modal
+      title="Add New Customer Group"
+      type="save"
+      onDone={() => handleSubmit(onSubmit)()}
+      closeOnDone
+    >
+      <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
             <Label name="Create Date" />
-            <InputText placeholder="" disabled className="basis-2/3" />
+            <DatePicker
+              className="basis-2/3"
+              defaultValue={moment(defaultCreateDate).format("DD/MM/YYYY")}
+              readOnly
+              {...register("createDate", {
+                required: "Please filled this input",
+              })}
+            />
           </div>
           <div className="flex gap-6 items-center justify-between">
             <Label name="Group Code" />
-            <InputText placeholder="" disabled className="basis-2/3" />
+            <InputText
+              className="basis-2/3"
+              defaultValue={defaultGroupCode}
+              readOnly
+              {...register("groupCode")}
+            />
           </div>
           <div className="flex gap-6 items-center justify-between">
             <Label name="Name" />
-            <InputText placeholder="Enter group name" className="basis-2/3" />
+            <InputText
+              placeholder="Enter Customer Group Name"
+              className="basis-2/3"
+              error={formState.errors.name?.message?.toString()}
+              defaultValue={props.customer?.name}
+              {...register("name", { required: "Please filled this input" })}
+            />
           </div>
           <div className="flex gap-6 items-center justify-between">
             <Label name="Description" />
             <InputText
-              placeholder="Enter group description"
+              placeholder="Enter Description"
               className="basis-2/3"
+              error={formState.errors.description?.message?.toString()}
+              defaultValue={props.customer?.description}
+              {...register("description")}
             />
           </div>
         </div>
@@ -50,15 +162,26 @@ export function Save() {
   );
 }
 
-export default function CustomerGroup() {
+export default function CustomerGroupPage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
-  const { setModal } = useModal();
+  const { setModal, current } = useModal();
 
   React.useEffect(() => {
     setTitle("Master Data | Customer Group");
     setActive(1, 0, 0);
   }, []);
+
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  const { groups, isLoading, error } = useCustomerGroups([current]);
+
+  if (isLoading) {
+    return <></>;
+  }
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -83,87 +206,55 @@ export default function CustomerGroup() {
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create", value: "create" },
-                { label: "Group Code", value: "groupCode" },
-                { label: "Group Name", value: "groupName" },
-                { label: "Description", value: "description" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              isMulti
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Group Code", isSortable: true },
-            { type: "text", name: "Name", isSortable: true },
-            { type: "text", name: "Description" },
-          ]}
-          records={[
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-            [false, new Date(), "CGC00001", "Hadi Ahmad Akbar"],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "createDate",
+            header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "code",
+            header: "Group Code",
+            type: "code",
+          },
+          {
+            id: "name",
+            header: "Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "description",
+            header: "Description",
+            type: "text",
+            isSortable: true,
+          },
+        ]}
+        rows={groups}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+          setModal(
+            <Save customer={groups[selectedRowIndex!] as CustomerGroup} />
+          );
+        }}
+        onDelete={async () => {
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+          const customer = groups[selectedRowIndex] as CustomerGroup;
+          await fetch(`/api/customer_groups/${customer.code}`, {
+            method: "DELETE",
+          });
+          setSelectedRowIndex(undefined);
+        }}
+      />
     </>
   );
 }
