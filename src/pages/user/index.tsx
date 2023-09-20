@@ -51,7 +51,7 @@ export default function userManagement() {
 
   React.useEffect(() => {
     setTitle("User Management");
-    setActive(4, 0, 0);
+    setActive(5, 0, 0);
   }, []);
 
   return (
@@ -122,6 +122,7 @@ export default function userManagement() {
                 text="Access"
                 variant="filled"
                 onClick={() => router.push("/user/access")}
+                className="!px-3 !py-2 !text-xs"
               />,
             ],
           ]}

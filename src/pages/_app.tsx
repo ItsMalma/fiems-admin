@@ -12,7 +12,24 @@ export default function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
 
   const router = useRouter();
+  let content;
 
+  if (router.asPath === '/login') {
+    content =
+    <div className="min-h-screen max-h-screen min-w-full max-w-full bg-neutral-200 flex justify-center items-center overflow-x-hidden">
+      <Component {...pageProps} />
+    </div>
+  } else if (router.asPath.endsWith('/print')) {
+     content =
+    <div className="">
+      <Component {...pageProps} />
+    </div>
+  } else {
+    content =
+    <MainLayout>
+      <Component {...pageProps} />
+    </MainLayout>
+  }
   return (
     <>
       <style jsx global>
@@ -23,15 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
         `}
       </style>
 
-      {router.asPath === '/login' ? (
-        <div className="min-h-screen max-h-screen min-w-full max-w-full bg-neutral-200 flex justify-center items-center overflow-x-hidden">
-          <Component {...pageProps} />
-        </div>
-    ) : (
-      <MainLayout>
-        <Component {...pageProps} />
-      </MainLayout>
-    )}
+      {content}
 
       <div
         className={clsx(

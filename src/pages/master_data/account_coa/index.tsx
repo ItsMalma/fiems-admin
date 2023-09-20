@@ -29,7 +29,7 @@ export function Export() {
           <Select
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
-            defaultValue={1}
+            defaultValue={{ label: "Excel", value: "excel" }}
             onChange={() => {}}
             className="basis-2/3"
           />
