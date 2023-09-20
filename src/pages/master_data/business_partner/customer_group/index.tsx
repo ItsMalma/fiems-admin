@@ -62,6 +62,8 @@ type SaveProps = {
 };
 
 export function Save(props: SaveProps) {
+  const { setModal } = useModal();
+
   const formRef = React.useRef<HTMLFormElement>(null);
 
   const { register, handleSubmit, formState } = useForm<SaveInputs>();
@@ -82,6 +84,8 @@ export function Save(props: SaveProps) {
         },
       }
     );
+
+    setModal(null);
   };
 
   const defaultCreateDate = React.useMemo(
@@ -112,7 +116,6 @@ export function Save(props: SaveProps) {
       title="Add New Customer Group"
       type="save"
       onDone={() => handleSubmit(onSubmit)()}
-      closeOnDone
     >
       <form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-3">
@@ -253,6 +256,7 @@ export default function CustomerGroupPage() {
             method: "DELETE",
           });
           setSelectedRowIndex(undefined);
+          setModal(null);
         }}
       />
     </>

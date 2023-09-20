@@ -11,7 +11,6 @@ type ModalProps = {
   type: ModalType;
   children: React.ReactNode;
   onDone: () => void | Promise<void>;
-  closeOnDone?: boolean;
   onClose?: () => void | Promise<void>;
 };
 
@@ -64,9 +63,6 @@ export default function Modal(props: ModalProps) {
             text={doneText}
             onClick={async () => {
               await Promise.resolve(props.onDone());
-              if (props.closeOnDone) {
-                await close();
-              }
             }}
           />
           {props.type === "confirm" && (
