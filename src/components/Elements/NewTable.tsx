@@ -370,6 +370,12 @@ export default function Table(props: TableProps) {
     return Math.ceil(props.rows.length / rowTotal);
   }, [props.rows, rowTotal]);
 
+  // Effect untuk membuat page berada di page akhir
+  // ketika terjadi perubahan pada maxPage
+  React.useEffect(() => {
+    setPage(maxPage);
+  }, [maxPage]);
+
   const cellRows = React.useMemo(
     () => getCellRows(columns, rows, rowTotal, page),
     [columns, rows, rowTotal, page]
@@ -432,7 +438,6 @@ export default function Table(props: TableProps) {
                         await Promise.resolve(props.onDelete(rowSelected));
                       }
                     }}
-                    closeOnDone
                   >
                     <p className="text-lg text-gray-700 font-medium">
                       Are you sure want to delete this row?
