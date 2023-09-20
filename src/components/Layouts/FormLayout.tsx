@@ -46,7 +46,7 @@ export default function FormLayout(props: FormLayoutProps) {
           <Button variant="filled" text="Save" icon={<Download />} />
         </div>
       </div>
-      <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-auto">
+      <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-hidden">
         <div className="h-full px-[18px] pt-[9px] pb-[15px] 2xl:px-6 2xl:pt-3 2xl:pb-5 flex flex-col gap-[18px] 2xl:gap-6 border border-gray-300 rounded-2xl relative">
           <div className="flex gap-1.5 2xl:gap-2">
             {props.tabs
@@ -147,7 +147,7 @@ export default function FormLayout(props: FormLayoutProps) {
                 <div
                   key={tabIndex}
                   className={clsx(
-                    "h-full flex flex-col gap-[16px] 2xl:gap-4 overflow-auto",
+                    "h-full flex flex-col gap-[16px] 2xl:gap-4 overflow-auto relative",
                     tabActive !== tabIndex && "hidden"
                   )}
                 >

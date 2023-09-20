@@ -155,7 +155,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
             type="text"
             className={clsx(
               "py-1.5 2xl:py-2 overflow-auto grow bg-inherit outline-none border-none",
-              props.icon ? "" : "pl-[9px] 2xl:pl-3"
+              props.icon ? "" : "px-3 2xl:px-4"
             )}
             value={inputValue}
             onClick={(e) => {
@@ -176,7 +176,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
             readOnly={!isSearchable && !isCreatable}
             placeholder={props.placeholder}
           />
-          <span className="ml-auto pr-[9px] 2xl:pr-3">
+          <span className="absolute right-3 2xl:right-4">
             {expand ? <CaretUpFill /> : <CaretDownFill />}
           </span>
         </div>

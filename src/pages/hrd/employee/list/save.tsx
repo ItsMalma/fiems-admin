@@ -11,15 +11,10 @@ export default function COASave() {
   const { setActive } = useMenu();
   const [marritalStatus, setMarritalStatus] = React.useState();
   const [siblings, setSiblings] = React.useState<number[]>([]);
-  const [siblingsLengthDisplay, setSiblingLengthDisplay] = React.useState<number>()
 
   React.useEffect(() => {
     setActive(4, 0, 0);
   }, []);
-
-  React.useEffect(() => {
-    setSiblingLengthDisplay(siblings.length)
-  }, [siblings])
 
   return (
     <FormLayout
@@ -247,7 +242,7 @@ export default function COASave() {
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                 </div>
               </div>
-              {marritalStatus == "married" || "divorce" ? 
+              {marritalStatus == "married" || marritalStatus == "divorce" ? 
               <>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
@@ -336,18 +331,61 @@ export default function COASave() {
                 <div className="flex gap-[18px] 2xl:gap-6 items-center">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                     <Label name="No. of Siblings" className="basis-2/5" />
-                    <div className="basis-3/5 flex gap-2 items-center">
-                      <DashCircle className="text-primary cursor-pointer" onClick={() => siblings.pop()}/>
-                      <h1>{siblingsLengthDisplay}</h1>
+                    <div className="basis-3/5 flex gap-2 items-center select-none">
+                      <DashCircle className="text-primary cursor-pointer" onClick={() => setSiblings(siblings.slice(0, -1))}/>
+                      <h1>{siblings.length}</h1>
                       <PlusCircle className="text-primary cursor-pointer" onClick={() => setSiblings([...siblings, siblings.length = siblings.length+1])}/>
                     </div>
                   </div>
                   <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                    <Label name="Tanggungan" className="basis-2/5" />
+                    <InputText placeholder="Enter jumlah tanggungan" className="basis-3/5" />
                   </div>
                 </div>
+                {siblings.map((item, index) => 
+                  <>
+                    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                        <Label name={`Sibling ${index+1} Name`} className="basis-2/5" />
+                        <InputText placeholder="Enter father name" className="basis-3/5" />
+                      </div>
+                      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                        <Label name="Address" className="basis-2/5" />
+                        <InputText
+                          placeholder="Enter address"
+                          className="basis-3/5"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                        <Label name={`Sibling ${index+1} Phone`} className="basis-2/5" />
+                        <InputText placeholder="Enter father number" className="basis-3/5" />
+                      </div>
+                      <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                      </div>
+                    </div>
+                    {index < siblings.length-1 && <hr></hr>}
+                  </>
+                )}
             </>
           ),
         },
+        {
+          name: "Other",
+          component: (
+            <>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                  <Label name="Leave" className="basis-2/5" />
+                  <InputText placeholder="Enter total leave" className="basis-3/5" />
+                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                </div>
+              </div>
+            </>
+          ),
+        },        
       ]}
     />
   );

@@ -178,7 +178,15 @@ export default function Sider() {
                     url: "/operation/document/request"
                   },
                 ]
-              }
+              },
+              {
+                name: "Ship Schedule",
+                url: "/operation/ship_schedule"
+              },
+              {
+                name: "Dooring",
+                url: "/operation/dooring"
+              },
             ]
           },
           {

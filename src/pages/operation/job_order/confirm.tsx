@@ -146,9 +146,8 @@ export default function JobOrderConfirm() {
                   <InputText placeholder="" className="basis-3/5" disabled />
                 </div>
               </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2 justify-end">
+              <div className="flex gap-[18px] 2xl:gap-6 items-center my-4">
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <div
                     className="flex px-3 py-[9px] 2xl:px-4 2xl:py-3 justify-center items-center gap-3 2xl:gap-4 rounded-[10px] font-semibold bg-primary text-white cursor-pointer"
                     onClick={() => setCombo(1)}
@@ -156,15 +155,9 @@ export default function JobOrderConfirm() {
                     Convert to Combo
                   </div>
                 </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
+                </div>
               </div>
-            </>
-          ),
-        },
-        {
-          isHide: combo === 0,
-          name: "Convert to Combo",
-          component: (
-            <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Stuffing Date" className="basis-2/5" />
@@ -229,12 +222,12 @@ export default function JobOrderConfirm() {
                   <div className="flex gap-3 basis-3/5 items-center">
                     <InputText
                       placeholder="Enter container number"
-                      className="basis-3/5"
+                      className="w-2/5 grow"
                     />
                     <Label name="Seal" />
                     <InputText
                       placeholder="Enter seal number"
-                      className="basis-3/5"
+                      className="w-2/5 grow"
                     />
                   </div>
                 </div>
@@ -248,18 +241,22 @@ export default function JobOrderConfirm() {
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Cont. Number" className="basis-2/5" />
-                  <div className="flex gap-3 basis-3/5 items-center">
-                    <InputText
-                      placeholder="Enter container number"
-                      className="basis-3/5"
-                    />
-                    <Label name="Seal" />
-                    <InputText
-                      placeholder="Enter seal number"
-                      className="basis-3/5"
-                    />
-                  </div>
+                  {combo === 1 &&
+                    <>
+                      <Label name="Cont. Number" className="basis-2/5" />
+                      <div className="flex gap-3 basis-3/5 items-center">
+                        <InputText
+                          placeholder="Enter container number"
+                          className="w-2/5 grow"
+                        />
+                        <Label name="Seal" />
+                        <InputText
+                          placeholder="Enter seal number"
+                          className="w-2/5 grow"
+                        />
+                      </div>
+                    </>
+                  }                 
                 </div>
               </div>
             </>

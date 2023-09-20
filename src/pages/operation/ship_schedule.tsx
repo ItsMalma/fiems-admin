@@ -17,14 +17,14 @@ import {
 } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
 
-export default function ShippingInstruction() {
+export default function InquiryContainer() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Operational | Shipping Instruction");
-    setActive(3, 2, 4);
+    setTitle("Operational | Ship Schedule");
+    setActive(3, 0, 3);
   }, []);
 
   return (
@@ -32,12 +32,6 @@ export default function ShippingInstruction() {
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
-          <Button
-            text="Add New Shipping Instruction"
-            icon={<PersonFillAdd />}
-            variant="filled"
-            onClick={() => router.push("/operation/document/si/save")}
-          />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
@@ -85,14 +79,31 @@ export default function ShippingInstruction() {
               icon={Filter}
               placeholder="Filter"
               options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "SPM Number", value: "spmNumber" },
-                { label: "JO. Number", value: "joNumber" },
+                { label: "Inquiry Date", value: "inquiryDate" },
+                { label: "Inquiry Number", value: "inquiryNumber" },
+                { label: "Sales Name", value: "salesName" },
                 { label: "Customer", value: "customer" },
-                { label: "Consignee", value: "consignee" },
+                { label: "Customer Group", value: "customerGroup" },
+                { label: "Customer Address", value: "customerAddress" },
+                { label: "Purchase", value: "purchase" },
+                { label: "Purchase Address", value: "purchaseAddress" },
+                { label: "Job Order Type", value: "jobOrderType" },
+                { label: "Order Type", value: "orderType" },
+                { label: "Customer To", value: "customerTo" },
+                { label: "City", value: "city" },
                 { label: "Route", value: "route" },
-                { label: "Nilai", value: "nilai" },
-                { label: "Description", value: "description" },
+                { label: "Service Type", value: "serviceType" },
+                { label: "Cont. Type", value: "contType" },
+                { label: "Cont. Size", value: "contSize" },
+                { label: "PPN", value: "ppn" },
+                { label: "Insurance", value: "insurance" },
+                { label: "PPFTZ", value: "ppftz" },
+                { label: "Shipping", value: "shipping" },
+                { label: "Vessel Name", value: "vesselName" },
+                { label: "Voyage", value: "voyage" },
+                { label: "ETD", value: "etd" },
+                { label: "ETA", value: "eta" },
+                { label: "Action", value: "action" },
               ]}
               onChange={() => {}}
               isMulti
@@ -113,36 +124,19 @@ export default function ShippingInstruction() {
         <Table
           fields={[
             { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "SPM Number", isSortable: true },
-            { type: "link", name: "JO. Number", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true },
-            { type: "text", name: "Consignee", isSortable: true },
-            { type: "text", name: "Route", isSortable: true },
-            { type: "text", name: "Nilai", isSortable: true },
-            { type: "text", name: "Description" },
+            { type: "text", name: "Departure", isSortable: true },
+            { type: "text", name: "Arrival", isSortable: true },
+            { type: "text", name: "Address", isSortable: true },
+            { type: "text", name: "Shipping", isSortable: true },
+            { type: "text", name: "Vessel", isSortable: true },
+            { type: "text", name: "Voyage", isSortable: true },
+            { type: "text", name: "Closing RC", isSortable: true },
+            { type: "text", name: "Closing Date", isSortable: true },
+            { type: "text", name: "Closing Time", isSortable: true },
+            { type: "date", name: "ETD", isSortable: true },
+            { type: "date", name: "ETA", isSortable: true },
           ]}
           records={[
-            [
-              false,
-              new Date(),
-              "SPM00001",
-              "JO00001",
-              "PT SUGIH JAYA LOGISTIC",
-              "PT INDOFOOD SUKSES MAKMUR",
-              "Marunda - Cibitung",
-              "825.000",
-            ],
-            [
-              false,
-              new Date(),
-              "SPM00002",
-              "JO00010",
-              "PT SUGIH JAYA LOGISTIC",
-              "PT INDOFOOD SUKSES MAKMUR",
-              "Marunda - Cibitung",
-              "825.000",
-            ],
           ]}
         />
         <div className="flex mt-auto">

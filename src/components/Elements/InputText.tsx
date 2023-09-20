@@ -12,6 +12,7 @@ const InputText = React.forwardRef<HTMLInputElement, InputTextProps>(
         className={clsx(
           "px-3 py-1.5 2xl:px-4 2xl:py-2 border-[1.5px] border-gray-300 rounded-lg outline-none text-gray-700",
           props.disabled && "bg-gray-100",
+          props.readOnly && "bg-gray-100",
           className
         )}
         {...props}
