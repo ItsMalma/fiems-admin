@@ -137,7 +137,7 @@ export default function ShippingInstructionSave() {
             <>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Shipping Name" className="basis-2/5" />
+                  <Label name="Shipment Name" className="basis-2/5" />
                   <Select
                     placeholder="Choose customer shipper"
                     options={[

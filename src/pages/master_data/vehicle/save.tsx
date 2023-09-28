@@ -38,17 +38,19 @@ export default function VehicleSave() {
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Vendor Name" className="basis-2/5" />
-                  <Select
-                    placeholder="Code"
-                    options={[
-                      { label: "Directur", value: "directur" },
-                      { label: "Marketing", value: "marketing" },
-                    ]}
-                    onChange={() => {}}
-                    isSearchable
-                    className="basis-3/5"
-                  />
-                  <InputText className="w-[65%]" disabled />
+                  <div className="basis-3/5 flex gap-1">
+                    <Select
+                      placeholder="Code"
+                      options={[
+                        { label: "Directur", value: "directur" },
+                        { label: "Marketing", value: "marketing" },
+                      ]}
+                      onChange={() => {}}
+                      isSearchable
+                      className="basis-2/4"
+                    />
+                    <InputText className="basis-2/4" disabled />
+                  </div>
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Silinder" className="basis-2/5" />

@@ -1,7 +1,3 @@
-import React from "react";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
-import useHeader from "@/stores/header";
 import Button from "@/components/Elements/Button";
 import InputText from "@/components/Elements/InputText";
 import Label from "@/components/Elements/Label";
@@ -10,8 +6,12 @@ import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
 import Table from "@/components/Elements/Table";
 import VerticalLine from "@/components/Icons/VerticalLine";
+import useMenu from "@/stores/menu";
+import useHeader from "@/stores/header";
+import React from "react";
+import useModal from "@/stores/modal";
 import {
-  BookmarkPlusFill,
+  BuildingFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
   Pencil,
@@ -20,9 +20,9 @@ import {
   Filter,
 } from "react-bootstrap-icons";
 
-export function Save() {
+function Save() {
   return (
-    <Modal title="Add New Category" type="save" onDone={() => {}}>
+    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
@@ -30,12 +30,40 @@ export function Save() {
             <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Reff Category" />
-            <InputText placeholder="Enter reff number" className="basis-2/3" />
+            <Label name="Port Code" />
+            <InputText placeholder="" disabled className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Product Category" />
-            <InputText placeholder="Enter category" className="basis-2/3" />
+            <Label name="City" />
+            <Select
+              placeholder="Choose city"
+              options={[
+                { label: "Jakarta", value: 0 },
+                { label: "Tangerang", value: 1 },
+                { label: "Solo", value: 2 },
+              ]}
+              onChange={() => {}}
+              isSearchable
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Province" />
+            <Select
+              placeholder="Choose province"
+              options={[
+                { label: "Jawa Barat", value: 0 },
+                { label: "Jakarta", value: 1 },
+                { label: "Banten", value: 2 },
+              ]}
+              onChange={() => {}}
+              isSearchable
+              className="basis-2/3"
+            />
+          </div>
+          <div className="flex gap-6 items-center justify-between">
+            <Label name="Port Name" />
+            <InputText placeholder="Enter port name" className="basis-2/3" />
           </div>
         </div>
       </form>
@@ -43,24 +71,43 @@ export function Save() {
   );
 }
 
-export default function MasterProductCategory() {
+export function Export() {
+  return (
+    <Modal title="Export Data" type="save" onDone={() => {}}>
+      <form>
+        <div className="flex gap-6 items-center justify-between">
+          <Label name="File Type" />
+          <Select
+            placeholder="Choose file type"
+            options={[{ label: "Excel", value: "excel" }]}
+            onChange={() => {}}
+            isSearchable
+            className="basis-2/3"
+          />
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+export default function Attendance() {
+  const { setActive: setIndex } = useMenu();
   const { setModal } = useModal();
-  const { setActive } = useMenu();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
-    setTitle("Master Data | Master Product Category");
-    setActive(1, 8, 0);
-  }, [setTitle, setActive]);
+    setTitle("HRD | Attendance");
+    setIndex(5, 0, 1);
+  }, []);
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Route Code" />
+        <Search placeholder="Search Port Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Category"
-            icon={<BookmarkPlusFill />}
+            text="Add New Port"
+            icon={<BuildingFillAdd />}
             variant="filled"
             onClick={() => setModal(<Save />)}
           />
@@ -73,6 +120,7 @@ export default function MasterProductCategory() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
+            onClick={() => setModal(<Export />)}
           />
         </div>
       </div>
@@ -112,10 +160,10 @@ export default function MasterProductCategory() {
               placeholder="Filter"
               options={[
                 { label: "Create Date", value: "createDate" },
-                { label: "Reff Category", value: "reffCategory" },
-                { label: "Product Category", value: "productCategory" },
+                { label: "Port Code", value: "portCode" },
+                { label: "Province", value: "province" },
+                { label: "City", value: "city" },
               ]}
-              defaultValue={{ label: "Create Date", value: "createDate" }}
               onChange={() => {}}
               isSearchable
               isMulti
@@ -126,7 +174,7 @@ export default function MasterProductCategory() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              value={10}
+              defaultValue={{ label: "Show 10 entries", value: 10 }}
               onChange={() => {}}
               isSearchable
             />
@@ -136,10 +184,14 @@ export default function MasterProductCategory() {
           fields={[
             { type: "option" },
             { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Reff Category", isSortable: true },
-            { type: "text", name: "Product Category", isSortable: true },
+            { type: "link", name: "Port Code", isSortable: true },
+            { type: "text", name: "Province", isSortable: true },
+            { type: "text", name: "City", isSortable: true },
+            { type: "text", name: "Port Name" },
           ]}
-          records={[[false, new Date(), "No. Reff", "Category"]]}
+          records={[
+            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
+          ]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>
