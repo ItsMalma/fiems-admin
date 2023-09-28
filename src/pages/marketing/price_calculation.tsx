@@ -16,35 +16,35 @@ function TrackingAsal() {
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Tracking" className="basis-1/3"/>
+            <Label name="Tracking" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Buruh" className="basis-1/3"/>
+            <Label name="Buruh" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="THC OPT" className="basis-1/3"/>
+            <Label name="THC OPT" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="THC OPP" className="basis-1/3"/>
+            <Label name="THC OPP" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Admin BL" className="basis-1/3"/>
+            <Label name="Admin BL" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Cleaning Cont." className="basis-1/3"/>
+            <Label name="Cleaning Cont." className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Materai" className="basis-1/3"/>
+            <Label name="Materai" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Price" className="basis-1/3"/>
+            <Label name="Price" className="basis-1/3" />
             <InputText placeholder="Rp" disabled className="basis-2/3" />
           </div>
         </div>
@@ -59,35 +59,35 @@ function TrackingTujuan() {
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Tracking" className="basis-1/3"/>
+            <Label name="Tracking" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Buruh" className="basis-1/3"/>
+            <Label name="Buruh" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="THC OPT" className="basis-1/3"/>
+            <Label name="THC OPT" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="THC OPP" className="basis-1/3"/>
+            <Label name="THC OPP" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Admin BL" className="basis-1/3"/>
+            <Label name="Admin BL" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Cleaning Cont." className="basis-1/3"/>
+            <Label name="Cleaning Cont." className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Materai" className="basis-1/3"/>
+            <Label name="Materai" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Price" className="basis-1/3"/>
+            <Label name="Price" className="basis-1/3" />
             <InputText placeholder="Rp" disabled className="basis-2/3" />
           </div>
         </div>
@@ -102,35 +102,35 @@ function ShippingCost() {
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Freight" className="basis-1/3"/>
+            <Label name="Freight" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="THC OPT" className="basis-1/3"/>
+            <Label name="THC OPT" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="THC OPP" className="basis-1/3"/>
+            <Label name="THC OPP" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="LO/LO" className="basis-1/3"/>
+            <Label name="LO/LO" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Segel" className="basis-1/3"/>
+            <Label name="Segel" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="RC" className="basis-1/3"/>
+            <Label name="RC" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="LSS" className="basis-1/3"/>
+            <Label name="LSS" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Shipping Cost" className="basis-1/3"/>
+            <Label name="Shipping Cost" className="basis-1/3" />
             <InputText placeholder="Rp" disabled className="basis-2/3" />
           </div>
         </div>
@@ -145,43 +145,43 @@ function OtherCost() {
       <form>
         <div className="flex flex-col gap-3">
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Admin BL" className="basis-1/3"/>
+            <Label name="Admin BL" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Cleaning Cont." className="basis-1/3"/>
+            <Label name="Cleaning Cont." className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Alih Kapal" className="basis-1/3"/>
+            <Label name="Alih Kapal" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Materai" className="basis-1/3"/>
+            <Label name="Materai" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Biaya Buruh" className="basis-1/3"/>
+            <Label name="Biaya Buruh" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Stuffing Dalam" className="basis-1/3"/>
+            <Label name="Stuffing Dalam" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Stuffing Luar" className="basis-1/3"/>
+            <Label name="Stuffing Luar" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Biaya Cetak RC" className="basis-1/3"/>
+            <Label name="Biaya Cetak RC" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Biaya Cetak IR" className="basis-1/3"/>
+            <Label name="Biaya Cetak IR" className="basis-1/3" />
             <InputText placeholder="Rp" className="basis-2/3" />
           </div>
           <div className="flex gap-6 items-center justify-between">
-            <Label name="Other Expanses Cost" className="basis-1/3"/>
+            <Label name="Other Expanses Cost" className="basis-1/3" />
             <InputText placeholder="Rp" disabled className="basis-2/3" />
           </div>
         </div>
@@ -201,10 +201,11 @@ export default function PriceCalculation() {
   React.useEffect(() => {
     setTitle("Marketing | Price Calculation");
     setActive(2, 0, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title=""
       tabs={[
         {
@@ -433,11 +434,15 @@ export default function PriceCalculation() {
                 <div className="flex flex-col gap-1 basis-1/2 relative">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <Label name="Amount" className="basis-2/5" />
-                    <InputText placeholder="Rp" disabled className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      disabled
+                      className="basis-3/5"
+                    />
                   </div>
-                  <u 
+                  <u
                     className="text-sm text-gray-400 cursor-pointer absolute right-0 bottom-[-1.5rem]"
-                    onClick={() => setModal(<TrackingAsal/>)}
+                    onClick={() => setModal(<TrackingAsal />)}
                   >
                     Amount Detail+
                   </u>
@@ -447,17 +452,20 @@ export default function PriceCalculation() {
                 <div className="flex flex-col gap-1 basis-1/2 relative">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <Label name="Amount" className="basis-2/5" />
-                    <InputText placeholder="Rp" disabled className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      disabled
+                      className="basis-3/5"
+                    />
                   </div>
-                  <u 
+                  <u
                     className="text-sm text-gray-400 cursor-pointer absolute right-0 bottom-[-1.5rem]"
-                    onClick={() => setModal(<TrackingTujuan/>)}
+                    onClick={() => setModal(<TrackingTujuan />)}
                   >
                     Amount Detail+
                   </u>
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <hr className=""></hr>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
@@ -490,11 +498,15 @@ export default function PriceCalculation() {
                 <div className="flex flex-col gap-1 basis-1/2 relative">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <Label name="Other Cost." className="basis-2/5" />
-                    <InputText placeholder="Rp" disabled className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      disabled
+                      className="basis-3/5"
+                    />
                   </div>
-                  <u 
+                  <u
                     className="text-sm text-gray-400 cursor-pointer absolute right-0 bottom-[-1.5rem]"
-                    onClick={() => setModal(<OtherCost/>)}
+                    onClick={() => setModal(<OtherCost />)}
                   >
                     Cost Detail+
                   </u>
@@ -521,17 +533,20 @@ export default function PriceCalculation() {
                 <div className="flex flex-col gap-1 basis-1/2 relative">
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <Label name="Shipping Cost" className="basis-2/5" />
-                    <InputText placeholder="Rp" disabled className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      disabled
+                      className="basis-3/5"
+                    />
                   </div>
-                  <u 
+                  <u
                     className="text-sm text-gray-400 cursor-pointer absolute right-0 bottom-[-1.5rem]"
-                    onClick={() => setModal(<ShippingCost/>)}
+                    onClick={() => setModal(<ShippingCost />)}
                   >
                     Cost Detail+
                   </u>
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <hr className=""></hr>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">

@@ -156,10 +156,11 @@ export default function UangJalanSave() {
 
   React.useEffect(() => {
     setActive(3, 2, 1);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Vehicle Data"
       tabs={[
         {

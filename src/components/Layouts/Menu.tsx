@@ -271,7 +271,7 @@ export default function Menu(props: MenuProps) {
         router.push(item.url);
       }
     }
-  }, [active]);
+  }, [active, props.items, router]);
 
   return (
     <nav className="px-[18px] 2xl:px-6 flex flex-col gap-[18px] 2xl:gap-6 overflow-auto">

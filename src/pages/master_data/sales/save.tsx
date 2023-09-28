@@ -10,10 +10,11 @@ export default function SalesSave() {
 
   React.useEffect(() => {
     setActive(1, 3, 0);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Sales Data"
       tabs={[
         {

@@ -10,10 +10,11 @@ export default function PackingSave() {
 
   React.useEffect(() => {
     setActive(3, 2, 3);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Vehicle Data"
       tabs={[
         {

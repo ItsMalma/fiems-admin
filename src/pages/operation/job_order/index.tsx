@@ -25,7 +25,7 @@ export default function InquiryContainer() {
   React.useEffect(() => {
     setTitle("Operational | Job Order");
     setActive(3, 0, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -115,7 +115,7 @@ export default function InquiryContainer() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />
@@ -177,11 +177,11 @@ export default function InquiryContainer() {
               "Voyage",
               "",
               "",
-              <Button
-                text="Confirm"
-                variant="filled"
-                onClick={() => router.push("/operation/job_order/confirm")}
-              />,
+              // <Button
+              //   text="Confirm"
+              //   variant="filled"
+              //   onClick={() => router.push("/operation/job_order/confirm")}
+              // />,
             ],
           ]}
         />

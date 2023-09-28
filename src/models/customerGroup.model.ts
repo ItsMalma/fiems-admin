@@ -1,4 +1,16 @@
 import mongoose from "mongoose";
+import { z } from "zod";
+import { saveCustomerGroupSchema } from "@/validations/customerGroup.validation";
+
+export type SaveCustomerGroupInput = z.infer<typeof saveCustomerGroupSchema>;
+
+export type CustomerGroupOutput = {
+  id: number;
+  createDate: string;
+  code: string;
+  name: string;
+  description?: string;
+};
 
 export type CustomerGroup = {
   name: string;
@@ -7,7 +19,7 @@ export type CustomerGroup = {
   createDate: Date;
 };
 
-export type CustomerGroupDocument = CustomerGroup & mongoose.Document;
+export type CustomerGroupDocument = CustomerGroup & mongoose.Document<number>;
 
 const CustomerGroupSchema = new mongoose.Schema<CustomerGroupDocument>(
   {
@@ -30,6 +42,7 @@ const CustomerGroupSchema = new mongoose.Schema<CustomerGroupDocument>(
     },
     createDate: {
       type: Date,
+      required: true,
       default: () => new Date(),
     },
   },
@@ -38,6 +51,6 @@ const CustomerGroupSchema = new mongoose.Schema<CustomerGroupDocument>(
   }
 );
 
-export default (mongoose.models
-  .CustomerGroup as mongoose.Model<CustomerGroupDocument>) ||
+export const CustomerGroupModel =
+  (mongoose.models.CustomerGroup as mongoose.Model<CustomerGroupDocument>) ||
   mongoose.model<CustomerGroupDocument>("CustomerGroup", CustomerGroupSchema);

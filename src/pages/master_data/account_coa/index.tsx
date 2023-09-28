@@ -29,7 +29,7 @@ export function Export() {
           <Select
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
-            defaultValue={{ label: "Excel", value: "excel" }}
+            value="excel"
             onChange={() => {}}
             className="basis-2/3"
           />
@@ -48,7 +48,7 @@ export default function MasterAccountCOA() {
   React.useEffect(() => {
     setTitle("Master Data | Account COA");
     setActive(1, 10, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -129,7 +129,7 @@ export default function MasterAccountCOA() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />

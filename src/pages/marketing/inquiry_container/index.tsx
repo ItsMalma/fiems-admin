@@ -25,7 +25,7 @@ export default function InquiryContainer() {
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
     setActive(2, 2, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -121,7 +121,7 @@ export default function InquiryContainer() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />

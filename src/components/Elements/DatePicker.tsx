@@ -5,12 +5,16 @@ import moment from "moment";
 
 type DatePickerProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "type"
->;
+  "type" | "defaultValue"
+> & {
+  defaultValue?: Date | string;
+};
 
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-  ({ className, ...props }, ref) => {
-    const [inputValue, setInputValue] = React.useState(new Date());
+  ({ className, defaultValue, ...props }, ref) => {
+    const [inputValue, setInputValue] = React.useState(
+      defaultValue ? moment(defaultValue).toDate() : new Date()
+    );
 
     const inputDateRef = React.useRef<HTMLInputElement>(null);
     const [calendarVisibility, setCalendarVisibility] = React.useState(false);
@@ -23,7 +27,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       if (calendarVisibility) {
         inputDateRef.current.showPicker();
       }
-    }, [calendarVisibility]);
+    }, [calendarVisibility, props.disabled, props.readOnly]);
 
     return (
       <>
@@ -60,5 +64,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     );
   }
 );
+
+DatePicker.displayName = "DatePicker";
 
 export default DatePicker;

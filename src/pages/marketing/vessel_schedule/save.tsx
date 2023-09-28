@@ -10,10 +10,11 @@ export default function InquirySave() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setActive(2, 3);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Sales Data"
       tabs={[
         {

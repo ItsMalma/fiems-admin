@@ -8,19 +8,14 @@ import Button from "@/components/Elements/Button";
 import Modal from "@/components/Elements/Modal";
 import Label from "@/components/Elements/Label";
 import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
 } from "react-bootstrap-icons";
-import lodash from "lodash";
-import PrintProvider from "@/components/Layouts/PrintProvider";
+import Table from "@/components/Elements/NewTable";
+import { deleteCustomer, useCustomers } from "@/api/customers";
+import { toTitleCase } from "@/libs/utils";
 
 export function Export() {
   return (
@@ -31,7 +26,7 @@ export function Export() {
           <Select
             placeholder="Choose city"
             options={[{ label: "Excel", value: "excel" }]}
-            defaultValue={{label: "Excel", value: "excel"}}
+            value="excel"
             onChange={() => {}}
             className="basis-2/3"
           />
@@ -41,17 +36,41 @@ export function Export() {
   );
 }
 
-export default function Customers() {
+export default function CustomersPage() {
+  // Gunakan store useMenu untuk mengset menu yang aktif
   const { setActive } = useMenu();
+
+  // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
+
+  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
+  const { setModal, current } = useModal();
+
+  // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Customers");
     setActive(1, 0, 1);
-  }, []);
+  }, [setTitle, setActive]);
 
-  const { setModal } = useModal();
-
+  // Mendapatkan router
   const router = useRouter();
+
+  // State untuk menyimpan index dari baris yang dipilih di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  // Pemanggilan api untuk mendapatkan semua data customer
+  const { customers, isLoading, error } = useCustomers([current]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua data customer
+  // masih loading atau data nya masih belum terload
+  if (isLoading || !customers) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua data customer terdapat error
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -79,183 +98,195 @@ export default function Customers() {
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "Customer Type", value: "customerType" },
-                { label: "Customer Code", value: "customerCode" },
-                { label: "Name", value: "name" },
-                { label: "Group", value: "group" },
-                { label: "Address", value: "address" },
-                { label: "City", value: "city" },
-                { label: "Country", value: "country" },
-                { label: "Telephone", value: "telephone" },
-                { label: "Fax", value: "fax" },
-                { label: "Email", value: "email" },
-                {
-                  label: "Purchasing Information",
-                  value: "purchasingInformation",
-                },
-                {
-                  label: "Operation Information",
-                  value: "operationInformation",
-                },
-                { label: "Finance Information", value: "financeInformation" },
-                {
-                  label: "Description Information",
-                  value: "descriptionInformation",
-                },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              isMulti
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
-              onChange={() => {}}
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            {
-              type: "date",
-              name: "Create Date",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Customer Type",
-              isSortable: true,
-            },
-            {
-              type: "link",
-              name: "Customer Code",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Name",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Group",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Address",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "City",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Country",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Telephone",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Fax",
-              isSortable: true,
-            },
-            {
-              type: "text",
-              name: "Email",
-              isSortable: true,
-            },
-            {
-              type: "group",
-              name: "Purchasing",
-              isSortable: true,
-              fields: [
-                { type: "text", name: "Phone Number" },
-                { type: "text", name: "Telephone" },
-                { type: "text", name: "Fax" },
-                { type: "text", name: "Email" },
-              ],
-            },
-            {
-              type: "group",
-              name: "Operation",
-              isSortable: true,
-              fields: [
-                { type: "text", name: "Phone Number" },
-                { type: "text", name: "Telephone" },
-                { type: "text", name: "Fax" },
-                { type: "text", name: "Email" },
-              ],
-            },
-            {
-              type: "group",
-              name: "Finance",
-              isSortable: true,
-              fields: [
-                { type: "text", name: "Phone Number" },
-                { type: "text", name: "Telephone" },
-                { type: "text", name: "Fax" },
-                { type: "text", name: "Email" },
-              ],
-            },
-            {
-              type: "text",
-              name: "Description",
-            },
-          ]}
-          records={[]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "createDate",
+            header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "type",
+            header: "Customer Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "code",
+            header: "Customer Code",
+            type: "code",
+            isSortable: true,
+          },
+          {
+            id: "name",
+            header: "Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "group",
+            header: "Group",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "address",
+            header: "Address",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "province",
+            header: "Province",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "city",
+            header: "City",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "telephone",
+            header: "Telephone",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "fax",
+            header: "Fax",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "email",
+            header: "Email",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "pic.purchasing",
+            header: "Purchasing",
+            type: "group",
+            columns: [
+              {
+                id: "name",
+                header: "Name",
+                type: "text",
+                isSortable: true,
+              },
+              {
+                id: "phoneNumber",
+                header: "Phone Number",
+                type: "text",
+                isSortable: true,
+              },
+              {
+                id: "telephone",
+                header: "Telephone",
+                type: "text",
+                isSortable: true,
+              },
+              { id: "fax", header: "Fax", type: "text", isSortable: true },
+              { id: "email", header: "Email", type: "text", isSortable: true },
+            ],
+          },
+          {
+            id: "pic.operation",
+            header: "Operation",
+            type: "group",
+            columns: [
+              {
+                id: "name",
+                header: "Name",
+                type: "text",
+                isSortable: true,
+              },
+              {
+                id: "phoneNumber",
+                header: "Phone Number",
+                type: "text",
+                isSortable: true,
+              },
+              {
+                id: "telephone",
+                header: "Telephone",
+                type: "text",
+                isSortable: true,
+              },
+              { id: "fax", header: "Fax", type: "text", isSortable: true },
+              { id: "email", header: "Email", type: "text", isSortable: true },
+            ],
+          },
+          {
+            id: "pic.finance",
+            header: "Finance",
+            type: "group",
+            columns: [
+              {
+                id: "name",
+                header: "Name",
+                type: "text",
+                isSortable: true,
+              },
+              {
+                id: "phoneNumber",
+                header: "Phone Number",
+                type: "text",
+                isSortable: true,
+              },
+              {
+                id: "telephone",
+                header: "Telephone",
+                type: "text",
+                isSortable: true,
+              },
+              { id: "fax", header: "Fax", type: "text", isSortable: true },
+              { id: "email", header: "Email", type: "text", isSortable: true },
+            ],
+          },
+          {
+            id: "description",
+            header: "Description",
+            type: "status",
+          },
+        ]}
+        rows={customers.map((customer) => ({
+          ...customer,
+          type: toTitleCase(customer.type),
+        }))}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Redirect ke halaman save customer
+          router.push(
+            `/master_data/business_partner/customers/save?code=${customers[selectedRowIndex].code}`
+          );
+        }}
+        onDelete={async () => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Hapus customer yang dipilih di table
+          await deleteCustomer(customers[selectedRowIndex].code);
+
+          // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          setSelectedRowIndex(undefined);
+
+          // Tutup modal
+          setModal(null);
+        }}
+      />
     </>
   );
 }

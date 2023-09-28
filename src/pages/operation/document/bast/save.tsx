@@ -12,10 +12,11 @@ export default function BASTSave() {
 
   React.useEffect(() => {
     setActive(3, 2, 2);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Vehicle Data"
       tabs={[
         {

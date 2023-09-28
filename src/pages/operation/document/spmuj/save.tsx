@@ -10,10 +10,11 @@ export default function VehicleSave() {
 
   React.useEffect(() => {
     setActive(3, 2, 0);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Vehicle Data"
       tabs={[
         {

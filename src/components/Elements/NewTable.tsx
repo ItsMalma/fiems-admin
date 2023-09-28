@@ -99,18 +99,20 @@ function getHeaderRows(
 
   const firstRow: TableHeadProps[] = columns.map((column) => {
     if (column.type === "group") {
-      secondRow = column.columns.map((subColumn) => ({
-        id: column.id + "." + subColumn.id,
-        value: subColumn.header,
-        colSpan: 1,
-        rowSpan: 1,
-        sort: subColumn.isSortable
-          ? column.id + "." + subColumn.id === sort.id
-            ? sort.direction
-            : null
-          : undefined,
-        isChildren: true,
-      }));
+      secondRow.push(
+        ...column.columns.map((subColumn) => ({
+          id: column.id + "." + subColumn.id,
+          value: subColumn.header,
+          colSpan: 1,
+          rowSpan: 1,
+          sort: subColumn.isSortable
+            ? column.id + "." + subColumn.id === sort.id
+              ? sort.direction
+              : null
+            : undefined,
+          isChildren: true,
+        }))
+      );
 
       return {
         id: column.id,
@@ -243,7 +245,7 @@ function TableCell(props: TableCellProps) {
       case "date":
         return (
           <p className="text-gray-700">
-            {moment(props.value).format("DD/MM/YYYY")}
+            {moment(props.value, "DD/MM/YYYY").format("DD/MM/YYYY")}
           </p>
         );
       case "code":
@@ -308,7 +310,7 @@ function getCellRows(
         if (column.type === "group") {
           return column.columns.map((subColumn) => ({
             type: subColumn.type,
-            value: lodash.get(row, [column.id, subColumn.id]),
+            value: lodash.get(row, [column.id, subColumn.id].join(".")),
             isChildren: true,
           }));
         }
@@ -349,7 +351,7 @@ export default function Table(props: TableProps) {
 
   const headerRows = React.useMemo(
     () => getHeaderRows(columns, props.isSelectable ?? false, sort),
-    [columns, sort]
+    [columns, props.isSelectable, sort]
   );
 
   const filterOptions = React.useMemo(() => {
@@ -389,7 +391,17 @@ export default function Table(props: TableProps) {
     if (props.onSelect && rowSelected !== undefined) {
       props.onSelect(rowSelected);
     }
-  }, [props.onSelect, rowSelected]);
+  }, [props, rowSelected]);
+
+  // Callback untuk handle perubahan pada filter
+  const handleFilterChange = React.useCallback(
+    (options: any[]) => {
+      setColumns(
+        props.columns.filter((_, columnIndex) => options.includes(columnIndex))
+      );
+    },
+    [props.columns]
+  );
 
   return (
     <div
@@ -468,27 +480,23 @@ export default function Table(props: TableProps) {
             icon={Filter}
             placeholder="Filter"
             options={filterOptions}
-            defaultValue={filterOptions}
-            onChange={(options) =>
-              setColumns(
-                props.columns.filter((_, columnIndex) =>
-                  options.includes(columnIndex)
-                )
-              )
-            }
+            value={filterOptions}
+            onChange={handleFilterChange}
             isSearchable
             isMulti
           />
           <Select
             className="w-40"
             options={entriesOptions}
-            defaultValue={entriesOptions.find(
-              (entriesOption) => entriesOption.value === rowTotal
-            )}
             onChange={(option) => {
               setRowTotal(option);
               setPage(1);
             }}
+            value={
+              entriesOptions.find(
+                (entriesOption) => entriesOption.value === rowTotal
+              )?.value
+            }
             isSearchable
           />
         </div>
@@ -525,7 +533,7 @@ export default function Table(props: TableProps) {
                         const realRowIndex =
                           cellRowIndex + (page - 1) * rowTotal;
                         if (realRowIndex == rowSelected) {
-                          setRowSelected(undefined);
+                          setRowSelected(realRowIndex);
                         } else {
                           setRowSelected(realRowIndex);
                         }
