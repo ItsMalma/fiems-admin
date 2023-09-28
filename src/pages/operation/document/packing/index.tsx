@@ -27,7 +27,7 @@ export default function CustomerGroup() {
   React.useEffect(() => {
     setTitle("Operational | Packing List");
     setActive(3, 3, 3);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -102,7 +102,7 @@ export default function CustomerGroup() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />

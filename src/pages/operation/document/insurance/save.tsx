@@ -11,10 +11,11 @@ export default function PackingSave() {
 
   React.useEffect(() => {
     setActive(3, 3, 3);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Vehicle Data"
       tabs={[
         {
@@ -97,7 +98,7 @@ export default function PackingSave() {
                   <Label name="Cont. Number" className="basis-2/5" />
                   <div className="flex gap-3 basis-3/5 items-center">
                     <InputText placeholder="" className="basis-1/5" disabled />
-                    <Label name="Seal" className=""/>
+                    <Label name="Seal" className="" />
                     <InputText placeholder="" className="basis-1/5" disabled />
                   </div>
                 </div>

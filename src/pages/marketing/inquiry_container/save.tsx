@@ -4,19 +4,17 @@ import Label from "@/components/Elements/Label";
 import InputText from "@/components/Elements/InputText";
 import FormLayout from "@/components/Layouts/FormLayout";
 import Select from "@/components/Elements/Select";
-import DatePicker from "@/components/Elements/DatePicker";
-import Radio from "@/components/Elements/Radio";
 
 export default function InquirySave() {
   const { setActive } = useMenu();
-  const [type, setType] = React.useState(0);
 
   React.useEffect(() => {
     setActive(2, 2);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Sales Data"
       tabs={[
         {

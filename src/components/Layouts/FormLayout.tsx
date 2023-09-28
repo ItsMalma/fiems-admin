@@ -3,6 +3,68 @@ import Button from "../Elements/Button";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { XCircle, PlusCircle, Download } from "react-bootstrap-icons";
+import Label from "../Elements/Label";
+
+type InputCol = {
+  label: string;
+  input: React.ReactNode;
+  error?: string;
+};
+
+type InputRowProps = {
+  firstCol?: InputCol | string;
+  secondCol?: InputCol | string;
+};
+
+export function InputRow(props: InputRowProps) {
+  return (
+    <div className="flex gap-[18px] 2xl:gap-6">
+      <div className="flex flex-col gap-1 basis-1/2">
+        {props.firstCol &&
+          (typeof props.firstCol === "string" ? (
+            <h1 className="text-gray-800 font-bold text-2xl">
+              {props.firstCol}
+            </h1>
+          ) : (
+            <>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <Label className="basis-2/5" name={props.firstCol.label} />
+                {props.firstCol.input}
+              </div>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <span className="basis-2/5"></span>
+                <p className="basis-3/5 text-statusInactive">
+                  {props.firstCol.error}
+                </p>
+              </div>
+            </>
+          ))}
+      </div>
+
+      <div className="flex flex-col gap-1 basis-1/2">
+        {props.secondCol &&
+          (typeof props.secondCol === "string" ? (
+            <h1 className="text-gray-800 font-bold text-2xl">
+              {props.secondCol}
+            </h1>
+          ) : (
+            <>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <Label className="basis-2/5" name={props.secondCol.label} />
+                {props.secondCol.input}
+              </div>
+              <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                <span className="basis-2/5"></span>
+                <p className="basis-3/5 text-statusInactive">
+                  {props.secondCol.error}
+                </p>
+              </div>
+            </>
+          ))}
+      </div>
+    </div>
+  );
+}
 
 type FormLayoutTab = {
   name: string;
@@ -15,6 +77,7 @@ type FormLayoutTab = {
 type FormLayoutProps = {
   title: string;
   tabs: FormLayoutTab[];
+  onSave: () => void | Promise<void>;
 };
 
 export default function FormLayout(props: FormLayoutProps) {
@@ -27,7 +90,7 @@ export default function FormLayout(props: FormLayoutProps) {
 
   useEffect(() => {
     setMaxNumber(Math.max(...appends));
-  }, [appends])
+  }, [appends]);
 
   return (
     <>
@@ -43,7 +106,13 @@ export default function FormLayout(props: FormLayoutProps) {
             icon={<XCircle />}
             onClick={() => router.back()}
           />
-          <Button variant="filled" text="Save" icon={<Download />} />
+          <Button
+            type="button"
+            variant="filled"
+            text="Save"
+            icon={<Download />}
+            onClick={async () => await Promise.resolve(props.onSave())}
+          />
         </div>
       </div>
       <div className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm grow overflow-hidden">
@@ -87,8 +156,8 @@ export default function FormLayout(props: FormLayoutProps) {
                               type="button"
                               icon={
                                 <XCircle
-                                  onClick={() =>
-                                    {setAppend(
+                                  onClick={() => {
+                                    setAppend(
                                       appends.filter(
                                         (append, appendIndex) =>
                                           appendIndex !== indexx
@@ -99,15 +168,20 @@ export default function FormLayout(props: FormLayoutProps) {
                                         (append, appendIndex) =>
                                           appendIndex !== indexx
                                       )
-                                    )
-                                    }
-                                  }
+                                    );
+                                  }}
                                   className="text-red-600 ps-auto"
                                 />
                               }
                               iconPosition="right"
                               variant="normal"
-                              onClick={() => {if (appendForm[indexx] == indexx) {setAppendActive(indexx)} else {setAppendActive(indexx + maxNumber)}}}
+                              onClick={() => {
+                                if (appendForm[indexx] == indexx) {
+                                  setAppendActive(indexx);
+                                } else {
+                                  setAppendActive(indexx + maxNumber);
+                                }
+                              }}
                               className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
                             />
                           </>
@@ -118,7 +192,13 @@ export default function FormLayout(props: FormLayoutProps) {
                               type="button"
                               iconPosition="right"
                               variant="normal"
-                              onClick={() => {if (appendForm[indexx] == indexx) {setAppendActive(indexx)} else {setAppendActive(indexx + maxNumber)}}}
+                              onClick={() => {
+                                if (appendForm[indexx] == indexx) {
+                                  setAppendActive(indexx);
+                                } else {
+                                  setAppendActive(indexx + maxNumber);
+                                }
+                              }}
                               className=" !text-gray-500 hover:border hover:border-gray-300 !justify-between"
                             />
                           </>
@@ -160,7 +240,11 @@ export default function FormLayout(props: FormLayoutProps) {
                         .map((index, indexx) => (
                           <div
                             key={index}
-                            className={clsx(appendForm[indexx] == indexx ? appendActive !== indexx && "hidden" : appendActive != indexx + maxNumber && "hidden" )}
+                            className={clsx(
+                              appendForm[indexx] == indexx
+                                ? appendActive !== indexx && "hidden"
+                                : appendActive != indexx + maxNumber && "hidden"
+                            )}
                           >
                             {tab.component}
                           </div>

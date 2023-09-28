@@ -29,7 +29,7 @@ export function Export() {
           <Select
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
-            defaultValue={1}
+            value="excel"
             onChange={() => {}}
             className="basis-2/3"
           />
@@ -48,7 +48,7 @@ export default function MasterVehicle() {
   React.useEffect(() => {
     setTitle("Master Data | Master Vehicle");
     setActive(1, 4, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -133,7 +133,7 @@ export default function MasterVehicle() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />

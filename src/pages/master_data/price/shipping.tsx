@@ -47,7 +47,7 @@ export default function PriceShipping() {
   React.useEffect(() => {
     setTitle("Master Data | Shipping Price");
     setActive(1, 6, 2);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -137,7 +137,7 @@ export default function PriceShipping() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />

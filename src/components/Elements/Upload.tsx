@@ -53,4 +53,6 @@ const Upload = React.forwardRef<HTMLInputElement, UploadProps>(
   }
 );
 
+Upload.displayName = "Upload";
+
 export default Upload;

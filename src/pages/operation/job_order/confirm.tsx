@@ -13,10 +13,11 @@ export default function JobOrderConfirm() {
 
   React.useEffect(() => {
     setActive(3, 0, 0);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Confirm Job Order"
       tabs={[
         {
@@ -155,8 +156,7 @@ export default function JobOrderConfirm() {
                     Convert to Combo
                   </div>
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
@@ -241,7 +241,7 @@ export default function JobOrderConfirm() {
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  {combo === 1 &&
+                  {combo === 1 && (
                     <>
                       <Label name="Cont. Number" className="basis-2/5" />
                       <div className="flex gap-3 basis-3/5 items-center">
@@ -256,7 +256,7 @@ export default function JobOrderConfirm() {
                         />
                       </div>
                     </>
-                  }                 
+                  )}
                 </div>
               </div>
             </>
