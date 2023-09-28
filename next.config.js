@@ -5,12 +5,13 @@ const nextConfig = {
     serverComponentsExternalPackages: ["mongoose"]
   },
   webpack(config) {
+    config.devtool = 'source-map';
     config.experiments = {
       ...config.experiments,
-      topLevelAwait: true
+      topLevelAwait: true,
     };
     return config;
-  }
+  },
 };
 
 module.exports = nextConfig;

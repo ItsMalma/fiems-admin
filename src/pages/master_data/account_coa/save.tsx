@@ -11,10 +11,11 @@ export default function COASave() {
 
   React.useEffect(() => {
     setActive(1, 10, 0);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input COA Data"
       tabs={[
         {

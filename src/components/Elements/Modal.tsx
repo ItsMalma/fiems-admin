@@ -58,6 +58,7 @@ export default function Modal(props: ModalProps) {
       {props.type !== "info" && (
         <div className="flex justify-end gap-3">
           <Button
+            type="button"
             variant="filled"
             icon={props.type === "confirm" ? null : <SaveFill />}
             text={doneText}

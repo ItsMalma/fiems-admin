@@ -1,94 +1,107 @@
-import { transformZodError } from "@/libs/error";
-import connect from "@/libs/mongodb";
-import CustomerGroup from "@/models/CustomerGroup";
 import { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
+import { ApiResponsePayload } from "@/libs/utils";
+import {
+  CustomerGroupModel,
+  CustomerGroupOutput,
+} from "@/models/customerGroup.model";
+import { CustomerModel } from "@/models/customer.model";
+import connect from "@/libs/mongodb";
+import moment from "moment";
+import {
+  validateCustomerGroupCode,
+  validateSaveCustomerGroup,
+} from "@/validations/customerGroup.validation";
 
-const codeSchema = z.object({
-  code: z.string({
-    invalid_type_error: "Code must be string",
-    required_error: "Code is required",
-  }),
-});
+async function update(
+  code: string,
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponsePayload<CustomerGroupOutput>>
+) {
+  // Ambil customer group dari db dengan code yang di request
+  let customerGroup = await CustomerGroupModel.findOne({ code });
 
-const saveSchema = z.object({
-  name: z
-    .string({
-      invalid_type_error: "Name must be string",
-      required_error: "Name is required",
-    })
-    .nonempty("Name must be not empty"),
-  description: z
-    .string({
-      invalid_type_error: "Description must be string",
-    })
-    .optional(),
-});
-
-async function update(code: string, req: NextApiRequest, res: NextApiResponse) {
-  let customerGroup = await CustomerGroup.findOne({ code });
+  // Cek apakah customer group tidak ada
   if (!customerGroup) {
     return res.status(404).json({
+      data: null,
       error: `Customer group with code ${code} not exists`,
     });
   }
 
-  const parsedBody = saveSchema.safeParse(req.body);
+  // Validasi request body
+  const parsedBody = validateSaveCustomerGroup(req.body);
 
-  if (!parsedBody.success) {
-    return res.status(401).json({
-      error: transformZodError(parsedBody.error),
-    });
+  // Cek apakah validasi tidak sukses
+  if (parsedBody.error) {
+    return res.status(401).json(parsedBody);
   }
 
+  // Ubah data customer group dari db dengan request
   customerGroup.name = parsedBody.data.name;
   customerGroup.description = parsedBody.data.description;
 
+  // Simpan data customer group yang telah diubah ke db
   customerGroup = await customerGroup.save();
 
   return res.status(200).json({
     data: {
       id: customerGroup._id,
+      createDate: moment(customerGroup.createDate).format("DD/MM/YYYY"),
+      code: customerGroup.code,
       name: customerGroup.name,
       description: customerGroup.description,
-      code: customerGroup.code,
-      createDate: customerGroup.createDate,
     },
+    error: null,
   });
 }
 
-async function remove(code: string, req: NextApiRequest, res: NextApiResponse) {
-  let customerGroup = await CustomerGroup.findOneAndDelete({ code });
+async function remove(
+  code: string,
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponsePayload<CustomerGroupOutput>>
+) {
+  // Ambil customer group dari db dengan code yang di request dan hapus kalau ketemu
+  const customerGroup = await CustomerGroupModel.findOneAndDelete({ code });
+
+  // Cek apakah customer group tidak ada
   if (!customerGroup) {
     return res.status(404).json({
+      data: null,
       error: `Customer group with code ${code} not exists`,
     });
   }
 
+  // Hapus semua customer yang terhubung dengan customer group yang telah dihapus
+  await CustomerModel.deleteMany({ group: customerGroup.id });
+
   return res.status(200).json({
     data: {
       id: customerGroup._id,
+      createDate: moment(customerGroup.createDate).format("DD/MM/YYYY"),
+      code: customerGroup.code,
       name: customerGroup.name,
       description: customerGroup.description,
-      code: customerGroup.code,
-      createDate: customerGroup.createDate,
     },
+    error: null,
   });
 }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<ApiResponsePayload<CustomerGroupOutput>>
 ) {
+  // Koneksikan ke db
   await connect();
 
-  const parsedQuery = codeSchema.safeParse(req.query);
-  if (!parsedQuery.success) {
-    return res.status(400).json({
-      error: transformZodError(parsedQuery.error),
-    });
+  // Validasi query
+  const parsedQuery = validateCustomerGroupCode(req.query);
+
+  // Cek apakah validasi query error
+  if (parsedQuery.error) {
+    return res.status(400).json(parsedQuery);
   }
 
+  // Cek method apa yang direquest dan panggil function yang sesuai
   switch (req.method) {
     case "PUT":
       return await update(parsedQuery.data.code, req, res);
@@ -96,6 +109,7 @@ export default async function handler(
       return await remove(parsedQuery.data.code, req, res);
     default:
       return res.status(405).json({
+        data: null,
         error: "Method not allowed",
       });
   }

@@ -7,7 +7,6 @@ import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
 import useHeader from "@/stores/header";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
   Pencil,
@@ -25,7 +24,7 @@ export default function InquiryContainer() {
   React.useEffect(() => {
     setTitle("Operational | Ship Schedule");
     setActive(3, 0, 3);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -115,7 +114,7 @@ export default function InquiryContainer() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />
@@ -136,8 +135,7 @@ export default function InquiryContainer() {
             { type: "date", name: "ETD", isSortable: true },
             { type: "date", name: "ETA", isSortable: true },
           ]}
-          records={[
-          ]}
+          records={[]}
         />
         <div className="flex mt-auto">
           <p className="font-medium text-gray-500">Showing 10 entries</p>

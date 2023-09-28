@@ -2,14 +2,14 @@ import React from "react";
 import clsx from "clsx";
 import { CaretDownFill, CaretUpFill, Icon } from "react-bootstrap-icons";
 
-type SelectOption = {
+export type SelectOption = {
   label: string;
   value: any;
 };
 
 type SelectProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "defaultValue"
+  "onChange" | "value" | "defaultValue"
 > & {
   options: SelectOption[];
 
@@ -23,18 +23,20 @@ type SelectProps = Omit<
   isMulti?: boolean;
 
   icon?: Icon;
+
+  isError?: boolean;
 } & (
     | {
         isMulti: true;
 
-        defaultValue?: SelectOption[];
+        value?: any[];
 
         onChange: (options: any[]) => void;
       }
     | {
         isMulti?: false;
 
-        defaultValue?: SelectOption;
+        value?: any;
 
         onChange: (option: any) => void;
       }
@@ -45,11 +47,12 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     {
       className,
       options,
-      defaultValue,
+      value,
       onChange,
       isSearchable,
       isCreatable,
       isMulti,
+      isError,
       ...props
     },
     ref
@@ -63,28 +66,40 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     // State untuk menyimpan nilai dari input text
     const [inputValue, setInputValue] = React.useState<string>("");
 
+    // State untuk menyimpan apakah select terbuka atau tidak
     const [expand, setExpand] = React.useState(false);
 
-    const [actives, setActives] = React.useState<SelectOption[]>(
-      isMulti ? defaultValue ?? [] : defaultValue ? [defaultValue] : []
-    );
-    React.useEffect(() => {
-      if (isMulti) {
-        setInputValue("");
-        setOptionsDisplayed(options);
-      }
+    // State untuk menyimpan option yang ditampilkan
+    const [optionsDisplayed, setOptionsDisplayed] =
+      React.useState<SelectOption[]>(options);
 
-      if (!actives || (!isMulti && actives.length < 1)) {
+    // State untuk menyimpan mana option yang active
+    const [actives, setActives] = React.useState<SelectOption[]>(
+      React.useMemo(() => {
+        if (value) {
+          return isMulti
+            ? options.filter((option) => option.value in value)
+            : options.filter((option) => option.value === value);
+        }
+        return [];
+      }, [value, isMulti, options])
+    );
+
+    // Effect ketika terjadi perubahan value
+    React.useEffect(() => {
+      if (!actives) {
         return;
       }
 
       if (isMulti) {
         onChange(actives.map((active) => active.value));
+      } else if (actives[0]) {
+        onChange(actives?.[0]?.value);
+        setInputValue(actives?.[0]?.label);
       } else {
-        onChange(actives[0].value);
-        setInputValue(actives[0].label);
+        onChange(null);
       }
-    }, [actives]);
+    }, [actives, isMulti, onChange]);
 
     const menuRef = React.useRef<HTMLDivElement>(null);
     const [menuPosition, setMenuPosition] = React.useState<"top" | "bottom">(
@@ -123,8 +138,6 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
       };
     }, [containerRef]);
 
-    const [optionsDisplayed, setOptionsDisplayed] =
-      React.useState<SelectOption[]>(options);
     React.useEffect(() => {
       setOptionsDisplayed(options);
     }, [options]);
@@ -136,8 +149,15 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-[9px] 2xl:gap-3"
+          className={clsx(
+            "bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-[9px] 2xl:gap-3",
+            (props.disabled || props.readOnly) && "!bg-gray-100",
+            isError && "border-statusInactive"
+          )}
           onClick={() => {
+            if (props.disabled || props.readOnly) {
+              return;
+            }
             setExpand(!expand);
             if (!expand) {
               setMenuPosition("bottom");
@@ -173,7 +193,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
                 )
               );
             }}
-            readOnly={!isSearchable && !isCreatable}
+            readOnly={(!isSearchable && !isCreatable) || props.readOnly}
             placeholder={props.placeholder}
           />
           <span className="absolute right-3 2xl:right-4">
@@ -197,10 +217,11 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
                     "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
                 )}
                 onClick={() => {
-                  if (
-                    actives.find((active) => active.value === option.value) &&
-                    isMulti
-                  ) {
+                  if (isMulti) {
+                    setInputValue("");
+                  }
+
+                  if (actives.find((active) => active.value === option.value)) {
                     // remove option from actives
                     setActives(
                       actives.filter((active) => active.value !== option.value)
@@ -209,6 +230,8 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
                     // add option to actives
                     setActives(isMulti ? [...actives, option] : [option]);
                   }
+                  setExpand(false);
+                  setOptionsDisplayed(options);
                 }}
               >
                 {option.label}
@@ -217,7 +240,10 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
             {actives
               .filter((active) => active.value === "custom")
               .map((active) => (
-                <div className="px-3 py-1.5 2xl:px-4 2xl:py-2 bg-primaryActive text-white font-semibold hover:!bg-primaryActive cursor-default whitespace-nowrap">
+                <div
+                  key={active.value}
+                  className="px-3 py-1.5 2xl:px-4 2xl:py-2 bg-primaryActive text-white font-semibold hover:!bg-primaryActive cursor-default whitespace-nowrap"
+                >
                   {active.label}
                 </div>
               ))}
@@ -242,5 +268,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     );
   }
 );
+
+Select.displayName = "Select";
 
 export default Select;

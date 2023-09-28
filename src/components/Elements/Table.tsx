@@ -9,7 +9,14 @@ import {
   SquareFill,
 } from "react-bootstrap-icons";
 
-type TableFieldType = "text" | "option" | "link" | "date" | "status" | "group" | "tool";
+type TableFieldType =
+  | "text"
+  | "option"
+  | "link"
+  | "date"
+  | "status"
+  | "group"
+  | "tool";
 
 type TableSubField = Omit<TableField, "type" | "fields"> & {
   type: Exclude<TableFieldType, "option" | "group">;
@@ -262,19 +269,13 @@ function TableData(props: TableDataProps) {
         </td>
       );
     case "tool":
-      return (
-        <td
-          key={props.fieldIndex}
-        >
-          {props.record[props.fieldIndex]}
-        </td>
-      )
+      return <td key={props.fieldIndex}>{props.record[props.fieldIndex]}</td>;
     case "group":
-      console.log(props.record);
       return (props.field.fields ?? [])
         .filter((field) => !field.isHide)
         .map((subField, subFieldIndex) => (
           <TableData
+            key={subFieldIndex}
             field={subField}
             fieldIndex={subFieldIndex}
             record={props.record[props.fieldIndex]}

@@ -466,10 +466,11 @@ export default function PriceSave() {
 
   React.useEffect(() => {
     setActive(1, 6);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Sales Data"
       tabs={[
         {

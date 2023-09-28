@@ -7,14 +7,14 @@ import Select from "@/components/Elements/Select";
 
 export default function RequestSave() {
   const { setActive } = useMenu();
-  const [type, setType] = React.useState(0);
 
   React.useEffect(() => {
     setActive(3, 2, 5);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Form Request"
       tabs={[
         {

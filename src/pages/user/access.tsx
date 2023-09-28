@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { ChevronUp, Download, XCircle } from "react-bootstrap-icons";
 
-export default function userAccess() {
+export default function UserAccess() {
   const router = useRouter();
   const { setActive } = useMenu();
   const { setTitle } = useHeader();
@@ -16,7 +16,7 @@ export default function userAccess() {
   React.useEffect(() => {
     setTitle("User Access");
     setActive(5, 0, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   const [allSelected, setAllSelected] = React.useState<number[]>([]);
   const [subAllSelected, setSubAllSelected] = React.useState<number[]>([]);

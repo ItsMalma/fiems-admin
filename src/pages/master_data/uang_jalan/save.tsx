@@ -10,10 +10,11 @@ export default function UJSave() {
 
   React.useEffect(() => {
     setActive(1, 7, 0);
-  }, []);
+  }, [setActive]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Input Uang Jalan Data"
       tabs={[
         {

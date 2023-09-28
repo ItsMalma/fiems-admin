@@ -40,7 +40,7 @@ export default function Login() {
               className="w-full"
               onChange={(e) => setUser({ ...user, username: e.target.value })}
             />
-            <InputText
+            <InputPassword
               placeholder="Password"
               className="w-full"
               onChange={(e) => setUser({ ...user, password: e.target.value })}
@@ -54,7 +54,7 @@ export default function Login() {
             </div>
           </form>
           <p className="text-white text-xs font-light mt-auto">
-            Can't login to your account? Please contact your admin
+            Can&apos;t login to your account? Please contact your admin
           </p>
         </div>
       </div>
