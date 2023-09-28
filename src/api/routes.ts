@@ -2,14 +2,11 @@ import React from "react";
 import useSWR from "swr";
 import { fetcher } from "@/libs/fetcher";
 import { ApiResponsePayload } from "@/libs/utils";
-import {
-  CustomerGroupOutput,
-  SaveCustomerGroupInput,
-} from "@/models/customerGroup.model";
+import { RouteOutput, SaveRouteInput } from "@/models/route.model";
 
-// Buat dan tambah customer group baru
-export async function createCustomerGroup(input: SaveCustomerGroupInput) {
-  await fetch("/api/customer_groups", {
+// Buat dan tambah route baru
+export async function createRoute(input: SaveRouteInput) {
+  await fetch("/api/routes", {
     method: "POST",
     body: JSON.stringify(input),
     headers: {
@@ -18,12 +15,9 @@ export async function createCustomerGroup(input: SaveCustomerGroupInput) {
   });
 }
 
-// Ubah (update) customer group
-export async function updateCustomerGroup(
-  code: string,
-  input: SaveCustomerGroupInput
-) {
-  await fetch(`/api/customer_groups/${code}`, {
+// Ubah (update) route
+export async function updateRoute(code: string, input: SaveRouteInput) {
+  await fetch(`/api/routes/${code}`, {
     method: "PUT",
     body: JSON.stringify(input),
     headers: {
@@ -32,11 +26,11 @@ export async function updateCustomerGroup(
   });
 }
 
-// Mendapatkan semua customer group
-export function useCustomerGroups(deps?: React.DependencyList) {
+// Mendapatkan semua route
+export function useRoutes(deps?: React.DependencyList) {
   const { data, error, isLoading, mutate } = useSWR<
-    ApiResponsePayload<CustomerGroupOutput[]>
-  >("/api/customer_groups", fetcher);
+    ApiResponsePayload<RouteOutput[]>
+  >("/api/routes", fetcher);
 
   React.useEffect(() => {
     mutate();
@@ -45,16 +39,16 @@ export function useCustomerGroups(deps?: React.DependencyList) {
   }, [mutate, ...(deps ?? [])]);
 
   return {
-    groups: data?.data,
+    routes: data?.data,
     error: error || data?.error,
     isLoading: isLoading || data === undefined || data.data === null,
   };
 }
 
-// Mendapatkan code selanjutnya dari customer group yang akan ditambah
-export function useNextCustomerGroupCode(deps?: React.DependencyList) {
+// Mendapatkan code selanjutnya dari route yang akan ditambah
+export function useNextRouteCode(deps?: React.DependencyList) {
   const { data, error, isLoading, mutate } = useSWR<ApiResponsePayload<string>>(
-    "/api/customer_groups/next",
+    "/api/routes/next",
     fetcher
   );
 
@@ -71,9 +65,9 @@ export function useNextCustomerGroupCode(deps?: React.DependencyList) {
   };
 }
 
-// Menghapus customer group
-export async function deleteCustomerGroup(code: string) {
-  await fetch(`/api/customer_groups/${code}`, {
+// Menghapus route
+export async function deleteRoute(code: string) {
+  await fetch(`/api/routes/${code}`, {
     method: "DELETE",
   });
 }

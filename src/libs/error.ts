@@ -1,4 +1,4 @@
-import { ZodError } from "zod";
+import { ZodError, ZodSchema } from "zod";
 import lodash from "lodash";
 
 export function transformZodError(err: ZodError) {
@@ -19,4 +19,14 @@ export function transformZodErrorDeep(err: ZodError) {
   });
 
   return transformedError;
+}
+
+export function formikValidateWithZod(zodSchema: ZodSchema) {
+  return function (values: unknown) {
+    const parsed = zodSchema.safeParse(values);
+
+    if (!parsed.success) {
+      return transformZodErrorDeep(parsed.error);
+    }
+  };
 }

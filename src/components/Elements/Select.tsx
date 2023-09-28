@@ -145,7 +145,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     return (
       <div
         ref={containerRef}
-        className={clsx("relative", className)}
+        className={clsx("w-full relative", className)}
         onClick={(e) => e.stopPropagation()}
       >
         <div

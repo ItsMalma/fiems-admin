@@ -27,8 +27,8 @@ import {
   useNextCustomerGroupCode,
 } from "@/api/customer_groups";
 import { useFormik } from "formik";
-import { toFormikValidate } from "zod-formik-adapter";
 import { saveCustomerGroupSchema } from "@/validations/customerGroup.validation";
+import { formikValidateWithZod } from "@/libs/error";
 
 type SaveProps = {
   customerGroup?: CustomerGroupOutput;
@@ -36,14 +36,14 @@ type SaveProps = {
 
 function Save(props: SaveProps) {
   // Gunakan formik
-  const { handleSubmit, handleChange, values, errors } =
+  const { handleSubmit, handleChange, values, errors, validateForm } =
     useFormik<SaveCustomerGroupInput>({
       initialValues: {
         name: props.customerGroup?.name ?? "",
         description: props.customerGroup?.description ?? "",
       },
       onSubmit: async (values) => {
-        // Cek apakah customer ada di props
+        // Cek apakah customer group ada di props
         // Jika ada maka lakukan update saja
         // Jika tidak ada maka lakukan penambahan
         if (props.customerGroup) {
@@ -55,14 +55,16 @@ function Save(props: SaveProps) {
         // Tutup modal
         setModal(null);
       },
-      validate: toFormikValidate(saveCustomerGroupSchema),
+      validate: formikValidateWithZod(saveCustomerGroupSchema),
     });
+
+  // Effect untuk mengvalidasi form
+  React.useEffect(() => {
+    validateForm();
+  }, [validateForm]);
 
   // Menggunakan function setModal dari store useModal
   const { setModal } = useModal();
-
-  // Ref untuk menyimpan form
-  const formRef = React.useRef<HTMLFormElement>(null);
 
   // Memo untuk menampung create date
   const defaultCreateDate = React.useMemo(
@@ -80,7 +82,7 @@ function Save(props: SaveProps) {
   const [defaultGroupCode, setDefaultGroupCode] = React.useState<string>();
 
   // Effect untuk mengset value dari default customer group code
-  // dimana jika customer ada di props maka set dengan code customer tersebut
+  // dimana jika customer group ada di props maka set dengan code customer group tersebut
   // tapi jika tidak ada maka set dengan code yang diambil dari api
   React.useEffect(() => {
     if (props.customerGroup?.code) {
@@ -102,7 +104,7 @@ function Save(props: SaveProps) {
 
   return (
     <Modal title="Add New Customer Group" type="save" onDone={handleSubmit}>
-      <form ref={formRef} onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="flex gap-6 items-center">
@@ -134,7 +136,7 @@ function Save(props: SaveProps) {
               <InputText
                 id="name"
                 name="name"
-                placeholder="Enter Customer Group Name"
+                placeholder="Enter name"
                 className="basis-2/3"
                 value={values.name}
                 onChange={handleChange}
@@ -152,7 +154,7 @@ function Save(props: SaveProps) {
               <InputText
                 id="description"
                 name="description"
-                placeholder="Enter Description"
+                placeholder="Enter description"
                 className="basis-2/3"
                 value={values.description}
                 onChange={handleChange}

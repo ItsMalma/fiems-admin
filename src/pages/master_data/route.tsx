@@ -1,80 +1,250 @@
-import Button from "@/components/Elements/Button";
-import InputText from "@/components/Elements/InputText";
-import Label from "@/components/Elements/Label";
-import Modal from "@/components/Elements/Modal";
-import Search from "@/components/Elements/Search";
-import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
-import useMenu from "@/stores/menu";
-import useHeader from "@/stores/header";
 import React from "react";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import Modal from "@/components/Elements/Modal";
+import Label from "@/components/Elements/Label";
+import DatePicker from "@/components/Elements/DatePicker";
+import InputText from "@/components/Elements/InputText";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
+import Select from "@/components/Elements/Select";
+import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
 import {
   GeoAltFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
 } from "react-bootstrap-icons";
-import PrintProvider from "@/components/Layouts/PrintProvider";
+import moment from "moment";
+import Table from "@/components/Elements/NewTable";
+import { RouteOutput, SaveRouteInput } from "@/models/route.model";
+import {
+  createRoute,
+  deleteRoute,
+  updateRoute,
+  useRoutes,
+  useNextRouteCode,
+} from "@/api/routes";
+import { useProvinces } from "@/api/provinces";
+import { FormikProvider, useFormik } from "formik";
+import { saveRouteSchema } from "@/validations/route.validation";
+import { formikValidateWithZod } from "@/libs/error";
 
-export function Save() {
+type SaveProps = {
+  route?: RouteOutput;
+};
+
+export function Save(props: SaveProps) {
+  // Pemanggilan api untuk mendapatkan semua provinsi
+  const {
+    provinces,
+    isLoading: provincesLoading,
+    error: provincesError,
+  } = useProvinces();
+
+  // Gunakan formik
+  const formik = useFormik<SaveRouteInput>({
+    initialValues: {
+      province: props.route?.province ?? "",
+      city: props.route?.city ?? "",
+      originDescription: props.route?.originDescription ?? "",
+      destinationDescription: props.route?.destinationDescription ?? "",
+    },
+    onSubmit: async (values) => {
+      // Cek apakah route ada di props
+      // Jika ada maka lakukan update saja
+      // Jika tidak ada maka lakukan penambahan
+      if (props.route) {
+        await updateRoute(props.route.code, values);
+      } else {
+        await createRoute(values);
+      }
+
+      // Tutup modal
+      setModal(null);
+    },
+    validate: formikValidateWithZod(saveRouteSchema),
+  });
+
+  // Decomposition formik
+  const { handleSubmit, handleChange, values, errors, validateForm } = formik;
+
+  // Effect untuk mengvalidasi form
+  React.useEffect(() => {
+    validateForm();
+  }, [validateForm]);
+
+  // Menggunakan function setModal dari store useModal
+  const { setModal } = useModal();
+
+  // Memo untuk menampung create date
+  const defaultCreateDate = React.useMemo(
+    () =>
+      props.route?.createDate
+        ? moment(props.route.createDate, "DD/MM/YYYY").toDate()
+        : new Date(),
+    [props.route?.createDate]
+  );
+
+  // Panggil api untuk mendapatkan code route selanjutnya
+  const { code, error, isLoading } = useNextRouteCode();
+
+  // State untuk menyimpan default value dari code route
+  const [defaultRouteCode, setDefaultRouteCode] = React.useState<string>();
+
+  // Effect untuk mengset value dari default route code
+  // dimana jika route ada di props maka set dengan code route tersebut
+  // tapi jika tidak ada maka set dengan code yang diambil dari api
+  React.useEffect(() => {
+    if (props.route?.code) {
+      setDefaultRouteCode(props.route.code);
+    } else if (code) {
+      setDefaultRouteCode(code);
+    }
+  }, [code, props.route?.code]);
+
+  // Ambil semua kota yang dimiliki provinsi yang dipilih
+  const selectedProvinceCities = React.useMemo(() => {
+    if (provinces && !provincesLoading) {
+      return provinces.find((province) => province.name === values.province)
+        ?.cities;
+    }
+    return null;
+  }, [provinces, provincesLoading, values.province]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan code route selanjutnya masih loading
+  if (isLoading) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan code route selanjutnya menghasilkan error
+  if (error) {
+    throw error;
+  }
+
   return (
-    <Modal title="Add New Route" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Create Date" className="basis-1/3" />
-            <InputText placeholder="" disabled className="basis-2/3" />
+    <Modal title="Add New Route" type="save" onDone={handleSubmit}>
+      <FormikProvider value={formik}>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Create Date" />
+                <DatePicker
+                  id="createDate"
+                  name="createDate"
+                  className="basis-2/3"
+                  defaultValue={defaultCreateDate}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Route Code" />
+                <InputText
+                  id="code"
+                  name="code"
+                  className="basis-2/3"
+                  defaultValue={defaultRouteCode}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Province" />
+                <SelectInput
+                  id="province"
+                  name="province"
+                  placeholder="Choose province"
+                  className="basis-2/3"
+                  options={
+                    !provincesLoading && provinces
+                      ? provinces.map((province) => ({
+                          label: province.name,
+                          value: province.name,
+                        }))
+                      : []
+                  }
+                  isSearchable
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">
+                  {errors.province}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="City" />
+                <SelectInput
+                  id="city"
+                  name="city"
+                  placeholder="Choose city"
+                  className="basis-2/3"
+                  options={
+                    selectedProvinceCities
+                      ? selectedProvinceCities.map((selectedProvinceCity) => ({
+                          label: selectedProvinceCity,
+                          value: selectedProvinceCity,
+                        }))
+                      : []
+                  }
+                  readOnly={!selectedProvinceCities}
+                  isSearchable
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">{errors.city}</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Origin Description" />
+                <InputText
+                  id="originDescription"
+                  name="originDescription"
+                  placeholder="Enter origin description"
+                  className="basis-2/3"
+                  value={values.originDescription}
+                  onChange={handleChange}
+                  isError={!!errors.originDescription}
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">
+                  {errors.originDescription}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Destination Description" />
+                <InputText
+                  id="destinationDescription"
+                  name="destinationDescription"
+                  placeholder="Enter origin description"
+                  className="basis-2/3"
+                  value={values.destinationDescription}
+                  onChange={handleChange}
+                  isError={!!errors.destinationDescription}
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">
+                  {errors.destinationDescription}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Route Code" className="basis-1/3" />
-            <InputText placeholder="" disabled className="basis-2/3" />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="City" className="basis-1/3" />
-            <Select
-              placeholder="Choose city"
-              options={[
-                { label: "Jakarta", value: 0 },
-                { label: "Tangerang", value: 1 },
-                { label: "Solo", value: 2 },
-              ]}
-              onChange={() => {}}
-              className="basis-2/3"
-              isSearchable
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Province" className="basis-1/3" />
-            <Select
-              placeholder="Choose province"
-              options={[
-                { label: "Jawa Barat", value: 0 },
-                { label: "DKI Jakarta", value: 1 },
-                { label: "Banten", value: 2 },
-              ]}
-              onChange={() => {}}
-              className="basis-2/3"
-              isSearchable
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Description" className="basis-1/3" />
-            <InputText
-              placeholder="Enter route description"
-              className="basis-2/3"
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <div className="basis-1/3"></div>
-            <InputText placeholder="..." className="basis-2/3" />
-          </div>
-        </div>
-      </form>
+        </form>
+      </FormikProvider>
     </Modal>
   );
 }
@@ -99,16 +269,37 @@ export function Export() {
 }
 
 export default function MasterRoute() {
-  const { setModal } = useModal();
+  // Gunakan store useHeader untuk merubah judul header
   const { setTitle } = useHeader();
+
+  // Gunakan store useMenu untuk mengset menu yang active
   const { setActive } = useMenu();
 
-  const [print, setPrint] = React.useState(false);
+  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
+  const { setModal, current } = useModal();
 
+  // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Route");
     setActive(1, 1, 0);
   }, [setTitle, setActive]);
+
+  // State untuk menyimpan row yang di-select di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  // Pemanggilan api untuk mendapatkan semua route
+  const { routes, isLoading, error } = useRoutes([current]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua route
+  // masih loading atau data masih belum didapatkan
+  if (isLoading || !routes) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua route menghasilkan error
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -136,163 +327,74 @@ export default function MasterRoute() {
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setPrint(true)}
+            onClick={() => {}}
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "Route Code", value: "routeCode" },
-                { label: "City", value: "city" },
-                { label: "Province", value: "province" },
-                { label: "Description", value: "description" },
-              ]}
-              onChange={() => {}}
-              isMulti
-              isSearchable
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              value={10}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Route Code", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "Description" },
-          ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-            [
-              false,
-              new Date(),
-              "RC00001",
-              "Banten",
-              "Tangerang",
-              "Jakarta - Tangerang",
-            ],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "createDate",
+            header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "code",
+            header: "Route Code",
+            type: "code",
+          },
+          {
+            id: "province",
+            header: "Province",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "city",
+            header: "City",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "description",
+            header: "Route Description",
+            type: "text",
+            isSortable: true,
+          },
+        ]}
+        rows={routes.map((route) => ({
+          ...route,
+          description: `${route.originDescription} - ${route.destinationDescription}`,
+        }))}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada row yang dipilih di table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Buka modal untuk membuat route
+          setModal(<Save route={routes[selectedRowIndex]} />);
+        }}
+        onDelete={async () => {
+          // Cek apakah tidak ada row yang dipilih di table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Hapus route yang dipilih di table
+          await deleteRoute(routes[selectedRowIndex].code);
+
+          // Karena route yang dipilih telah dihapus, maka hapus pilihan sebelumnya
+          setSelectedRowIndex(undefined);
+
+          // Tutup modal
+          setModal(null);
+        }}
+      />
     </>
   );
 }
