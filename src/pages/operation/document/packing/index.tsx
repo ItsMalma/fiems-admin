@@ -26,7 +26,7 @@ export default function CustomerGroup() {
 
   React.useEffect(() => {
     setTitle("Operational | Packing List");
-    setActive(3, 3, 3);
+    setActive(3, 2, 3);
   }, []);
 
   return (

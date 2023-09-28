@@ -187,6 +187,10 @@ export default function Sider() {
                 name: "Dooring",
                 url: "/operation/dooring"
               },
+              {
+                name: "Change Dooring",
+                url: "/operation/change_dooring"
+              },
             ]
           },
           {
