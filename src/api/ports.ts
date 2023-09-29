@@ -2,11 +2,11 @@ import React from "react";
 import useSWR from "swr";
 import { fetcher } from "@/libs/fetcher";
 import { ApiResponsePayload } from "@/libs/utils";
-import { RouteOutput, SaveRouteInput } from "@/models/route.model";
+import { PortOutput, SavePortInput } from "@/models/port.model";
 
-// Buat dan tambah route baru
-export async function createRoute(input: SaveRouteInput) {
-  await fetch("/api/routes", {
+// Buat dan tambah port baru
+export async function createPort(input: SavePortInput) {
+  await fetch("/api/ports", {
     method: "POST",
     body: JSON.stringify(input),
     headers: {
@@ -15,9 +15,9 @@ export async function createRoute(input: SaveRouteInput) {
   });
 }
 
-// Ubah (update) route
-export async function updateRoute(code: string, input: SaveRouteInput) {
-  await fetch(`/api/routes/${code}`, {
+// Ubah (update) port
+export async function updatePort(code: string, input: SavePortInput) {
+  await fetch(`/api/ports/${code}`, {
     method: "PUT",
     body: JSON.stringify(input),
     headers: {
@@ -26,29 +26,29 @@ export async function updateRoute(code: string, input: SaveRouteInput) {
   });
 }
 
-// Mendapatkan semua route
-export function useRoutes(deps?: React.DependencyList) {
+// Mendapatkan semua port
+export function usePorts(deps?: React.DependencyList) {
   const { data, error, isLoading, mutate } = useSWR<
-    ApiResponsePayload<RouteOutput[]>
-  >("/api/routes", fetcher);
+    ApiResponsePayload<PortOutput[]>
+  >("/api/ports", fetcher);
 
   React.useEffect(() => {
     mutate();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [mutate, ...(deps ?? [])]);
 
   return {
-    routes: data?.data,
+    ports: data?.data,
     error: error || data?.error,
     isLoading: isLoading || data === undefined || data.data === null,
   };
 }
 
-// Mendapatkan code selanjutnya dari route yang akan ditambah
-export function useNextRouteCode(deps?: React.DependencyList) {
+// Mendapatkan code selanjutnya dari port yang akan ditambah
+export function useNextPortCode(deps?: React.DependencyList) {
   const { data, error, isLoading, mutate } = useSWR<ApiResponsePayload<string>>(
-    "/api/routes/next",
+    "/api/ports/next",
     fetcher
   );
 
@@ -65,9 +65,9 @@ export function useNextRouteCode(deps?: React.DependencyList) {
   };
 }
 
-// Menghapus route
-export async function deleteRoute(code: string) {
-  await fetch(`/api/routes/${code}`, {
+// Menghapus port
+export async function deletePort(code: string) {
+  await fetch(`/api/ports/${code}`, {
     method: "DELETE",
   });
 }

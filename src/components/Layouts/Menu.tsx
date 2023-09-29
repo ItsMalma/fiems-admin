@@ -1,28 +1,8 @@
 import React from "react";
-import {
-  Icon,
-  ChevronDown,
-  ChevronUp,
-  Grid1x2,
-  Grid1x2Fill,
-  Database,
-  DatabaseFill,
-  BarChart,
-  BarChartFill,
-  Gear,
-  GearFill,
-  Cart,
-  CartFill,
-  HouseDoor,
-  HouseDoorFill,
-  PiggyBank,
-  PiggyBankFill,
-  People,
-  PeopleFill,
-} from "react-bootstrap-icons";
+import { Icon, ChevronDown, ChevronUp } from "react-bootstrap-icons";
 import clsx from "clsx";
-import { useRouter } from "next/router";
 import useMenu from "@/stores/menu";
+import { useRouter } from "next/router";
 
 type SingleMenuItemProps =
   | {
@@ -224,7 +204,7 @@ function MenuItemComponent(props: MenuItemProps) {
 type MenuItemChildren = {
   name: string;
   url?: string;
-  childrens?: Omit<MenuItemChildren, "childrens">[];
+  childrens?: (Omit<MenuItemChildren, "childrens" | "url"> & { url: string })[];
 };
 
 type MenuItem = {
@@ -239,69 +219,79 @@ type MenuProps = {
   items: MenuItem[];
 };
 
-export default function Menu(props: MenuProps) {
+export default function Menu({ items }: MenuProps) {
   const { active: activeContext } = useMenu();
 
   const [active, setActive] = React.useState<{
     0?: number;
     1?: number;
     2?: number;
-  }>({
-    0: undefined,
-    1: undefined,
-    2: undefined,
-  });
+  }>({ 0: 0, 1: 0, 2: 0 });
+
+  React.useEffect(() => {
+    setActive({
+      0: activeContext[0] ?? 0,
+      1: activeContext[1] ?? 0,
+      2: activeContext[2] ?? 0,
+    });
+  }, [activeContext]);
 
   const router = useRouter();
 
-  React.useEffect(() => {
-    if (active[0] !== undefined) {
-      const item = props.items[active[0]];
-      if (item.childrens && active[1] !== undefined) {
-        const children = item.childrens[active[1]];
-        if (children.childrens && active[2] !== undefined) {
-          const subChildren = children.childrens[active[2]];
-          if (subChildren.url) {
-            router.push(subChildren.url);
-          }
-        } else if (children.url) {
-          router.push(children.url);
+  const handleClick = React.useCallback(
+    (itemIndex: number, childrenIndex: number, subChildrenIndex: number) => {
+      setActive({ 0: itemIndex, 1: childrenIndex, 2: subChildrenIndex });
+
+      // Dapatkan menu item berdasarkan index
+      const item = items[itemIndex];
+
+      // Cek apakah item punya children
+      if (item.childrens) {
+        // Dapatkan children dari menu item
+        const itemChildren = item.childrens[childrenIndex];
+
+        // Cek apakah children punya children lagi (subChildren)
+        if (itemChildren.childrens) {
+          // Dapatkan children dari childrennya menu item (:v)
+          const subChildren = itemChildren.childrens[subChildrenIndex];
+
+          // Redirect ke url sub children
+          router.push(subChildren.url);
+        } else if (itemChildren.url) {
+          // Jika tidak, maka redirect ke url children item
+          router.push(itemChildren.url);
         }
       } else if (item.url) {
+        // Jika tidak, maka redirect ke url item
         router.push(item.url);
       }
-    }
-  }, [active, props.items, router]);
+    },
+    [router, items]
+  );
 
   return (
     <nav className="px-[18px] 2xl:px-6 flex flex-col gap-[18px] 2xl:gap-6 overflow-auto">
-      {props.items.map((item, itemIndex) => (
+      {items.map((item, itemIndex) => (
         <MenuItemComponent
           key={itemIndex}
           name={item.name}
           icon={item.icon}
           activeIcon={item.activeIcon}
-          isActive={itemIndex === activeContext[0]}
-          onClick={() => setActive({ 0: itemIndex, 1: 0, 2: 0 })}
+          isActive={itemIndex === active[0]}
+          onClick={() => handleClick(itemIndex, 0, 0)}
           childrens={item.childrens?.map((children, childrenIndex) => ({
             name: children.name,
-            isActive:
-              itemIndex === activeContext[0] &&
-              childrenIndex === activeContext[1],
-            onClick: () => setActive({ 0: itemIndex, 1: childrenIndex, 2: 0 }),
+            isActive: itemIndex === active[0] && childrenIndex === active[1],
+            onClick: () => handleClick(itemIndex, childrenIndex, 0),
             childrens: children.childrens?.map(
               (subChildren, subChildrenIndex) => ({
                 name: subChildren.name,
                 isActive:
-                  itemIndex === activeContext[0] &&
-                  childrenIndex === activeContext[1] &&
-                  subChildrenIndex === activeContext[2],
+                  itemIndex === active[0] &&
+                  childrenIndex === active[1] &&
+                  subChildrenIndex === active[2],
                 onClick: () =>
-                  setActive({
-                    0: itemIndex,
-                    1: childrenIndex,
-                    2: subChildrenIndex,
-                  }),
+                  handleClick(itemIndex, childrenIndex, subChildrenIndex),
               })
             ),
           }))}

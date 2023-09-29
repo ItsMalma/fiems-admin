@@ -25,7 +25,7 @@ export default function InquiryContainer() {
   React.useEffect(() => {
     setTitle("Operational | Dooring");
     setActive(3, 4, 0);
-  }, []);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -115,7 +115,7 @@ export default function InquiryContainer() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />
@@ -163,13 +163,13 @@ export default function InquiryContainer() {
               "",
               "",
               "",
-              <Button
-                className="text-sm !py-1.5 !px-2 rounded-lg"
-                text="Dooring"
-                variant="filled"
-                onClick={() => router.push("/operation/dooring/save")}
-              />,
-            ]
+              // <Button
+              //   className="text-sm !py-1.5 !px-2 rounded-lg"
+              //   text="Dooring"
+              //   variant="filled"
+              //   onClick={() => router.push("/operation/dooring/save")}
+              // />,
+            ],
           ]}
         />
         <div className="flex mt-auto">

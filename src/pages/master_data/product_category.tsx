@@ -115,7 +115,6 @@ export default function MasterProductCategory() {
                 { label: "Reff Category", value: "reffCategory" },
                 { label: "Product Category", value: "productCategory" },
               ]}
-              defaultValue={{ label: "Create Date", value: "createDate" }}
               onChange={() => {}}
               isSearchable
               isMulti
