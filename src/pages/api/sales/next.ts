@@ -27,26 +27,31 @@ export default async function handler(
     return res.status(400).json(parsedQuery);
   }
 
-  // Ambil data customer terakhir
-  const lastCustomer = await CustomerModel.findOne({
-    type: parsedQuery.data.type,
-  }).sort({
-    _id: -1,
-  });
-
   // Buat variabel code untuk menampung nilai kembalian nanti
   let code = "";
 
   // Cek customer type dari request query dan buat code yang sesuai dengan customer type nya
   switch (parsedQuery.data.type) {
     case "factory":
-      code = "CFC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
+      code =
+        "CFC" +
+        ((await CustomerModel.count({ type: "factory" })) + 1)
+          .toString()
+          .padStart(5, "0");
       break;
     case "shipping":
-      code = "CSC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
+      code =
+        "CSC" +
+        ((await CustomerModel.count({ type: "shipping" })) + 1)
+          .toString()
+          .padStart(5, "0");
       break;
     case "vendor":
-      code = "CVC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
+      code =
+        "CVC" +
+        ((await CustomerModel.count({ type: "vendor" })) + 1)
+          .toString()
+          .padStart(5, "0");
       break;
   }
 

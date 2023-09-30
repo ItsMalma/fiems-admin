@@ -9,7 +9,10 @@ import connect from "@/libs/mongodb";
 import moment from "moment";
 import { validateCustomerSave } from "@/validations/customer.validation";
 
-async function create(req: NextApiRequest, res: NextApiResponse) {
+async function create(
+  req: NextApiRequest,
+  res: NextApiResponse<ApiResponsePayload<CustomerOutput>>
+) {
   // Validasi request body
   const parsedBody = validateCustomerSave(req.body);
 
@@ -26,6 +29,7 @@ async function create(req: NextApiRequest, res: NextApiResponse) {
   // Cek apakah data customer group tidak ada
   if (!customerGroup) {
     return res.status(404).json({
+      data: null,
       error: `No customer group with id ${parsedBody.data.group}`,
     });
   }
@@ -47,28 +51,26 @@ async function create(req: NextApiRequest, res: NextApiResponse) {
   customer.pic = parsedBody.data.pic;
   customer.status = true;
 
+  // Ambil data customer terakhir
+  const lastCustomer = await CustomerModel.findOne({
+    type: customer.type,
+  }).sort({
+    _id: -1,
+  });
+
   // Buat customer code berdasarkan customer type
   switch (customer.type) {
     case "factory":
       customer.code =
-        "CFC" +
-        ((await CustomerModel.count({ type: "factory" })) + 1)
-          .toString()
-          .padStart(5, "0");
+        "CFC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
       break;
     case "shipping":
       customer.code =
-        "CSC" +
-        ((await CustomerModel.count({ type: "shipping" })) + 1)
-          .toString()
-          .padStart(5, "0");
+        "CSC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
       break;
     case "vendor":
       customer.code =
-        "CVC" +
-        ((await CustomerModel.count({ type: "vendor" })) + 1)
-          .toString()
-          .padStart(5, "0");
+        "CVC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
       break;
   }
 
@@ -91,8 +93,10 @@ async function create(req: NextApiRequest, res: NextApiResponse) {
       currency: customer.currency,
       pic: customer.pic,
       code: customer.code,
-      createDate: customer.createDate,
+      createDate: moment(customer.createDate).format("DD/MM/YYYY"),
+      status: customer.status,
     },
+    error: null,
   });
 }
 

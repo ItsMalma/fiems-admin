@@ -1,19 +1,19 @@
 import React from "react";
 import useMenu from "@/stores/menu";
 import { useRouter } from "next/router";
-import InputText from "@/components/Elements/InputText";
-import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
-import { CustomerOutput, SaveCustomerInput } from "@/models/customer.model";
-import InputNumber from "@/components/Elements/InputNumber";
 import { createCustomer, updateCustomer, useCustomer } from "@/api/customers";
 import { useCustomerGroups } from "@/api/customer_groups";
 import { useProvinces } from "@/api/provinces";
 import { useCurrencies } from "@/api/currencies";
 import { useFormik, FormikProvider } from "formik";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import { saveCustomerSchema } from "@/validations/customer.validation";
-import { formikValidateWithZod, transformZodErrorDeep } from "@/libs/error";
 import { ApiResponsePayload } from "@/libs/utils";
+import { CustomerOutput, SaveCustomerInput } from "@/models/customer.model";
+import { formikValidateWithZod } from "@/libs/error";
+import { saveCustomerSchema } from "@/validations/customer.validation";
+import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
+import InputText from "@/components/Elements/InputText";
+import InputNumber from "@/components/Elements/InputNumber";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
 
 export default function CustomerSavePage() {
   // Gunakan store useMenu untuk mengset menu mana yang aktif
@@ -210,7 +210,7 @@ export default function CustomerSavePage() {
                 />
                 {values.type && (
                   <>
-                    <hr></hr>
+                    <hr />
                     <InputRow
                       firstCol={{
                         label: `${capitalizedSelectedCustomerType} Name`,

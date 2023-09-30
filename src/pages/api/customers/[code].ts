@@ -106,6 +106,13 @@ async function update(
   customer.currency = parsedBody.data.currency;
   customer.pic = parsedBody.data.pic;
 
+  // Ambil data customer terakhir
+  const lastCustomer = await CustomerModel.findOne({
+    type: customer.type,
+  }).sort({
+    _id: -1,
+  });
+
   // Cek apakah terjadi perubahan pada customer type
   if (customer.type !== parsedBody.data.type) {
     // Ubah data customer type dengan type yang baru
@@ -115,24 +122,15 @@ async function update(
     switch (customer.type) {
       case "factory":
         customer.code =
-          "CFC" +
-          ((await CustomerModel.count({ type: "factory" })) + 1)
-            .toString()
-            .padStart(5, "0");
+          "CFC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
         break;
       case "shipping":
         customer.code =
-          "CSC" +
-          ((await CustomerModel.count({ type: "shipping" })) + 1)
-            .toString()
-            .padStart(5, "0");
+          "CSC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
         break;
       case "vendor":
         customer.code =
-          "CVC" +
-          ((await CustomerModel.count({ type: "vendor" })) + 1)
-            .toString()
-            .padStart(5, "0");
+          "CVC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
         break;
     }
   }

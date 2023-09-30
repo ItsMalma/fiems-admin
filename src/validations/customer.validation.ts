@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { CustomerType } from "@/libs/utils";
-import { transformZodError } from "@/libs/error";
 import isEmail from "validator/lib/isEmail";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import isNumeric from "validator/lib/isNumeric";
+import { transformZodError } from "@/libs/error";
 
 const customerPicSchema = z.object(
   {

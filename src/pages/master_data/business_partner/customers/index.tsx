@@ -250,7 +250,7 @@ export default function CustomersPage() {
             ],
           },
           {
-            id: "description",
+            id: "status",
             header: "Description",
             type: "status",
           },
