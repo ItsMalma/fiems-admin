@@ -173,7 +173,7 @@ export default function MasterVehicle() {
           },
           {
             id: "status",
-            header: "Description",
+            header: "Status",
             type: "status",
           },
         ]}

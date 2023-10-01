@@ -121,6 +121,11 @@ export function Save(props: SaveProps) {
     throw error;
   }
 
+  // Cek apakah pemanggilan api untuk mendapatkan semua province menghasilkan error
+  if (provincesError) {
+    throw provincesError;
+  }
+
   return (
     <Modal title="Add New Port" type="save" onDone={handleSubmit}>
       <FormikProvider value={formik}>

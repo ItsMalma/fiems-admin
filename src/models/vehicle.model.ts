@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { saveVehicleSchema } from "@/validations/vehicle.validation";
-import { CustomerDocument, CustomerOutput } from "./customer.model";
+import { CustomerDocument } from "./customer.model";
 import { TruckTypes, Cylinders } from "@/libs/utils";
 import mongoose from "mongoose";
 

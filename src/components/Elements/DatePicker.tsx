@@ -15,7 +15,7 @@ type DatePickerProps = Omit<
 
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
   ({ className, onChange, value, defaultValue, isError, ...props }, ref) => {
-    const [inputValue, setInputValue] = React.useState(new Date());
+    const [inputValue, setInputValue] = React.useState<Date>();
 
     React.useEffect(() => {
       if (value instanceof Date) {

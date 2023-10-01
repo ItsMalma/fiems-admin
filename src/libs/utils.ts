@@ -14,6 +14,8 @@ export const TruckTypes = [
 
 export const Cylinders = [2, 4, 8];
 
+export const VesselUnits = ["container", "teus", "ton"] as const;
+
 export function toTitleCase(str: string): string {
   return lodash.startCase(lodash.toLower(str));
 }
