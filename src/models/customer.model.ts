@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CustomerType } from "@/libs/utils";
+import { CustomerTypes } from "@/libs/utils";
 import { CustomerGroupDocument } from "./customerGroup.model";
 import { z } from "zod";
 import { saveCustomerSchema } from "@/validations/customer.validation";
@@ -10,7 +10,7 @@ export type CustomerOutput = {
   id: number;
   createDate: string;
   code: string;
-  type: (typeof CustomerType)[number];
+  type: (typeof CustomerTypes)[number];
   name: string;
   group: string;
   address: string;
@@ -64,7 +64,7 @@ const CustomerPicSchema = new mongoose.Schema<CustomerPic>(
 );
 
 export type Customer = {
-  type: (typeof CustomerType)[number];
+  type: (typeof CustomerTypes)[number];
   name: string;
   group: mongoose.PopulatedDoc<CustomerGroupDocument & number, number>;
   address: string;
@@ -96,7 +96,7 @@ const CustomerSchema = new mongoose.Schema<CustomerDocument>(
     type: {
       type: String,
       required: true,
-      enum: CustomerType,
+      enum: CustomerTypes,
     },
     name: {
       type: String,

@@ -8,7 +8,7 @@ import { transformZodError } from "@/libs/error";
 export const saveSalesSchema = z.object({
   jobPosition: z.enum(JobPositions, {
     errorMap: () => ({
-      message: `Job position must be director or marketing`,
+      message: "Job position must be director or marketing",
     }),
   }),
   name: z

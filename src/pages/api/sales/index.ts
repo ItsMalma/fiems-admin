@@ -24,7 +24,7 @@ async function create(
 
   // Buat data sales baru dan isi semua datanya dengan request
   let sales = new SalesModel();
-  sales._id = (await SalesModel.count()) + 1;
+  sales._id = (lastSales?._id ?? 0) + 1;
   sales.code = "SLS" + ((lastSales?._id ?? 0) + 1).toString().padStart(5, "0");
   sales.jobPosition = parsedBody.data.jobPosition;
   sales.name = parsedBody.data.name;

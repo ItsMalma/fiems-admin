@@ -7,7 +7,10 @@ import {
 } from "@/models/customerGroup.model";
 import connect from "@/libs/mongodb";
 import moment from "moment";
-import { validateCustomerSave } from "@/validations/customer.validation";
+import {
+  validateCustomerSave,
+  validateCustomerFilter,
+} from "@/validations/customer.validation";
 
 async function create(
   req: NextApiRequest,
@@ -30,13 +33,18 @@ async function create(
   if (!customerGroup) {
     return res.status(404).json({
       data: null,
-      error: `No customer group with id ${parsedBody.data.group}`,
+      error: `No customer group with code ${parsedBody.data.group}`,
     });
   }
 
+  // Ambil data customer terakhir
+  let lastCustomer = await CustomerModel.findOne().sort({
+    _id: -1,
+  });
+
   // Buat data customer baru dan isi semua datanya dengan request
   let customer = new CustomerModel();
-  customer._id = (await CustomerModel.count()) + 1;
+  customer._id = (lastCustomer?._id ?? 0) + 1;
   customer.type = parsedBody.data.type;
   customer.name = parsedBody.data.name;
   customer.group = customerGroup._id;
@@ -51,8 +59,8 @@ async function create(
   customer.pic = parsedBody.data.pic;
   customer.status = true;
 
-  // Ambil data customer terakhir
-  const lastCustomer = await CustomerModel.findOne({
+  // Ambil data customer terakhir dengan tipe yang sama
+  lastCustomer = await CustomerModel.findOne({
     type: customer.type,
   }).sort({
     _id: -1,
@@ -104,9 +112,25 @@ async function findAll(
   req: NextApiRequest,
   res: NextApiResponse<ApiResponsePayload<CustomerOutput[]>>
 ) {
+  // Validasi request query
+  const parsedQuery = validateCustomerFilter(req.query);
+
+  // Cek apakah hasil validasi error
+  if (parsedQuery.error) {
+    return res.status(400).json(parsedQuery);
+  }
+
+  // Buat filter query sebagai filter saat mendapatkan data di db
+  const filterQuery: { [key: string]: any } = {};
+
+  // Cek apakah ada query type
+  if (parsedQuery.data.type) {
+    filterQuery["type"] = parsedQuery.data.type;
+  }
+
   // Ambil semua data customer dari db
   // lakukan populate untuk mengambil data customer group yang berkaitan dengan data customer yang diambil
-  const customers = await CustomerModel.find().populate<{
+  const customers = await CustomerModel.find(filterQuery).populate<{
     group: CustomerGroup;
   }>("group");
 

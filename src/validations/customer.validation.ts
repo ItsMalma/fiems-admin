@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CustomerType } from "@/libs/utils";
+import { CustomerTypes } from "@/libs/utils";
 import isEmail from "validator/lib/isEmail";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import isNumeric from "validator/lib/isNumeric";
@@ -57,7 +57,7 @@ const customerPicSchema = z.object(
 );
 
 export const saveCustomerSchema = z.object({
-  type: z.enum(CustomerType, {
+  type: z.enum(CustomerTypes, {
     errorMap: () => ({
       message: `Type must be factory, shipping or vendor`,
     }),
@@ -154,11 +154,21 @@ const customerCodeSchema = z.object({
 });
 
 const customerTypeSchema = z.object({
-  type: z.enum(CustomerType, {
+  type: z.enum(CustomerTypes, {
     errorMap: () => ({
       message: `Type must be factory, shipping or vendor`,
     }),
   }),
+});
+
+const filterCustomerSchema = z.object({
+  type: z
+    .enum(CustomerTypes, {
+      errorMap: () => ({
+        message: `Type must be factory, shipping or vendor`,
+      }),
+    })
+    .optional(),
 });
 
 export function validateCustomerSave(data: unknown) {
@@ -195,6 +205,21 @@ export function validateCustomerCode(data: unknown) {
 
 export function validateCustomerType(data: unknown) {
   const parsed = customerTypeSchema.safeParse(data);
+
+  if (!parsed.success) {
+    return {
+      error: transformZodError(parsed.error),
+      data: null,
+    };
+  }
+
+  return {
+    error: null,
+    data: parsed.data,
+  };
+}
+export function validateCustomerFilter(data: unknown) {
+  const parsed = filterCustomerSchema.safeParse(data);
 
   if (!parsed.success) {
     return {

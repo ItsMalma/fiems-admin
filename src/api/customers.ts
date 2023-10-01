@@ -1,7 +1,7 @@
 import React from "react";
 import useSWR from "swr";
 import { fetcher } from "@/libs/fetcher";
-import { ApiResponsePayload } from "@/libs/utils";
+import { ApiResponsePayload, CustomerTypes } from "@/libs/utils";
 import { SaveCustomerInput, CustomerOutput } from "@/models/customer.model";
 
 // Buat dan tambah customer baru
@@ -31,10 +31,19 @@ export async function updateCustomer(code: string, input: SaveCustomerInput) {
 }
 
 // Mendapatkan semua customer
-export function useCustomers(deps?: React.DependencyList) {
+export function useCustomers(
+  type?: (typeof CustomerTypes)[number],
+  deps?: React.DependencyList
+) {
+  let url = "/api/customers";
+
+  if (type) {
+    url += `?type=${type}`;
+  }
+
   const { data, error, isLoading, mutate } = useSWR<
     ApiResponsePayload<CustomerOutput[]>
-  >("/api/customers", fetcher);
+  >(url, fetcher);
 
   React.useEffect(() => {
     mutate();

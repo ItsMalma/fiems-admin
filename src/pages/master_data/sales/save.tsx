@@ -117,7 +117,7 @@ export default function SalesSave() {
                         placeholder="Choose job position"
                         className="basis-3/5"
                         options={[
-                          { label: "Directur", value: "directur" },
+                          { label: "Director", value: "director" },
                           { label: "Marketing", value: "marketing" },
                         ]}
                         isSearchable

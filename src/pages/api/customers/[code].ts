@@ -12,12 +12,12 @@ import {
   validateCustomerSave,
 } from "@/validations/customer.validation";
 
-async function findById(
+async function findByCode(
   code: string,
   req: NextApiRequest,
   res: NextApiResponse<ApiResponsePayload<CustomerOutput>>
 ) {
-  // Ambil data customer dari db dengan code yang sesuai di request lalu hapus jika ketemu
+  // Ambil data customer dari db dengan code yang sesuai di request
   // lakukan populate untuk mendapatkan juga data customer group yang terkait
   const customer = await CustomerModel.findOne({
     code,
@@ -223,7 +223,7 @@ export default async function handler(
   // Cek request method dan panggil function yang sesuai
   switch (req.method) {
     case "GET":
-      return await findById(parsedQuery.data.code, req, res);
+      return await findByCode(parsedQuery.data.code, req, res);
     case "PUT":
       return await update(parsedQuery.data.code, req, res);
     case "DELETE":
