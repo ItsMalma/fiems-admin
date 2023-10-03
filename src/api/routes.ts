@@ -36,7 +36,7 @@ export function useRoutes(deps?: React.DependencyList) {
     mutate();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  }, [mutate, ...(deps ?? [])]);
 
   return {
     routes: data?.data,

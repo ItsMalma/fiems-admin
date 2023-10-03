@@ -5,11 +5,22 @@ export const CustomerTypes = ["factory", "vendor", "shipping"] as const;
 export const JobPositions = ["director", "marketing"] as const;
 
 export const TruckTypes = [
-  "20 feet single",
-  "20 feet combo",
+  "engkel single",
+  "engkel double",
+  "fuso",
+  "tronton",
+  "trinton",
+  "trintin",
+  "trailer",
+] as const;
+
+export const ContainerSizes = [
+  "20 feet",
+  "21 feet",
   "40 feet",
+  "41 feet",
   "40 hc",
-  "21 feet single",
+  "combo",
 ] as const;
 
 export const Cylinders = [2, 4, 8];

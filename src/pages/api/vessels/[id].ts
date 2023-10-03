@@ -9,7 +9,7 @@ import {
 import { Customer, CustomerModel } from "@/models/customer.model";
 import moment from "moment";
 
-async function findByNumber(
+async function findById(
   id: string,
   req: NextApiRequest,
   res: NextApiResponse<ApiResponsePayload<VesselOutput>>
@@ -17,7 +17,7 @@ async function findByNumber(
   // Ambil data vessel dari db dengan id yang sesuai di request
   // lakukan populate untuk mengambil data shipping yang bersangkutan dengan data vessel
   const vessel = await VesselModel.findOne({
-    id,
+    _id: id,
   }).populate<{ shipping: Customer }>("shipping");
 
   // Cek apakah data vessel tidak ada
@@ -51,7 +51,7 @@ async function update(
   res: NextApiResponse<ApiResponsePayload<VesselOutput>>
 ) {
   // Ambil data vessel dari db dengan code yang sesuai di request
-  let vessel = await VesselModel.findOne({ id });
+  let vessel = await VesselModel.findOne({ _id: id });
 
   // Cek apakah data vessel tidak ada
   if (!vessel) {
@@ -89,11 +89,6 @@ async function update(
   vessel.capacity = parsedBody.data.capacity;
   vessel.unit = parsedBody.data.unit;
 
-  // Ambil data vessel terakhir
-  const lastVessel = await VesselModel.findOne().sort({
-    _id: -1,
-  });
-
   // Simpan data vessel yang baru ke db
   vessel = await vessel.save();
 
@@ -122,7 +117,7 @@ async function remove(
   // Ambil data vessel dari db dengan code yang sesuai di request lalu hapus jika ketemu
   // lakukan populate untuk mendapatkan juga data shipping yang terkait
   const vessel = await VesselModel.findOneAndDelete({
-    id,
+    _id: id,
   }).populate<{
     shipping: Customer;
   }>("shipping");
@@ -170,7 +165,7 @@ export default async function handle(
   // Cek request method dan panggil function yang sesuai
   switch (req.method) {
     case "GET":
-      return await findByNumber(parsedQuery.data.id, req, res);
+      return await findById(parsedQuery.data.id, req, res);
     case "PUT":
       return await update(parsedQuery.data.id, req, res);
     case "DELETE":

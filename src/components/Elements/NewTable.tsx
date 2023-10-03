@@ -35,7 +35,7 @@ type SortState = {
   direction: SortDirection | null;
 };
 
-type ColumnType = "code" | "date" | "text" | "status";
+type ColumnType = "code" | "date" | "text" | "status" | "money";
 
 type TableSubColumn = {
   id: string;
@@ -235,6 +235,10 @@ type TableCellProps = (
       type: "status";
       value: boolean;
     }
+  | {
+      type: "money";
+      value: number;
+    }
 ) & {
   isChildren?: boolean;
 };
@@ -261,6 +265,15 @@ function TableCell(props: TableCellProps) {
             )}
           >
             {props.value ? "Active" : "Inactive"}
+          </p>
+        );
+      case "money":
+        return (
+          <p className="text-gray-700 font-medium">
+            {Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+            }).format(Number(props.value))}
           </p>
         );
     }
@@ -369,7 +382,10 @@ export default function Table(props: TableProps) {
 
   // Memo untuk menghitung jumlah maksimal page
   const maxPage = React.useMemo(() => {
-    return Math.ceil(props.rows.length / rowTotal);
+    const n = Math.ceil(props.rows.length / rowTotal);
+
+    // Untuk mencegah NaN
+    return isNaN(n) ? 1 : n;
   }, [props.rows, rowTotal]);
 
   // Effect untuk membuat page berada di page akhir

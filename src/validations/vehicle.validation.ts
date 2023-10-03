@@ -26,7 +26,7 @@ export const saveVehicleSchema = z.object({
   truckType: z.enum(TruckTypes, {
     errorMap: () => ({
       message:
-        "Truck type must be 20 feet single, 20 feet combo, 40 feet, 40 hc, 21 feet single",
+        "Truck type must be engkel single, engkel double, fuso, tronton, trinton, trintin, or trailer",
     }),
   }),
   engineNumber: z

@@ -10,7 +10,7 @@ import { createVehicle, updateVehicle, useVehicle } from "@/api/vehicles";
 import { useCustomers } from "@/api/customers";
 import { FormikProvider, useFormik } from "formik";
 import { SaveVehicleInput, VehicleOutput } from "@/models/vehicle.model";
-import { ApiResponsePayload } from "@/libs/utils";
+import { ApiResponsePayload, TruckTypes, toTitleCase } from "@/libs/utils";
 import { formikValidateWithZod } from "@/libs/error";
 import { saveVehicleSchema } from "@/validations/vehicle.validation";
 import moment from "moment";
@@ -20,7 +20,7 @@ type VehicleFormValues = Omit<SaveVehicleInput, "truckType" | "cylinder"> & {
   cylinder: SaveVehicleInput["cylinder"] | "";
 };
 
-export default function VehicleSave() {
+export default function VehicleSavePage() {
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
@@ -241,13 +241,10 @@ export default function VehicleSave() {
                         name="truckType"
                         placeholder="Choose truck type"
                         className="basis-3/5"
-                        options={[
-                          { label: "20 Feet Single", value: "20 feet single" },
-                          { label: "20 Feet Combo", value: "20 feet combo" },
-                          { label: "40 Feet", value: "40 feet" },
-                          { label: "40 HC", value: "40 hc" },
-                          { label: "21 Feet Single", value: "21 feet single" },
-                        ]}
+                        options={TruckTypes.map((truckType) => ({
+                          label: toTitleCase(truckType),
+                          value: truckType,
+                        }))}
                         isSearchable
                       />
                     ),
