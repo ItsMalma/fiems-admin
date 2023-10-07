@@ -27,6 +27,14 @@ export const Cylinders = [2, 4, 8];
 
 export const VesselUnits = ["container", "teus", "ton"] as const;
 
+export const ItemTypes = ["product", "sparepart", "atk"] as const;
+
+export const ProductUnits = ["carton", "pack", "kg"] as const;
+
+export const SparepartUnits = ["pcs", "pack", "liter"] as const;
+
+export const AtkUnits = ["pcs", "pack", "box"] as const;
+
 export function toTitleCase(str: string): string {
   return lodash.startCase(lodash.toLower(str));
 }

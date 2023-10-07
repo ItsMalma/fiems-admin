@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiResponsePayload } from "@/libs/utils";
-import { CustomerModel, CustomerOutput } from "@/models/customer.model";
+import {
+  CustomerModel,
+  CustomerOutput,
+  formatCustomerCode,
+  getNumberCustomerCode,
+} from "@/models/customer.model";
 import {
   CustomerGroupModel,
   CustomerGroup,
@@ -66,21 +71,10 @@ async function create(
     _id: -1,
   });
 
-  // Buat customer code berdasarkan customer type
-  switch (customer.type) {
-    case "factory":
-      customer.code =
-        "CFC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
-      break;
-    case "shipping":
-      customer.code =
-        "CSC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
-      break;
-    case "vendor":
-      customer.code =
-        "CVC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
-      break;
-  }
+  customer.code = formatCustomerCode(
+    customer.type,
+    getNumberCustomerCode(lastCustomer?.code) + 1
+  );
 
   // Simpan data customer ke db
   customer = await customer.save();

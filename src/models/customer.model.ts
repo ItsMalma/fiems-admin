@@ -4,6 +4,36 @@ import { CustomerGroupDocument } from "./customerGroup.model";
 import { z } from "zod";
 import { saveCustomerSchema } from "@/validations/customer.validation";
 
+export function getNumberCustomerCode(customerCode?: string): number {
+  if (!customerCode) {
+    return 0;
+  }
+
+  if (
+    customerCode.startsWith("CFC") ||
+    customerCode.startsWith("CVC") ||
+    customerCode.startsWith("CSC")
+  ) {
+    return Number(customerCode.slice(3));
+  }
+
+  return 0;
+}
+
+export function formatCustomerCode(
+  customerType: (typeof CustomerTypes)[number],
+  no: number
+): string {
+  switch (customerType) {
+    case "factory":
+      return "CFC" + no.toString().padStart(5, "0");
+    case "shipping":
+      return "CSC" + no.toString().padStart(5, "0");
+    case "vendor":
+      return "CVC" + no.toString().padStart(5, "0");
+  }
+}
+
 export type SaveCustomerInput = z.infer<typeof saveCustomerSchema>;
 
 export type CustomerOutput = {

@@ -98,11 +98,7 @@ export default function Sider() {
               },
               {
                 name: "Master Product",
-                childrens: [
-                  { name: "Product", url: "/master_data/items/product" },
-                  { name: "Sparepart", url: "/master_data/items/sparepart" },
-                  { name: "ATK", url: "/master_data/items/atk" },
-                ],
+                url: "/master_data/product",
               },
               {
                 name: "Account COA",
@@ -131,7 +127,7 @@ export default function Sider() {
                 name: "Vessel Schedule",
                 url: "/marketing/vessel_schedule",
               },
-            ]
+            ],
           },
           {
             name: "Operational",
@@ -144,7 +140,7 @@ export default function Sider() {
               },
               {
                 name: "Delivery Report",
-                url: "/operation/delivery_report"
+                url: "/operation/delivery_report",
               },
               {
                 name: "Operational Docs.",
@@ -155,43 +151,43 @@ export default function Sider() {
                   },
                   {
                     name: "Surat Jalan",
-                    url: "/operation/document/surat_jalan"
+                    url: "/operation/document/surat_jalan",
                   },
                   {
                     name: "BAST Report",
-                    url: "/operation/document/bast"
+                    url: "/operation/document/bast",
                   },
                   {
                     name: "Packing List",
-                    url: "/operation/document/packing"
+                    url: "/operation/document/packing",
                   },
                   {
                     name: "Shipping Instruction",
-                    url: "/operation/document/si"
+                    url: "/operation/document/si",
                   },
                   {
                     name: "Insurance",
-                    url: "/operation/document/insurance"
+                    url: "/operation/document/insurance",
                   },
                   {
                     name: "Request",
-                    url: "/operation/document/request"
+                    url: "/operation/document/request",
                   },
-                ]
+                ],
               },
               {
                 name: "Ship Schedule",
-                url: "/operation/ship_schedule"
+                url: "/operation/ship_schedule",
               },
               {
                 name: "Dooring",
-                url: "/operation/dooring"
+                url: "/operation/dooring",
               },
               {
                 name: "Change Dooring",
-                url: "/operation/change_dooring"
+                url: "/operation/change_dooring",
               },
-            ]
+            ],
           },
           {
             name: "HRD",
@@ -207,13 +203,13 @@ export default function Sider() {
                   },
                   {
                     name: "Attendance",
-                    url: "/hrd/employee/attendance"
+                    url: "/hrd/employee/attendance",
                   },
                   {
                     name: "Leave",
-                    url: "/hrd/employee/leave"
+                    url: "/hrd/employee/leave",
                   },
-                ]
+                ],
               },
               {
                 name: "Payroll",
@@ -223,7 +219,7 @@ export default function Sider() {
                 name: "Recruitment",
                 url: "/marketing/inquiry_container",
               },
-            ]
+            ],
           },
           {
             name: "User Management",

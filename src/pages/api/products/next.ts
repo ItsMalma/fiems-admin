@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiResponsePayload } from "@/libs/utils";
-import { RouteModel } from "@/models/route.model";
+import { ProductModel } from "@/models/product.model";
 import connect from "@/libs/mongodb";
 
 export default async function handler(
@@ -18,13 +18,13 @@ export default async function handler(
     });
   }
 
-  // Ambil data route terakhir
-  const lastRoute = await RouteModel.findOne().sort({
+  // Ambil data product terakhir
+  const lastProduct = await ProductModel.findOne().sort({
     _id: -1,
   });
 
   return res.status(200).json({
-    data: "RC" + ((lastRoute?._id ?? 0) + 1).toString().padStart(5, "0"),
+    data: "SKU" + ((lastProduct?._id ?? 0) + 1).toString().padStart(5, "0"),
     error: null,
   });
 }

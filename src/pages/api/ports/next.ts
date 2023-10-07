@@ -24,7 +24,7 @@ export default async function handler(
   });
 
   return res.status(200).json({
-    data: "PC" + (lastPort?.id ?? 0 + 1).toString().padStart(5, "0"),
+    data: "PC" + ((lastPort?._id ?? 0) + 1).toString().padStart(5, "0"),
     error: null,
   });
 }

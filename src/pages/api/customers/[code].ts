@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiResponsePayload } from "@/libs/utils";
-import { CustomerModel, CustomerOutput } from "@/models/customer.model";
+import {
+  CustomerModel,
+  CustomerOutput,
+  formatCustomerCode,
+  getNumberCustomerCode,
+} from "@/models/customer.model";
 import {
   CustomerGroupModel,
   CustomerGroup,
@@ -118,21 +123,10 @@ async function update(
     // Ubah data customer type dengan type yang baru
     customer.type = parsedBody.data.type;
 
-    // Cek customer type yang baru dan buat ulang customer code
-    switch (customer.type) {
-      case "factory":
-        customer.code =
-          "CFC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
-        break;
-      case "shipping":
-        customer.code =
-          "CSC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
-        break;
-      case "vendor":
-        customer.code =
-          "CVC" + ((lastCustomer?._id ?? 0) + 1).toString().padStart(5, "0");
-        break;
-    }
+    customer.code = formatCustomerCode(
+      customer.type,
+      getNumberCustomerCode(lastCustomer?.code) + 1
+    );
   }
 
   // Simpan data customer yang baru ke db
