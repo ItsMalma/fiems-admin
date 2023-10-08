@@ -13,14 +13,15 @@ export default function JobOrderConfirm() {
 
   React.useEffect(() => {
     setActive(3, 4, 0);
-  }, []);
-  
+  }, [setActive]);
+
   React.useEffect(() => {
-    console.log(isChangeDooring)
+    console.log(isChangeDooring);
   }, [isChangeDooring]);
 
   return (
     <FormLayout
+      onSave={() => {}}
       title="Confirm Dooring / Change Dooring"
       tabs={[
         {
@@ -30,36 +31,40 @@ export default function JobOrderConfirm() {
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <div className="basis-2/5"></div>
-                  <Select     
+                  <Select
                     options={[
                       { label: "Dooring", value: false },
                       { label: "Change Dooring", value: true },
                     ]}
-                    defaultValue={{ label: "Dooring", value: false }}
+                    value={false}
                     onChange={(option) => setIsChangeDooring(option)}
                     className="basis-3/5"
                   />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  {isChangeDooring ? 
-                  <>
-                    <Label name="Dooring To" className="basis-2/5" />
-                    <Select
-                      placeholder="Choose customer "
-                      options={[
-                        { label: "Customer 1", value: 1 },
-                        { label: "Customer 2", value: 2 },
-                      ]}
-                      onChange={() => {}}
-                      className="basis-3/5"
-                    />
-                  </>
-                  :
-                  <>
-                    <Label name="Customer" className="basis-2/5" />
-                    <InputText placeholder="" className="basis-3/5" readOnly/>
-                  </>
-                  }
+                  {isChangeDooring ? (
+                    <>
+                      <Label name="Dooring To" className="basis-2/5" />
+                      <Select
+                        placeholder="Choose customer "
+                        options={[
+                          { label: "Customer 1", value: 1 },
+                          { label: "Customer 2", value: 2 },
+                        ]}
+                        onChange={() => {}}
+                        className="basis-3/5"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Label name="Customer" className="basis-2/5" />
+                      <InputText
+                        placeholder=""
+                        className="basis-3/5"
+                        readOnly
+                      />
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
@@ -75,31 +80,51 @@ export default function JobOrderConfirm() {
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="FreeTime Storage" className="basis-2/5" />
-                  <InputText placeholder="Enter berapa hari" className="basis-3/5" />
+                  <InputText
+                    placeholder="Enter berapa hari"
+                    className="basis-3/5"
+                  />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="FreeTime Demurage" className="basis-2/5" />
-                  <InputText placeholder="Enter berapa hari" className="basis-3/5" />
+                  <InputText
+                    placeholder="Enter berapa hari"
+                    className="basis-3/5"
+                  />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Storage" className="basis-2/5" />
-                  <InputText placeholder="Enter berapa hari" className="basis-3/5" readOnly />
+                  <InputText
+                    placeholder="Enter berapa hari"
+                    className="basis-3/5"
+                    readOnly
+                  />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Demurage" className="basis-2/5" />
-                  <InputText placeholder="Enter berapa hari" className="basis-3/5" readOnly />
+                  <InputText
+                    placeholder="Enter berapa hari"
+                    className="basis-3/5"
+                    readOnly
+                  />
                 </div>
               </div>
               <div className="flex gap-[18px] 2xl:gap-6 items-center">
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Storage Value" className="basis-2/5" />
-                  <InputText placeholder="Enter berapa hari" className="basis-3/5" />
+                  <InputText
+                    placeholder="Enter berapa hari"
+                    className="basis-3/5"
+                  />
                 </div>
                 <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
                   <Label name="Demurage Value" className="basis-2/5" />
-                  <InputText placeholder="Enter berapa hari" className="basis-3/5" />
+                  <InputText
+                    placeholder="Enter berapa hari"
+                    className="basis-3/5"
+                  />
                 </div>
               </div>
             </>

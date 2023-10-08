@@ -1,6 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiResponsePayload } from "@/libs/utils";
-import { CustomerModel, CustomerOutput } from "@/models/customer.model";
+import {
+  CustomerModel,
+  CustomerOutput,
+  formatCustomerCode,
+  getNumberCustomerCode,
+} from "@/models/customer.model";
 import {
   CustomerGroupModel,
   CustomerGroup,
@@ -12,12 +17,12 @@ import {
   validateCustomerSave,
 } from "@/validations/customer.validation";
 
-async function findById(
+async function findByCode(
   code: string,
   req: NextApiRequest,
   res: NextApiResponse<ApiResponsePayload<CustomerOutput>>
 ) {
-  // Ambil data customer dari db dengan code yang sesuai di request lalu hapus jika ketemu
+  // Ambil data customer dari db dengan code yang sesuai di request
   // lakukan populate untuk mendapatkan juga data customer group yang terkait
   const customer = await CustomerModel.findOne({
     code,
@@ -106,35 +111,22 @@ async function update(
   customer.currency = parsedBody.data.currency;
   customer.pic = parsedBody.data.pic;
 
+  // Ambil data customer terakhir
+  const lastCustomer = await CustomerModel.findOne({
+    type: customer.type,
+  }).sort({
+    _id: -1,
+  });
+
   // Cek apakah terjadi perubahan pada customer type
   if (customer.type !== parsedBody.data.type) {
     // Ubah data customer type dengan type yang baru
     customer.type = parsedBody.data.type;
 
-    // Cek customer type yang baru dan buat ulang customer code
-    switch (customer.type) {
-      case "factory":
-        customer.code =
-          "CFC" +
-          ((await CustomerModel.count({ type: "factory" })) + 1)
-            .toString()
-            .padStart(5, "0");
-        break;
-      case "shipping":
-        customer.code =
-          "CSC" +
-          ((await CustomerModel.count({ type: "shipping" })) + 1)
-            .toString()
-            .padStart(5, "0");
-        break;
-      case "vendor":
-        customer.code =
-          "CVC" +
-          ((await CustomerModel.count({ type: "vendor" })) + 1)
-            .toString()
-            .padStart(5, "0");
-        break;
-    }
+    customer.code = formatCustomerCode(
+      customer.type,
+      getNumberCustomerCode(lastCustomer?.code) + 1
+    );
   }
 
   // Simpan data customer yang baru ke db
@@ -225,7 +217,7 @@ export default async function handler(
   // Cek request method dan panggil function yang sesuai
   switch (req.method) {
     case "GET":
-      return await findById(parsedQuery.data.code, req, res);
+      return await findByCode(parsedQuery.data.code, req, res);
     case "PUT":
       return await update(parsedQuery.data.code, req, res);
     case "DELETE":

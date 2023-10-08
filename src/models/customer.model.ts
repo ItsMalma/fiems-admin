@@ -1,8 +1,38 @@
 import mongoose from "mongoose";
-import { CustomerType } from "@/libs/utils";
+import { CustomerTypes } from "@/libs/utils";
 import { CustomerGroupDocument } from "./customerGroup.model";
 import { z } from "zod";
 import { saveCustomerSchema } from "@/validations/customer.validation";
+
+export function getNumberCustomerCode(customerCode?: string): number {
+  if (!customerCode) {
+    return 0;
+  }
+
+  if (
+    customerCode.startsWith("CFC") ||
+    customerCode.startsWith("CVC") ||
+    customerCode.startsWith("CSC")
+  ) {
+    return Number(customerCode.slice(3));
+  }
+
+  return 0;
+}
+
+export function formatCustomerCode(
+  customerType: (typeof CustomerTypes)[number],
+  no: number
+): string {
+  switch (customerType) {
+    case "factory":
+      return "CFC" + no.toString().padStart(5, "0");
+    case "shipping":
+      return "CSC" + no.toString().padStart(5, "0");
+    case "vendor":
+      return "CVC" + no.toString().padStart(5, "0");
+  }
+}
 
 export type SaveCustomerInput = z.infer<typeof saveCustomerSchema>;
 
@@ -10,7 +40,7 @@ export type CustomerOutput = {
   id: number;
   createDate: string;
   code: string;
-  type: (typeof CustomerType)[number];
+  type: (typeof CustomerTypes)[number];
   name: string;
   group: string;
   address: string;
@@ -64,7 +94,7 @@ const CustomerPicSchema = new mongoose.Schema<CustomerPic>(
 );
 
 export type Customer = {
-  type: (typeof CustomerType)[number];
+  type: (typeof CustomerTypes)[number];
   name: string;
   group: mongoose.PopulatedDoc<CustomerGroupDocument & number, number>;
   address: string;
@@ -96,7 +126,7 @@ const CustomerSchema = new mongoose.Schema<CustomerDocument>(
     type: {
       type: String,
       required: true,
-      enum: CustomerType,
+      enum: CustomerTypes,
     },
     name: {
       type: String,

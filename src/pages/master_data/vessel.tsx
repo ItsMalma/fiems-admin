@@ -1,58 +1,202 @@
 import React from "react";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
-import Button from "@/components/Elements/Button";
-import InputText from "@/components/Elements/InputText";
-import Label from "@/components/Elements/Label";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
 import Modal from "@/components/Elements/Modal";
-import Search from "@/components/Elements/Search";
+import Label from "@/components/Elements/Label";
+import DatePicker from "@/components/Elements/DatePicker";
+import InputText from "@/components/Elements/InputText";
+import InputNumber from "@/components/Elements/InputNumber";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
 import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
+import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
 import {
   BoxFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
 } from "react-bootstrap-icons";
+import moment from "moment";
+import Table from "@/components/Elements/NewTable";
+import { VesselOutput, SaveVesselInput } from "@/models/vessel.model";
+import {
+  createVessel,
+  deleteVessel,
+  updateVessel,
+  useVessels,
+} from "@/api/vessels";
+import { FormikProvider, useFormik } from "formik";
+import { saveVesselSchema } from "@/validations/vessel.validation";
+import { formikValidateWithZod } from "@/libs/error";
+import { useCustomers } from "@/api/customers";
+import { toTitleCase } from "@/libs/utils";
 
-export function Save() {
+type SaveProps = {
+  vessel?: VesselOutput;
+};
+
+export function Save(props: SaveProps) {
+  // Menggunakan function setModal dari store useModal
+  const { setModal } = useModal();
+
+  // Gunakan formik
+  const formik = useFormik<SaveVesselInput>({
+    initialValues: {
+      shipping: props.vessel?.shipping.code ?? "",
+      name: props.vessel?.name ?? "",
+      capacity: props.vessel?.capacity ?? 0,
+      unit: props.vessel?.unit ?? "container",
+    },
+    onSubmit: async (values) => {
+      // Cek apakah vessel ada di props
+      // Jika ada maka lakukan update saja
+      // Jika tidak ada maka lakukan penambahan
+      if (props.vessel) {
+        await updateVessel(props.vessel.id, values);
+      } else {
+        await createVessel(values);
+      }
+
+      // Tutup modal
+      setModal(null);
+    },
+    validate: formikValidateWithZod(saveVesselSchema),
+  });
+
+  // Decomposition formik
+  const { handleSubmit, handleChange, values, errors, validateForm } = formik;
+
+  // Pemanggilan api untuk mendapatkan semua shipping
+  const {
+    customers: shippings,
+    isLoading: shippingsLoading,
+    error: shippingsError,
+  } = useCustomers("shipping");
+
+  // Effect untuk mengvalidasi form
+  React.useEffect(() => {
+    validateForm();
+  }, [validateForm]);
+
+  // Memo untuk menampung create date
+  const defaultCreateDate = React.useMemo(
+    () =>
+      props.vessel?.createDate
+        ? moment(props.vessel.createDate, "DD/MM/YYYY").toDate()
+        : new Date(),
+    [props.vessel?.createDate]
+  );
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua shipping mengembalikan error
+  if (shippingsError) {
+    throw shippingsError;
+  }
+
   return (
-    <Modal title="Add New Vessel" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Create Date" />
-            <InputText placeholder="" disabled className="basis-2/3" />
+    <Modal title="Add New Vessel" type="save" onDone={handleSubmit}>
+      <FormikProvider value={formik}>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Create Date" />
+                <DatePicker
+                  id="createDate"
+                  name="createDate"
+                  className="basis-2/3"
+                  defaultValue={defaultCreateDate}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Shipping" />
+                <SelectInput
+                  id="shipping"
+                  name="shipping"
+                  placeholder="Choose shipping"
+                  className="basis-2/3"
+                  options={
+                    shippings
+                      ? shippings.map((shipping) => ({
+                          label: `${shipping.code} - ${shipping.name}`,
+                          value: shipping.code,
+                        }))
+                      : []
+                  }
+                  isSearchable
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">
+                  {errors.shipping}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Name" />
+                <InputText
+                  id="name"
+                  name="name"
+                  placeholder="Enter name"
+                  className="basis-2/3"
+                  value={values.name}
+                  onChange={handleChange}
+                  isError={!!errors.name}
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">{errors.name}</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Capacity" />
+                <InputNumber
+                  id="capacity"
+                  name="capacity"
+                  placeholder="Enter capacity"
+                  className="basis-2/3"
+                  value={values.capacity}
+                  onChange={handleChange}
+                  isError={!!errors.capacity}
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">
+                  {errors.capacity}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Unit" />
+                <SelectInput
+                  id="unit"
+                  name="unit"
+                  placeholder="Choose unit"
+                  className="basis-2/3"
+                  options={[
+                    { label: "Container", value: "container" },
+                    { label: "Teus", value: "teus" },
+                    { label: "Ton", value: "ton" },
+                  ]}
+                  isSearchable
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">{errors.unit}</p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Shipping Name" />
-            <Select
-              placeholder="Shipping Name"
-              options={[
-                { label: "Jakarta", value: 0 },
-                { label: "Tangerang", value: 1 },
-                { label: "Solo", value: 2 },
-              ]}
-              onChange={() => {}}
-              className="basis-2/3"
-              isSearchable
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Vessel Name" />
-            <InputText placeholder="Enter vessel name" className="basis-2/3" />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Capacity" />
-            <InputText placeholder="Enter capacity" className="basis-2/3" />
-          </div>
-        </div>
-      </form>
+        </form>
+      </FormikProvider>
     </Modal>
   );
 }
@@ -77,14 +221,37 @@ export function Export() {
 }
 
 export default function MasterVessel() {
-  const { setModal } = useModal();
-  const { setActive } = useMenu();
+  // Gunakan store useHeader untuk merubah judul header
   const { setTitle } = useHeader();
 
+  // Gunakan store useMenu untuk mengset menu yang active
+  const { setActive } = useMenu();
+
+  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
+  const { setModal, current } = useModal();
+
+  // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Vessel");
     setActive(1, 5, 0);
   }, [setTitle, setActive]);
+
+  // State untuk menyimpan row yang di-select di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  // Pemanggilan api untuk mendapatkan semua vessel
+  const { vessels, isLoading, error } = useVessels([current]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua vessel
+  // masih loading atau data masih belum didapatkan
+  if (isLoading || !vessels) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua vessel menghasilkan error
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -110,125 +277,75 @@ export default function MasterVessel() {
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "Vendor Name", value: "vendorName" },
-                { label: "Truck Number", value: "truckNumber" },
-                { label: "Merk", value: "merk" },
-                { label: "Truck Type", value: "truckType" },
-                { label: "Mesin Number", value: "mesinNumber" },
-                { label: "Rangka Number", value: "rangkaNumber" },
-                { label: "Silinder", value: "silinder" },
-                { label: "Color", value: "color" },
-                { label: "STNK Expired", value: "stnkExpired" },
-                { label: "Pajak Expired", value: "pajakExpired" },
-                { label: "Keur Expired", value: "keurExpired" },
-                { label: "Description", value: "description" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              isMulti
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              value={10}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "text", name: "Vendor Name", isSortable: true },
-            { type: "link", name: "Truck Number", isSortable: true },
-            { type: "text", name: "Merk", isSortable: true },
-            { type: "text", name: "Truck Type", isSortable: true },
-            { type: "text", name: "Mesin Number", isSortable: true },
-            { type: "text", name: "Rangka Number", isSortable: true },
-            { type: "text", name: "Silinder", isSortable: true },
-            { type: "text", name: "Color", isSortable: true },
-            { type: "date", name: "STNK Expired", isSortable: true },
-            { type: "date", name: "Pajak Expired", isSortable: true },
-            { type: "date", name: "Keur Expired", isSortable: true },
-            { type: "text", name: "Description" },
-          ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "Vendor Name",
-              "VHC00001",
-              "Merk",
-              "Truck Type",
-              "Mesin Number",
-              "Rangka Number",
-              "Silinder",
-              "Color",
-              new Date(),
-              new Date(),
-              new Date(),
-            ],
-            [
-              false,
-              new Date(),
-              "Vendor Name",
-              "VHC00001",
-              "Merk",
-              "Truck Type",
-              "Mesin Number",
-              "Rangka Number",
-              "Silinder",
-              "Color",
-              new Date(),
-              new Date(),
-              new Date(),
-            ],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "createDate",
+            header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "shipping.name",
+            header: "Shipping Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "name",
+            header: "Vessel Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "capacity",
+            header: "Capacity",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "unit",
+            header: "Unit",
+            type: "text",
+          },
+          {
+            id: "status",
+            header: "Status",
+            type: "status",
+          },
+        ]}
+        rows={vessels.map((vessel) => ({
+          ...vessel,
+          unit: toTitleCase(vessel.unit),
+        }))}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada row yang dipilih di table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Buka modal untuk membuat vessel
+          setModal(<Save vessel={vessels[selectedRowIndex]} />);
+        }}
+        onDelete={async () => {
+          // Cek apakah tidak ada row yang dipilih di table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Hapus vessel yang dipilih di table
+          await deleteVessel(vessels[selectedRowIndex].id);
+
+          // Karena vessel yang dipilih telah dihapus, maka hapus pilihan sebelumnya
+          setSelectedRowIndex(undefined);
+
+          // Tutup modal
+          setModal(null);
+        }}
+      />
     </>
   );
 }

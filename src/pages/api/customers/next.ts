@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiResponsePayload } from "@/libs/utils";
-import { CustomerModel } from "@/models/customer.model";
+import {
+  CustomerModel,
+  formatCustomerCode,
+  getNumberCustomerCode,
+} from "@/models/customer.model";
 import connect from "@/libs/mongodb";
 import { validateCustomerType } from "@/validations/customer.validation";
 
@@ -27,36 +31,18 @@ export default async function handler(
     return res.status(400).json(parsedQuery);
   }
 
-  // Buat variabel code untuk menampung nilai kembalian nanti
-  let code = "";
-
-  // Cek customer type dari request query dan buat code yang sesuai dengan customer type nya
-  switch (parsedQuery.data.type) {
-    case "factory":
-      code =
-        "CFC" +
-        ((await CustomerModel.count({ type: "factory" })) + 1)
-          .toString()
-          .padStart(5, "0");
-      break;
-    case "shipping":
-      code =
-        "CSC" +
-        ((await CustomerModel.count({ type: "shipping" })) + 1)
-          .toString()
-          .padStart(5, "0");
-      break;
-    case "vendor":
-      code =
-        "CVC" +
-        ((await CustomerModel.count({ type: "vendor" })) + 1)
-          .toString()
-          .padStart(5, "0");
-      break;
-  }
+  // Ambil data customer terakhir
+  const lastCustomer = await CustomerModel.findOne({
+    type: parsedQuery.data.type,
+  }).sort({
+    _id: -1,
+  });
 
   return res.status(200).json({
-    data: code,
+    data: formatCustomerCode(
+      parsedQuery.data.type,
+      getNumberCustomerCode(lastCustomer?.code) + 1
+    ),
     error: null,
   });
 }

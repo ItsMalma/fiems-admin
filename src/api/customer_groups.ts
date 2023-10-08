@@ -64,14 +64,6 @@ export function useNextCustomerGroupCode(deps?: React.DependencyList) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mutate, ...(deps ?? [])]);
 
-  if (isLoading || data === undefined || data.data === null) {
-    return {
-      groups: undefined,
-      error: error,
-      isLoading: true,
-    };
-  }
-
   return {
     code: data?.data,
     error: error || data?.error,

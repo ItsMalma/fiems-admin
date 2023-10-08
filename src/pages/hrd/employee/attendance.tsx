@@ -91,14 +91,14 @@ export function Export() {
 }
 
 export default function Attendance() {
-  const { setActive: setIndex } = useMenu();
+  const { setActive } = useMenu();
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
     setTitle("HRD | Attendance");
-    setIndex(5, 0, 1);
-  }, []);
+    setActive(5, 0, 1);
+  }, [setTitle, setActive]);
 
   return (
     <>
@@ -174,7 +174,7 @@ export default function Attendance() {
                 { label: "Show 25 entries", value: 25 },
                 { label: "Show 50 entries", value: 50 },
               ]}
-              defaultValue={{ label: "Show 10 entries", value: 10 }}
+              value={10}
               onChange={() => {}}
               isSearchable
             />

@@ -37,11 +37,11 @@ export function Export() {
 }
 
 export default function CustomersPage() {
-  // Gunakan store useMenu untuk mengset menu yang aktif
-  const { setActive } = useMenu();
-
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
+
+  // Gunakan store useMenu untuk mengset menu yang aktif
+  const { setActive } = useMenu();
 
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
   const { setModal, current } = useModal();
@@ -59,7 +59,7 @@ export default function CustomersPage() {
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
   // Pemanggilan api untuk mendapatkan semua data customer
-  const { customers, isLoading, error } = useCustomers([current]);
+  const { customers, isLoading, error } = useCustomers(undefined, [current]);
 
   // Cek apakah pemanggilan api untuk mendapatkan semua data customer
   // masih loading atau data nya masih belum terload
@@ -250,7 +250,7 @@ export default function CustomersPage() {
             ],
           },
           {
-            id: "description",
+            id: "status",
             header: "Description",
             type: "status",
           },

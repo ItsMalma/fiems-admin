@@ -1,24 +1,20 @@
 import React from "react";
-import { useRouter } from "next/router";
-import useModal from "@/stores/modal";
-import useMenu from "@/stores/menu";
 import useHeader from "@/stores/header";
-import Button from "@/components/Elements/Button";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
+import { useRouter } from "next/router";
 import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
+import Modal from "@/components/Elements/Modal";
+import Label from "@/components/Elements/Label";
 import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
 import {
   TruckFrontFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
 } from "react-bootstrap-icons";
-import Label from "@/components/Elements/Label";
-import Modal from "@/components/Elements/Modal";
+import Table from "@/components/Elements/NewTable";
+import { deleteVehicle, useVehicles } from "@/api/vehicles";
 
 export function Export() {
   return (
@@ -40,15 +36,40 @@ export function Export() {
 }
 
 export default function MasterVehicle() {
-  const router = useRouter();
-  const { setModal } = useModal();
-  const { setActive } = useMenu();
+  // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
+  // Gunakan store useMenu untuk mengset menu yang aktif
+  const { setActive } = useMenu();
+
+  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
+  const { setModal, current } = useModal();
+
+  // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Master Data | Master Vehicle");
+    setTitle("Master Data | Vehicle");
     setActive(1, 4, 0);
   }, [setTitle, setActive]);
+
+  // Mendapatkan router
+  const router = useRouter();
+
+  // State untuk menyimpan index dari baris yang dipilih di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  // Pemanggilan api untuk mendapatkan semua data vehicle
+  const { vehicles, isLoading, error } = useVehicles([current]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua data vehicle
+  // masih loading atau data nya masih belum terload
+  if (isLoading || !vehicles) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua data vehicle terdapat error
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -74,125 +95,117 @@ export default function MasterVehicle() {
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "Vendor Name", value: "vendorName" },
-                { label: "Truck Number", value: "truckNumber" },
-                { label: "Merk", value: "merk" },
-                { label: "Truck Type", value: "truckType" },
-                { label: "Mesin Number", value: "mesinNumber" },
-                { label: "Rangka Number", value: "rangkaNumber" },
-                { label: "Silinder", value: "silinder" },
-                { label: "Color", value: "color" },
-                { label: "STNK Expired", value: "stnkExpired" },
-                { label: "Pajak Expired", value: "pajakExpired" },
-                { label: "Keur Expired", value: "keurExpired" },
-                { label: "Description", value: "description" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              isMulti
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              value={10}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "text", name: "Vendor Name", isSortable: true },
-            { type: "link", name: "Truck Number", isSortable: true },
-            { type: "text", name: "Merk", isSortable: true },
-            { type: "text", name: "Truck Type", isSortable: true },
-            { type: "text", name: "Mesin Number", isSortable: true },
-            { type: "text", name: "Rangka Number", isSortable: true },
-            { type: "text", name: "Silinder", isSortable: true },
-            { type: "text", name: "Color", isSortable: true },
-            { type: "date", name: "STNK Expired", isSortable: true },
-            { type: "date", name: "Pajak Expired", isSortable: true },
-            { type: "date", name: "Keur Expired", isSortable: true },
-            { type: "text", name: "Description" },
-          ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "Vendor Name",
-              "VHC00001",
-              "Merk",
-              "Truck Type",
-              "Mesin Number",
-              "Rangka Number",
-              "Silinder",
-              "Color",
-              new Date(),
-              new Date(),
-              new Date(),
-            ],
-            [
-              false,
-              new Date(),
-              "Vendor Name",
-              "VHC00001",
-              "Merk",
-              "Truck Type",
-              "Mesin Number",
-              "Rangka Number",
-              "Silinder",
-              "Color",
-              new Date(),
-              new Date(),
-              new Date(),
-            ],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "createDate",
+            header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "vendor.name",
+            header: "Vendor Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "truckNumber",
+            header: "Truck Number",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "brand",
+            header: "Brand",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "truckType",
+            header: "Truck Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "engineNumber",
+            header: "Engine Number",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "chassisNumber",
+            header: "Chassis Number",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "cylinder",
+            header: "Cylinder",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "color",
+            header: "Color",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "stnkExpired",
+            header: "STNK Expired",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "taxExpired",
+            header: "Tax Expired",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "keurExpired",
+            header: "KEUR Expired",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "status",
+            header: "Status",
+            type: "status",
+          },
+        ]}
+        rows={vehicles}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Redirect ke halaman save vehicle
+          router.push(
+            `/master_data/vehicle/save?code=${vehicles[selectedRowIndex].truckNumber}`
+          );
+        }}
+        onDelete={async () => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Hapus vehicle yang dipilih di table
+          await deleteVehicle(vehicles[selectedRowIndex].truckNumber);
+
+          // Karena vehicle yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          setSelectedRowIndex(undefined);
+
+          // Tutup modal
+          setModal(null);
+        }}
+      />
     </>
   );
 }

@@ -1,72 +1,232 @@
-import Button from "@/components/Elements/Button";
-import InputText from "@/components/Elements/InputText";
-import Label from "@/components/Elements/Label";
-import Modal from "@/components/Elements/Modal";
-import Search from "@/components/Elements/Search";
-import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
-import useMenu from "@/stores/menu";
-import useHeader from "@/stores/header";
 import React from "react";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import Modal from "@/components/Elements/Modal";
+import Label from "@/components/Elements/Label";
+import DatePicker from "@/components/Elements/DatePicker";
+import InputText from "@/components/Elements/InputText";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
+import Select from "@/components/Elements/Select";
+import Search from "@/components/Elements/Search";
+import Button from "@/components/Elements/Button";
 import {
-  BuildingFillAdd,
+  GeoAltFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
 } from "react-bootstrap-icons";
+import moment from "moment";
+import Table from "@/components/Elements/NewTable";
+import { PortOutput, SavePortInput } from "@/models/port.model";
+import {
+  createPort,
+  deletePort,
+  updatePort,
+  usePorts,
+  useNextPortCode,
+} from "@/api/ports";
+import { useProvinces } from "@/api/provinces";
+import { FormikProvider, useFormik } from "formik";
+import { savePortSchema } from "@/validations/port.validation";
+import { formikValidateWithZod } from "@/libs/error";
 
-function Save() {
+type SaveProps = {
+  port?: PortOutput;
+};
+
+export function Save(props: SaveProps) {
+  // Pemanggilan api untuk mendapatkan semua provinsi
+  const {
+    provinces,
+    isLoading: provincesLoading,
+    error: provincesError,
+  } = useProvinces();
+
+  // Gunakan formik
+  const formik = useFormik<SavePortInput>({
+    initialValues: {
+      province: props.port?.province ?? "",
+      city: props.port?.city ?? "",
+      name: props.port?.name ?? "",
+    },
+    onSubmit: async (values) => {
+      // Cek apakah port ada di props
+      // Jika ada maka lakukan update saja
+      // Jika tidak ada maka lakukan penambahan
+      if (props.port) {
+        await updatePort(props.port.code, values);
+      } else {
+        await createPort(values);
+      }
+
+      // Tutup modal
+      setModal(null);
+    },
+    validate: formikValidateWithZod(savePortSchema),
+  });
+
+  // Decomposition formik
+  const { handleSubmit, handleChange, values, errors, validateForm } = formik;
+
+  // Effect untuk mengvalidasi form
+  React.useEffect(() => {
+    validateForm();
+  }, [validateForm]);
+
+  // Menggunakan function setModal dari store useModal
+  const { setModal } = useModal();
+
+  // Memo untuk menampung create date
+  const defaultCreateDate = React.useMemo(
+    () =>
+      props.port?.createDate
+        ? moment(props.port.createDate, "DD/MM/YYYY").toDate()
+        : new Date(),
+    [props.port?.createDate]
+  );
+
+  // Panggil api untuk mendapatkan code port selanjutnya
+  const { code, error, isLoading } = useNextPortCode();
+
+  // State untuk menyimpan default value dari code port
+  const [defaultPortCode, setDefaultPortCode] = React.useState<string>();
+
+  // Effect untuk mengset value dari default port code
+  // dimana jika port ada di props maka set dengan code port tersebut
+  // tapi jika tidak ada maka set dengan code yang diambil dari api
+  React.useEffect(() => {
+    if (props.port?.code) {
+      setDefaultPortCode(props.port.code);
+    } else if (code) {
+      setDefaultPortCode(code);
+    }
+  }, [code, props.port?.code]);
+
+  // Ambil semua kota yang dimiliki provinsi yang dipilih
+  const selectedProvinceCities = React.useMemo(() => {
+    if (provinces && !provincesLoading) {
+      return provinces.find((province) => province.name === values.province)
+        ?.cities;
+    }
+    return null;
+  }, [provinces, provincesLoading, values.province]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan code port selanjutnya masih loading
+  if (isLoading) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan code port selanjutnya menghasilkan error
+  if (error) {
+    throw error;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua province menghasilkan error
+  if (provincesError) {
+    throw provincesError;
+  }
+
   return (
-    <Modal title="Add New Customer Group" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Create Date" />
-            <InputText placeholder="" disabled className="basis-2/3" />
+    <Modal title="Add New Port" type="save" onDone={handleSubmit}>
+      <FormikProvider value={formik}>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Create Date" />
+                <DatePicker
+                  id="createDate"
+                  name="createDate"
+                  className="basis-2/3"
+                  defaultValue={defaultCreateDate}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Port Code" />
+                <InputText
+                  id="code"
+                  name="code"
+                  className="basis-2/3"
+                  defaultValue={defaultPortCode}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Province" />
+                <SelectInput
+                  id="province"
+                  name="province"
+                  placeholder="Choose province"
+                  className="basis-2/3"
+                  options={
+                    !provincesLoading && provinces
+                      ? provinces.map((province) => ({
+                          label: province.name,
+                          value: province.name,
+                        }))
+                      : []
+                  }
+                  isSearchable
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">
+                  {errors.province}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="City" />
+                <SelectInput
+                  id="city"
+                  name="city"
+                  placeholder="Choose city"
+                  className="basis-2/3"
+                  options={
+                    selectedProvinceCities
+                      ? selectedProvinceCities.map((selectedProvinceCity) => ({
+                          label: selectedProvinceCity,
+                          value: selectedProvinceCity,
+                        }))
+                      : []
+                  }
+                  readOnly={!selectedProvinceCities}
+                  isSearchable
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">{errors.city}</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-6 items-center">
+                <Label className="basis-1/3" name="Name" />
+                <InputText
+                  id="name"
+                  name="name"
+                  placeholder="Enter name"
+                  className="basis-2/3"
+                  value={values.name}
+                  onChange={handleChange}
+                  isError={!!errors.name}
+                />
+              </div>
+              <div className="flex gap-6 items-center">
+                <div className="basis-1/3"></div>
+                <p className="basis-2/3 text-statusInactive">{errors.name}</p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Port Code" />
-            <InputText placeholder="" disabled className="basis-2/3" />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="City" />
-            <Select
-              placeholder="Choose city"
-              options={[
-                { label: "Jakarta", value: 0 },
-                { label: "Tangerang", value: 1 },
-                { label: "Solo", value: 2 },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              className="basis-2/3"
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Province" />
-            <Select
-              placeholder="Choose province"
-              options={[
-                { label: "Jawa Barat", value: 0 },
-                { label: "Jakarta", value: 1 },
-                { label: "Banten", value: 2 },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              className="basis-2/3"
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Port Name" />
-            <InputText placeholder="Enter port name" className="basis-2/3" />
-          </div>
-        </div>
-      </form>
+        </form>
+      </FormikProvider>
     </Modal>
   );
 }
@@ -81,8 +241,8 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             onChange={() => {}}
-            isSearchable
             className="basis-2/3"
+            isSearchable
           />
         </div>
       </form>
@@ -91,14 +251,37 @@ export function Export() {
 }
 
 export default function MasterPort() {
-  const { setActive: setIndex } = useMenu();
-  const { setModal } = useModal();
+  // Gunakan store useHeader untuk merubah judul header
   const { setTitle } = useHeader();
 
+  // Gunakan store useMenu untuk mengset menu yang active
+  const { setActive } = useMenu();
+
+  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
+  const { setModal, current } = useModal();
+
+  // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Port");
-    setIndex(1, 2, 0);
-  }, [setTitle, setIndex]);
+    setActive(1, 2, 0);
+  }, [setTitle, setActive]);
+
+  // State untuk menyimpan row yang di-select di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  // Pemanggilan api untuk mendapatkan semua port
+  const { ports, isLoading, error } = usePorts([current]);
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua port
+  // masih loading atau data masih belum didapatkan
+  if (isLoading || !ports) {
+    return <></>;
+  }
+
+  // Cek apakah pemanggilan api untuk mendapatkan semua port menghasilkan error
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -107,7 +290,7 @@ export default function MasterPort() {
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Port"
-            icon={<BuildingFillAdd />}
+            icon={<GeoAltFill />}
             variant="filled"
             onClick={() => setModal(<Save />)}
           />
@@ -122,81 +305,75 @@ export default function MasterPort() {
             variant="outlined"
             onClick={() => setModal(<Export />)}
           />
+          <Button
+            text="Print"
+            icon={<FileEarmarkArrowUpFill />}
+            variant="outlined"
+            onClick={() => {}}
+          />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "Port Code", value: "portCode" },
-                { label: "Province", value: "province" },
-                { label: "City", value: "city" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              isMulti
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              value={10}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "link", name: "Port Code", isSortable: true },
-            { type: "text", name: "Province", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Port Name" },
-          ]}
-          records={[
-            [false, new Date(), "PC00001", "Banten", "Tangerang", "Port Name"],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "createDate",
+            header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "code",
+            header: "Port Code",
+            type: "code",
+          },
+          {
+            id: "province",
+            header: "Province",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "city",
+            header: "City",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "name",
+            header: "Port Name",
+            type: "text",
+            isSortable: true,
+          },
+        ]}
+        rows={ports}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada row yang dipilih di table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Buka modal untuk membuat port
+          setModal(<Save port={ports[selectedRowIndex]} />);
+        }}
+        onDelete={async () => {
+          // Cek apakah tidak ada row yang dipilih di table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          // Hapus port yang dipilih di table
+          await deletePort(ports[selectedRowIndex].code);
+
+          // Karena port yang dipilih telah dihapus, maka hapus pilihan sebelumnya
+          setSelectedRowIndex(undefined);
+
+          // Tutup modal
+          setModal(null);
+        }}
+      />
     </>
   );
 }

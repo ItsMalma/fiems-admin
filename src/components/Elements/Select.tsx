@@ -74,16 +74,19 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
       React.useState<SelectOption[]>(options);
 
     // State untuk menyimpan mana option yang active
-    const [actives, setActives] = React.useState<SelectOption[]>(
-      React.useMemo(() => {
-        if (value) {
-          return isMulti
+    const [actives, setActives] = React.useState<SelectOption[]>([]);
+
+    // Effect ketika terjadi perubahan pada value
+    React.useEffect(() => {
+      if (value) {
+        setActives(
+          isMulti
             ? options.filter((option) => option.value in value)
-            : options.filter((option) => option.value === value);
-        }
-        return [];
-      }, [value, isMulti, options])
-    );
+            : options.filter((option) => option.value === value)
+        );
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value, isMulti]);
 
     // Effect ketika terjadi perubahan value
     React.useEffect(() => {
@@ -97,6 +100,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
         onChange(actives?.[0]?.value);
         setInputValue(actives?.[0]?.label);
       } else {
+        setInputValue("");
         onChange(null);
       }
     }, [actives, isMulti, onChange]);
@@ -128,6 +132,13 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
           !containerRef.current.contains(e.target as Node)
         ) {
           setExpand(false);
+
+          if (!isMulti && actives[0]) {
+            setInputValue(actives?.[0]?.label);
+          } else {
+            setInputValue("");
+          }
+          setOptionsDisplayed(options);
         }
       };
 
@@ -136,16 +147,36 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
       return () => {
         document.removeEventListener("mouseup", handleMouseUp);
       };
-    }, [containerRef]);
+    }, [actives, containerRef, isMulti, options]);
 
     React.useEffect(() => {
       setOptionsDisplayed(options);
     }, [options]);
 
+    // Callback untuk click option
+    const handleClick = React.useCallback(
+      (option: SelectOption) => {
+        if (isMulti) {
+          setInputValue("");
+        }
+
+        if (actives.find((active) => active.value === option.value)) {
+          // remove option from actives
+          setActives(actives.filter((active) => active.value !== option.value));
+        } else {
+          // add option to actives
+          setActives(isMulti ? [...actives, option] : [option]);
+        }
+        setExpand(false);
+        setOptionsDisplayed(options);
+      },
+      [actives, isMulti, options]
+    );
+
     return (
       <div
         ref={containerRef}
-        className={clsx("relative", className)}
+        className={clsx("w-full relative", className)}
         onClick={(e) => e.stopPropagation()}
       >
         <div
@@ -183,6 +214,11 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
                 e.stopPropagation();
               }
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && optionsDisplayed.length === 1) {
+                handleClick(optionsDisplayed[0]);
+              }
+            }}
             onChange={(e) => {
               setInputValue(e.target.value);
               setOptionsDisplayed(
@@ -217,21 +253,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
                     "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
                 )}
                 onClick={() => {
-                  if (isMulti) {
-                    setInputValue("");
-                  }
-
-                  if (actives.find((active) => active.value === option.value)) {
-                    // remove option from actives
-                    setActives(
-                      actives.filter((active) => active.value !== option.value)
-                    );
-                  } else {
-                    // add option to actives
-                    setActives(isMulti ? [...actives, option] : [option]);
-                  }
-                  setExpand(false);
-                  setOptionsDisplayed(options);
+                  handleClick(option);
                 }}
               >
                 {option.label}

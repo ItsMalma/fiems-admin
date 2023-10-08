@@ -11,17 +11,21 @@ type InputNumberProps = Omit<
 const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
   ({ className, isError, ...props }, ref) => {
     return (
-      <input
-        ref={ref}
-        type="number"
+      <div
         className={clsx(
-          "bg-white px-3 py-1.5 2xl:px-4 2xl:py-2 border-[1.5px] border-gray-300 rounded-lg outline-none text-gray-700",
+          "bg-white px-3 py-1.5 2xl:px-4 2xl:py-2 border-[1.5px] border-gray-300 rounded-lg text-gray-700 overflow-hidden flex items-center",
           (props.disabled || props.readOnly) && "!bg-gray-100",
           isError && "border-statusInactive",
           className
         )}
-        {...props}
-      />
+      >
+        <input
+          ref={ref}
+          type="number"
+          className="overflow-auto grow bg-inherit outline-none border-none"
+          {...props}
+        />
+      </div>
     );
   }
 );
