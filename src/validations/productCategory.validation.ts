@@ -1,10 +1,10 @@
-import { z } from "zod";
 import { transformZodError } from "@/libs/error";
+import { z } from "zod";
 
 export const saveProductCategorySchema = z.object({
   name: z
     .string({
-      invalid_type_error: "Name must be string",
+      invalid_type_error: "Name Invalid value",
       required_error: "Name is required",
     })
     .nonempty("Name must be not empty"),
@@ -13,7 +13,7 @@ export const saveProductCategorySchema = z.object({
 const productCategoryReffSchema = z.object({
   reff: z
     .string({
-      invalid_type_error: "Reff must be string",
+      invalid_type_error: "Reff Invalid value",
       required_error: "Reff is required",
     })
     .nonempty("Reff must be not empty"),

@@ -1,22 +1,22 @@
-import { z } from "zod";
 import { transformZodError } from "@/libs/error";
+import { z } from "zod";
 
 export const savePortSchema = z.object({
   province: z
     .string({
-      invalid_type_error: "Province must be string",
+      invalid_type_error: "Province Invalid value",
       required_error: "Province is required",
     })
     .nonempty("Province must be not empty"),
   city: z
     .string({
-      invalid_type_error: "City must be string",
+      invalid_type_error: "City Invalid value",
       required_error: "City is required",
     })
     .nonempty("City must be not empty"),
   name: z
     .string({
-      invalid_type_error: "Name must be string",
+      invalid_type_error: "Name Invalid value",
       required_error: "Name is required",
     })
     .nonempty("Name must be not empty"),
@@ -25,7 +25,7 @@ export const savePortSchema = z.object({
 const portCodeSchema = z.object({
   code: z
     .string({
-      invalid_type_error: "Code must be string",
+      invalid_type_error: "Code Invalid value",
       required_error: "Code is required",
     })
     .nonempty("Code must be not empty"),

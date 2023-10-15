@@ -14,7 +14,7 @@ async function create(
 
   // Cek apakah hasil validasi error
   if (parsedBody.error) {
-    return res.status(401).json(parsedBody);
+    return res.status(400).json(parsedBody);
   }
 
   // Ambil data sales terakhir

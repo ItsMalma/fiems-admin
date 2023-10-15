@@ -14,7 +14,7 @@ async function create(
 
   // Cek apakah invalid
   if (parsedBody.error) {
-    return res.status(401).json(parsedBody);
+    return res.status(400).json(parsedBody);
   }
 
   // Ambil data port terakhir

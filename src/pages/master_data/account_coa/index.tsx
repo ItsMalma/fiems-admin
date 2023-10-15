@@ -1,24 +1,21 @@
-import React from "react";
-import useMenu from "@/stores/menu";
-import useModal from "@/stores/modal";
-import useHeader from "@/stores/header";
-import { useRouter } from "next/router";
+import { deleteCOA, useCOAs } from "@/api/coas";
 import Button from "@/components/Elements/Button";
+import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
+import Table from "@/components/Elements/NewTable";
 import Search from "@/components/Elements/Search";
 import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
-import VerticalLine from "@/components/Icons/VerticalLine";
+import { formatCOANumber, normalizeMainOutput } from "@/models/coa.model";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
+import { useRouter } from "next/router";
+import React from "react";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Pencil,
-  Trash,
-  Calendar,
-  Filter,
+  PersonFillAdd,
 } from "react-bootstrap-icons";
-import Label from "@/components/Elements/Label";
 
 export function Export() {
   return (
@@ -42,13 +39,39 @@ export function Export() {
 export default function MasterAccountCOA() {
   const router = useRouter();
   const { setActive } = useMenu();
-  const { setModal } = useModal();
+  const { setModal, current } = useModal();
   const { setTitle } = useHeader();
 
   React.useEffect(() => {
     setTitle("Master Data | Account COA");
     setActive(1, 10, 0);
   }, [setTitle, setActive]);
+
+  // State untuk menyimpan index dari baris yang dipilih di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
+
+  const { coas, error } = useCOAs([current]);
+
+  const normalizeCOAs = React.useMemo(
+    () =>
+      coas
+        ? coas.flatMap((coa) =>
+            normalizeMainOutput(coa).map((output) => ({
+              ...output,
+              accountNumber: formatCOANumber(
+                output.main.accountNumber,
+                output.sub1?.accountNumber,
+                output.sub2?.accountNumber
+              ),
+            }))
+          )
+        : [],
+    [coas]
+  );
+
+  if (error) {
+    throw error;
+  }
 
   return (
     <>
@@ -74,120 +97,102 @@ export default function MasterAccountCOA() {
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Create Date", value: "createDate" },
-                { label: "Main COA", value: "mainCOA" },
-                { label: "Sub COA1", value: "subCOA1" },
-                { label: "Sub COA2", value: "subCOA2" },
-                { label: "Account Number", value: "accountNumber" },
-                { label: "Account Type", value: "accountType" },
-                { label: "Category", value: "category" },
-                { label: "Transaction", value: "transaction" },
-                { label: "Currency", value: "currency" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-              isMulti
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              value={10}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Create Date", isSortable: true },
-            { type: "text", name: "Main COA", isSortable: true },
-            { type: "text", name: "Sub COA1", isSortable: true },
-            { type: "text", name: "Sub COA2", isSortable: true },
-            { type: "link", name: "Account Number", isSortable: true },
-            { type: "text", name: "Account Type", isSortable: true },
-            { type: "text", name: "Category", isSortable: true },
-            { type: "text", name: "Transaction", isSortable: true },
-            { type: "text", name: "Currency", isSortable: true },
-          ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "Aktiva",
-              "",
-              "",
-              "100000",
-              "Aktiva",
-              "Aktiva",
-              "IDR",
-            ],
-            [
-              false,
-              new Date(),
-              "Aktiva",
-              "Aktiva Lancar",
-              "",
-              "101000",
-              "Aktiva",
-              "Aktiva",
-              "IDR",
-            ],
-            [
-              false,
-              new Date(),
-              "Aktiva",
-              "Aktiva Lancar",
-              "Kas Besar",
-              "101010",
-              "Aktiva",
-              "Kas",
-              "IDR",
-            ],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "main.accountName",
+            header: "Main COA",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "sub1.description",
+            header: "Sub COA1",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "sub2.description",
+            header: "Sub COA2",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "accountNumber",
+            header: "Account Number",
+            type: "code",
+            isSortable: true,
+          },
+          {
+            id: "accountType",
+            header: "Account Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "category",
+            header: "Category",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "transaction",
+            header: "Transaction",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "currency",
+            header: "Currency",
+            type: "text",
+            isSortable: true,
+          },
+        ]}
+        rows={normalizeCOAs}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          const selectedCOA = normalizeCOAs[selectedRowIndex];
+
+          // Redirect ke halaman save coa
+          router.push(
+            `/master_data/account_coa/save?number=${formatCOANumber(
+              selectedCOA.main.accountNumber,
+              selectedCOA.sub1?.accountNumber,
+              selectedCOA.sub2?.accountNumber
+            )}`
+          );
+        }}
+        onDelete={async () => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (selectedRowIndex === undefined) {
+            return;
+          }
+
+          const selectedCOA = normalizeCOAs[selectedRowIndex];
+
+          // Hapus customer yang dipilih di table
+          await deleteCOA(
+            formatCOANumber(
+              selectedCOA.main.accountNumber,
+              selectedCOA.sub1?.accountNumber,
+              selectedCOA.sub2?.accountNumber
+            )
+          );
+
+          // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          setSelectedRowIndex(undefined);
+
+          // Tutup modal
+          setModal(null);
+        }}
+      />
     </>
   );
 }

@@ -84,7 +84,7 @@ async function update(
 
   // Cek apakah request body invalid
   if (parsedBody.error) {
-    return res.status(401).json(parsedBody);
+    return res.status(400).json(parsedBody);
   }
 
   // Ambil data customer dengan code yang sesuai dari request

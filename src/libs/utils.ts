@@ -35,6 +35,8 @@ export const SparepartUnits = ["pcs", "pack", "liter"] as const;
 
 export const AtkUnits = ["pcs", "pack", "box"] as const;
 
+export const COATypes = ["main", "sub1", "sub2"] as const;
+
 export function toTitleCase(str: string): string {
   return lodash.startCase(lodash.toLower(str));
 }
@@ -48,3 +50,12 @@ export type ApiResponsePayload<TData extends any> =
       data: TData;
       error: null;
     };
+
+export function generateEnumError(
+  field: string,
+  values: string[] | readonly string[]
+): string {
+  return `${field} must be ${values
+    .slice(0, values.length - 1)
+    .join(", ")} or ${values[values.length - 1]}`;
+}
