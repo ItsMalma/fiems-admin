@@ -1,10 +1,10 @@
-import { z } from "zod";
 import { transformZodError } from "@/libs/error";
+import { z } from "zod";
 
 const provinceNameSchema = z.object({
   name: z
     .string({
-      invalid_type_error: "Code must be string",
+      invalid_type_error: "Code Invalid value",
     })
     .optional(),
 });

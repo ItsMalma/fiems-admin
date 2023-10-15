@@ -1,16 +1,16 @@
-import { z } from "zod";
 import { transformZodError } from "@/libs/error";
+import { z } from "zod";
 
 export const saveCustomerGroupSchema = z.object({
   name: z
     .string({
-      invalid_type_error: "Name must be string",
+      invalid_type_error: "Name Invalid value",
       required_error: "Name is required",
     })
     .nonempty("Name must be not empty"),
   description: z
     .string({
-      invalid_type_error: "Description must be string",
+      invalid_type_error: "Description Invalid value",
     })
     .optional(),
 });
@@ -18,7 +18,7 @@ export const saveCustomerGroupSchema = z.object({
 const customerGroupCodeSchema = z.object({
   code: z
     .string({
-      invalid_type_error: "Code must be string",
+      invalid_type_error: "Code Invalid value",
       required_error: "Code is required",
     })
     .nonempty("Code must be not empty"),

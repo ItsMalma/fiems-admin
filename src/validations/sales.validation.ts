@@ -1,9 +1,9 @@
-import { z } from "zod";
+import { transformZodError } from "@/libs/error";
 import { JobPositions } from "@/libs/utils";
 import isEmail from "validator/lib/isEmail";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import isNumeric from "validator/lib/isNumeric";
-import { transformZodError } from "@/libs/error";
+import { z } from "zod";
 
 export const saveSalesSchema = z.object({
   jobPosition: z.enum(JobPositions, {
@@ -13,13 +13,13 @@ export const saveSalesSchema = z.object({
   }),
   name: z
     .string({
-      invalid_type_error: "Name must be string",
+      invalid_type_error: "Name Invalid value",
       required_error: "Name is required",
     })
     .nonempty("Name must be not empty"),
   nik: z
     .string({
-      invalid_type_error: "NIK must be string",
+      invalid_type_error: "NIK Invalid value",
       required_error: "NIK is required",
     })
     .length(16, "NIK's length must be 16 characters")
@@ -29,13 +29,13 @@ export const saveSalesSchema = z.object({
     }),
   cabang: z
     .string({
-      invalid_type_error: "Cabang must be string",
+      invalid_type_error: "Cabang Invalid value",
       required_error: "Cabang is required",
     })
     .nonempty("Cabang must be not empty"),
   phoneNumber: z
     .string({
-      invalid_type_error: "Phone number must be string",
+      invalid_type_error: "Phone number Invalid value",
       required_error: "Phone number is required",
     })
     .nonempty("Phone number must be not empty")
@@ -44,7 +44,7 @@ export const saveSalesSchema = z.object({
     }),
   telephone: z
     .string({
-      invalid_type_error: "Telephone must be string",
+      invalid_type_error: "Telephone Invalid value",
       required_error: "Telephone is required",
     })
     .nonempty("Telephone must be not empty")
@@ -53,7 +53,7 @@ export const saveSalesSchema = z.object({
     }),
   fax: z
     .string({
-      invalid_type_error: "Fax must be string",
+      invalid_type_error: "Fax Invalid value",
       required_error: "Fax is required",
     })
     .nonempty("Fax must be not empty")
@@ -62,7 +62,7 @@ export const saveSalesSchema = z.object({
     }),
   email: z
     .string({
-      invalid_type_error: "Email must be string",
+      invalid_type_error: "Email Invalid value",
       required_error: "Email is required",
     })
     .nonempty("Email must be not empty")
@@ -74,7 +74,7 @@ export const saveSalesSchema = z.object({
 const salesCodeSchema = z.object({
   code: z
     .string({
-      invalid_type_error: "Code must be string",
+      invalid_type_error: "Code Invalid value",
       required_error: "Code is required",
     })
     .nonempty("Code must be not empty"),

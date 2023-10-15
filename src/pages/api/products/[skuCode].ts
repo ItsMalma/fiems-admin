@@ -71,7 +71,7 @@ async function update(
 
   // Cek apakah request body invalid
   if (parsedBody.error) {
-    return res.status(401).json(parsedBody);
+    return res.status(400).json(parsedBody);
   }
 
   // Ubah data product yang diambil dari db barusan dengan request

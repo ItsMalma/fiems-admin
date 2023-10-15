@@ -1,17 +1,17 @@
-import { z } from "zod";
-import { VesselUnits } from "@/libs/utils";
 import { transformZodError } from "@/libs/error";
+import { VesselUnits } from "@/libs/utils";
+import { z } from "zod";
 
 export const saveVesselSchema = z.object({
   shipping: z
     .string({
-      invalid_type_error: "Shipping must be string",
+      invalid_type_error: "Shipping Invalid value",
       required_error: "Shipping is required",
     })
     .nonempty("Shipping must be not empty"),
   name: z
     .string({
-      invalid_type_error: "Name must be string",
+      invalid_type_error: "Name Invalid value",
       required_error: "Name is required",
     })
     .nonempty("Name must be not empty"),
@@ -31,7 +31,7 @@ export const saveVesselSchema = z.object({
 const vesselIDSchema = z.object({
   id: z
     .string({
-      invalid_type_error: "ID must be string",
+      invalid_type_error: "ID Invalid value",
       required_error: "ID is required",
     })
     .nonempty("ID must be not empty"),

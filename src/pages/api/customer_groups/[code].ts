@@ -33,7 +33,7 @@ async function update(
 
   // Cek apakah validasi tidak sukses
   if (parsedBody.error) {
-    return res.status(401).json(parsedBody);
+    return res.status(400).json(parsedBody);
   }
 
   // Ubah data customer group dari db dengan request

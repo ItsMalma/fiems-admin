@@ -1,13 +1,8 @@
-import mongoose from "mongoose";
-import { ProductCategoryDocument } from "./productCategory.model";
-import {
-  ItemTypes,
-  ProductUnits,
-  SparepartUnits,
-  AtkUnits,
-} from "@/libs/utils";
-import { z } from "zod";
+import { ItemTypes } from "@/libs/utils";
 import { saveProductSchema } from "@/validations/product.validation";
+import mongoose from "mongoose";
+import { z } from "zod";
+import { ProductCategoryDocument } from "./productCategory.model";
 
 export type SaveProductInput = z.infer<typeof saveProductSchema>;
 

@@ -1,34 +1,34 @@
-import { z } from "zod";
+import { transformZodError } from "@/libs/error";
 import {
+  AtkUnits,
   ItemTypes,
   ProductUnits,
   SparepartUnits,
-  AtkUnits,
 } from "@/libs/utils";
-import { transformZodError } from "@/libs/error";
 import lodash from "lodash";
+import { z } from "zod";
 
 export const saveProductSchema = z
   .object({
     type: z.enum(ItemTypes, {
       errorMap: () => ({
-        message: "Type product, sparepart or atk",
+        message: "Type must be product, sparepart or atk",
       }),
     }),
     category: z
       .string({
-        invalid_type_error: "Category must be string",
+        invalid_type_error: "Category Invalid value",
         required_error: "Category is required",
       })
       .optional(),
     name: z
       .string({
-        invalid_type_error: "Name must be string",
+        invalid_type_error: "Name Invalid value",
         required_error: "Name is required",
       })
       .nonempty("Name must be not empty"),
     unit: z.string({
-      invalid_type_error: "Unit must be string",
+      invalid_type_error: "Unit Invalid value",
       required_error: "Unit is required",
     }),
   })
@@ -75,7 +75,7 @@ export const saveProductSchema = z
 const productSKUCodeSchema = z.object({
   skuCode: z
     .string({
-      invalid_type_error: "SKU code must be string",
+      invalid_type_error: "SKU code Invalid value",
       required_error: "SKU code is required",
     })
     .nonempty("SKU code must be not empty"),

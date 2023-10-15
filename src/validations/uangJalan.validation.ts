@@ -1,17 +1,17 @@
-import { z } from "zod";
-import { ContainerSizes, TruckTypes } from "@/libs/utils";
 import { transformZodError } from "@/libs/error";
+import { ContainerSizes, TruckTypes } from "@/libs/utils";
+import { z } from "zod";
 
 export const saveUangJalanSchema = z.object({
   customer: z
     .string({
-      invalid_type_error: "Customer must be string",
+      invalid_type_error: "Customer Invalid value",
       required_error: "Customer is required",
     })
     .nonempty("Customer must be not empty"),
   route: z
     .string({
-      invalid_type_error: "Route must be string",
+      invalid_type_error: "Route Invalid value",
       required_error: "Route is required",
     })
     .nonempty("Route must be not empty"),
@@ -62,7 +62,7 @@ export const saveUangJalanSchema = z.object({
 const uangJalanIDSchema = z.object({
   id: z
     .string({
-      invalid_type_error: "ID must be string",
+      invalid_type_error: "ID Invalid value",
       required_error: "ID is required",
     })
     .nonempty("ID must be not empty"),
