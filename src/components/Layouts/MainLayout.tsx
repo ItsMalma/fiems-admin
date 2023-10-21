@@ -2,6 +2,9 @@ import React from "react";
 import Header from "./Header";
 import Sider from "./Sider";
 import Footer from "./Footer";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import LogoCel from "@/../public/logo-cel.png"
 
 type MainLayoutProps = {
   children: React.ReactNode;

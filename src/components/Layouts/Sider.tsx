@@ -237,7 +237,7 @@ export default function Sider() {
             width={0}
             height={0}
             sizes="100vh"
-            className="rounded-full w-8 h-8"
+            className="rounded-full w-10 h-10"
           />
           <div className="flex flex-col 2xl:gap-0.5">
             <p className="text-white font-semibold">Hadi Yusuf</p>

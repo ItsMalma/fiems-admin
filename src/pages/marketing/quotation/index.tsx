@@ -38,7 +38,8 @@ export function QuotationTable() {
         { type: "text", name: "Other", isSortable: true },
         { type: "text", name: "Summary", isSortable: true },
         { type: "text", name: "HPP", isSortable: true },
-        { type: "text", name: "Description" },
+        { type: "tool", name: "Status" },
+        { type: "tool", name: "Action" },
       ]}
       records={[
         [
@@ -58,6 +59,13 @@ export function QuotationTable() {
           "Rp",
           "Rp",
           "Rp",
+          <p className="text-white font-semibold bg-yellow-500 py-2 px-3 rounded-xl text-sm">Pending</p>,
+          <Button
+            text="Confirm"
+            variant="filled"
+            onClick={() => {}}
+            className="!px-3 !py-2 !text-sm !rounded-xl"
+          />,
         ],
       ]}
     />
@@ -65,6 +73,9 @@ export function QuotationTable() {
 }
 
 export function ConfirmTable() {
+
+  const router = useRouter();  
+
   return (
     <Table
       fields={[
@@ -84,7 +95,8 @@ export function ConfirmTable() {
         { type: "text", name: "Other", isSortable: true },
         { type: "text", name: "Summary", isSortable: true },
         { type: "text", name: "HPP", isSortable: true },
-        { type: "text", name: "Description" },
+        { type: "tool", name: "Status" },
+        { type: "tool", name: "Action" },
       ]}
       records={[
         [
@@ -104,6 +116,21 @@ export function ConfirmTable() {
           "Rp",
           "Rp",
           "Rp",
+          <p className="text-white font-semibold bg-yellow-500 py-2 px-3 rounded-xl text-sm">Pending</p>,
+          <div className="flex gap-1">
+            <Button
+              text="Print"
+              variant="filled"
+              onClick={() => router.push("/marketing/quotation/print")}
+              className="!px-3 !py-2 !text-sm !rounded-xl"
+            />
+            <Button
+              text="Confirm"
+              variant="filled"
+              onClick={() => {}}
+              className="!px-3 !py-2 !text-sm !rounded-xl"
+            />
+          </div>,
         ],
       ]}
     />

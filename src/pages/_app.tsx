@@ -5,14 +5,28 @@ import clsx from "clsx";
 import useModal from "@/stores/modal";
 import MainLayout from "@/components/Layouts/MainLayout";
 import { useRouter } from "next/router";
+import React from "react";
+import Image from "next/image";
+import LogoCel from "@/../public/logo-cel.png"
+import PrintLayout from "@/components/Layouts/PrintLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
+  const [isPrint, setIsPrint] = React.useState(true)
 
   const router = useRouter();
   let content;
+
+  React.useEffect(() => {
+    window.onbeforeprint = () => {
+      setIsPrint(true);
+    }
+    window.onafterprint = () => {
+      setIsPrint(false);
+    }
+  }, [isPrint]);
 
   if (router.asPath === "/login") {
     content = (
@@ -22,9 +36,9 @@ export default function App({ Component, pageProps }: AppProps) {
     );
   } else if (router.asPath.endsWith("/print")) {
     content = (
-      <div className="">
+      <PrintLayout>
         <Component {...pageProps} />
-      </div>
+      </PrintLayout>
     );
   } else {
     content = (
