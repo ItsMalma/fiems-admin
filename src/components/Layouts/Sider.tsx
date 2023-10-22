@@ -30,7 +30,7 @@ import Menu from "./Menu";
 
 export default function Sider() {
   return (
-    <aside className="bg-primary pt-[18px] text-lg pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl 2xl:rounded-3xl basis-1/5 2xl:basis-1/6 sticky top-0 flex flex-col">
+    <aside className="bg-primary dark:bg-primary3 pt-[18px] text-lg pb-3 2xl:pt-6 2xl:pb-4 rounded-2xl 2xl:rounded-3xl basis-1/5 2xl:basis-1/6 sticky top-0 flex flex-col">
       <Menu
         items={[
           {

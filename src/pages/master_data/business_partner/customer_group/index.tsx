@@ -209,7 +209,7 @@ export default function CustomerGroupPage() {
 
   return (
     <>
-      <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
+      <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white dark:bg-gray-700 rounded-2xl shadow-sm">
         <Search placeholder="Search Group Code" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
@@ -231,7 +231,7 @@ export default function CustomerGroupPage() {
         </div>
       </div>
       <Table
-        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        className="p-[18px] 2xl:p-6 bg-white dark:bg-gray-700 rounded-2xl shadow-sm"
         isSelectable
         columns={[
           {

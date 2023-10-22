@@ -155,7 +155,7 @@ function TableHead(props: TableHeadProps) {
       case "asc":
         return (
           <span
-            className="text-gray-700 cursor-pointer"
+            className="text-gray-700 dark:text-white cursor-pointer"
             onClick={() => {
               if (props.onSort) {
                 props.onSort("desc");
@@ -168,7 +168,7 @@ function TableHead(props: TableHeadProps) {
       case "desc":
         return (
           <span
-            className="text-gray-700 cursor-pointer"
+            className="text-gray-700 dark:text-white cursor-pointer"
             onClick={() => {
               if (props.onSort) {
                 props.onSort(null);
@@ -199,7 +199,7 @@ function TableHead(props: TableHeadProps) {
   return (
     <th
       className={clsx(
-        "bg-gray-100 p-3 2xl:p-4",
+        "bg-gray-100 dark:bg-gray-800 p-3 2xl:p-4",
         (props.isParent || props.isChildren) && "py-0.5",
         props.isParent && "border-b border-b-gray-300"
       )}
@@ -435,7 +435,7 @@ export default function Table(props: TableProps) {
             variant="normal"
             className={clsx(
               rowSelected === undefined
-                ? "!border-gray-300 !text-gray-300"
+                ? "!border-gray-300 dark:!border-gray-500 !text-gray-300 dark:!text-gray-500"
                 : "!border-gray-700 !text-gray-700 cursor-pointer"
             )}
             onClick={() => {
@@ -452,7 +452,7 @@ export default function Table(props: TableProps) {
             variant="normal"
             className={clsx(
               rowSelected === undefined
-                ? "!border-gray-300 !text-gray-300"
+                ? "!border-gray-300 dark:!border-gray-500 !text-gray-300 dark:!text-gray-500"
                 : "!border-gray-700 !text-gray-700 cursor-pointer"
             )}
             onClick={() => {
@@ -568,16 +568,16 @@ export default function Table(props: TableProps) {
       <div className="flex justify-end items-center gap-3 2xl:gap-4">
         <span
           className={clsx(
-            page === 1 ? "text-gray-400" : "text-gray-700 cursor-pointer"
+            page === 1 ? "text-gray-400 dark:text-gray-100" : "text-gray-700 dark:text-gray-400 cursor-pointer"
           )}
           onClick={() => setPage(page === 1 ? 1 : page - 1)}
         >
           <ChevronLeft />
         </span>
-        <span className="text-gray-700 cursor-pointer">{page}</span>
+        <span className="text-gray-700 dark:text-gray-400 cursor-pointer">{page}</span>
         <span
           className={clsx(
-            page === maxPage ? "text-gray-400" : "text-gray-700 cursor-pointer"
+            page === maxPage ? "text-gray-400 dark:text-gray-100" : "text-gray-700 dark:text-gray-400 cursor-pointer"
           )}
           onClick={() => setPage(page === maxPage ? maxPage : page + 1)}
         >
