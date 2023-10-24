@@ -1,232 +1,129 @@
-import React from "react";
+import {
+  Button,
+  Label,
+  Modal,
+  Search,
+  Select,
+  Table,
+} from "@/components/Elements";
+import {
+  Form,
+  FormCode,
+  FormDate,
+  FormSelect,
+  FormText,
+} from "@/components/Forms";
+import { trpc } from "@/libs/trpc";
+import { PortForm } from "@/server/dtos/port.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import DatePicker from "@/components/Elements/DatePicker";
-import InputText from "@/components/Elements/InputText";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import Select from "@/components/Elements/Select";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
+import React from "react";
 import {
-  GeoAltFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  GeoAltFill,
 } from "react-bootstrap-icons";
-import moment from "moment";
-import Table from "@/components/Elements/NewTable";
-import { PortOutput, SavePortInput } from "@/models/port.model";
-import {
-  createPort,
-  deletePort,
-  updatePort,
-  usePorts,
-  useNextPortCode,
-} from "@/api/ports";
-import { useProvinces } from "@/api/provinces";
-import { FormikProvider, useFormik } from "formik";
-import { savePortSchema } from "@/validations/port.validation";
-import { formikValidateWithZod } from "@/libs/error";
+import { useForm } from "react-hook-form";
 
-type SaveProps = {
-  port?: PortOutput;
-};
-
-export function Save(props: SaveProps) {
-  // Pemanggilan api untuk mendapatkan semua provinsi
-  const {
-    provinces,
-    isLoading: provincesLoading,
-    error: provincesError,
-  } = useProvinces();
-
-  // Gunakan formik
-  const formik = useFormik<SavePortInput>({
-    initialValues: {
-      province: props.port?.province ?? "",
-      city: props.port?.city ?? "",
-      name: props.port?.name ?? "",
-    },
-    onSubmit: async (values) => {
-      // Cek apakah port ada di props
-      // Jika ada maka lakukan update saja
-      // Jika tidak ada maka lakukan penambahan
-      if (props.port) {
-        await updatePort(props.port.code, values);
-      } else {
-        await createPort(values);
-      }
-
-      // Tutup modal
-      setModal(null);
-    },
-    validate: formikValidateWithZod(savePortSchema),
-  });
-
-  // Decomposition formik
-  const { handleSubmit, handleChange, values, errors, validateForm } = formik;
-
-  // Effect untuk mengvalidasi form
-  React.useEffect(() => {
-    validateForm();
-  }, [validateForm]);
-
-  // Menggunakan function setModal dari store useModal
+export function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
 
-  // Memo untuk menampung create date
-  const defaultCreateDate = React.useMemo(
-    () =>
-      props.port?.createDate
-        ? moment(props.port.createDate, "DD/MM/YYYY").toDate()
-        : new Date(),
-    [props.port?.createDate]
-  );
+  const methods = useForm<PortForm>({
+    defaultValues: PortForm.initial,
+  });
+  const { reset, setValue } = methods;
 
-  // Panggil api untuk mendapatkan code port selanjutnya
-  const { code, error, isLoading } = useNextPortCode();
-
-  // State untuk menyimpan default value dari code port
-  const [defaultPortCode, setDefaultPortCode] = React.useState<string>();
-
-  // Effect untuk mengset value dari default port code
-  // dimana jika port ada di props maka set dengan code port tersebut
-  // tapi jika tidak ada maka set dengan code yang diambil dari api
+  const province = methods.watch("province");
   React.useEffect(() => {
-    if (props.port?.code) {
-      setDefaultPortCode(props.port.code);
-    } else if (code) {
-      setDefaultPortCode(code);
+    if (!province) setValue("city", "");
+  }, [province, setValue]);
+
+  const formQuery = trpc.ports.getForm.useQuery({
+    code,
+    province,
+  });
+  React.useEffect(() => {
+    if (formQuery.data?.defaultValue && reset) {
+      reset(formQuery.data.defaultValue, {
+        keepDirtyValues: true,
+        keepErrors: true,
+      });
     }
-  }, [code, props.port?.code]);
+  }, [formQuery.data?.defaultValue, reset]);
 
-  // Ambil semua kota yang dimiliki provinsi yang dipilih
-  const selectedProvinceCities = React.useMemo(() => {
-    if (provinces && !provincesLoading) {
-      return provinces.find((province) => province.name === values.province)
-        ?.cities;
-    }
-    return null;
-  }, [provinces, provincesLoading, values.province]);
+  const saveMutation = trpc.ports.save.useMutation();
 
-  // Cek apakah pemanggilan api untuk mendapatkan code port selanjutnya masih loading
-  if (isLoading) {
-    return <></>;
-  }
+  const onSubmit = methods.handleSubmit(async (data) => {
+    await saveMutation.mutateAsync({
+      ...data,
+      code,
+    });
 
-  // Cek apakah pemanggilan api untuk mendapatkan code port selanjutnya menghasilkan error
-  if (error) {
-    throw error;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua province menghasilkan error
-  if (provincesError) {
-    throw provincesError;
-  }
+    setModal(null);
+  });
 
   return (
-    <Modal title="Add New Port" type="save" onDone={handleSubmit}>
-      <FormikProvider value={formik}>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Create Date" />
-                <DatePicker
-                  id="createDate"
-                  name="createDate"
-                  className="basis-2/3"
-                  defaultValue={defaultCreateDate}
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Port Code" />
-                <InputText
-                  id="code"
-                  name="code"
-                  className="basis-2/3"
-                  defaultValue={defaultPortCode}
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Province" />
-                <SelectInput
-                  id="province"
-                  name="province"
-                  placeholder="Choose province"
-                  className="basis-2/3"
-                  options={
-                    !provincesLoading && provinces
-                      ? provinces.map((province) => ({
-                          label: province.name,
-                          value: province.name,
-                        }))
-                      : []
-                  }
-                  isSearchable
-                />
-              </div>
-              <div className="flex gap-6 items-center">
-                <div className="basis-1/3"></div>
-                <p className="basis-2/3 text-statusInactive">
-                  {errors.province}
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="City" />
-                <SelectInput
-                  id="city"
-                  name="city"
-                  placeholder="Choose city"
-                  className="basis-2/3"
-                  options={
-                    selectedProvinceCities
-                      ? selectedProvinceCities.map((selectedProvinceCity) => ({
-                          label: selectedProvinceCity,
-                          value: selectedProvinceCity,
-                        }))
-                      : []
-                  }
-                  readOnly={!selectedProvinceCities}
-                  isSearchable
-                />
-              </div>
-              <div className="flex gap-6 items-center">
-                <div className="basis-1/3"></div>
-                <p className="basis-2/3 text-statusInactive">{errors.city}</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Name" />
-                <InputText
-                  id="name"
-                  name="name"
-                  placeholder="Enter name"
-                  className="basis-2/3"
-                  value={values.name}
-                  onChange={handleChange}
-                  isError={!!errors.name}
-                />
-              </div>
-              <div className="flex gap-6 items-center">
-                <div className="basis-1/3"></div>
-                <p className="basis-2/3 text-statusInactive">{errors.name}</p>
-              </div>
-            </div>
-          </div>
-        </form>
-      </FormikProvider>
+    <Modal
+      title="Add New Port"
+      type="save"
+      onDone={onSubmit}
+      isLoading={!formQuery.data}
+    >
+      <Form
+        methods={methods}
+        singleTab
+        controls={[
+          {
+            type: "input",
+            id: "createDate",
+            label: "Create Date",
+            input: <FormDate name="createDate" readOnly />,
+          },
+          {
+            type: "input",
+            id: "code",
+            label: "Route Code",
+            input: <FormCode name="code" readOnly />,
+          },
+          {
+            type: "separator",
+          },
+          {
+            type: "input",
+            id: "province",
+            label: "Province",
+            input: (
+              <FormSelect
+                name="province"
+                options={formQuery.data?.provinces ?? []}
+              />
+            ),
+          },
+          {
+            type: "input",
+            id: "city",
+            label: "City",
+            input: (
+              <FormSelect
+                name="city"
+                options={
+                  formQuery.data?.cities && province
+                    ? formQuery.data?.cities
+                    : []
+                }
+                readOnly={!province}
+              />
+            ),
+          },
+          {
+            type: "input",
+            id: "name",
+            label: "Name",
+            input: <FormText name="name" />,
+          },
+        ]}
+      />
     </Modal>
   );
 }
@@ -241,6 +138,7 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             onChange={() => {}}
+            value={null}
             className="basis-2/3"
             isSearchable
           />
@@ -269,19 +167,12 @@ export default function MasterPort() {
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua port
-  const { ports, isLoading, error } = usePorts([current]);
+  const tableRowsQuery = trpc.ports.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua port
-  // masih loading atau data masih belum didapatkan
-  if (isLoading || !ports) {
-    return <></>;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua port menghasilkan error
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.ports.delete.useMutation();
 
   return (
     <>
@@ -314,6 +205,7 @@ export default function MasterPort() {
         </div>
       </div>
       <Table
+        isLoading={!tableRowsQuery.data}
         className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
         isSelectable
         columns={[
@@ -347,25 +239,33 @@ export default function MasterPort() {
             isSortable: true,
           },
         ]}
-        rows={ports}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada row yang dipilih di table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Buka modal untuk membuat port
-          setModal(<Save port={ports[selectedRowIndex]} />);
+          setModal(<Save code={tableRowsQuery.data[selectedRowIndex].code} />);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada row yang dipilih di table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Hapus port yang dipilih di table
-          await deletePort(ports[selectedRowIndex].code);
+          await deleteMutation.mutateAsync({
+            code: tableRowsQuery.data[selectedRowIndex].code,
+          });
 
           // Karena port yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);
