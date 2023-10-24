@@ -1,14 +1,14 @@
-import React from "react";
-import useMenu from "@/stores/menu";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
-import FormLayout from "@/components/Layouts/FormLayout";
-import Select from "@/components/Elements/Select";
-import useHeader from "@/stores/header";
 import DatePicker from "@/components/Elements/DatePicker";
-import useModal from "@/stores/modal";
+import InputText from "@/components/Elements/InputText";
+import Label from "@/components/Elements/Label";
 import Modal from "@/components/Elements/Modal";
 import Radio from "@/components/Elements/Radio";
+import Select from "@/components/Elements/Select";
+import SaveLayout from "@/components/Layouts/SaveLayout";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
+import useModal from "@/stores/modal";
+import React from "react";
 
 function TrackingAsal() {
   return (
@@ -195,8 +195,8 @@ export default function PriceCalculation() {
   const { setModal } = useModal();
   const { setTitle } = useHeader();
 
-  const [insurance, setInsurance] = React.useState<string | number>(0)
-  const [adminFee, setAdminFee] = React.useState<string | number>(0)
+  const [insurance, setInsurance] = React.useState<string | number>(0);
+  const [adminFee, setAdminFee] = React.useState<string | number>(0);
 
   React.useEffect(() => {
     setTitle("Marketing | Price Calculation");
@@ -204,7 +204,7 @@ export default function PriceCalculation() {
   }, [setTitle, setActive]);
 
   return (
-    <FormLayout
+    <SaveLayout
       onSave={() => {}}
       title=""
       tabs={[
@@ -555,8 +555,7 @@ export default function PriceCalculation() {
                     Summary
                   </h1>
                 </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                </div>
+                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
               </div>
               <div className="flex items-center gap-[18px] 2xl:gap-6">
                 <div className="flex flex-col basis-1/2 gap-6">
@@ -564,76 +563,66 @@ export default function PriceCalculation() {
                     <div className="flex gap-[18px] 2xl:gap-6 items-center">
                       <Label name="PPFTZ" className="basis-2/5" />
                       <div className="flex justify-between basis-3/5">
-                        <Radio 
-                          name="status"
-                          value="Include"
-                        />
-                        <Radio 
-                          name="status"
-                          value="Exclude"
-                        />
-                        <Radio 
-                          name="status"
-                          value="None"
-                        />
+                        <Radio name="status" value="Include" />
+                        <Radio name="status" value="Exclude" />
+                        <Radio name="status" value="None" />
                       </div>
                     </div>
                     <div className="flex flex-col gap-1 basis-1/2 relative">
-                      <InputText placeholder="Rp" className=""/>
+                      <InputText placeholder="Rp" className="" />
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                      <Label name="Insurance" className="basis-2/5"/>
+                      <Label name="Insurance" className="basis-2/5" />
                       <div className="flex justify-between basis-3/5">
-                        <Radio 
-                          name="status"
-                          value="Include"
-                        />
-                        <Radio 
-                          name="status"
-                          value="Exclude"
-                        />
-                        <Radio 
-                          name="status"
-                          value="None"
-                        />
+                        <Radio name="status" value="Include" />
+                        <Radio name="status" value="Exclude" />
+                        <Radio name="status" value="None" />
                       </div>
                     </div>
                     <div className="flex justify-between gap-1 items-center">
-                      <InputText placeholder="Rp" className="w-5/12" onChange={(e) => setInsurance(e.target.value)}/>
+                      <InputText
+                        placeholder="Rp"
+                        className="w-5/12"
+                        onChange={(e) => setInsurance(e.target.value)}
+                      />
                       <p className="">x 10% +</p>
-                      <InputText placeholder="Admin Fee" className="w-5/12" onChange={(e) => setAdminFee(e.target.value)}/>
+                      <InputText
+                        placeholder="Admin Fee"
+                        className="w-5/12"
+                        onChange={(e) => setAdminFee(e.target.value)}
+                      />
                     </div>
                     <div className="flex flex-col gap-1 relative">
-                      <InputText readOnly placeholder="Rp" className="" value={Number(insurance) * 0.10 + Number(adminFee)}/>
+                      <InputText
+                        readOnly
+                        placeholder="Rp"
+                        className=""
+                        value={Number(insurance) * 0.1 + Number(adminFee)}
+                      />
                     </div>
                   </div>
                   <div className="flex flex-col gap-3">
                     <div className="flex gap-[18px] 2xl:gap-6 items-center">
                       <Label name="PPN" className="basis-2/5" />
                       <div className="flex justify-between basis-3/5">
-                        <Radio 
-                          name="status"
-                          value="Include"
-                        />
-                        <Radio 
-                          name="status"
-                          value="Exclude"
-                        />
-                        <Radio 
-                          name="status"
-                          value="None"
-                        />
+                        <Radio name="status" value="Include" />
+                        <Radio name="status" value="Exclude" />
+                        <Radio name="status" value="None" />
                       </div>
-                    </div>                    
+                    </div>
                   </div>
                 </div>
-            
+
                 <div className="flex flex-col basis-1/2 gap-3">
                   <div className="flex flex-col gap-1 relative">
                     <Label name="HPP" className="basis-2/5" />
-                    <InputText placeholder="Rp" readOnly className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      readOnly
+                      className="basis-3/5"
+                    />
                   </div>
                   <div className="flex flex-col gap-1 relative">
                     <Label name="Harga Jual" className="basis-2/5" />
@@ -641,18 +630,30 @@ export default function PriceCalculation() {
                   </div>
                   <div className="flex flex-col gap-1 relative">
                     <Label name="" className="basis-2/5" />
-                    <InputText placeholder="Rp" readOnly className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      readOnly
+                      className="basis-3/5"
+                    />
                   </div>
                   <div className="flex flex-col gap-1 relative">
                     <Label name="" className="basis-2/5" />
-                    <InputText placeholder="Rp" readOnly className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      readOnly
+                      className="basis-3/5"
+                    />
                   </div>
                   <div className="flex flex-col gap-1 relative">
                     <Label name="Profit" className="basis-2/5" />
-                    <InputText placeholder="Rp" readOnly className="basis-3/5" />
+                    <InputText
+                      placeholder="Rp"
+                      readOnly
+                      className="basis-3/5"
+                    />
                   </div>
                 </div>
-              </div>             
+              </div>
             </div>
           ),
         },

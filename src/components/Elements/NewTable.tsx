@@ -1,24 +1,22 @@
+import useModal from "@/stores/modal";
+import clsx from "clsx";
+import lodash from "lodash";
 import moment from "moment";
+import React from "react";
 import {
-  Square,
-  SquareFill,
-  SortAlphaDown,
-  SortAlphaDownAlt,
-  Pencil,
-  Trash,
   Calendar,
-  Filter,
   ChevronLeft,
   ChevronRight,
+  Filter,
+  Pencil,
+  SortAlphaDown,
+  SortAlphaDownAlt,
+  Square,
+  SquareFill,
+  Trash,
 } from "react-bootstrap-icons";
-import lodash from "lodash";
-import React from "react";
-import clsx from "clsx";
-import Button from "./Button";
+import { Button, Loading, Modal, Select } from ".";
 import VerticalLine from "../Icons/VerticalLine";
-import Select from "./Select";
-import useModal from "@/stores/modal";
-import Modal from "./Modal";
 
 const entriesOptions = [
   { label: "Show 10 entries", value: 10 },
@@ -71,6 +69,8 @@ type TableProps = {
 
   onEdit?: (rowIndex: number) => void | Promise<void>;
   onDelete?: (rowIndex: number) => void | Promise<void>;
+
+  isLoading?: boolean;
 };
 
 type TableHeadProps = {
@@ -249,7 +249,7 @@ function TableCell(props: TableCellProps) {
       case "date":
         return (
           <p className="text-gray-700">
-            {moment(props.value, "DD/MM/YYYY").format("DD/MM/YYYY")}
+            {moment(props.value).format("DD/MM/YYYY")}
           </p>
         );
       case "code":
@@ -337,7 +337,7 @@ function getCellRows(
     .slice((page - 1) * rowTotal, rowTotal * page);
 }
 
-export default function Table(props: TableProps) {
+export function Table(props: TableProps) {
   const { setModal } = useModal();
 
   const [columns, setColumns] = React.useState(props.columns);
@@ -426,164 +426,174 @@ export default function Table(props: TableProps) {
         props.className
       )}
     >
-      <div className="flex justify-between items-center">
-        <div className="flex items-center">
-          <Button
-            text="Edit"
-            icon={<Pencil />}
-            iconPosition="left"
-            variant="normal"
-            className={clsx(
-              rowSelected === undefined
-                ? "!border-gray-300 !text-gray-300"
-                : "!border-gray-700 !text-gray-700 cursor-pointer"
-            )}
-            onClick={() => {
-              if (rowSelected !== undefined && props.onEdit) {
-                props.onEdit(rowSelected);
-              }
-            }}
-          />
-          <VerticalLine />
-          <Button
-            text="Delete"
-            icon={<Trash />}
-            iconPosition="left"
-            variant="normal"
-            className={clsx(
-              rowSelected === undefined
-                ? "!border-gray-300 !text-gray-300"
-                : "!border-gray-700 !text-gray-700 cursor-pointer"
-            )}
-            onClick={() => {
-              if (rowSelected !== undefined) {
-                setModal(
-                  <Modal
-                    type="confirm"
-                    title="Delete"
-                    onDone={async () => {
-                      if (props.onDelete) {
-                        await Promise.resolve(props.onDelete(rowSelected));
-                      }
-                    }}
-                  >
-                    <p className="text-lg text-gray-700 font-medium">
-                      Are you sure want to delete this row?
-                    </p>
-                  </Modal>
-                );
-              }
-            }}
-          />
-        </div>
-        <div className="flex items-center gap-3 2xl:gap-4">
-          <Select
-            className="w-40"
-            icon={Calendar}
-            placeholder="Date Range"
-            options={[
-              { label: "Today", value: "today" },
-              { label: "Yesterday", value: "yesterday" },
-              { label: "Weeks Ago", value: "weeksAgo" },
-            ]}
-            onChange={(option) =>
-              props.onSelectDateRange && props.onSelectDateRange(option.value)
-            }
-            isSearchable
-          />
-          <Select
-            className="w-40"
-            icon={Filter}
-            placeholder="Filter"
-            options={filterOptions}
-            value={filterOptions}
-            onChange={handleFilterChange}
-            isSearchable
-            isMulti
-          />
-          <Select
-            className="w-40"
-            options={entriesOptions}
-            onChange={(option) => {
-              setRowTotal(option);
-              setPage(1);
-            }}
-            value={
-              entriesOptions.find(
-                (entriesOption) => entriesOption.value === rowTotal
-              )?.value
-            }
-            isSearchable
-          />
-        </div>
-      </div>
-      <div className="grow flex rounded-t-2xl overflow-auto">
-        {columns.length < 1 ? (
-          <></>
-        ) : (
-          <table className="w-full h-fit rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate">
-            <thead className="sticky top-0">
-              {headerRows.map((headerRow, headerRowIndex) => (
-                <tr key={headerRowIndex}>
-                  {headerRow.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      {...header}
-                      onSort={(direction) =>
-                        setSort({ id: header.id, direction })
-                      }
-                    />
+      {props.isLoading ? (
+        <Loading size="xl" color="primary" />
+      ) : (
+        <>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <Button
+                text="Edit"
+                icon={<Pencil />}
+                iconPosition="left"
+                variant="normal"
+                className={clsx(
+                  rowSelected === undefined
+                    ? "!border-gray-300 !text-gray-300"
+                    : "!border-gray-700 !text-gray-700 cursor-pointer"
+                )}
+                onClick={() => {
+                  if (rowSelected !== undefined && props.onEdit) {
+                    props.onEdit(rowSelected);
+                  }
+                }}
+              />
+              <VerticalLine />
+              <Button
+                text="Delete"
+                icon={<Trash />}
+                iconPosition="left"
+                variant="normal"
+                className={clsx(
+                  rowSelected === undefined
+                    ? "!border-gray-300 !text-gray-300"
+                    : "!border-gray-700 !text-gray-700 cursor-pointer"
+                )}
+                onClick={() => {
+                  if (rowSelected !== undefined) {
+                    setModal(
+                      <Modal
+                        type="confirm"
+                        title="Delete"
+                        onDone={async () => {
+                          if (props.onDelete) {
+                            await Promise.resolve(props.onDelete(rowSelected));
+                          }
+                        }}
+                      >
+                        <p className="text-lg text-gray-700 font-medium">
+                          Are you sure want to delete this row?
+                        </p>
+                      </Modal>
+                    );
+                  }
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-3 2xl:gap-4">
+              <Select
+                className="w-40"
+                icon={Calendar}
+                placeholder="Date Range"
+                value={null}
+                options={[
+                  { label: "Today", value: "today" },
+                  { label: "Yesterday", value: "yesterday" },
+                  { label: "Weeks Ago", value: "weeksAgo" },
+                ]}
+                onChange={(option) =>
+                  props.onSelectDateRange &&
+                  props.onSelectDateRange(option.value)
+                }
+                isSearchable
+              />
+              <Select
+                className="w-40"
+                icon={Filter}
+                placeholder="Filter"
+                options={filterOptions}
+                value={filterOptions}
+                onChange={handleFilterChange}
+                isSearchable
+                isMulti
+              />
+              <Select
+                className="w-40"
+                options={entriesOptions}
+                onChange={(option) => {
+                  setRowTotal(option);
+                  setPage(1);
+                }}
+                value={
+                  entriesOptions.find(
+                    (entriesOption) => entriesOption.value === rowTotal
+                  )?.value
+                }
+                isSearchable
+              />
+            </div>
+          </div>
+          <div className="grow flex rounded-t-2xl overflow-auto">
+            {columns.length < 1 ? (
+              <></>
+            ) : (
+              <table className="w-full h-fit rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate">
+                <thead className="sticky top-0">
+                  {headerRows.map((headerRow, headerRowIndex) => (
+                    <tr key={headerRowIndex}>
+                      {headerRow.map((header) => (
+                        <TableHead
+                          key={header.id}
+                          {...header}
+                          onSort={(direction) =>
+                            setSort({ id: header.id, direction })
+                          }
+                        />
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {cellRows.map((cellRow, cellRowIndex) => (
-                <tr key={cellRowIndex}>
-                  {props.isSelectable && (
-                    <TableCellSelect
-                      selected={
-                        cellRowIndex + (page - 1) * rowTotal == rowSelected
-                      }
-                      onSelect={() => {
-                        const realRowIndex =
-                          cellRowIndex + (page - 1) * rowTotal;
-                        if (realRowIndex == rowSelected) {
-                          setRowSelected(realRowIndex);
-                        } else {
-                          setRowSelected(realRowIndex);
-                        }
-                      }}
-                    />
-                  )}
-                  {cellRow.map((cell, cellIndex) => (
-                    <TableCell key={cellIndex} {...cell} />
+                </thead>
+                <tbody>
+                  {cellRows.map((cellRow, cellRowIndex) => (
+                    <tr key={cellRowIndex}>
+                      {props.isSelectable && (
+                        <TableCellSelect
+                          selected={
+                            cellRowIndex + (page - 1) * rowTotal == rowSelected
+                          }
+                          onSelect={() => {
+                            const realRowIndex =
+                              cellRowIndex + (page - 1) * rowTotal;
+                            if (realRowIndex == rowSelected) {
+                              setRowSelected(realRowIndex);
+                            } else {
+                              setRowSelected(realRowIndex);
+                            }
+                          }}
+                        />
+                      )}
+                      {cellRow.map((cell, cellIndex) => (
+                        <TableCell key={cellIndex} {...cell} />
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      <div className="flex justify-end items-center gap-3 2xl:gap-4">
-        <span
-          className={clsx(
-            page === 1 ? "text-gray-400" : "text-gray-700 cursor-pointer"
-          )}
-          onClick={() => setPage(page === 1 ? 1 : page - 1)}
-        >
-          <ChevronLeft />
-        </span>
-        <span className="text-gray-700 cursor-pointer">{page}</span>
-        <span
-          className={clsx(
-            page === maxPage ? "text-gray-400" : "text-gray-700 cursor-pointer"
-          )}
-          onClick={() => setPage(page === maxPage ? maxPage : page + 1)}
-        >
-          <ChevronRight />
-        </span>
-      </div>
+                </tbody>
+              </table>
+            )}
+          </div>
+          <div className="flex justify-end items-center gap-3 2xl:gap-4">
+            <span
+              className={clsx(
+                page === 1 ? "text-gray-400" : "text-gray-700 cursor-pointer"
+              )}
+              onClick={() => setPage(page === 1 ? 1 : page - 1)}
+            >
+              <ChevronLeft />
+            </span>
+            <span className="text-gray-700 cursor-pointer">{page}</span>
+            <span
+              className={clsx(
+                page === maxPage
+                  ? "text-gray-400"
+                  : "text-gray-700 cursor-pointer"
+              )}
+              onClick={() => setPage(page === maxPage ? maxPage : page + 1)}
+            >
+              <ChevronRight />
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

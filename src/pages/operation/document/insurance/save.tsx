@@ -1,10 +1,10 @@
-import React from "react";
-import useMenu from "@/stores/menu";
-import Label from "@/components/Elements/Label";
 import InputText from "@/components/Elements/InputText";
-import FormLayout from "@/components/Layouts/FormLayout";
+import Label from "@/components/Elements/Label";
 import Select from "@/components/Elements/Select";
 import TextArea from "@/components/Elements/TextArea";
+import SaveLayout from "@/components/Layouts/SaveLayout";
+import useMenu from "@/stores/menu";
+import React from "react";
 
 export default function PackingSave() {
   const { setActive } = useMenu();
@@ -14,7 +14,7 @@ export default function PackingSave() {
   }, [setActive]);
 
   return (
-    <FormLayout
+    <SaveLayout
       onSave={() => {}}
       title="Input Vehicle Data"
       tabs={[

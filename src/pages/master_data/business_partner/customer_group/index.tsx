@@ -1,175 +1,90 @@
-import React from "react";
+import { Button, Modal, Search, Table } from "@/components/Elements";
+import { Form, FormCode, FormDate, FormText } from "@/components/Forms";
+import { trpc } from "@/libs/trpc";
+import { CustomerGroupForm } from "@/server/dtos/customerGroup.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import DatePicker from "@/components/Elements/DatePicker";
-import InputText from "@/components/Elements/InputText";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
+import React from "react";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  PersonFillAdd,
 } from "react-bootstrap-icons";
-import moment from "moment";
-import Table from "@/components/Elements/NewTable";
-import {
-  CustomerGroupOutput,
-  SaveCustomerGroupInput,
-} from "@/models/customerGroup.model";
-import {
-  createCustomerGroup,
-  deleteCustomerGroup,
-  updateCustomerGroup,
-  useCustomerGroups,
-  useNextCustomerGroupCode,
-} from "@/api/customer_groups";
-import { useFormik } from "formik";
-import { saveCustomerGroupSchema } from "@/validations/customerGroup.validation";
-import { formikValidateWithZod } from "@/libs/error";
+import { useForm } from "react-hook-form";
 
-type SaveProps = {
-  customerGroup?: CustomerGroupOutput;
-};
-
-function Save(props: SaveProps) {
-  // Gunakan formik
-  const { handleSubmit, handleChange, values, errors, validateForm } =
-    useFormik<SaveCustomerGroupInput>({
-      initialValues: {
-        name: props.customerGroup?.name ?? "",
-        description: props.customerGroup?.description ?? "",
-      },
-      onSubmit: async (values) => {
-        // Cek apakah customer group ada di props
-        // Jika ada maka lakukan update saja
-        // Jika tidak ada maka lakukan penambahan
-        if (props.customerGroup) {
-          await updateCustomerGroup(props.customerGroup.code, values);
-        } else {
-          await createCustomerGroup(values);
-        }
-
-        // Tutup modal
-        setModal(null);
-      },
-      validate: formikValidateWithZod(saveCustomerGroupSchema),
-    });
-
-  // Effect untuk mengvalidasi form
-  React.useEffect(() => {
-    validateForm();
-  }, [validateForm]);
-
-  // Menggunakan function setModal dari store useModal
+function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
 
-  // Memo untuk menampung create date
-  const defaultCreateDate = React.useMemo(
-    () =>
-      props.customerGroup?.createDate
-        ? moment(props.customerGroup.createDate, "DD/MM/YYYY").toDate()
-        : new Date(),
-    [props.customerGroup?.createDate]
-  );
+  const saveMutation = trpc.customerGroups.save.useMutation();
 
-  // Panggil api untuk mendapatkan code customer group selanjutnya
-  const { code, error, isLoading } = useNextCustomerGroupCode();
+  const methods = useForm<CustomerGroupForm>({
+    values: CustomerGroupForm.initial,
+  });
+  const { reset } = methods;
 
-  // State untuk menyimpan default value dari code customer group
-  const [defaultGroupCode, setDefaultGroupCode] = React.useState<string>();
-
-  // Effect untuk mengset value dari default customer group code
-  // dimana jika customer group ada di props maka set dengan code customer group tersebut
-  // tapi jika tidak ada maka set dengan code yang diambil dari api
+  const defaultValuesQuery = trpc.customerGroups.getDefaultValues.useQuery({
+    code,
+  });
   React.useEffect(() => {
-    if (props.customerGroup?.code) {
-      setDefaultGroupCode(props.customerGroup.code);
-    } else if (code) {
-      setDefaultGroupCode(code);
+    if (defaultValuesQuery.data && reset) {
+      reset(defaultValuesQuery.data, {
+        keepDirtyValues: true,
+        keepErrors: true,
+      });
     }
-  }, [code, props.customerGroup?.code]);
+  }, [defaultValuesQuery.data, reset]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan code customer group selanjutnya masih loading
-  if (isLoading) {
-    return <></>;
-  }
+  const onSubmit = methods.handleSubmit(async (data) => {
+    await saveMutation.mutateAsync({
+      code,
+      name: data.name,
+      description: data.description,
+    });
 
-  // Cek apakah pemanggilan api untuk mendapatkan code customer group selanjutnya menghasilkan error
-  if (error) {
-    throw error;
-  }
+    setModal(null);
+  });
 
   return (
-    <Modal title="Add New Customer Group" type="save" onDone={handleSubmit}>
-      <form onSubmit={handleSubmit}>
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-6 items-center">
-              <Label className="basis-1/3" name="Create Date" />
-              <DatePicker
-                id="createDate"
-                name="createDate"
-                className="basis-2/3"
-                defaultValue={defaultCreateDate}
-                readOnly
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-6 items-center">
-              <Label className="basis-1/3" name="Group Code" />
-              <InputText
-                id="code"
-                name="code"
-                className="basis-2/3"
-                defaultValue={defaultGroupCode}
-                readOnly
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-6 items-center">
-              <Label className="basis-1/3" name="Name" />
-              <InputText
-                id="name"
-                name="name"
-                placeholder="Enter name"
-                className="basis-2/3"
-                value={values.name}
-                onChange={handleChange}
-                isError={!!errors.name}
-              />
-            </div>
-            <div className="flex gap-6 items-center">
-              <div className="basis-1/3"></div>
-              <p className="basis-2/3 text-statusInactive">{errors.name}</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="flex gap-6 items-center">
-              <Label className="basis-1/3" name="Description" />
-              <InputText
-                id="description"
-                name="description"
-                placeholder="Enter description"
-                className="basis-2/3"
-                value={values.description}
-                onChange={handleChange}
-                isError={!!errors.description}
-              />
-            </div>
-            <div className="flex gap-6 items-center">
-              <div className="basis-1/3"></div>
-              <p className="basis-2/3 text-statusInactive">
-                {errors.description}
-              </p>
-            </div>
-          </div>
-        </div>
-      </form>
+    <Modal
+      title="Add New Customer Group"
+      type="save"
+      onDone={onSubmit}
+      isLoading={!defaultValuesQuery.data}
+    >
+      <Form
+        methods={methods}
+        singleTab
+        controls={[
+          {
+            type: "input",
+            id: "createDate",
+            label: "Create Date",
+            input: <FormDate name="createDate" readOnly />,
+          },
+          {
+            type: "input",
+            id: "code",
+            label: "Group Code",
+            input: <FormCode name="code" readOnly />,
+          },
+          {
+            type: "separator",
+          },
+          {
+            type: "input",
+            id: "name",
+            label: "Name",
+            input: <FormText name="name" />,
+          },
+          {
+            type: "input",
+            id: "description",
+            label: "Description",
+            input: <FormText name="description" />,
+          },
+        ]}
+      />
     </Modal>
   );
 }
@@ -193,19 +108,14 @@ export default function CustomerGroupPage() {
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua customer group
-  const { groups, isLoading, error } = useCustomerGroups([current]);
+  const deleteMutation = trpc.customerGroups.delete.useMutation();
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua customer group
-  // masih loading atau data masih belum didapatkan
-  if (isLoading || !groups) {
-    return <></>;
-  }
+  const findQuery = trpc.customerGroups.findAll.useQuery();
+  React.useEffect(() => {
+    findQuery.refetch();
+  }, [current, findQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua customer group menghasilkan error
-  if (error) {
-    throw error;
-  }
+  console.log(findQuery.data);
 
   return (
     <>
@@ -258,25 +168,28 @@ export default function CustomerGroupPage() {
             isSortable: true,
           },
         ]}
-        rows={groups}
+        isLoading={!findQuery.data}
+        rows={findQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada row yang dipilih di table
-          if (selectedRowIndex === undefined) {
+          if (selectedRowIndex === undefined || findQuery.data === undefined) {
             return;
           }
 
           // Buka modal untuk membuat customer group
-          setModal(<Save customerGroup={groups[selectedRowIndex]} />);
+          setModal(<Save code={findQuery.data[selectedRowIndex].code} />);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada row yang dipilih di table
-          if (selectedRowIndex === undefined) {
+          if (selectedRowIndex === undefined || findQuery.data === undefined) {
             return;
           }
 
           // Hapus customer group yang dipilih di table
-          await deleteCustomerGroup(groups[selectedRowIndex].code);
+          await deleteMutation.mutateAsync(
+            findQuery.data[selectedRowIndex].code
+          );
 
           // Karena customer group yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

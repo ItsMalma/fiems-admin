@@ -1,30 +1,30 @@
-import React from "react";
-import useHeader from "@/stores/header";
-import useMenu from "@/stores/menu";
-import { useRouter } from "next/router";
-import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
-import InputMoney from "@/components/Elements/Forms/InputMoney";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import DatePickerInput from "@/components/Elements/Forms/DatePickerInput";
-import InputText from "@/components/Elements/InputText";
+import { useCustomers } from "@/api/customers";
+import { useRoutes } from "@/api/routes";
 import {
   createUangJalan,
   updateUangJalan,
   useUangJalan,
 } from "@/api/uang_jalan";
-import { useCustomers } from "@/api/customers";
-import { FormikProvider, useFormik } from "formik";
-import { SaveUangJalanInput, UangJalanOutput } from "@/models/uangJalan.model";
+import DatePickerInput from "@/components/Elements/Forms/DatePickerInput";
+import InputMoney from "@/components/Elements/Forms/InputMoney";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
+import InputText from "@/components/Elements/InputText";
+import SaveLayout, { InputRow } from "@/components/Layouts/SaveLayout";
+import { formikValidateWithZod } from "@/libs/error";
 import {
   ApiResponsePayload,
   ContainerSizes,
   TruckTypes,
   toTitleCase,
 } from "@/libs/utils";
-import { formikValidateWithZod } from "@/libs/error";
+import { SaveUangJalanInput, UangJalanOutput } from "@/models/uangJalan.model";
+import useHeader from "@/stores/header";
+import useMenu from "@/stores/menu";
 import { saveUangJalanSchema } from "@/validations/uangJalan.validation";
+import { FormikProvider, useFormik } from "formik";
 import moment from "moment";
-import { useRoutes } from "@/api/routes";
+import { useRouter } from "next/router";
+import React from "react";
 
 type UangJalanFormValues = Omit<
   SaveUangJalanInput,
@@ -147,7 +147,7 @@ export default function UangJalanSavePage() {
 
   return (
     <FormikProvider value={formik}>
-      <FormLayout
+      <SaveLayout
         onSave={handleSubmit}
         title="Input Uang Jalan Data"
         tabs={[

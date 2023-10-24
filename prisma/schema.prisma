@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model CustomerGroup {
+  code        String    @id @map("_id") @db.String
+  name        String
+  description String
+  createDate  DateTime  @default(now())
+  factories   Factory[]
+}
+
+type CustomerPic {
+  name        String
+  email       String
+  phoneNumber String
+  telephone   String
+  fax         String
+}
+
+model Factory {
+  code       String        @id @map("_id") @db.String
+  name       String
+  group      CustomerGroup @relation(fields: [groupCode], references: [code])
+  groupCode  String        @db.String
+  address    String
+  province   String
+  city       String
+  telephone  String
+  fax        String
+  email      String
+  top        Int
+  currency   String
+  purchasing CustomerPic
+  operation  CustomerPic
+  finance    CustomerPic
+  createDate DateTime      @default(now())
+  status     Boolean       @default(false)
+}
+
+model Vendor {
+  code       String      @id @map("_id") @db.String
+  name       String
+  address    String
+  province   String
+  city       String
+  telephone  String
+  fax        String
+  email      String
+  top        Int
+  currency   String
+  purchasing CustomerPic
+  operation  CustomerPic
+  finance    CustomerPic
+  createDate DateTime    @default(now())
+  status     Boolean     @default(false)
+}
+
+model Shipping {
+  code       String      @id @map("_id") @db.String
+  name       String
+  address    String
+  province   String
+  city       String
+  telephone  String
+  fax        String
+  email      String
+  top        Int
+  currency   String
+  purchasing CustomerPic
+  operation  CustomerPic
+  finance    CustomerPic
+  createDate DateTime    @default(now())
+  status     Boolean     @default(false)
+}

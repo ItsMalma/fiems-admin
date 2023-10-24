@@ -1,39 +1,20 @@
-import React from "react";
 import clsx from "clsx";
-import { Calendar as CalendarIcon } from "react-bootstrap-icons";
 import moment from "moment";
+import React from "react";
+import { Calendar as CalendarIcon } from "react-bootstrap-icons";
 
 type DatePickerProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "onChange" | "type" | "defaultValue" | "value"
 > & {
-  onChange?: (newValue: Date | string) => void;
-  value?: Date | string;
+  onChange: (newValue: Date | string) => void;
+  value: Date | string;
   defaultValue?: Date | string;
   isError?: boolean;
 };
 
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
   ({ className, onChange, value, defaultValue, isError, ...props }, ref) => {
-    const [inputValue, setInputValue] = React.useState<Date>();
-
-    React.useEffect(() => {
-      if (value instanceof Date) {
-        setInputValue(value);
-      } else if (
-        typeof value === "string" &&
-        moment(value, "DD/MM/YYYY").isValid()
-      ) {
-        setInputValue(moment(value, "DD/MM/YYYY").toDate());
-      }
-    }, [value]);
-
-    React.useEffect(() => {
-      if (onChange && inputValue) {
-        onChange(inputValue);
-      }
-    }, [onChange, inputValue]);
-
     const inputDateRef = React.useRef<HTMLInputElement>(null);
     const [calendarVisibility, setCalendarVisibility] = React.useState(false);
 
@@ -62,7 +43,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             ref={ref}
             type="text"
             className="cursor-default overflow-auto grow bg-inherit outline-none border-none"
-            value={moment(inputValue).format("DD/MM/YYYY")}
+            value={moment(value).format("DD/MM/YYYY")}
             readOnly
             {...props}
           />
@@ -74,7 +55,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             type="date"
             className="invisible absolute"
             onChange={(e) => {
-              setInputValue(e.target.valueAsDate ?? new Date());
+              onChange(e.target.valueAsDate ?? new Date());
               setCalendarVisibility(false);
             }}
           />
@@ -86,4 +67,4 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
 
 DatePicker.displayName = "DatePicker";
 
-export default DatePicker;
+export { DatePicker };

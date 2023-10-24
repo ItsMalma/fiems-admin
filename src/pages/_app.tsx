@@ -1,14 +1,15 @@
+import MainLayout from "@/components/Layouts/MainLayout";
+import { trpc } from "@/libs/trpc";
+import useModal from "@/stores/modal";
 import "@/styles/globals.css";
+import clsx from "clsx";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
-import clsx from "clsx";
-import useModal from "@/stores/modal";
-import MainLayout from "@/components/Layouts/MainLayout";
 import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
 
   const router = useRouter();
@@ -57,3 +58,5 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+export default trpc.withTRPC(App);

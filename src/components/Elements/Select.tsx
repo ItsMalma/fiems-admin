@@ -1,8 +1,8 @@
-import React from "react";
 import clsx from "clsx";
+import React from "react";
 import { CaretDownFill, CaretUpFill, Icon } from "react-bootstrap-icons";
 
-export type SelectOption = {
+type SelectOption = {
   label: string;
   value: any;
 };
@@ -29,14 +29,14 @@ type SelectProps = Omit<
     | {
         isMulti: true;
 
-        value?: any[];
+        value: any[];
 
         onChange: (options: any[]) => void;
       }
     | {
         isMulti?: false;
 
-        value?: any;
+        value: any;
 
         onChange: (option: any) => void;
       }
@@ -63,9 +63,6 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     // Untuk mengkombinasikan antar ref dari input text dan ref yang dari forward
     React.useImperativeHandle(ref, () => inputRef.current!);
 
-    // State untuk menyimpan nilai dari input text
-    const [inputValue, setInputValue] = React.useState<string>("");
-
     // State untuk menyimpan apakah select terbuka atau tidak
     const [expand, setExpand] = React.useState(false);
 
@@ -73,37 +70,25 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     const [optionsDisplayed, setOptionsDisplayed] =
       React.useState<SelectOption[]>(options);
 
-    // State untuk menyimpan mana option yang active
-    const [actives, setActives] = React.useState<SelectOption[]>([]);
+    // Memo untuk menyimpan kumpulan option yang dipilih
+    const actives = React.useMemo(() => {
+      return options.filter((option) => {
+        if (isMulti) {
+          return value.includes(option);
+        }
+        return option.value === value;
+      });
+    }, [isMulti, options, value]);
 
-    // Effect ketika terjadi perubahan pada value
+    // Memo untuk menyimpan nilai dari input text
+    const [inputValue, setInputValue] = React.useState<string>("");
     React.useEffect(() => {
-      if (value) {
-        setActives(
-          isMulti
-            ? options.filter((option) => option.value in value)
-            : options.filter((option) => option.value === value)
-        );
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value, isMulti]);
-
-    // Effect ketika terjadi perubahan value
-    React.useEffect(() => {
-      if (!actives) {
-        return;
-      }
-
-      if (isMulti) {
-        onChange(actives.map((active) => active.value));
-      } else if (actives[0]) {
-        onChange(actives?.[0]?.value);
-        setInputValue(actives?.[0]?.label);
-      } else {
+      if (isMulti || actives.length === 0) {
         setInputValue("");
-        onChange(null);
+      } else if (actives.length >= 1) {
+        setInputValue(actives[0].label);
       }
-    }, [actives, isMulti, onChange]);
+    }, [actives, isMulti]);
 
     const menuRef = React.useRef<HTMLDivElement>(null);
     const [menuPosition, setMenuPosition] = React.useState<"top" | "bottom">(
@@ -134,7 +119,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
           setExpand(false);
 
           if (!isMulti && actives[0]) {
-            setInputValue(actives?.[0]?.label);
+            setInputValue(actives[0].label);
           } else {
             setInputValue("");
           }
@@ -162,15 +147,23 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
 
         if (actives.find((active) => active.value === option.value)) {
           // remove option from actives
-          setActives(actives.filter((active) => active.value !== option.value));
+          if (isMulti) {
+            onChange(actives.filter((active) => active.value !== option.value));
+          } else {
+            onChange(null);
+          }
         } else {
           // add option to actives
-          setActives(isMulti ? [...actives, option] : [option]);
+          if (isMulti) {
+            onChange([...actives, option]);
+          } else {
+            onChange(option);
+          }
         }
         setExpand(false);
         setOptionsDisplayed(options);
       },
-      [actives, isMulti, options]
+      [actives, isMulti, onChange, options]
     );
 
     return (
@@ -278,7 +271,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
                     value: "custom",
                   };
                   setOptionsDisplayed(options);
-                  setActives([...actives, creatableOption]);
+                  handleClick(creatableOption);
                 }}
               >
                 Create
@@ -293,4 +286,5 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
 
 Select.displayName = "Select";
 
-export default Select;
+export { Select };
+export type { SelectOption };

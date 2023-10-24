@@ -1,16 +1,15 @@
-import React from "react";
-import useMenu from "@/stores/menu";
-import { useRouter } from "next/router";
 import { createSales, updateSales, useSales } from "@/api/sales";
-import { useFormik, FormikProvider, Formik } from "formik";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
+import InputText from "@/components/Elements/InputText";
+import SaveLayout, { InputRow } from "@/components/Layouts/SaveLayout";
+import { formikValidateWithZod } from "@/libs/error";
 import { ApiResponsePayload } from "@/libs/utils";
 import { SalesOutput, SaveSalesInput } from "@/models/sales.model";
-import { formikValidateWithZod } from "@/libs/error";
+import useMenu from "@/stores/menu";
 import { saveSalesSchema } from "@/validations/sales.validation";
-import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
-import InputText from "@/components/Elements/InputText";
-import InputNumber from "@/components/Elements/InputNumber";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
+import { FormikProvider, useFormik } from "formik";
+import { useRouter } from "next/router";
+import React from "react";
 
 export default function SalesSave() {
   // Gunakan store useMenu untuk mengset menu mana yang aktif
@@ -99,7 +98,7 @@ export default function SalesSave() {
 
   return (
     <FormikProvider value={formik}>
-      <FormLayout
+      <SaveLayout
         onSave={handleSubmit}
         title="Input Sales Data"
         tabs={[

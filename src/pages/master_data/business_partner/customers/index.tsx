@@ -1,21 +1,23 @@
-import React from "react";
+import {
+  Button,
+  Label,
+  Modal,
+  Search,
+  Select,
+  Table,
+} from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
+import { CustomerType } from "@/server/dtos/customer.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import Select from "@/components/Elements/Select";
+import React from "react";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  PersonFillAdd,
 } from "react-bootstrap-icons";
-import Table from "@/components/Elements/NewTable";
-import { deleteCustomer, useCustomers } from "@/api/customers";
-import { toTitleCase } from "@/libs/utils";
 
 export function Export() {
   return (
@@ -58,19 +60,12 @@ export default function CustomersPage() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua data customer
-  const { customers, isLoading, error } = useCustomers(undefined, [current]);
+  const tableRowsQuery = trpc.customers.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua data customer
-  // masih loading atau data nya masih belum terload
-  if (isLoading || !customers) {
-    return <></>;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua data customer terdapat error
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.customers.delete.useMutation();
 
   return (
     <>
@@ -169,7 +164,7 @@ export default function CustomersPage() {
             isSortable: true,
           },
           {
-            id: "pic.purchasing",
+            id: "purchasing",
             header: "Purchasing",
             type: "group",
             columns: [
@@ -196,7 +191,7 @@ export default function CustomersPage() {
             ],
           },
           {
-            id: "pic.operation",
+            id: "operation",
             header: "Operation",
             type: "group",
             columns: [
@@ -223,7 +218,7 @@ export default function CustomersPage() {
             ],
           },
           {
-            id: "pic.finance",
+            id: "finance",
             header: "Finance",
             type: "group",
             columns: [
@@ -255,30 +250,40 @@ export default function CustomersPage() {
             type: "status",
           },
         ]}
-        rows={customers.map((customer) => ({
-          ...customer,
-          type: toTitleCase(customer.type),
-        }))}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
+          const customer = tableRowsQuery.data[selectedRowIndex];
+
           // Redirect ke halaman save customer
           router.push(
-            `/master_data/business_partner/customers/save?code=${customers[selectedRowIndex].code}`
+            `/master_data/business_partner/customers/save?code=${customer.code}&type=${customer.type}`
           );
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
+          const customer = tableRowsQuery.data[selectedRowIndex];
+
           // Hapus customer yang dipilih di table
-          await deleteCustomer(customers[selectedRowIndex].code);
+          await deleteMutation.mutateAsync({
+            type: customer.type as CustomerType,
+            code: customer.code,
+          });
 
           // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);

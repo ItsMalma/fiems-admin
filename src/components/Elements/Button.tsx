@@ -1,20 +1,23 @@
-import React from "react";
 import clsx from "clsx";
+import React from "react";
+import { Loading } from ".";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "normal" | "filled" | "outlined";
   text?: string;
   icon?: React.ReactNode;
-  iconPosition?: "left" | "right" | "center";
+  iconPosition?: "left" | "right";
+  isLoading?: boolean;
   onClick?: () => void;
 };
 
-export default function Button({
+export function Button({
   className,
   variant = "normal",
   text = "",
   icon,
   iconPosition = "right",
+  isLoading = false,
   onClick,
   ...props
 }: ButtonProps) {
@@ -30,9 +33,11 @@ export default function Button({
       )}
       onClick={() => onClick && onClick()}
     >
-      {iconPosition === "left" && icon}
-      {iconPosition === "center" ? icon : <p>{text}</p>}
-      {iconPosition === "right" && icon}
+      {iconPosition === "left" &&
+        (isLoading ? <Loading size="xs" color="white" /> : icon)}
+      <p>{text}</p>
+      {iconPosition === "right" &&
+        (isLoading ? <Loading size="xs" color="white" /> : icon)}
     </button>
   );
 }

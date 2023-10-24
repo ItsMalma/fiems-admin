@@ -1,19 +1,19 @@
-import React from "react";
+import { useCustomers } from "@/api/customers";
+import { createVehicle, updateVehicle, useVehicle } from "@/api/vehicles";
+import DatePickerInput from "@/components/Elements/Forms/DatePickerInput";
+import SelectInput from "@/components/Elements/Forms/SelectInput";
+import InputText from "@/components/Elements/InputText";
+import SaveLayout, { InputRow } from "@/components/Layouts/SaveLayout";
+import { formikValidateWithZod } from "@/libs/error";
+import { ApiResponsePayload, TruckTypes, toTitleCase } from "@/libs/utils";
+import { SaveVehicleInput, VehicleOutput } from "@/models/vehicle.model";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
-import { useRouter } from "next/router";
-import InputText from "@/components/Elements/InputText";
-import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import DatePickerInput from "@/components/Elements/Forms/DatePickerInput";
-import { createVehicle, updateVehicle, useVehicle } from "@/api/vehicles";
-import { useCustomers } from "@/api/customers";
-import { FormikProvider, useFormik } from "formik";
-import { SaveVehicleInput, VehicleOutput } from "@/models/vehicle.model";
-import { ApiResponsePayload, TruckTypes, toTitleCase } from "@/libs/utils";
-import { formikValidateWithZod } from "@/libs/error";
 import { saveVehicleSchema } from "@/validations/vehicle.validation";
+import { FormikProvider, useFormik } from "formik";
 import moment from "moment";
+import { useRouter } from "next/router";
+import React from "react";
 
 type VehicleFormValues = Omit<SaveVehicleInput, "truckType" | "cylinder"> & {
   truckType: SaveVehicleInput["truckType"] | "";
@@ -122,7 +122,7 @@ export default function VehicleSavePage() {
 
   return (
     <FormikProvider value={formik}>
-      <FormLayout
+      <SaveLayout
         onSave={handleSubmit}
         title="Input Vehicle Data"
         tabs={[

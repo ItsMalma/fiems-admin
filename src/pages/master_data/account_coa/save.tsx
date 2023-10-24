@@ -10,7 +10,7 @@ import { useCurrencies } from "@/api/currencies";
 import DatePicker from "@/components/Elements/DatePicker";
 import SelectInput from "@/components/Elements/Forms/SelectInput";
 import InputText from "@/components/Elements/InputText";
-import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
+import SaveLayout, { InputRow } from "@/components/Layouts/SaveLayout";
 import { ApiResponsePayload, COATypes, toTitleCase } from "@/libs/utils";
 import {
   COAOutput,
@@ -277,7 +277,7 @@ export default function COASave() {
 
   return (
     <FormikProvider value={formik}>
-      <FormLayout
+      <SaveLayout
         onSave={handleSubmit}
         title="Input COA Data"
         tabs={[

@@ -1,10 +1,10 @@
-import React from "react";
-import useMenu from "@/stores/menu";
-import Label from "@/components/Elements/Label";
-import InputText from "@/components/Elements/InputText";
-import FormLayout from "@/components/Layouts/FormLayout";
-import Select from "@/components/Elements/Select";
 import DatePicker from "@/components/Elements/DatePicker";
+import InputText from "@/components/Elements/InputText";
+import Label from "@/components/Elements/Label";
+import Select from "@/components/Elements/Select";
+import SaveLayout from "@/components/Layouts/SaveLayout";
+import useMenu from "@/stores/menu";
+import React from "react";
 
 export default function JobOrderConfirm() {
   const { setActive } = useMenu();
@@ -20,7 +20,7 @@ export default function JobOrderConfirm() {
   }, [isChangeDooring]);
 
   return (
-    <FormLayout
+    <SaveLayout
       onSave={() => {}}
       title="Confirm Dooring / Change Dooring"
       tabs={[
