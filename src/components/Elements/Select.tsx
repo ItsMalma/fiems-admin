@@ -74,7 +74,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     const actives = React.useMemo(() => {
       return options.filter((option) => {
         if (isMulti) {
-          return value.includes(option);
+          return value.findIndex((v) => v === option.value) !== -1;
         }
         return option.value === value;
       });

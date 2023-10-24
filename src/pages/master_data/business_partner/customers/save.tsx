@@ -43,7 +43,6 @@ export default function CustomerSavePage() {
     if (!province) setValue("city", "");
   }, [province, setValue]);
 
-  console.log(queryCode);
   const formQuery = trpc.customers.getForm.useQuery({
     code: queryCode,
     type: customerType,

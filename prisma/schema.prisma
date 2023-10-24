@@ -81,3 +81,24 @@ model Shipping {
   createDate DateTime    @default(now())
   status     Boolean     @default(false)
 }
+
+model Route {
+  code               String   @id @map("_id") @db.String
+  serviceType        String
+  containerType      String
+  province           String
+  city               String
+  startDescription   String
+  endDescription     String
+  createDate         DateTime @default(now())
+  effectiveStartDate DateTime
+  effectiveEndDate   DateTime
+}
+
+model Port {
+  code       String   @id @map("_id") @db.String
+  province   String
+  city       String
+  name       String
+  createDate DateTime @default(now())
+}

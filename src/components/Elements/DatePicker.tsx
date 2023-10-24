@@ -9,12 +9,11 @@ type DatePickerProps = Omit<
 > & {
   onChange: (newValue: Date | string) => void;
   value: Date | string;
-  defaultValue?: Date | string;
   isError?: boolean;
 };
 
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
-  ({ className, onChange, value, defaultValue, isError, ...props }, ref) => {
+  ({ className, onChange, value, isError, ...props }, ref) => {
     const inputDateRef = React.useRef<HTMLInputElement>(null);
     const [calendarVisibility, setCalendarVisibility] = React.useState(false);
 
@@ -44,6 +43,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             type="text"
             className="cursor-default overflow-auto grow bg-inherit outline-none border-none"
             value={moment(value).format("DD/MM/YYYY")}
+            onChange={() => {}}
             readOnly
             {...props}
           />

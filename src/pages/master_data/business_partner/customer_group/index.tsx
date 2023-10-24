@@ -115,8 +115,6 @@ export default function CustomerGroupPage() {
     findQuery.refetch();
   }, [current, findQuery]);
 
-  console.log(findQuery.data);
-
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">

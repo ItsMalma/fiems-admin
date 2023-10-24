@@ -150,7 +150,7 @@ export const customersRouter = router({
     .input(
       z.object({
         type: z.enum(customerTypes),
-        code: z.string(),
+        code: validateCode((value) => !isNaN(extractCustomerCode(value))),
       })
     )
     .mutation(async ({ input }) => {

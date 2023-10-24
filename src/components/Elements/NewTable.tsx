@@ -15,7 +15,7 @@ import {
   SquareFill,
   Trash,
 } from "react-bootstrap-icons";
-import { Button, Loading, Modal, Select } from ".";
+import { Button, Loading, Modal, Select, SelectOption } from ".";
 import VerticalLine from "../Icons/VerticalLine";
 
 const entriesOptions = [
@@ -373,6 +373,12 @@ export function Table(props: TableProps) {
       value: columnIndex,
     }));
   }, [props.columns]);
+  const [filterValue, setFilterValue] = React.useState(
+    React.useMemo(
+      () => filterOptions.map((option) => option.value),
+      [filterOptions]
+    )
+  );
 
   // State untuk menyimpan jumlah row yang ditampilkan
   const [rowTotal, setRowTotal] = React.useState(10);
@@ -411,9 +417,13 @@ export function Table(props: TableProps) {
 
   // Callback untuk handle perubahan pada filter
   const handleFilterChange = React.useCallback(
-    (options: any[]) => {
+    (options: SelectOption[]) => {
+      const optionsValue = options.map((option) => option.value);
+      setFilterValue(optionsValue);
       setColumns(
-        props.columns.filter((_, columnIndex) => options.includes(columnIndex))
+        props.columns.filter((_, columnIndex) =>
+          optionsValue.includes(columnIndex)
+        )
       );
     },
     [props.columns]
@@ -502,7 +512,7 @@ export function Table(props: TableProps) {
                 icon={Filter}
                 placeholder="Filter"
                 options={filterOptions}
-                value={filterOptions}
+                value={filterValue}
                 onChange={handleFilterChange}
                 isSearchable
                 isMulti

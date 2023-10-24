@@ -1,3 +1,4 @@
+import moment from "moment";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import { z } from "zod";
 
@@ -38,10 +39,18 @@ export function validateCounter(min: number = 1, max?: number) {
 }
 
 export function validateDate() {
-  return z.coerce.date({
-    invalid_type_error: "Invalid value",
-    required_error: "Must be filled",
-  });
+  return z.union([
+    z.date({
+      invalid_type_error: "Invalid value",
+      required_error: "Must be filled",
+    }),
+    z
+      .string({
+        invalid_type_error: "Invalid value",
+        required_error: "Must be filled",
+      })
+      .refine((value) => moment(value).isValid(), "Invalid value"),
+  ]);
 }
 
 export function validateEmail() {
@@ -86,4 +95,17 @@ export function validateText() {
       required_error: "Must be filled",
     })
     .min(1, "Must be filled");
+}
+
+export function refineDateRange(start: string, end: string): z.Refinement<any> {
+  return (data, ctx) => {
+    const startDate = moment(data[start]);
+    if (moment(data[end]).isBefore(startDate, "day")) {
+      ctx.addIssue({
+        code: "invalid_date",
+        path: [end],
+        message: `Must be after ${startDate.format("DD/MM/YYYY")}`,
+      });
+    }
+  };
 }
