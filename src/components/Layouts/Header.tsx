@@ -3,9 +3,23 @@ import useHeader from "@/stores/header";
 import { Moon, Bell, BellFill } from "react-bootstrap-icons";
 
 export default function Header() {
+  const notificationBar = React.useRef<any>(null)
   const { title } = useHeader();
   const [ showNotification, setShowNotification ] = React.useState(false);
   const [ theme, setTheme ] = React.useState("light")
+
+  
+  // React.useEffect(() => {
+  //   const handleNotification = (event:any) => {
+  //     if (showNotification) {
+  //       const bar = notificationBar.current
+  //       if (bar && !bar.contains(event.target)) {
+  //         setShowNotification(false); 
+  //       }
+  //     }
+  //   };
+  //   document.addEventListener('click', handleNotification);
+  // }, []);
 
   React.useEffect(() => {
     if (theme === "dark") {
@@ -19,9 +33,7 @@ export default function Header() {
   }, [theme])
 
   return (
-    <header className="bg-primary dark:bg-primary3 w-full px-6 py-[18px] 2xl:px-8 2xl:py-6 flex items-center justify-between sticky top-0 z-50">  
-      <div onClick={() => setShowNotification(false)} className="absolute left-0 top-0 w-full min-h-screen">
-      </div>    
+    <header className="bg-primary dark:bg-primary3 w-full px-6 py-[18px] 2xl:px-8 2xl:py-6 flex items-center justify-between sticky top-0 z-50"> 
       <div>
         <h1 className="text-white text-[18px] 2xl:text-2xl font-bold">FIEMS</h1>
       </div>
@@ -40,7 +52,7 @@ export default function Header() {
           }
         </span>
         {showNotification ?
-          <div className="absolute bg-gray-200 dark:bg-slate-800 right-0 top-10 w-[30rem] h-[38rem] rounded-2xl">
+          <div ref={notificationBar} className=" absolute bg-gray-200 dark:bg-slate-800 right-0 top-10 w-[30rem] h-[38rem] rounded-2xl">
           </div>
         :
           null
