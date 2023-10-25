@@ -121,3 +121,8 @@ enum SalesJobPosition {
   Marketing
   Direktur
 }
+
+enum ContainerUnits {
+  Container
+  Teus
+}
