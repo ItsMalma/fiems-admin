@@ -102,3 +102,22 @@ model Port {
   name       String
   createDate DateTime @default(now())
 }
+
+model Sales {
+  code        String   @id @map("_id") @db.String
+  jobPosition SalesJobPosition
+  name        String
+  nik         String
+  area        String
+  phoneNumber String
+  telephone   String
+  fax         String
+  email       String
+  status      Boolean  @default(false)
+  createDate  DateTime @default(now())
+}
+
+enum SalesJobPosition {
+  Marketing
+  Direktur
+}

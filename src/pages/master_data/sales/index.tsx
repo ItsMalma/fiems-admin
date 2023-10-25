@@ -3,19 +3,13 @@ import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import Select from "@/components/Elements/Select";
 import {
   PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
-import Table from "@/components/Elements/NewTable";
-import { deleteSales, useListSales } from "@/api/sales";
-import { toTitleCase } from "@/libs/utils";
+import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
 
 export function Export() {
   return (
@@ -58,19 +52,13 @@ export default function SalesPage() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua data sales
-  const { listSales, isLoading, error } = useListSales([current]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua data sales
-  // masih loading atau data nya masih belum terload
-  if (isLoading || !listSales) {
-    return <></>;
-  }
+  const tableRowsQuery = trpc.sales.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua data sales terdapat error
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.sales.delete.useMutation();
 
   return (
     <>
@@ -131,7 +119,7 @@ export default function SalesPage() {
             isSortable: true,
           },
           {
-            id: "cabang",
+            id: "area",
             header: "Cabang",
             type: "text",
             isSortable: true,
@@ -166,36 +154,41 @@ export default function SalesPage() {
             type: "status",
           },
         ]}
-        rows={listSales.map((sales) => ({
-          ...sales,
-          jobPosition: toTitleCase(sales.jobPosition),
-        }))}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Redirect ke halaman save sales
           router.push(
-            `/master_data/sales/save?code=${listSales[selectedRowIndex].code}`
+            `/master_data/sales/save?code=${tableRowsQuery.data[selectedRowIndex].code}`
           );
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Hapus sales yang dipilih di table
-          await deleteSales(listSales[selectedRowIndex].code);
+          await deleteMutation.mutateAsync({
+            code: tableRowsQuery.data[selectedRowIndex].code
+          });
 
           // Karena sales yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
-          // Tutup modal
-          setModal(null);
+          //tutup modal
+          setModal(null);          
         }}
       />
     </>
