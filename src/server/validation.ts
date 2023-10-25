@@ -88,6 +88,12 @@ export function validateSelect(options: Readonly<[string, ...string[]]>) {
   });
 }
 
+export function validateSelectEnum(options: z.EnumLike) {
+  return z.nativeEnum(options, {
+    errorMap: () => ({ message: "Invalid value" }),
+  });
+}
+
 export function validateText() {
   return z
     .string({

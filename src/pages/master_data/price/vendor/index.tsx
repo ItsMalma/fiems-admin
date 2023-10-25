@@ -1,9 +1,10 @@
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import { useRouter } from "next/router";
 import React from "react";
 
-export default function PriceFactoryPage() {
+export default function PriceVendorPage() {
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
@@ -15,7 +16,13 @@ export default function PriceFactoryPage() {
 
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Master Data | Price Factory");
-    setActive(1, 7, 0);
+    setTitle("Master Data | Price Vendor");
+    setActive(1, 7, 1);
   }, [setTitle, setActive]);
+
+  // Mendapatkan router
+  const router = useRouter();
+
+  // State untuk menyimpan index dari baris yang dipilih di table
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 }
