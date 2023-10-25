@@ -15,6 +15,7 @@ model CustomerGroup {
   name        String
   description String
   createDate  DateTime  @default(now())
+
   factories   Factory[]
 }
 
@@ -62,6 +63,8 @@ model Vendor {
   finance    CustomerPic
   createDate DateTime    @default(now())
   status     Boolean     @default(false)
+  
+  vehicles   Vehicle[]
 }
 
 model Shipping {
@@ -120,6 +123,24 @@ model Sales {
 enum SalesJobPosition {
   Marketing
   Direktur
+}
+
+model Vehicle {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId 
+  vendor        Vendor    @relation(fields: [vendorCode], references: [code])
+  vendorCode    String    @db.String   
+  truckNumber   String
+  brand         String
+  type          String
+  machineNumber String
+  frameNumber   String
+  cylinder      String
+  color         String
+  stnkExpired   DateTime
+  taxExpired    DateTime
+  keurExpired   DateTime
+  createDate    DateTime  @default(now())
+  status        Boolean
 }
 
 enum ContainerUnits {
