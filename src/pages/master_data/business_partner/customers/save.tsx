@@ -193,10 +193,9 @@ export default function CustomerSavePage() {
                 id: "currency",
                 label: "Currency",
                 input: (
-                  <FormSelect
-                    name="currency"
-                    options={formQuery.data?.currencies ?? []}
-                  />
+                  <FormText
+                    name="currency"/>
+                  // di ubah menjadi form text sementara untuk mengecek
                 ),
               },
             ],

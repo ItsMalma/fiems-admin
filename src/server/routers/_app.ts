@@ -4,6 +4,9 @@ import { customersRouter } from "./customers.router";
 import { portsRouter } from "./ports.router";
 import { routesRouter } from "./routes.router";
 import { salesRouter } from "./sales.router";
+import { uangJalanRouter } from "./uangJalan.router";
+import { vehicleRouter } from "./vehicles.router";
+import { vesselRouter } from "./vessels.router";
 
 export const appRouter = router({
   customerGroups: customerGroupsRouter,
@@ -11,6 +14,9 @@ export const appRouter = router({
   routes: routesRouter,
   ports: portsRouter,
   sales: salesRouter,
+  vehicle: vehicleRouter,
+  vessel: vesselRouter,
+  uangJalan: uangJalanRouter
 });
 
 export type AppRouter = typeof appRouter;

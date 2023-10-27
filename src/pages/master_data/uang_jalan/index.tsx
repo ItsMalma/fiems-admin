@@ -3,19 +3,14 @@ import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import Select from "@/components/Elements/Select";
-import Upload from "@/components/Elements/Upload";
 import {
   GeoAltFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  Upload,
 } from "react-bootstrap-icons";
-import Table from "@/components/Elements/NewTable";
-import { deleteUangJalan, useListUangJalan } from "@/api/uang_jalan";
+import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
 
 function Export() {
   return (
@@ -27,6 +22,7 @@ function Export() {
             className="basis-3/5"
             placeholder="Choose city"
             options={[{ label: "Excel", value: "excel" }]}
+            value={null}
             onChange={() => {}}
           />
         </div>
@@ -46,6 +42,7 @@ function Import() {
               className="basis-2/3"
               placeholder="Choose file type"
               options={[{ label: "Excel", value: "excel" }]}
+              value={null}
               onChange={() => {}}
             />
           </div>
@@ -81,20 +78,12 @@ export default function MasterUangJalan() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua data uang jalan
-  const { listUangJalan, isLoading, error } = useListUangJalan([current]);
+  const tableRowsQuery = trpc.uangJalan.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua data uang jalan
-  // masih loading atau data nya masih belum terload
-  if (isLoading || !listUangJalan) {
-    return <></>;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua data uang jalan terdapat error
-  if (error) {
-    throw error;
-  }
-
+  const deleteMutation = trpc.uangJalan.delete.useMutation();
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
@@ -131,8 +120,8 @@ export default function MasterUangJalan() {
             isSortable: true,
           },
           {
-            id: "customer.name",
-            header: "Customer Name",
+            id: "vendor",
+            header: "vendor",
             type: "text",
             isSortable: true,
           },
@@ -155,8 +144,8 @@ export default function MasterUangJalan() {
             isSortable: true,
           },
           {
-            id: "fuelOil",
-            header: "Fuel Oil",
+            id: "bbm",
+            header: "BBM",
             type: "money",
             isSortable: true,
           },
@@ -167,8 +156,8 @@ export default function MasterUangJalan() {
             isSortable: true,
           },
           {
-            id: "labourCosts",
-            header: "Labour Costs",
+            id: "labourCost",
+            header: "Biaya Buruh",
             type: "money",
             isSortable: true,
           },
@@ -190,27 +179,35 @@ export default function MasterUangJalan() {
             type: "status",
           },
         ]}
-        rows={listUangJalan}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
-          // Redirect ke halaman save uang jalan
+          // Redirect ke halaman save sales
           router.push(
-            `/master_data/uang_jalan/save?id=${listUangJalan[selectedRowIndex].id}`
+            `/master_data/uangJalan/save?id=${tableRowsQuery.data[selectedRowIndex].id}`
           );
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Hapus uang jalan yang dipilih di table
-          await deleteUangJalan(listUangJalan[selectedRowIndex].id);
+          await deleteMutation.mutateAsync({
+            id: tableRowsQuery.data[selectedRowIndex].id
+          });
 
           // Karena uang jalan yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);

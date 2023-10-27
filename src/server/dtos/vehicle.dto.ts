@@ -8,12 +8,12 @@ import { extractCustomerCode } from "./customer.dto";
 export const brands = ["Mitsubishi", "Nissan UD", "Hino", "Isuzu", "FAW", "Scania", "Toyota"]  as const;
 export type Brand = (typeof brands)[number];
 
-export const types = ["Tronton", "Trintin", "Trinton"]  as const;
+export const types = ["Tronton", "Trintin", "Trinton", "Trailer", "Fuso", "Engkel"]  as const;
 export type type = (typeof types)[number];
 
 export const vehicleInput = z
   .object({
-    vendorName: validateCode(
+    vendor: validateCode(
         (value) => !isNaN(extractCustomerCode(value))
     ),
     truckNumber: validateText(),
@@ -32,7 +32,8 @@ export type VehicleInput = z.infer<typeof vehicleInput>;
 export class VehicleTableRow {
   constructor(
     public createDate: string,
-    public vendorName: string,
+    public id: string,
+    public vendor: string,
     public truckNumber: string,
     public brand: string,
     public type: string,
@@ -52,6 +53,7 @@ export class VehicleTableRow {
     }>): VehicleTableRow {
     return new VehicleTableRow(
       moment(model.createDate).toString(),
+      model.id,
       `${model.vendorCode}/${model.vendor.name}`,
       model.truckNumber,
       model.brand,
@@ -71,7 +73,6 @@ export class VehicleTableRow {
 export class VehicleForm {
   constructor(
     public createDate: string | Date,
-    public vendorName: string,
     public truckNumber: string,
     public brand: string,
     public type: string,
@@ -79,18 +80,19 @@ export class VehicleForm {
     public frameNumber: string,
     public cylinder: string,
     public color: string,
-    public stnkExpired: Date,
-    public taxExpired: Date,
-    public keurExpired: Date,
-  ) {}
+    public stnkExpired: string | Date,
+    public taxExpired: string | Date,
+    public keurExpired: string | Date,
+    public vendor: string,
+    ) {}
 
   static fromModel(
     model: Prisma.VehicleGetPayload<{
         include: {vendor: true}
-  }>): VehicleForm {
+  }>
+  ): VehicleForm {
     return new VehicleForm(
       model.createDate,
-      `${model.vendorCode}/${model.vendor.name}`,
       model.truckNumber,
       model.brand,
       model.type,
@@ -101,6 +103,7 @@ export class VehicleForm {
       model.stnkExpired,
       model.taxExpired,
       model.keurExpired,
+      model.vendor.code,
     );
   }
 
@@ -113,10 +116,10 @@ export class VehicleForm {
     "",
     "",
     "",
+    new Date(),
+    new Date(),
+    new Date(),
     "",
-    new Date(),
-    new Date(),
-    new Date(),
   );
 
   static readonly brandOptions: SelectOption[] = [
@@ -133,6 +136,9 @@ export class VehicleForm {
     { label: "Tronton", value: "Tronton" },
     { label: "Trintin", value: "Trintin" },
     { label: "Trinton", value: "Trinton" },
+    { label: "Trailer", value: "Trailer" },
+    { label: "Fuso", value: "Fuso" },
+    { label: "Engkel", value: "Engkel" },
   ];
 }
 

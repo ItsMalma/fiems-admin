@@ -65,6 +65,7 @@ model Vendor {
   status     Boolean     @default(false)
   
   vehicles   Vehicle[]
+  uangJalan  UangJalan[]
 }
 
 model Shipping {
@@ -83,6 +84,8 @@ model Shipping {
   finance    CustomerPic
   createDate DateTime    @default(now())
   status     Boolean     @default(false)
+
+  vessels    Vessel[]
 }
 
 model Route {
@@ -96,6 +99,8 @@ model Route {
   createDate         DateTime @default(now())
   effectiveStartDate DateTime
   effectiveEndDate   DateTime
+
+  uangJalan          UangJalan[]
 }
 
 model Port {
@@ -143,7 +148,30 @@ model Vehicle {
   status        Boolean
 }
 
-enum ContainerUnits {
-  Container
-  Teus
+model Vessel {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId 
+  shipping      Shipping  @relation(fields: [shippingCode], references: [code])
+  shippingCode  String    @db.String  
+  name          String
+  unit          String 
+  capacity      Int
+  createDate    DateTime  @default(now())
+  status        Boolean
+}
+
+model UangJalan {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendor        Vendor   @relation(fields: [vendorCode], references: [code])
+  vendorCode    String   @db.String
+  route         Route    @relation(fields: [routeCode], references: [code])
+  routeCode     String   @db.String
+  truckType     String
+  containerSize String
+  bbm           Int
+  toll          Int
+  labourCost    Int
+  meal          Int
+  etc           Int
+  total         Int
+  createDate    DateTime @default(now())
 }

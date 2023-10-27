@@ -1,4 +1,4 @@
-import { Sales } from "@prisma/client";
+import { Sales, SalesJobPosition } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   SalesInput,
@@ -24,14 +24,14 @@ export async function findSalesByCode(code: string) {
 }
 
 export async function findNextSalesCode() {
-  const nextRoute = await prisma.sales.findFirst({
+  const nextSales = await prisma.sales.findFirst({
     orderBy: {
       code: "desc",
     },
   });
 
-  if (nextRoute) {
-    return createSalesCode(extractSalesCode(nextRoute.code) + 1);
+  if (nextSales) {
+    return createSalesCode(extractSalesCode(nextSales.code) + 1);
   } else {
     return createSalesCode(1);
   }
@@ -45,7 +45,7 @@ export async function createSales(
     data: {
       code,
       name: input.name,
-      jobPosition: input.jobPosition,
+      jobPosition: input.jobPosition as SalesJobPosition,
       nik: input.nik,
       area: input.area,
       phoneNumber: input.phoneNumber,
@@ -66,7 +66,7 @@ export async function updateSales(
     },
     data: {
       name: input.name,
-      jobPosition: input.jobPosition,
+      jobPosition: input.jobPosition as SalesJobPosition,
       nik: input.nik,
       area: input.area,
       phoneNumber: input.phoneNumber,

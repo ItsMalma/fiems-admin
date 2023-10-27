@@ -4,18 +4,20 @@ import {
   VehicleInput,
 } from "../dtos/vehicle.dto";
 import prisma from "../prisma";
-import { findVendorByCode } from "./customer.store";
 
 export async function findAllVehicle() {
   return await prisma.vehicle.findMany({
     include: {
-        vendor: true
+        vendor: true,
     }
   });
 }
 
 export async function findVehicleById(id: string) {
-  const vehicle = await prisma.vehicle.findFirst({ where: { id } });
+  const vehicle = await prisma.vehicle.findFirst({ 
+    where: { id }, 
+    include: { vendor: true }
+  });
   if (!vehicle) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -27,23 +29,18 @@ export async function findVehicleById(id: string) {
 }
 
 export async function createVehicle(
-  id: string,
   input: VehicleInput
 ): Promise<Vehicle> {
 
-	if (input.vendorName === undefined) {
+	if (input.vendor === undefined) {
 		throw new TRPCError({
 			code: "BAD_REQUEST",
 			message: "Invalid vendor code",
 		});
 	}
-
-	const vendor = findVendorByCode(input.vendorName)
-
   return await prisma.vehicle.create({
     data: {
-      id,
-      vendorName: { connect: { code: vendor.code } },
+      vendor: { connect: { code: input.vendor } },
       truckNumber: input.truckNumber,
       brand: input.brand,
       type: input.type,
@@ -54,6 +51,7 @@ export async function createVehicle(
       stnkExpired: input.stnkExpired,
       taxExpired: input.taxExpired,
       keurExpired: input.keurExpired,
+      status: false
     },
   });
 }
