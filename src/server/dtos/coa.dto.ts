@@ -32,8 +32,8 @@ export const createCoaCode = (codeNumber: number): string => {
   return codeNumber.toString().padStart(2, "0");
 };
 
-export const extractCoaCode = (code: string): number => {
-  return Number(code);
+export const extractCoaCode = (number: string): number => {
+  return Number(number);
 };
 
 export class CoaTableRow {
@@ -124,7 +124,11 @@ export class CoaForm {
       model.type,
       model.category,
       model.transaction,
-      model.currency
+      model.currency,
+      "",
+      "",
+      "",
+      "",
     );
   }
 
@@ -138,8 +142,10 @@ export class CoaForm {
       model.coa.category,
       model.coa.transaction,
       model.coa.currency,
-
-      model.description
+      "",
+      model.description,
+      "",
+      "",
     );
   }
   
@@ -209,8 +215,8 @@ export class CoaForm {
 
   static readonly typeOptions: SelectOption[] = [
     { label: "Main Coa", value: "Main Coa" },
-    { label: "Sub Coa1", value: "Sub Coa1" },
-    { label: "Sub Coa2", value: "Sub Coa2" },
+    { label: "Sub Coa 1", value: "Sub Coa 1" },
+    { label: "Sub Coa 2", value: "Sub Coa 2" },
   ];
 }
 

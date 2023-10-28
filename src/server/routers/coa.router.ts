@@ -99,9 +99,7 @@ export const coaRouter = router({
     .input(coaInput)
     .input(
       z.object({
-        number: validateCode(
-          (value) => !isNaN(extractCoaCode(value))
-        ).optional(),
+        number: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {

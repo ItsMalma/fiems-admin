@@ -29,9 +29,10 @@ export default function COASave() {
     defaultValues: CoaForm.mainCoaInitial(queryType),
   });
   const { reset, setValue } = methods;
-
-  const formQuery = trpc.mainCoa.getForm.useQuery({
-    number: queryNumber
+  const accountType = methods.watch("accountType");
+  const formQuery = trpc.coa.getForm.useQuery({
+    number: queryNumber,
+    type: accountType
   });
   React.useEffect(() => {
     if (formQuery.data?.defaultValue && reset) {
@@ -42,7 +43,7 @@ export default function COASave() {
     }
   }, [formQuery.data?.defaultValue, reset]);
 
-  const saveMutation = trpc.mainCoa.save.useMutation();
+  const saveMutation = trpc.coa.save.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync({
@@ -69,7 +70,7 @@ export default function COASave() {
                 {
                   type: "input",
                   id: "accountType",
-                  label: "Job Position",
+                  label: "COA Type",
                   input: 
                     <FormSelect
                       name="accountType"
@@ -96,7 +97,15 @@ export default function COASave() {
                   type: "input",
                   id: "number",
                   label: "Account Number",
-                  input: <FormText name="number"/>,
+                  input: <FormText name="number" readOnly/>,
+                  isHidden: accountType !== "Main Coa"
+                },
+                {
+                  type: "input",
+                  id: "number",
+                  label: "Account Number",
+                  input: <FormSelect name="coa1" options={formQuery.data?.coa1 ?? []} readOnly={accountType === "Sub Coa 2" || !!formQuery.data?.defaultValue.number}/>,
+                  isHidden: accountType === "Main Coa",
                 },
                 {
                   type: "input",
@@ -123,28 +132,33 @@ export default function COASave() {
                   input: <FormText name="type"/>,
                 },
                 {
-                  type: "separator"
+                  type: "separator",
+                  isHidden: accountType !== "Sub Coa 1"
                 },
                 {
                   type: "input",
                   id: "coa1",
                   label: "Sub Account 1 Number",
                   input: <FormSelect name="coa1" options={formQuery.data?.coa1 ?? []}/>,
+                  isHidden: accountType !== "Sub Coa 2"
                 },
                 {
                   type: "input",
                   id: "coa1Description",
                   label: "Sub Account 1 Description",
                   input: <FormCode name="coa1Description" />,
+                  isHidden: accountType === "Main Coa"
                 },
                 {
-                  type: "separator"
+                  type: "separator",
+                  isHidden: accountType !== "Sub Coa 2"
                 },
                 {
                   type: "input",
                   id: "coa2Description",
                   label: "Sub Account 2 Description",
                   input: <FormCode name="coa2Description" />,
+                  isHidden: accountType !== "Sub Coa 2"
                 },
               ]
             }

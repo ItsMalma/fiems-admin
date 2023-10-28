@@ -18,7 +18,7 @@ export const appRouter = router({
   vehicle: vehicleRouter,
   vessel: vesselRouter,
   uangJalan: uangJalanRouter,
-  mainCoa: coaRouter
+  coa: coaRouter
 });
 
 export type AppRouter = typeof appRouter;

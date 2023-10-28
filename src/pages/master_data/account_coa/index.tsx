@@ -46,12 +46,12 @@ export default function MasterAccountCOA() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.mainCoa.getTableRows.useQuery();
+  const tableRowsQuery = trpc.coa.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.mainCoa.delete.useMutation();
+  const deleteMutation = trpc.coa.delete.useMutation();
 
   return (
     <>
@@ -145,7 +145,7 @@ export default function MasterAccountCOA() {
 
           // Redirect ke halaman save customer
           router.push(
-            `/master_data/business_partner/customers/save?number=${coa.number}&type=${coa.accountType}`
+            `/master_data/business_partner/account_coa/save?number=${coa.number}&type=${coa.accountType}`
           );
         }}
         onDelete={async () => {
