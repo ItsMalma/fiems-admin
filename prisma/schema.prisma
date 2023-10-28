@@ -175,3 +175,32 @@ model UangJalan {
   total         Int
   createDate    DateTime @default(now())
 }
+
+model Coa {
+  number      String   @id @map("_id") @db.String
+  description String
+  type        String
+  category    String
+  transaction String
+  currency    String
+  status      Boolean
+  createDate  DateTime @default(now())
+
+  coas1       Coa1[]
+}
+
+model Coa1 {
+  number      String   @id @map("_id") @db.String
+  coa         Coa      @relation(fields: [coaNumber], references: [number])
+  coaNumber   String   @db.String
+  description String
+
+  coas2       Coa2[]
+}
+
+model Coa2 {
+  number      String   @id @map("_id") @db.String
+  coa1        Coa1     @relation(fields: [coa1Number], references: [number])
+  coa1Number  String   @db.String
+  description String
+}

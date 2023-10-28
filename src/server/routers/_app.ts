@@ -1,6 +1,7 @@
 import { router } from "../trpc";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
+import { coaRouter } from "./coa.router";
 import { portsRouter } from "./ports.router";
 import { routesRouter } from "./routes.router";
 import { salesRouter } from "./sales.router";
@@ -16,7 +17,8 @@ export const appRouter = router({
   sales: salesRouter,
   vehicle: vehicleRouter,
   vessel: vesselRouter,
-  uangJalan: uangJalanRouter
+  uangJalan: uangJalanRouter,
+  mainCoa: coaRouter
 });
 
 export type AppRouter = typeof appRouter;
