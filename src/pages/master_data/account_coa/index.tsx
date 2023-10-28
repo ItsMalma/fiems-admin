@@ -1,11 +1,6 @@
-import { deleteCOA, useCOAs } from "@/api/coas";
-import Button from "@/components/Elements/Button";
-import Label from "@/components/Elements/Label";
-import Modal from "@/components/Elements/Modal";
-import Table from "@/components/Elements/NewTable";
-import Search from "@/components/Elements/Search";
-import Select from "@/components/Elements/Select";
-import { formatCOANumber, normalizeMainOutput } from "@/models/coa.model";
+import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
+import { AccountType } from "@/server/dtos/coa.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
@@ -48,30 +43,15 @@ export default function MasterAccountCOA() {
   }, [setTitle, setActive]);
 
   // State untuk menyimpan index dari baris yang dipilih di table
+  // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const { coas, error } = useCOAs([current]);
+  const tableRowsQuery = trpc.mainCoa.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  const normalizeCOAs = React.useMemo(
-    () =>
-      coas
-        ? coas.flatMap((coa) =>
-            normalizeMainOutput(coa).map((output) => ({
-              ...output,
-              accountNumber: formatCOANumber(
-                output.main.accountNumber,
-                output.sub1?.accountNumber,
-                output.sub2?.accountNumber
-              ),
-            }))
-          )
-        : [],
-    [coas]
-  );
-
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.mainCoa.delete.useMutation();
 
   return (
     <>
@@ -102,31 +82,31 @@ export default function MasterAccountCOA() {
         isSelectable
         columns={[
           {
-            id: "main.accountName",
+            id: "description",
             header: "Main COA",
             type: "text",
             isSortable: true,
           },
           {
-            id: "sub1.description",
+            id: "coa1Description",
             header: "Sub COA1",
             type: "text",
             isSortable: true,
           },
           {
-            id: "sub2.description",
+            id: "coa2description",
             header: "Sub COA2",
             type: "text",
             isSortable: true,
           },
           {
-            id: "accountNumber",
+            id: "number",
             header: "Account Number",
             type: "code",
             isSortable: true,
           },
           {
-            id: "accountType",
+            id: "type",
             header: "Account Type",
             type: "text",
             isSortable: true,
@@ -150,41 +130,40 @@ export default function MasterAccountCOA() {
             isSortable: true,
           },
         ]}
-        rows={normalizeCOAs}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
-          const selectedCOA = normalizeCOAs[selectedRowIndex];
+          const coa = tableRowsQuery.data[selectedRowIndex];
 
-          // Redirect ke halaman save coa
+          // Redirect ke halaman save customer
           router.push(
-            `/master_data/account_coa/save?number=${formatCOANumber(
-              selectedCOA.main.accountNumber,
-              selectedCOA.sub1?.accountNumber,
-              selectedCOA.sub2?.accountNumber
-            )}`
+            `/master_data/business_partner/customers/save?number=${coa.number}&type=${coa.accountType}`
           );
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
-          const selectedCOA = normalizeCOAs[selectedRowIndex];
+          const coa = tableRowsQuery.data[selectedRowIndex];
 
-          // Hapus customer yang dipilih di table
-          await deleteCOA(
-            formatCOANumber(
-              selectedCOA.main.accountNumber,
-              selectedCOA.sub1?.accountNumber,
-              selectedCOA.sub2?.accountNumber
-            )
-          );
+          // Hapus coa yang dipilih di table
+          await deleteMutation.mutateAsync({
+            type: coa.accountType as AccountType,
+            number: coa.number,
+          });
 
           // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);

@@ -21,7 +21,9 @@ export async function findAllSubCoa1() {
 export async function findAllSubCoa2() {
   return await prisma.coa2.findMany({
     include: {
-      coa1: true
+      coa1: {include: {
+        coa: true
+      }}
     }
   });
 }
@@ -51,7 +53,7 @@ export async function findSubCoa1ByNumber(number: string) {
 }
 
 export async function findSubCoa2ByNumber(number: string) {
-  const coa2 = await prisma.coa2.findFirst({ where: { number }, include: {coa1:true} });
+  const coa2 = await prisma.coa2.findFirst({ where: { number }, include: {coa1: {include: {coa: true}}} });
   if (!coa2) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -158,7 +160,7 @@ export async function createMainCoa(
   }
 }
 
-export async function updateMainCoa(
+export async function updateCoa(
   type: AccountType,
   number: string,
   input: CoaInput

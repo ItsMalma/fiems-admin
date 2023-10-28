@@ -1,9 +1,9 @@
 import { Select } from "@/components/Elements";
-import { Form, FormCode, FormDate, FormSelect } from "@/components/Forms";
+import { Form, FormCode, FormDate, FormSelect, FormText } from "@/components/Forms";
 import SaveLayout, { InputRow } from "@/components/Layouts/SaveLayout";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
-import { CoaForm } from "@/server/dtos/coa.dto";
+import { AccountType, CoaForm } from "@/server/dtos/coa.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import moment from "moment";
@@ -23,9 +23,10 @@ export default function COASave() {
   const router = useRouter();
 
   const queryNumber = useQuery("number");
+  const queryType = (useQuery("type") ?? "Main Coa") as AccountType;
 
   const methods = useForm<CoaForm>({
-    defaultValues: CoaForm.initial,
+    defaultValues: CoaForm.mainCoaInitial(queryType),
   });
   const { reset, setValue } = methods;
 
@@ -69,7 +70,15 @@ export default function COASave() {
                   type: "input",
                   id: "accountType",
                   label: "Job Position",
-                  input: <Select options={}/>,
+                  input: 
+                    <FormSelect
+                      name="accountType"
+                      options={CoaForm.typeOptions}
+                      readOnly={!!queryNumber}
+                    />,
+                },
+                {
+                  type: "blank"
                 },
                 {
                   type: "input",
@@ -79,60 +88,63 @@ export default function COASave() {
                 },
                 {
                   type: "input",
-                  id: "code",
-                  label: "Sales Code",
-                  input: <FormCode name="code" readOnly />,
+                  id: "category",
+                  label: "Category",
+                  input: <FormText name="category"/>,
                 },
                 {
                   type: "input",
-                  id: "jobPosition",
-                  label: "Job Position",
-                  input: <FormSelect name="jobPosition" options={SalesForm.typeOptions} readOnly={!!queryCode}/>,
-                },
-                {
-                  type: "separator",
+                  id: "number",
+                  label: "Account Number",
+                  input: <FormText name="number"/>,
                 },
                 {
                   type: "input",
-                  id: "name",
-                  label: "Marketing Name",
-                  input: <FormCode name="name" />,
+                  id: "transaction",
+                  label: "Transaction",
+                  input: <FormText name="transaction"/>,
                 },
                 {
                   type: "input",
-                  id: "telephone",
-                  label: "Telephone",
-                  input: <FormCode name="telephone" />,
+                  id: "description",
+                  label: "Account Name",
+                  input: <FormText name="description"/>,
                 },
                 {
                   type: "input",
-                  id: "nik",
-                  label: "NIK",
-                  input: <FormCode name="nik" />,
+                  id: "currency",
+                  label: "Currency",
+                  input: <FormText name="currency"/>,
                 },
                 {
                   type: "input",
-                  id: "fax",
-                  label: "Fax",
-                  input: <FormCode name="fax" />,
+                  id: "type",
+                  label: "Account Type",
+                  input: <FormText name="type"/>,
+                },
+                {
+                  type: "separator"
                 },
                 {
                   type: "input",
-                  id: "area",
-                  label: "Cabang",
-                  input: <FormCode name="area" />,
+                  id: "coa1",
+                  label: "Sub Account 1 Number",
+                  input: <FormSelect name="coa1" options={formQuery.data?.coa1 ?? []}/>,
                 },
                 {
                   type: "input",
-                  id: "email",
-                  label: "Email",
-                  input: <FormCode name="email" />,
+                  id: "coa1Description",
+                  label: "Sub Account 1 Description",
+                  input: <FormCode name="coa1Description" />,
+                },
+                {
+                  type: "separator"
                 },
                 {
                   type: "input",
-                  id: "phoneNumber",
-                  label: "Phone Number",
-                  input: <FormCode name="phoneNumber" />,
+                  id: "coa2Description",
+                  label: "Sub Account 2 Description",
+                  input: <FormCode name="coa2Description" />,
                 },
               ]
             }

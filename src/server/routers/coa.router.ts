@@ -5,19 +5,40 @@ import {
   CoaTableRow,
   extractCoaCode,
   coaInput,
+  accountTypes,
+  AccountType,
 } from "../dtos/coa.dto";
 import {
-  createCoa,
-  deleteCoa,
-  findAllCoa,
-  findNextCoaCode,
-  findCoaByCode,
-  updateCoa,
   findAllMainCoa,
   findAllSubCoa1,
   findAllSubCoa2,
+  findNextMainCoaCode,
+  findMainCoaByNumber,
+  findNextSubCoa1Code,
+  findNextSubCoa2Code,
+  findSubCoa1ByNumber,
+  findSubCoa2ByNumber,
+  createMainCoa,
+  deleteCoa,
+  updateCoa,
 } from "../stores/coa.store";
 import { publicProcedure, router } from "../trpc";
+
+const getDefaultValue = async (
+  accountType: AccountType
+): Promise<CoaForm> => {
+  return {
+    createDate: new Date(),
+    accountType: accountType,
+    number: await findNextMainCoaCode(),
+    description: "",
+    type: "",
+    category: "",
+    transaction: "",
+    currency: "",
+
+  };
+};
 
 export const coaRouter = router({
   getTableRows: publicProcedure.query<CoaTableRow[]>(async (opts) => {
@@ -38,19 +59,40 @@ export const coaRouter = router({
     .input(
       z.object({
         number: z.string().optional(),
+        type: z.enum(accountTypes).optional(),
       })
     )
     .query<{
       defaultValue: CoaForm;
+      coa1: { label: string; value: string }[];
     }>(async ({ input }) => {
-      let defaultValue = CoaForm.initial;
-      defaultValue.number = await findNextCoaCode();
 
-      if (input.number) {
-        defaultValue = CoaForm.fromModel(await findCoaByCode(input.number));
+      const coa1 = (await findAllSubCoa1()).map((coa1) => ({
+        label: `${input.number}.${coa1.number}`,
+        value: coa1.number,
+      }));
+
+      let defaultValue = await getDefaultValue(input.type ?? "Main Coa");
+      
+      if(input.type === "Main Coa") {
+        defaultValue.number = await findNextMainCoaCode();
+      } else if(input.type === "Sub Coa 1") {
+        defaultValue.number = await findNextSubCoa1Code();
+      } else if(input.type === "Sub Coa 2") {
+        defaultValue.number = await findNextSubCoa2Code();
       }
 
-      return { defaultValue };
+      if (input.number) {
+        if(input.type === "Main Coa") {
+          defaultValue = CoaForm.fromMainCoaModel(await findMainCoaByNumber(input.number));
+        } else if(input.type === "Sub Coa 1") {
+          defaultValue = CoaForm.fromSubCoa1Model(await findSubCoa1ByNumber(input.number));
+        } else if(input.type === "Sub Coa 2") {
+          defaultValue = CoaForm.fromSubCoa2Model(await findSubCoa2ByNumber(input.number));
+        }
+      }
+
+      return { defaultValue, coa1 };
     }),
 
   save: publicProcedure
@@ -63,19 +105,23 @@ export const coaRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+
+      const type = input.type as AccountType;
+
       if (input.number === undefined) {
-        return await createCoa(await findNextCoaCode(), input);
+          return await createMainCoa(type,await findNextMainCoaCode(), input,);
       }
-      return await updateCoa(input.number, input);
+      return await updateCoa(type, input.number, input);
     }),
 
   delete: publicProcedure
     .input(
       z.object({
+        type: z.enum(accountTypes),
         number: validateCode((value) => !isNaN(extractCoaCode(value))),
       })
     )
     .mutation(async ({ input }) => {
-      return await deleteCoa(input.number);
+      return await deleteCoa(input.type ,input.number);
     }),
 });

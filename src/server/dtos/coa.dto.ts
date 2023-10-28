@@ -38,6 +38,7 @@ export const extractCoaCode = (code: string): number => {
 
 export class CoaTableRow {
   constructor(
+    public accountType: AccountType,
     public description: string,
     public subCoa1: string,
     public subCoa2: string,
@@ -51,6 +52,7 @@ export class CoaTableRow {
 
   static fromMainCoaModel(model: Coa): CoaTableRow {
     return new CoaTableRow(
+      "Main Coa",
       model.description,
       "",
       "",
@@ -65,6 +67,7 @@ export class CoaTableRow {
   
   static fromSubCoa1Model(model: Prisma.Coa1GetPayload<{include: { coa: true }}>): CoaTableRow {
     return new CoaTableRow(
+      "Sub Coa 1",
       model.coa.description,
       model.description,
       "",
@@ -79,6 +82,7 @@ export class CoaTableRow {
 
   static fromSubCoa2Model(model: Prisma.Coa2GetPayload<{include: { coa1: {include: {coa: true}} }}>): CoaTableRow {
     return new CoaTableRow(
+      "Sub Coa 2",
       model.coa1.coa.description,
       model.coa1.description,
       model.description,
