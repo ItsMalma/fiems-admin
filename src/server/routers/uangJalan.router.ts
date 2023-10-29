@@ -1,13 +1,19 @@
-import { validateCode } from "@/server/validation";
 import { z } from "zod";
 import {
   UangJalanForm,
   UangJalanTableRow,
   uangJalanInput,
 } from "../dtos/uangJalan.dto";
-import { publicProcedure, router } from "../trpc";
-import { createUangJalan, deleteUangJalan, findAllUangJalan, findUangJalanById, updateUangJalan } from "../stores/uangJalan.store";
 import { findAllVendor } from "../stores/customer.store";
+import { findAllRoute } from "../stores/route.store";
+import {
+  createUangJalan,
+  deleteUangJalan,
+  findAllUangJalan,
+  findUangJalanById,
+  updateUangJalan,
+} from "../stores/uangJalan.store";
+import { publicProcedure, router } from "../trpc";
 
 export const uangJalanRouter = router({
   getTableRows: publicProcedure.query<UangJalanTableRow[]>(async () => {
@@ -23,27 +29,26 @@ export const uangJalanRouter = router({
       })
     )
     .query<{
-      defaultValue: UangJalanForm;
+      value: UangJalanForm;
       vendors: { label: string; value: string }[];
       routes: { label: string; value: string }[];
     }>(async ({ input }) => {
-
       const vendors = (await findAllVendor()).map((vendor) => ({
-        label: `${vendor.code} | ${vendor.name}`,
+        label: `${vendor.code} (${vendor.name})`,
         value: vendor.code,
       }));
 
-      const routes = (await findAllVendor()).map((route) => ({
-        label: `${route.code} - ${route.name}`,
+      const routes = (await findAllRoute()).map((route) => ({
+        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
         value: route.code,
       }));
 
-      let defaultValue = UangJalanForm.initial;
+      let value = UangJalanForm.initial;
       if (input.id) {
-        defaultValue = UangJalanForm.fromModel(await findUangJalanById(input.id));
+        value = UangJalanForm.fromModel(await findUangJalanById(input.id));
       }
 
-      return { defaultValue, vendors, routes };
+      return { value, vendors, routes };
     }),
 
   save: publicProcedure
