@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from "react";
 import { useField } from "formik";
+import React from "react";
 import InputText from "../InputText";
 
 type InputMoneyProps = React.ComponentProps<typeof InputText> & {
@@ -9,7 +9,7 @@ type InputMoneyProps = React.ComponentProps<typeof InputText> & {
 export default function InputMoney(props: InputMoneyProps) {
   const [input, meta, { setValue }] = useField({
     id: props.id,
-    name: props.name,
+    name: namePrefix + props.name,
   });
 
   const [isBlank, setIsBlank] = React.useState(false);

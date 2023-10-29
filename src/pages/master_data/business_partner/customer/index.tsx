@@ -70,14 +70,14 @@ export default function CustomersPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Customer Code" />
+        <Search placeholder="Search Customer" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Customer"
             icon={<PersonFillAdd />}
             variant="filled"
             onClick={() =>
-              router.push("/master_data/business_partner/customers/save")
+              router.push("/master_data/business_partner/customer/save")
             }
           />
           <Button
@@ -265,7 +265,7 @@ export default function CustomersPage() {
 
           // Redirect ke halaman save customer
           router.push(
-            `/master_data/business_partner/customers/save?code=${customer.code}&type=${customer.type}`
+            `/master_data/business_partner/customer/save?code=${customer.code}&type=${customer.type}`
           );
         }}
         onDelete={async () => {

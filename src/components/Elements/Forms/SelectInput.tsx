@@ -1,5 +1,5 @@
-import React from "react";
 import { useField } from "formik";
+import React from "react";
 import Select from "../Select";
 
 type SelectInputProps = Omit<
@@ -12,7 +12,7 @@ type SelectInputProps = Omit<
 export default function SelectInput(props: SelectInputProps) {
   const [input, meta, { setValue }] = useField({
     id: props.id,
-    name: props.name,
+    name: namePrefix + props.name,
   });
 
   const handleChange = React.useCallback(

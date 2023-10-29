@@ -1,8 +1,15 @@
 import clsx from "clsx";
 import lodash from "lodash";
 import React from "react";
-import { FieldErrors, FormProvider, UseFormReturn } from "react-hook-form";
+import { PlusCircle, X } from "react-bootstrap-icons";
+import {
+  FieldErrors,
+  FormProvider,
+  UseFormReturn,
+  useFieldArray,
+} from "react-hook-form";
 import { Button, Label } from "../Elements";
+import { ControlPrefix } from "./prefix.context";
 
 type FormControl = {
   isHidden?: boolean;
@@ -20,9 +27,20 @@ type FormControl = {
 type FormTab = {
   id: string;
   name: string;
-  controls: FormControl[];
   isHide?: boolean;
-};
+} & (
+  | {
+      isAppend?: false;
+      controls: FormControl[];
+    }
+  | {
+      isAppend: true;
+      itemName: string;
+      fieldName: string;
+      controls: FormControl[];
+      defaultValue?: any;
+    }
+);
 
 type FormTabMenuProps = {
   tabActive: number;
@@ -63,7 +81,7 @@ function FormControls(props: FormControlsProps) {
   return (
     <div
       className={clsx(
-        "grid grid-cols-1 lg:grid-cols-2 gap-x-[18px] 2xl:gap-x-6 gap-y-3 2xl:gap-y-4 overflow-auto",
+        "grow grid grid-cols-1 lg:grid-cols-2 gap-x-[18px] 2xl:gap-x-6 gap-y-3 2xl:gap-y-4 overflow-auto",
         !props.active && "hidden"
       )}
     >
@@ -98,6 +116,92 @@ function FormControls(props: FormControlsProps) {
   );
 }
 
+type FormAppendProps = {
+  active: boolean;
+  name: string;
+  fieldName: string;
+  controls: FormControl[];
+  errors: FieldErrors<any>;
+  defaultValue: any;
+};
+
+function FormAppend(props: FormAppendProps) {
+  const { fields, append, remove } = useFieldArray({ name: props.fieldName });
+
+  const [active, setActive] = React.useState(0);
+
+  React.useEffect(() => {
+    if (fields.length === 0) return;
+    if (active < 0) setActive(0);
+    else if (active >= fields.length) setActive(fields.length - 1);
+  }, [active, fields.length]);
+
+  return (
+    <div
+      className={clsx(
+        "flex gap-[18px] 2xl:gap-6 relative overflow-auto",
+        !props.active && "hidden"
+      )}
+    >
+      <>
+        <div className="sticky left-0 basis-1/5 flex flex-col gap-3 2xl:gap-4">
+          {fields.map((field, index) => (
+            <div
+              key={field.id}
+              className={clsx(
+                "flex items-center px-3 py-2 2xl:px-4 gap-3 2xl:gap-4 rounded-[10px] font-semibold border-[1.5px]",
+                index === active && "text-black border-black",
+                index !== active &&
+                  "text-gray-200 border-gray-200 cursor-pointer"
+              )}
+              onClick={() => setActive(index)}
+            >
+              <p>{`${props.name} ${index + 1}`}</p>
+              {index === active && fields.length > 1 && (
+                <span
+                  className="ml-auto cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    remove(index);
+                  }}
+                >
+                  <X size={16} />
+                </span>
+              )}
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outlined"
+            text="Add Item"
+            iconPosition="left"
+            icon={<PlusCircle size={16} />}
+            className="!py-2"
+            onClick={async () => {
+              append(props.defaultValue);
+              setActive(fields.length);
+            }}
+          />
+        </div>
+        {fields.map((field, index) => {
+          return (
+            <ControlPrefix.Provider
+              key={field.id}
+              value={`${props.fieldName}.${index}.`}
+            >
+              <FormControls
+                controls={props.controls}
+                errors={props.errors}
+                active={index === active}
+              />
+            </ControlPrefix.Provider>
+          );
+        })}
+      </>
+    </div>
+  );
+}
+
 type FormProps = {
   methods: UseFormReturn<any>;
 } & (
@@ -118,13 +222,6 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
             !props.singleTab ?? "pt-[9px] 2xl:pt-3"
           )}
         >
-          {!props.singleTab && (
-            <FormTabMenu
-              tabs={props.tabs}
-              tabActive={tabActive}
-              setTabActive={setTabActive}
-            />
-          )}
           {props.singleTab ? (
             <FormControls
               controls={props.controls}
@@ -132,16 +229,35 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
               errors={props.methods.formState.errors}
             />
           ) : (
-            props.tabs
-              .filter((tab) => !tab.isHide)
-              .map((tab, tabIndex) => (
-                <FormControls
-                  key={tab.id}
-                  controls={tab.controls}
-                  active={tabIndex === tabActive}
-                  errors={props.methods.formState.errors}
-                />
-              ))
+            <>
+              <FormTabMenu
+                tabs={props.tabs}
+                tabActive={tabActive}
+                setTabActive={setTabActive}
+              />
+              {props.tabs
+                .filter((tab) => !tab.isHide)
+                .map((tab, tabIndex) =>
+                  tab.isAppend ? (
+                    <FormAppend
+                      key={tab.id}
+                      controls={tab.controls}
+                      active={tabIndex === tabActive}
+                      errors={props.methods.formState.errors}
+                      name={tab.itemName}
+                      fieldName={tab.fieldName}
+                      defaultValue={tab.defaultValue}
+                    />
+                  ) : (
+                    <FormControls
+                      key={tab.id}
+                      controls={tab.controls}
+                      active={tabIndex === tabActive}
+                      errors={props.methods.formState.errors}
+                    />
+                  )
+                )}
+            </>
           )}
         </form>
       </FormProvider>

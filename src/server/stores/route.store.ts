@@ -44,8 +44,9 @@ export async function createRoute(
   return await prisma.route.create({
     data: {
       code: code,
-      serviceType: input.serviceType,
+      containerSize: input.containerSize,
       containerType: input.containerType,
+      serviceType: input.serviceType,
       province: input.province,
       city: input.city,
       startDescription: input.startDescription,
@@ -65,8 +66,9 @@ export async function updateRoute(
       code,
     },
     data: {
-      serviceType: input.serviceType,
+      containerSize: input.containerSize,
       containerType: input.containerType,
+      serviceType: input.serviceType,
       province: input.province,
       city: input.city,
       startDescription: input.startDescription,

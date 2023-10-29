@@ -91,12 +91,12 @@ export function Save({ code }: { code?: string }) {
           },
           {
             type: "input",
-            id: "serviceType",
-            label: "Service Type",
+            id: "containerSize",
+            label: "Container Size",
             input: (
               <FormSelect
-                name="serviceType"
-                options={RouteForm.serviceTypeOptions}
+                name="containerSize"
+                options={RouteForm.containerSizeOptions}
               />
             ),
           },
@@ -110,6 +110,20 @@ export function Save({ code }: { code?: string }) {
                 options={RouteForm.containerTypeOptions}
               />
             ),
+          },
+          {
+            type: "input",
+            id: "serviceType",
+            label: "Service Type",
+            input: (
+              <FormSelect
+                name="serviceType"
+                options={RouteForm.serviceTypeOptions}
+              />
+            ),
+          },
+          {
+            type: "blank",
           },
           {
             type: "input",

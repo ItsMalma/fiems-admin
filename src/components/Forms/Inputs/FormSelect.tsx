@@ -1,6 +1,8 @@
 import { Select } from "@/components/Elements";
 import { SelectOption } from "@/components/Elements/Select";
+import { ControlPrefix } from "@/components/Forms/prefix.context";
 import clsx from "clsx";
+import React from "react";
 import { useController } from "react-hook-form";
 
 type FormSelectProps = {
@@ -12,8 +14,10 @@ type FormSelectProps = {
 };
 
 export function FormSelect(props: FormSelectProps) {
+  const namePrefix = React.useContext(ControlPrefix);
+
   const { field, fieldState } = useController({
-    name: props.name,
+    name: namePrefix + props.name,
   });
 
   return (

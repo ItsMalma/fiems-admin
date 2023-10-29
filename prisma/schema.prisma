@@ -29,7 +29,7 @@ type CustomerPic {
 model Factory {
   code       String        @id @map("_id") @db.String
   name       String
-  group      CustomerGroup @relation(fields: [groupCode], references: [code])
+  group      CustomerGroup @relation(fields: [groupCode], references: [code], onDelete: Cascade)
   groupCode  String        @db.String
   address    String
   province   String
@@ -86,8 +86,9 @@ model Shipping {
 
 model Route {
   code                 String                @id @map("_id") @db.String
-  serviceType          String
+  containerSize        String
   containerType        String
+  serviceType          String
   province             String
   city                 String
   startDescription     String
@@ -110,17 +111,17 @@ model Port {
 }
 
 model PriceVendorDetail {
-  id            String      @id @map("_id") @db.ObjectId
-  priceVendor   PriceVendor @relation(fields: [priceVendorId], references: [id])
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  priceVendor   PriceVendor @relation(fields: [priceVendorId], references: [id], onDelete: Cascade)
   priceVendorId String      @db.ObjectId
-  route         Route       @relation(fields: [routeCode], references: [code])
+  route         Route       @relation(fields: [routeCode], references: [code], onDelete: Cascade)
   routeCode     String      @db.String
   containerSize String
   containerType String
   serviceType   String
-  port          Port        @relation(fields: [portCode], references: [code])
+  port          Port        @relation(fields: [portCode], references: [code], onDelete: Cascade)
   portCode      String      @db.String
-  trackingRate  Int
+  tracking      Int
   buruh         Int
   thcOPT        Int
   thcOPP        Int
@@ -130,8 +131,8 @@ model PriceVendorDetail {
 }
 
 model PriceVendor {
-  id                 String              @id @map("_id") @db.ObjectId
-  vendor             Vendor              @relation(fields: [vendorCode], references: [code])
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  vendor             Vendor              @relation(fields: [vendorCode], references: [code], onDelete: Cascade)
   vendorCode         String              @db.String
   containerSize      String
   containerType      String
@@ -144,15 +145,15 @@ model PriceVendor {
 }
 
 model PriceShippingDetail {
-  id              String        @id @map("_id") @db.ObjectId
-  priceShipping   PriceShipping @relation(fields: [priceShippingId], references: [id])
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  priceShipping   PriceShipping @relation(fields: [priceShippingId], references: [id], onDelete: Cascade)
   priceShippingId String        @db.ObjectId
-  route           Route         @relation(fields: [routeCode], references: [code])
+  route           Route         @relation(fields: [routeCode], references: [code], onDelete: Cascade)
   routeCode       String        @db.String
   containerSize   String
   containerType   String
   serviceType     String
-  port            Port          @relation(fields: [portCode], references: [code])
+  port            Port          @relation(fields: [portCode], references: [code], onDelete: Cascade)
   portCode        String        @db.String
   freight         Int
   thcOPT          Int
@@ -168,8 +169,8 @@ model PriceShippingDetail {
 }
 
 model PriceShipping {
-  id                 String                @id @map("_id") @db.ObjectId
-  shipping           Shipping              @relation(fields: [shippingCode], references: [code])
+  id                 String                @id @default(auto()) @map("_id") @db.ObjectId
+  shipping           Shipping              @relation(fields: [shippingCode], references: [code], onDelete: Cascade)
   shippingCode       String                @db.String
   containerSize      String
   containerType      String
@@ -197,7 +198,7 @@ enum ProductType {
 model Product {
   skuCode             String           @id @map("_id") @db.String
   type                ProductType
-  productCategory     ProductCategory? @relation(fields: [productCategoryReff], references: [reff])
+  productCategory     ProductCategory? @relation(fields: [productCategoryReff], references: [reff], onDelete: Cascade)
   productCategoryReff String?          @db.String
   name                String
   unit                String

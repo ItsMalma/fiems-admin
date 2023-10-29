@@ -15,10 +15,6 @@ export default function JobOrderConfirm() {
     setActive(3, 4, 0);
   }, [setActive]);
 
-  React.useEffect(() => {
-    console.log(isChangeDooring);
-  }, [isChangeDooring]);
-
   return (
     <SaveLayout
       onSave={() => {}}

@@ -3,27 +3,19 @@ import { ControlPrefix } from "@/components/Forms/prefix.context";
 import clsx from "clsx";
 import React from "react";
 import { useController } from "react-hook-form";
-import isEmail from "validator/lib/isEmail";
 
-type FormEmailProps = {
+type FormMoneyProps = {
   id?: string;
   name: string;
   className?: string;
   readOnly?: boolean;
 };
 
-export function FormEmail(props: FormEmailProps) {
+export function FormMoney(props: FormMoneyProps) {
   const namePrefix = React.useContext(ControlPrefix);
 
   const { field, fieldState } = useController({
     name: namePrefix + props.name,
-    rules: {
-      validate: (value) => {
-        if (!isEmail(value)) {
-          return "Invalid format";
-        }
-      },
-    },
   });
 
   return (
@@ -31,7 +23,14 @@ export function FormEmail(props: FormEmailProps) {
       id={props.id ?? field.name}
       name={field.name}
       value={field.value}
-      onChange={field.onChange}
+      onChange={(e) => {
+        const valueAsNumber = Number(e.target.value);
+        if (isNaN(valueAsNumber)) {
+          e.preventDefault();
+          return;
+        }
+        field.onChange(valueAsNumber);
+      }}
       onBlur={field.onBlur}
       isError={!!fieldState.error}
       readOnly={props.readOnly}

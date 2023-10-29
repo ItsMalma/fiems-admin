@@ -12,19 +12,24 @@ import SaveLayout from "@/components/Layouts/SaveLayout";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
 import { CustomerForm, CustomerType } from "@/server/dtos/customer.dto";
+import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
 
 export default function CustomerSavePage() {
-  // Gunakan store useMenu untuk mengset menu mana yang aktif
+  // Gunakan store useHeader untuk mengset judul di header
+  const { setTitle } = useHeader();
+
+  // Gunakan store useMenu untuk mengset menu yang aktif
   const { setActive } = useMenu();
 
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
+    setTitle("Master Data | Customer");
     setActive(1, 0, 1);
-  }, [setActive]);
+  }, [setTitle, setActive]);
 
   // Mendapatkan router
   const router = useRouter();
@@ -65,7 +70,7 @@ export default function CustomerSavePage() {
       code: queryCode,
     });
 
-    await router.push("/master_data/business_partner/customers");
+    await router.push("/master_data/business_partner/customer");
   });
 
   return (

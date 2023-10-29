@@ -82,7 +82,10 @@ export function validatePhone(
     }, "Invalid format");
 }
 
-export function validateSelect(options: Readonly<[string, ...string[]]>) {
+export function validateSelect<
+  U extends string,
+  T extends Readonly<[U, ...U[]]>,
+>(options: T) {
   return z.enum(options, {
     errorMap: () => ({ message: "Invalid value" }),
   });
@@ -103,6 +106,20 @@ export function validateText() {
     .min(1, "Must be filled");
 }
 
+export function validateMoney() {
+  return z.number({
+    invalid_type_error: "Invalid value",
+    required_error: "Must be filled",
+  });
+}
+
+export function validateAppend<T extends z.ZodTypeAny>(validations: T) {
+  return z.array(validations, {
+    invalid_type_error: "Invalud value",
+    required_error: "Must be filled",
+  });
+}
+
 export function refineDateRange(start: string, end: string): z.Refinement<any> {
   return (data, ctx) => {
     const startDate = moment(data[start]);
@@ -114,4 +131,8 @@ export function refineDateRange(start: string, end: string): z.Refinement<any> {
       });
     }
   };
+}
+
+export function isObjectID(value: string): boolean {
+  return true;
 }

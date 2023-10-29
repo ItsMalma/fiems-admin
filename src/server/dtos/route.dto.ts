@@ -1,4 +1,5 @@
 import { SelectOption } from "@/components/Elements";
+import { ContainerSizes, ContainerTypes, ServiceTypes } from "@/libs/options";
 import { Route } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
@@ -6,8 +7,9 @@ import { refineDateRange, validateDate, validateText } from "../validation";
 
 export const routeInput = z
   .object({
-    serviceType: validateText(),
+    containerSize: validateText(),
     containerType: validateText(),
+    serviceType: validateText(),
     province: validateText(),
     city: validateText(),
     startDescription: validateText(),
@@ -33,8 +35,9 @@ export class RouteTableRow {
     public province: string,
     public city: string,
     public description: string,
-    public serviceType: string,
+    public containerSize: string,
     public containerType: string,
+    public serviceType: string,
     public status: boolean
   ) {}
 
@@ -45,8 +48,9 @@ export class RouteTableRow {
       model.province,
       model.city,
       `${model.startDescription} - ${model.endDescription}`,
-      model.serviceType,
+      model.containerSize,
       model.containerType,
+      model.serviceType,
       moment(new Date()).isBetween(
         model.effectiveStartDate,
         model.effectiveEndDate,
@@ -61,8 +65,9 @@ export class RouteForm {
   constructor(
     public createDate: string | Date,
     public code: string,
-    public serviceType: string,
+    public containerSize: string,
     public containerType: string,
+    public serviceType: string,
     public province: string,
     public city: string,
     public startDescription: string,
@@ -75,8 +80,9 @@ export class RouteForm {
     return new RouteForm(
       model.createDate,
       model.code,
-      model.serviceType,
+      model.containerSize,
       model.containerType,
+      model.serviceType,
       model.province,
       model.city,
       model.startDescription,
@@ -95,27 +101,14 @@ export class RouteForm {
     "",
     "",
     "",
+    "",
     new Date(),
     new Date()
   );
 
-  static readonly serviceTypeOptions: SelectOption[] = [
-    { label: "Door to Door", value: "Door to Door" },
-    { label: "Door to Port", value: "Door to Port" },
-    { label: "Port to Door", value: "Port to Door" },
-    { label: "Port to Port", value: "Port to Port" },
-    { label: "Door to CY", value: "Door to CY" },
-    { label: "Port to CY", value: "Port to CY" },
-    { label: "CY to Door", value: "CY to Door" },
-    { label: "CY to Port", value: "CY to Port" },
-    { label: "CY to CY", value: "CY to CY" },
-  ];
+  static readonly containerSizeOptions: SelectOption[] = ContainerSizes;
 
-  static readonly containerTypeOptions: SelectOption[] = [
-    { label: "20 Feet", value: "20 Feet" },
-    { label: "21 Feet", value: "21 Feet" },
-    { label: "40 Feet", value: "40 Feet" },
-    { label: "41 Feet", value: "41 Feet" },
-    { label: "40 HC", value: "40 HC" },
-  ];
+  static readonly containerTypeOptions: SelectOption[] = ContainerTypes;
+
+  static readonly serviceTypeOptions: SelectOption[] = ServiceTypes;
 }

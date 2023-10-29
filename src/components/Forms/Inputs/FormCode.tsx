@@ -1,6 +1,8 @@
 import { InputText } from "@/components/Elements";
 import clsx from "clsx";
+import React from "react";
 import { useController } from "react-hook-form";
+import { ControlPrefix } from "../prefix.context";
 
 type FormCodeProps = {
   id?: string;
@@ -10,8 +12,10 @@ type FormCodeProps = {
 };
 
 export function FormCode(props: FormCodeProps) {
+  const namePrefix = React.useContext(ControlPrefix);
+
   const { field, fieldState } = useController({
-    name: props.name,
+    name: namePrefix + props.name,
   });
 
   return (

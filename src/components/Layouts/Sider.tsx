@@ -1,30 +1,18 @@
-import React from "react";
 import Image from "next/image";
 import {
-  Icon,
-  ChevronDown,
-  ChevronUp,
-  Grid1x2,
-  Grid1x2Fill,
-  Database,
-  DatabaseFill,
   BarChart,
   BarChartFill,
+  Database,
+  DatabaseFill,
   Gear,
   GearFill,
-  Cart,
-  CartFill,
-  HouseDoor,
-  HouseDoorFill,
-  PiggyBank,
-  PiggyBankFill,
-  People,
-  PeopleFill,
+  Grid1x2,
+  Grid1x2Fill,
   InfoCircleFill,
-  PersonGear,
-  PersonFillGear,
   Person,
   PersonFill,
+  PersonFillGear,
+  PersonGear,
 } from "react-bootstrap-icons";
 import Menu from "./Menu";
 
@@ -53,7 +41,7 @@ export default function Sider() {
                   },
                   {
                     name: "Customers",
-                    url: "/master_data/business_partner/customers",
+                    url: "/master_data/business_partner/customer",
                   },
                 ],
               },
@@ -80,11 +68,11 @@ export default function Sider() {
               {
                 name: "Master Price",
                 childrens: [
-                  { name: "Price Factory", url: "/master_data/price/factory" },
-                  { name: "Price Vendor", url: "/master_data/price/vendor" },
+                  { name: "Price Factory", url: "/master_data/prices/factory" },
+                  { name: "Price Vendor", url: "/master_data/prices/vendor" },
                   {
                     name: "Price Shipping",
-                    url: "/master_data/price/shipping",
+                    url: "/master_data/prices/shipping",
                   },
                 ],
               },

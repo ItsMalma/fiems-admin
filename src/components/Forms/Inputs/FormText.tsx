@@ -1,5 +1,7 @@
 import { InputText } from "@/components/Elements";
+import { ControlPrefix } from "@/components/Forms/prefix.context";
 import clsx from "clsx";
+import React from "react";
 import { useController } from "react-hook-form";
 
 type FormTextProps = {
@@ -10,8 +12,10 @@ type FormTextProps = {
 };
 
 export function FormText(props: FormTextProps) {
+  const namePrefix = React.useContext(ControlPrefix);
+
   const { field, fieldState } = useController({
-    name: props.name,
+    name: namePrefix + props.name,
   });
 
   return (

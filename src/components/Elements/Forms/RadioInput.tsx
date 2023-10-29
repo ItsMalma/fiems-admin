@@ -16,7 +16,7 @@ type RadioInputProps = {
 export default function RadioInput(props: RadioInputProps) {
   const [input, meta, { setValue }] = useField({
     id: props.id,
-    name: props.name,
+    name: namePrefix + props.name,
   });
 
   const handleChange = React.useCallback(

@@ -27,8 +27,11 @@ export function Save({ skuCode }: { skuCode?: string }) {
   });
   const { reset } = methods;
 
+  const productType = methods.watch("type");
+
   const formQuery = trpc.products.getForm.useQuery({
     skuCode,
+    type: productType,
   });
   React.useEffect(() => {
     if (formQuery.data?.defaultValue && reset) {
@@ -49,8 +52,6 @@ export function Save({ skuCode }: { skuCode?: string }) {
 
     setModal(null);
   });
-
-  console.log(formQuery.data);
 
   return (
     <Modal
@@ -93,13 +94,15 @@ export function Save({ skuCode }: { skuCode?: string }) {
             label: "Category",
             input: (
               <FormSelect
-                name="name"
+                name="category"
                 options={formQuery.data?.categories ?? []}
               />
             ),
+            isHidden: productType !== "Product",
           },
           {
             type: "blank",
+            isHidden: productType !== "Product",
           },
           {
             type: "input",

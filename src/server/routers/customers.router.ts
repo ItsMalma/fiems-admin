@@ -66,6 +66,29 @@ export const customersRouter = router({
     ];
   }),
 
+  getOptions: publicProcedure
+    .input(z.enum(customerTypes))
+    .query<{ label: string; value: string }[]>(async ({ input }) => {
+      switch (input) {
+        case "Factory":
+          return (await findAllFactory()).map((customer) => ({
+            label: `${customer.code} (${customer.name})`,
+            value: customer.code,
+          }));
+        case "Vendor":
+          return (await findAllVendor()).map((customer) => ({
+            label: `${customer.code} (${customer.name})`,
+            value: customer.code,
+          }));
+        case "Shipping":
+          return (await findAllShipping()).map((customer) => ({
+            label: `${customer.code} (${customer.name})`,
+            value: customer.code,
+          }));
+      }
+      return [];
+    }),
+
   getForm: publicProcedure
     .input(
       z.object({
