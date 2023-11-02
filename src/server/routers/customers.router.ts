@@ -105,7 +105,7 @@ export const customersRouter = router({
       currencies: { label: string; value: string }[];
     }>(async ({ input }) => {
       const groups = (await findAllCustomerGroup()).map((customerGroup) => ({
-        label: `${customerGroup.code} | ${customerGroup.name}`,
+        label: `${customerGroup.code} (${customerGroup.name})`,
         value: customerGroup.code,
       }));
 

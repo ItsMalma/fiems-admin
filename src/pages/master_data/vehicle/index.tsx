@@ -1,39 +1,15 @@
-import React from "react";
+import { Button, Search, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import Select from "@/components/Elements/Select";
+import React from "react";
 import {
-  TruckFrontFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  TruckFrontFill,
 } from "react-bootstrap-icons";
-import Table from "@/components/Elements/NewTable";
-import { deleteVehicle, useVehicles } from "@/api/vehicles";
-
-export function Export() {
-  return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            placeholder="Choose file type"
-            options={[{ label: "Excel", value: "excel" }]}
-            value="excel"
-            onChange={() => {}}
-            className="basis-2/3"
-          />
-        </div>
-      </form>
-    </Modal>
-  );
-}
 
 export default function MasterVehicle() {
   // Gunakan store useHeader untuk mengset judul di header
@@ -57,24 +33,17 @@ export default function MasterVehicle() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua data vehicle
-  const { vehicles, isLoading, error } = useVehicles([current]);
+  const tableRowsQuery = trpc.vehicle.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua data vehicle
-  // masih loading atau data nya masih belum terload
-  if (isLoading || !vehicles) {
-    return <></>;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua data vehicle terdapat error
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.vehicle.delete.useMutation();
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Route Code" />
+        <Search placeholder="Search Vehicle" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Vehicle"
@@ -91,7 +60,7 @@ export default function MasterVehicle() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -106,8 +75,8 @@ export default function MasterVehicle() {
             isSortable: true,
           },
           {
-            id: "vendor.name",
-            header: "Vendor Name",
+            id: "vendor",
+            header: "Vendor",
             type: "text",
             isSortable: true,
           },
@@ -124,20 +93,20 @@ export default function MasterVehicle() {
             isSortable: true,
           },
           {
-            id: "truckType",
+            id: "type",
             header: "Truck Type",
             type: "text",
             isSortable: true,
           },
           {
-            id: "engineNumber",
-            header: "Engine Number",
+            id: "machineNumber",
+            header: "Machine Number",
             type: "text",
             isSortable: true,
           },
           {
-            id: "chassisNumber",
-            header: "Chassis Number",
+            id: "frameNumber",
+            header: "Frame Number",
             type: "text",
             isSortable: true,
           },
@@ -177,27 +146,35 @@ export default function MasterVehicle() {
             type: "status",
           },
         ]}
-        rows={vehicles}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Redirect ke halaman save vehicle
           router.push(
-            `/master_data/vehicle/save?code=${vehicles[selectedRowIndex].truckNumber}`
+            `/master_data/vehicle/save?id=${tableRowsQuery.data[selectedRowIndex].id}`
           );
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Hapus vehicle yang dipilih di table
-          await deleteVehicle(vehicles[selectedRowIndex].truckNumber);
+          await deleteMutation.mutateAsync({
+            id: tableRowsQuery.data[selectedRowIndex].id,
+          });
 
           // Karena vehicle yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);

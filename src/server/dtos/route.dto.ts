@@ -42,6 +42,7 @@ export class RouteTableRow {
   ) {}
 
   static fromModel(model: Route): RouteTableRow {
+
     return new RouteTableRow(
       moment(model.createDate).toString(),
       model.code,

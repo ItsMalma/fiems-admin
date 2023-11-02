@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:push": "npx dotenv -e .env.local -- npx prisma db push",
+    "prisma:generate": "npx dotenv -e .env.local -- npx prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

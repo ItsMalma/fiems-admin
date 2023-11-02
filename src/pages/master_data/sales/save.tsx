@@ -1,253 +1,145 @@
-import { createSales, updateSales, useSales } from "@/api/sales";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import InputText from "@/components/Elements/InputText";
-import SaveLayout, { InputRow } from "@/components/Layouts/SaveLayout";
-import { formikValidateWithZod } from "@/libs/error";
-import { ApiResponsePayload } from "@/libs/utils";
-import { SalesOutput, SaveSalesInput } from "@/models/sales.model";
+import { Form, FormCode, FormDate, FormSelect } from "@/components/Forms";
+import SaveLayout from "@/components/Layouts/SaveLayout";
+import { useQuery } from "@/libs/hooks";
+import { trpc } from "@/libs/trpc";
+import { SalesForm } from "@/server/dtos/sales.dto";
+import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
-import { saveSalesSchema } from "@/validations/sales.validation";
-import { FormikProvider, useFormik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
+import { useForm } from "react-hook-form";
 
 export default function SalesSave() {
+  // Gunakan store useHeader untuk mengset judul di header
+  const { setTitle } = useHeader();
+
   // Gunakan store useMenu untuk mengset menu mana yang aktif
   const { setActive } = useMenu();
 
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
+    setTitle("Master Data | Sales");
     setActive(1, 3, 0);
-  }, [setActive]);
+  }, [setTitle, setActive]);
 
   // Mendapatkan router
   const router = useRouter();
 
-  // Ambil code sales dari query
-  // Jika ada query nya maka akan mengembalikan string code sales nya
-  // Jika tidak ada query nya maka akan mengembalikan null
-  const salesCode = React.useMemo(() => {
-    if (!router.query.code) {
-      return null;
-    } else if (typeof router.query.code === "string") {
-      return router.query.code;
-    } else {
-      return router.query.code[0] ?? null;
-    }
-  }, [router.query.code]);
+  const queryCode = useQuery("code");
 
-  // Pemanggilan api untuk mendapatkan sales berdasarkan code nya (dari query)
-  const { sales, error: salesError } = useSales(salesCode, [salesCode]);
-
-  // Penggunaan formik
-  const formik = useFormik<SaveSalesInput>({
-    enableReinitialize: true,
-    initialValues: {
-      jobPosition: sales?.jobPosition ?? "marketing",
-      name: sales?.name ?? "",
-      nik: sales?.nik ?? "",
-      cabang: sales?.cabang ?? "",
-      phoneNumber: sales?.phoneNumber ?? "",
-      telephone: sales?.telephone ?? "",
-      fax: sales?.fax ?? "",
-      email: sales?.email ?? "",
-    },
-    onSubmit: async (values, helpers) => {
-      let res: ApiResponsePayload<SalesOutput> | null = null;
-      if (sales) {
-        res = await updateSales(sales.code, values);
-      } else {
-        res = await createSales(values);
-      }
-
-      if (res.error) {
-        if (typeof res.error !== "string") {
-          const errors = res.error;
-
-          Object.keys(errors).forEach((field) => {
-            helpers.setFieldError(field, errors[field]);
-          });
-        } else {
-          // TODO: tampilin notif gagal
-        }
-      } else {
-        await router.push("/master_data/sales");
-      }
-    },
-    validate: formikValidateWithZod(saveSalesSchema),
+  const methods = useForm<SalesForm>({
+    defaultValues: SalesForm.initial,
   });
+  const { reset } = methods;
 
-  // Decomposition formik
-  const { handleSubmit, handleChange, values, errors } = formik;
-
-  // Memo untuk merubah job position yang dipilih menjadi kapital
-  const capitalizedSelectedJobPosition = React.useMemo(() => {
-    switch (values.jobPosition) {
-      case "marketing":
-        return "Marketing";
-      case "director":
-        return "Director";
+  const formQuery = trpc.sales.getForm.useQuery({
+    code: queryCode,
+  });
+  React.useEffect(() => {
+    if (formQuery.data?.value && reset) {
+      reset(formQuery.data.value, {
+        keepDirtyValues: true,
+        keepErrors: true,
+      });
     }
-  }, [values.jobPosition]);
+  }, [formQuery.data?.value, reset]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan sales berdasarkan code nya (dari query)
-  // mengalami error
-  if (salesError) {
-    throw salesError;
-  }
+  const saveMutation = trpc.sales.save.useMutation();
 
+  const onSubmit = methods.handleSubmit(async (data) => {
+    await saveMutation.mutateAsync({
+      ...data,
+      code: queryCode,
+    });
+
+    await router.push("/master_data/sales");
+  });
   return (
-    <FormikProvider value={formik}>
-      <SaveLayout
-        onSave={handleSubmit}
-        title="Input Sales Data"
+    <SaveLayout
+      onSave={onSubmit}
+      title="Input Sales Data"
+      isLoading={!formQuery.data?.value}
+    >
+      <Form
+        methods={methods}
         tabs={[
           {
+            id: "generalInformation",
             name: "General Information",
-            component: (
-              <>
-                <InputRow
-                  firstCol={{
-                    label: "Job Position",
-                    input: (
-                      <SelectInput
-                        id="jobPosition"
-                        name="jobPosition"
-                        placeholder="Choose job position"
-                        className="basis-3/5"
-                        options={[
-                          { label: "Director", value: "director" },
-                          { label: "Marketing", value: "marketing" },
-                        ]}
-                        isSearchable
-                      />
-                    ),
-                    error: errors.jobPosition,
-                  }}
-                />
-                {values.jobPosition && (
-                  <>
-                    <hr />
-                    <InputRow
-                      firstCol={{
-                        label: `${capitalizedSelectedJobPosition} Name`,
-                        input: (
-                          <InputText
-                            id="name"
-                            name="name"
-                            placeholder={`Enter ${values.jobPosition} name`}
-                            className="basis-3/5"
-                            value={values.name}
-                            onChange={handleChange}
-                            isError={!!errors.name}
-                          />
-                        ),
-                        error: errors.name,
-                      }}
-                      secondCol={{
-                        label: "Telephone",
-                        input: (
-                          <InputText
-                            id="telephone"
-                            name="telephone"
-                            placeholder="Enter telephone number"
-                            className="basis-3/5"
-                            value={values.telephone}
-                            onChange={handleChange}
-                            isError={!!errors.telephone}
-                          />
-                        ),
-                        error: errors.telephone,
-                      }}
-                    />
-                    <InputRow
-                      firstCol={{
-                        label: "NIK",
-                        input: (
-                          <InputText
-                            id="nik"
-                            name="nik"
-                            placeholder="Enter NIK"
-                            className="basis-3/5"
-                            value={values.nik}
-                            onChange={handleChange}
-                            isError={!!errors.nik}
-                          />
-                        ),
-                        error: errors.nik,
-                      }}
-                      secondCol={{
-                        label: "Fax",
-                        input: (
-                          <InputText
-                            id="fax"
-                            name="fax"
-                            placeholder="Enter fax number"
-                            className="basis-3/5"
-                            value={values.fax}
-                            onChange={handleChange}
-                            isError={!!errors.fax}
-                          />
-                        ),
-                        error: errors.fax,
-                      }}
-                    />
-                    <InputRow
-                      firstCol={{
-                        label: "Cabang",
-                        input: (
-                          <InputText
-                            id="cabang"
-                            name="cabang"
-                            placeholder="Enter Cabang"
-                            className="basis-3/5"
-                            value={values.cabang}
-                            onChange={handleChange}
-                            isError={!!errors.cabang}
-                          />
-                        ),
-                        error: errors.cabang,
-                      }}
-                      secondCol={{
-                        label: "Email",
-                        input: (
-                          <InputText
-                            id="email"
-                            name="email"
-                            placeholder="Enter email"
-                            className="basis-3/5"
-                            value={values.email}
-                            onChange={handleChange}
-                            isError={!!errors.email}
-                          />
-                        ),
-                        error: errors.email,
-                      }}
-                    />
-                    <InputRow
-                      firstCol={{
-                        label: "Phone Number",
-                        input: (
-                          <InputText
-                            id="phoneNumber"
-                            name="phoneNumber"
-                            placeholder="Enter phone number"
-                            className="basis-3/5"
-                            value={values.phoneNumber}
-                            onChange={handleChange}
-                            isError={!!errors.phoneNumber}
-                          />
-                        ),
-                        error: errors.phoneNumber,
-                      }}
-                    />
-                  </>
-                )}
-              </>
-            ),
+            controls: [
+              {
+                type: "input",
+                id: "createDate",
+                label: "Create Date",
+                input: <FormDate name="createDate" readOnly />,
+              },
+              {
+                type: "input",
+                id: "code",
+                label: "Sales Code",
+                input: <FormCode name="code" readOnly />,
+              },
+              {
+                type: "input",
+                id: "jobPosition",
+                label: "Job Position",
+                input: (
+                  <FormSelect
+                    name="jobPosition"
+                    options={SalesForm.typeOptions}
+                    readOnly={!!queryCode}
+                  />
+                ),
+              },
+              {
+                type: "separator",
+              },
+              {
+                type: "input",
+                id: "name",
+                label: "Name",
+                input: <FormCode name="name" />,
+              },
+              {
+                type: "input",
+                id: "telephone",
+                label: "Telephone",
+                input: <FormCode name="telephone" />,
+              },
+              {
+                type: "input",
+                id: "nik",
+                label: "NIK",
+                input: <FormCode name="nik" />,
+              },
+              {
+                type: "input",
+                id: "fax",
+                label: "Fax",
+                input: <FormCode name="fax" />,
+              },
+              {
+                type: "input",
+                id: "area",
+                label: "Cabang",
+                input: <FormCode name="area" />,
+              },
+              {
+                type: "input",
+                id: "email",
+                label: "Email",
+                input: <FormCode name="email" />,
+              },
+              {
+                type: "input",
+                id: "phoneNumber",
+                label: "Phone Number",
+                input: <FormCode name="phoneNumber" />,
+              },
+            ],
           },
         ]}
       />
-    </FormikProvider>
+    </SaveLayout>
   );
 }

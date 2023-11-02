@@ -11,11 +11,12 @@ datasource db {
 }
 
 model CustomerGroup {
-  code        String    @id @map("_id") @db.String
+  code        String   @id @map("_id") @db.String
   name        String
   description String
-  createDate  DateTime  @default(now())
-  factories   Factory[]
+  createDate  DateTime @default(now())
+
+  factories Factory[]
 }
 
 type CustomerPic {
@@ -63,25 +64,28 @@ model Vendor {
   createDate   DateTime      @default(now())
   status       Boolean       @default(false)
   priceVendors PriceVendor[]
+  vehicles     Vehicle[]
+  uangJalan    UangJalan[]
 }
 
 model Shipping {
-  code           String          @id @map("_id") @db.String
-  name           String
-  address        String
-  province       String
-  city           String
-  telephone      String
-  fax            String
-  email          String
-  top            Int
-  currency       String
-  purchasing     CustomerPic
-  operation      CustomerPic
-  finance        CustomerPic
-  createDate     DateTime        @default(now())
-  status         Boolean         @default(false)
-  priceShippings PriceShipping[]
+  code          String          @id @map("_id") @db.String
+  name          String
+  address       String
+  province      String
+  city          String
+  telephone     String
+  fax           String
+  email         String
+  top           Int
+  currency      String
+  purchasing    CustomerPic
+  operation     CustomerPic
+  finance       CustomerPic
+  createDate    DateTime        @default(now())
+  status        Boolean         @default(false)
+  PriceShipping PriceShipping[]
+  Vessel        Vessel[]
 }
 
 model Route {
@@ -98,6 +102,7 @@ model Route {
   createDate           DateTime              @default(now())
   priceVendorDetails   PriceVendorDetail[]
   priceShippingDetails PriceShippingDetail[]
+  UangJalan            UangJalan[]
 }
 
 model Port {
@@ -169,17 +174,15 @@ model PriceShippingDetail {
 }
 
 model PriceShipping {
-  id                 String                @id @default(auto()) @map("_id") @db.ObjectId
-  shipping           Shipping              @relation(fields: [shippingCode], references: [code], onDelete: Cascade)
-  shippingCode       String                @db.String
-  containerSize      String
-  containerType      String
-  serviceType        String
-  effectiveStartDate DateTime
-  effectiveEndDate   DateTime
-  details            PriceShippingDetail[]
-  createDate         DateTime              @default(now())
-  status             Boolean
+  id                  String                @id @default(auto()) @map("_id") @db.ObjectId
+  shipping            Shipping              @relation(fields: [shippingCode], references: [code], onDelete: Cascade)
+  shippingCode        String                @db.String
+  containerSize       String
+  containerType       String
+  serviceType         String
+  effectiveStartDate  DateTime
+  effectiveEndDate    DateTime
+  PriceShippingDetail PriceShippingDetail[]
 }
 
 model ProductCategory {
@@ -203,4 +206,98 @@ model Product {
   name                String
   unit                String
   createDate          DateTime         @default(now())
+}
+
+model Sales {
+  code        String           @id @map("_id") @db.String
+  jobPosition SalesJobPosition
+  name        String
+  nik         String
+  area        String
+  phoneNumber String
+  telephone   String
+  fax         String
+  email       String
+  status      Boolean          @default(false)
+  createDate  DateTime         @default(now())
+}
+
+enum SalesJobPosition {
+  Marketing
+  Direktur
+}
+
+model Vehicle {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendor        Vendor   @relation(fields: [vendorCode], references: [code])
+  vendorCode    String   @db.String
+  truckNumber   String
+  brand         String
+  type          String
+  machineNumber String
+  frameNumber   String
+  cylinder      String
+  color         String
+  stnkExpired   DateTime
+  taxExpired    DateTime
+  keurExpired   DateTime
+  createDate    DateTime @default(now())
+  status        Boolean
+}
+
+model Vessel {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  shipping     Shipping @relation(fields: [shippingCode], references: [code])
+  shippingCode String   @db.String
+  name         String
+  unit         String
+  capacity     Int
+  createDate   DateTime @default(now())
+  status       Boolean
+}
+
+model UangJalan {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendor        Vendor   @relation(fields: [vendorCode], references: [code])
+  vendorCode    String   @db.String
+  route         Route    @relation(fields: [routeCode], references: [code])
+  routeCode     String   @db.String
+  truckType     String
+  containerSize String
+  bbm           Int
+  toll          Int
+  labourCost    Int
+  meal          Int
+  etc           Int
+  total         Int
+  createDate    DateTime @default(now())
+}
+
+model Coa {
+  number      String   @id @map("_id") @db.String
+  description String
+  type        String
+  category    String
+  transaction String
+  currency    String
+  status      Boolean
+  createDate  DateTime @default(now())
+
+  coas1 Coa1[]
+}
+
+model Coa1 {
+  number      String @id @map("_id") @db.String
+  coa         Coa    @relation(fields: [coaNumber], references: [number])
+  coaNumber   String @db.String
+  description String
+
+  coas2 Coa2[]
+}
+
+model Coa2 {
+  number      String @id @map("_id") @db.String
+  coa1        Coa1   @relation(fields: [coa1Number], references: [number])
+  coa1Number  String @db.String
+  description String
 }
