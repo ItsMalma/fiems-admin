@@ -76,7 +76,7 @@ export default function MasterUangJalan() {
           },
           {
             id: "vendor",
-            header: "vendor",
+            header: "Vendor",
             type: "text",
             isSortable: true,
           },
@@ -125,6 +125,12 @@ export default function MasterUangJalan() {
           {
             id: "etc",
             header: "Etc",
+            type: "money",
+            isSortable: true,
+          },
+          {
+            id: "total",
+            header: "Total",
             type: "money",
             isSortable: true,
           },

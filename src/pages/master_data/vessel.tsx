@@ -7,10 +7,11 @@ import {
   FormText,
 } from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
-import { VesselForm } from "@/server/dtos/vessel.dto";
+import { VesselForm, vesselInput } from "@/server/dtos/vessel.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import {
   BoxFill,
@@ -25,6 +26,7 @@ export function Save({ id }: { id?: string }) {
 
   const methods = useForm<VesselForm>({
     defaultValues: VesselForm.initial,
+    resolver: zodResolver(vesselInput),
   });
   const { reset } = methods;
 

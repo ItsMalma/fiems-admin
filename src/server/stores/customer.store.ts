@@ -21,6 +21,12 @@ export async function findAllVendor() {
   return await prisma.vendor.findMany({});
 }
 
+export async function findUniqueVendorAtPrice() {
+  return await prisma.vendor.findMany({
+    where: { priceVendors: { none: {} } },
+  });
+}
+
 export async function findAllShipping() {
   return await prisma.shipping.findMany({});
 }

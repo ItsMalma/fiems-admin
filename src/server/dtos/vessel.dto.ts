@@ -1,22 +1,16 @@
-import { Prisma, Vessel } from "@prisma/client";
+import { SelectOption } from "@/components/Elements";
+import { Prisma } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
-import { validateCode, validateCounter, validateSelect, validateText } from "../validation";
-import { SelectOption } from "@/components/Elements";
+import { validateCode, validateCounter, validateText } from "../validation";
 import { extractCustomerCode } from "./customer.dto";
 
-export const units = ["Teus", "Container"] as const;
-export type Unit = (typeof units)[number];
-
-export const vesselInput = z
-  .object({
-    shipping: validateCode(
-        (value) => !isNaN(extractCustomerCode(value))
-    ),
-    name: validateText(),
-    capacity: validateCounter(),
-    unit: validateSelect(units),
-  })
+export const vesselInput = z.object({
+  shipping: validateCode((value) => !isNaN(extractCustomerCode(value))),
+  name: validateText(),
+  capacity: validateCounter(),
+  unit: validateText(),
+});
 export type VesselInput = z.infer<typeof vesselInput>;
 
 export class VesselTableRow {
@@ -32,11 +26,12 @@ export class VesselTableRow {
 
   static fromModel(
     model: Prisma.VesselGetPayload<{
-    include: {shipping: true}
-}>): VesselTableRow {
+      include: { shipping: true };
+    }>
+  ): VesselTableRow {
     return new VesselTableRow(
       moment(model.createDate).toString(),
-      `${model.shippingCode}/${model.shipping.name}`,
+      `${model.shippingCode} (${model.shipping.name})`,
       model.name,
       model.capacity,
       model.unit,
@@ -52,19 +47,20 @@ export class VesselForm {
     public name: string,
     public shipping: string,
     public capacity: number,
-    public unit: string,
+    public unit: string
   ) {}
 
   static fromModel(
     model: Prisma.VesselGetPayload<{
-    include: {shipping: true}
-}>): VesselForm {
+      include: { shipping: true };
+    }>
+  ): VesselForm {
     return new VesselForm(
       model.createDate,
       model.name,
       model.shipping.code,
       model.capacity,
-      model.unit,
+      model.unit
     );
   }
 
@@ -81,4 +77,3 @@ export class VesselForm {
     { label: "Container", value: "Container" },
   ];
 }
-

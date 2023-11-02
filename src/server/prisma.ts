@@ -2,7 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 // Singleton function to create prisma client
 function createPrismaClient() {
-  return new PrismaClient();
+  const prismaClient = new PrismaClient();
+  return prismaClient;
 }
 
 type PrismaClientSingleton = ReturnType<typeof createPrismaClient>;

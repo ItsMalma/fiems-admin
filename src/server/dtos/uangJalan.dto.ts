@@ -1,33 +1,24 @@
-import { Prisma, UangJalan } from "@prisma/client";
+import { SelectOption } from "@/components/Elements";
+import { ContainerSizes, TruckTypes } from "@/libs/options";
+import { Prisma } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
-import { validateCode, validateCounter, validateDate, validateEmail, validatePhone, validateSelect, validateText } from "../validation";
-import { SelectOption } from "@/components/Elements";
+import { validateCode, validateMoney, validateText } from "../validation";
 import { extractCustomerCode } from "./customer.dto";
 import { extractRouteCode } from "./route.dto";
 
-export const containerSizes = ["20ft", "21ft","40ft", "41ft", "40HC"] as const;
-export type ContainerSize = (typeof containerSizes)[number];
-export const truckTypes = ["Tronton", "Trintin","Trinton", "Trailer", "Fuso", "Engkel"] as const;
-export type TruckTypes = (typeof truckTypes)[number];
-
-export const uangJalanInput = z
-  .object({
-    vendor: validateCode(
-      (value) => !isNaN(extractCustomerCode(value))
-    ),
-    route: validateCode(
-      (value) => !isNaN(extractRouteCode(value))
-    ),
-    containerSize: validateSelect(containerSizes),
-    truckType: validateSelect(truckTypes),
-    bbm: validateCounter(),
-    toll: validateCounter(),
-    labourCost: validateCounter(),
-    meal: validateCounter(),
-    etc: validateCounter(),
-    total: validateCounter(),
-  })
+export const uangJalanInput = z.object({
+  vendor: validateCode((value) => !isNaN(extractCustomerCode(value))),
+  route: validateCode((value) => !isNaN(extractRouteCode(value))),
+  containerSize: validateText(),
+  truckType: validateText(),
+  bbm: validateMoney(),
+  toll: validateMoney(),
+  labourCost: validateMoney(),
+  meal: validateMoney(),
+  etc: validateMoney(),
+  total: validateMoney(),
+});
 export type UangJalanInput = z.infer<typeof uangJalanInput>;
 
 export class UangJalanTableRow {
@@ -49,13 +40,15 @@ export class UangJalanTableRow {
   static fromModel(
     model: Prisma.UangJalanGetPayload<{
       include: {
-        vendor: true, 
-        route: true}
-    }>): UangJalanTableRow {
+        vendor: true;
+        route: true;
+      };
+    }>
+  ): UangJalanTableRow {
     return new UangJalanTableRow(
       moment(model.createDate).toString(),
       model.id,
-      `${model.vendorCode}/${model.vendor.name}`,
+      `${model.vendorCode} (${model.vendor.name})`,
       `${model.route.startDescription} - ${model.route.endDescription}`,
       model.truckType,
       model.containerSize,
@@ -81,15 +74,17 @@ export class UangJalanForm {
     public etc: number,
     public total: number,
     public vendor: string,
-    public route: string,
+    public route: string
   ) {}
 
   static fromModel(
     model: Prisma.UangJalanGetPayload<{
       include: {
-        vendor: true, 
-        route: true}
-    }>): UangJalanForm {
+        vendor: true;
+        route: true;
+      };
+    }>
+  ): UangJalanForm {
     return new UangJalanForm(
       model.createDate,
       model.truckType,
@@ -119,21 +114,7 @@ export class UangJalanForm {
     ""
   );
 
-  static readonly truckTypeOptions: SelectOption[] = [
-    { label: "Tronton", value: "Tronton" },
-    { label: "Trintin", value: "Trintin" },
-    { label: "Trinton", value: "Trinton" },
-    { label: "Trailer", value: "Trailer" },
-    { label: "Fuso", value: "Fuso" },
-    { label: "Engkel", value: "Engkel" },
-  ];
+  static readonly truckTypeOptions: SelectOption[] = TruckTypes;
 
-  static readonly containerSizeOptions: SelectOption[] = [
-    { label: "20ft", value: "20ft" },
-    { label: "21ft", value: "21ft" },
-    { label: "40ft", value: "40ft" },
-    { label: "41ft", value: "41ft" },
-    { label: "40HC", value: "40HC" },
-  ];
+  static readonly containerSizeOptions = ContainerSizes;
 }
-

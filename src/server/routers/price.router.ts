@@ -9,7 +9,13 @@ import {
   priceTypeInput,
   priceVendorInput,
 } from "../dtos/price.dto";
-import { findShippingByCode, findVendorByCode } from "../stores/customer.store";
+import {
+  findAllShipping,
+  findAllVendor,
+  findShippingByCode,
+  findVendorByCode,
+} from "../stores/customer.store";
+import { findAllPort } from "../stores/port.store";
 import {
   createPriceShipping,
   createPriceVendor,
@@ -22,7 +28,7 @@ import {
   updatePriceShipping,
   updatePriceVendor,
 } from "../stores/price.store";
-import { findRouteByCode } from "../stores/route.store";
+import { findAllRoute, findRouteByCode } from "../stores/route.store";
 import { publicProcedure, router } from "../trpc";
 import { isObjectID, validateCode } from "../validation";
 
@@ -53,6 +59,7 @@ export const pricesRouter = router({
           .array(
             z.object({
               route: z.string().optional(),
+              port: z.string().optional(),
               tracking: z.number().default(0),
               buruh: z.number().default(0),
               thcOPT: z.number().default(0),
@@ -69,7 +76,25 @@ export const pricesRouter = router({
     .query<{
       defaultValue?: PriceVendorForm;
       value?: DeepPartial<PriceVendorForm>;
+      vendors: { label: string; value: string }[];
+      routes: { label: string; value: string }[];
+      ports: { label: string; value: string }[];
     }>(async ({ input }) => {
+      const vendors = (await findAllVendor()).map((vendor) => ({
+        label: `${vendor.code} (${vendor.name})`,
+        value: vendor.code,
+      }));
+
+      let routes = (await findAllRoute()).map((route) => ({
+        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
+        value: route.code,
+      }));
+
+      let ports = (await findAllPort()).map((port) => ({
+        label: `${port.code} (${port.name})`,
+        value: port.code,
+      }));
+
       const value: DeepPartial<PriceVendorForm> = {
         createDate: new Date(),
       };
@@ -85,8 +110,8 @@ export const pricesRouter = router({
         const vendor = await findVendorByCode(input.vendor);
 
         value.vendorAddress = vendor.address;
+        value.vendorProvince = vendor.province;
         value.vendorCity = vendor.city;
-        value.vendorProvince = vendor.address;
       }
 
       if (!!input.details) {
@@ -113,7 +138,7 @@ export const pricesRouter = router({
         );
       }
 
-      return { value, defaultValue };
+      return { value, defaultValue, vendors, routes, ports };
     }),
 
   getFormShipping: publicProcedure
@@ -145,7 +170,25 @@ export const pricesRouter = router({
     .query<{
       defaultValue?: PriceShippingForm;
       value?: DeepPartial<PriceShippingForm>;
+      shippings: { label: string; value: string }[];
+      routes: { label: string; value: string }[];
+      ports: { label: string; value: string }[];
     }>(async ({ input }) => {
+      const shippings = (await findAllShipping()).map((shipping) => ({
+        label: `${shipping.code} (${shipping.name})`,
+        value: shipping.code,
+      }));
+
+      let routes = (await findAllRoute()).map((route) => ({
+        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
+        value: route.code,
+      }));
+
+      let ports = (await findAllPort()).map((port) => ({
+        label: `${port.code} (${port.name})`,
+        value: port.code,
+      }));
+
       const value: DeepPartial<PriceShippingForm> = {
         createDate: new Date(),
       };
@@ -162,7 +205,7 @@ export const pricesRouter = router({
 
         value.shippingAddress = shipping.address;
         value.shippingCity = shipping.city;
-        value.shippingProvince = shipping.address;
+        value.shippingProvince = shipping.province;
       }
 
       if (!!input.details) {
@@ -193,7 +236,7 @@ export const pricesRouter = router({
         );
       }
 
-      return { value, defaultValue };
+      return { value, defaultValue, shippings, routes, ports };
     }),
 
   saveVendor: publicProcedure

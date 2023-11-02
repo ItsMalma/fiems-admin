@@ -1,10 +1,12 @@
-import { Form, FormCounter, FormDate, FormSelect } from "@/components/Forms";
+import { Form, FormDate, FormMoney, FormSelect } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
+import { setValues } from "@/libs/functions";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
-import { UangJalanForm } from "@/server/dtos/uangJalan.dto";
+import { UangJalanForm, uangJalanInput } from "@/server/dtos/uangJalan.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -26,42 +28,51 @@ export default function UangJalanSavePage() {
   const router = useRouter();
 
   // Ambil id uang jalan dari query
-  const queryId = useQuery("id");
+  const queryID = useQuery("id");
 
   const methods = useForm<UangJalanForm>({
     defaultValues: UangJalanForm.initial,
+    resolver: zodResolver(uangJalanInput),
   });
-  const { reset } = methods;
+  const { setValue, reset } = methods;
 
+  const value = methods.watch();
+
+  const [isDefault, setIsDefault] = React.useState(true);
   const formQuery = trpc.uangJalan.getForm.useQuery({
-    id: queryId,
+    ...value,
+    id: queryID,
+    isDefault,
   });
+
   React.useEffect(() => {
-    if (formQuery.data?.value && reset) {
-      reset(formQuery.data.value, {
-        keepDirtyValues: true,
-        keepErrors: true,
+    if (formQuery.data?.value && setValue) {
+      setValues(formQuery.data.value, (name, value) => {
+        setValue(name, value);
       });
     }
-  }, [formQuery.data?.value, reset]);
+  }, [formQuery.data?.value, setValue]);
+
+  React.useEffect(() => {
+    if (formQuery.data?.defaultValue && reset) {
+      reset(formQuery.data.defaultValue);
+      setIsDefault(false);
+    }
+  }, [formQuery.data?.defaultValue, reset]);
 
   const saveMutation = trpc.uangJalan.save.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync({
       ...data,
-      id: queryId,
+      id: queryID,
     });
 
     await router.push("/master_data/uang_jalan");
   });
 
   return (
-    <SaveLayout
-      onSave={onSubmit}
-      title="Input Uang Jalan"
-      isLoading={!formQuery.data?.value}
-    >
+    <SaveLayout onSave={onSubmit} title="Input Uang Jalan" isLoading={!value}>
       <Form
         methods={methods}
         tabs={[
@@ -81,7 +92,7 @@ export default function UangJalanSavePage() {
               {
                 type: "input",
                 id: "vendor",
-                label: "Customer",
+                label: "Vendor",
                 input: (
                   <FormSelect
                     name="vendor"
@@ -97,6 +108,19 @@ export default function UangJalanSavePage() {
                   <FormSelect
                     name="route"
                     options={formQuery.data?.routes ?? []}
+                    readOnly={!value.vendor}
+                  />
+                ),
+              },
+              {
+                type: "input",
+                id: "containerSize",
+                label: "Container Size",
+                input: (
+                  <FormSelect
+                    name="containerSize"
+                    options={formQuery.data?.containerSizes ?? []}
+                    readOnly={!value.route}
                   />
                 ),
               },
@@ -113,53 +137,39 @@ export default function UangJalanSavePage() {
               },
               {
                 type: "input",
-                id: "containerSize",
-                label: "Silinder",
-                input: (
-                  <FormSelect
-                    name="containerSize"
-                    options={UangJalanForm.containerSizeOptions}
-                  />
-                ),
-              },
-              {
-                type: "input",
                 id: "bbm",
                 label: "BBM",
-                input: <FormCounter name="bbm" />,
+                input: <FormMoney name="bbm" />,
               },
               {
                 type: "input",
                 id: "toll",
                 label: "Toll",
-                input: <FormCounter name="toll" />,
+                input: <FormMoney name="toll" />,
               },
               {
                 type: "input",
                 id: "labourCost",
                 label: "Biaya Buruh",
-                input: <FormCounter name="labourCost" />,
+                input: <FormMoney name="labourCost" />,
               },
               {
                 type: "input",
                 id: "meal",
                 label: "Meal",
-                input: <FormCounter name="meal" />,
+                input: <FormMoney name="meal" />,
               },
               {
                 type: "input",
                 id: "etc",
                 label: "Etc.",
-                input: <FormCounter name="etc" />,
-              },
-              {
-                type: "blank",
+                input: <FormMoney name="etc" />,
               },
               {
                 type: "input",
                 id: "total",
-                label: "Total Uang Jalan",
-                input: <FormCounter name="total" readOnly />,
+                label: "Total",
+                input: <FormMoney name="total" readOnly />,
               },
             ],
           },

@@ -1,10 +1,14 @@
 import { Button, Modal, Search, Table } from "@/components/Elements";
 import { Form, FormCode, FormDate, FormText } from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
-import { CustomerGroupForm } from "@/server/dtos/customerGroup.dto";
+import {
+  CustomerGroupForm,
+  customerGroupInput,
+} from "@/server/dtos/customerGroup.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import {
   FileEarmarkArrowDownFill,
@@ -20,6 +24,7 @@ function Save({ code }: { code?: string }) {
 
   const methods = useForm<CustomerGroupForm>({
     values: CustomerGroupForm.initial,
+    resolver: zodResolver(customerGroupInput),
   });
   const { reset } = methods;
 

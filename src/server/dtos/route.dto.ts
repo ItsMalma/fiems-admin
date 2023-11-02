@@ -7,9 +7,6 @@ import { refineDateRange, validateDate, validateText } from "../validation";
 
 export const routeInput = z
   .object({
-    containerSize: validateText(),
-    containerType: validateText(),
-    serviceType: validateText(),
     province: validateText(),
     city: validateText(),
     startDescription: validateText(),
@@ -35,23 +32,16 @@ export class RouteTableRow {
     public province: string,
     public city: string,
     public description: string,
-    public containerSize: string,
-    public containerType: string,
-    public serviceType: string,
     public status: boolean
   ) {}
 
   static fromModel(model: Route): RouteTableRow {
-
     return new RouteTableRow(
       moment(model.createDate).toString(),
       model.code,
       model.province,
       model.city,
       `${model.startDescription} - ${model.endDescription}`,
-      model.containerSize,
-      model.containerType,
-      model.serviceType,
       moment(new Date()).isBetween(
         model.effectiveStartDate,
         model.effectiveEndDate,
@@ -66,9 +56,6 @@ export class RouteForm {
   constructor(
     public createDate: string | Date,
     public code: string,
-    public containerSize: string,
-    public containerType: string,
-    public serviceType: string,
     public province: string,
     public city: string,
     public startDescription: string,
@@ -81,9 +68,6 @@ export class RouteForm {
     return new RouteForm(
       model.createDate,
       model.code,
-      model.containerSize,
-      model.containerType,
-      model.serviceType,
       model.province,
       model.city,
       model.startDescription,
@@ -96,9 +80,6 @@ export class RouteForm {
   static readonly initial: RouteForm = new RouteForm(
     new Date(),
     createRouteCode(1),
-    "",
-    "",
-    "",
     "",
     "",
     "",

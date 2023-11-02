@@ -14,10 +14,11 @@ import {
   FormText,
 } from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
-import { RouteForm } from "@/server/dtos/route.dto";
+import { RouteForm, routeInput } from "@/server/dtos/route.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import {
   FileEarmarkArrowDownFill,
@@ -31,6 +32,7 @@ export function Save({ code }: { code?: string }) {
 
   const methods = useForm<RouteForm>({
     defaultValues: RouteForm.initial,
+    resolver: zodResolver(routeInput),
   });
   const { reset, setValue } = methods;
 
@@ -88,42 +90,6 @@ export function Save({ code }: { code?: string }) {
           },
           {
             type: "separator",
-          },
-          {
-            type: "input",
-            id: "containerSize",
-            label: "Container Size",
-            input: (
-              <FormSelect
-                name="containerSize"
-                options={RouteForm.containerSizeOptions}
-              />
-            ),
-          },
-          {
-            type: "input",
-            id: "containerType",
-            label: "Container Type",
-            input: (
-              <FormSelect
-                name="containerType"
-                options={RouteForm.containerTypeOptions}
-              />
-            ),
-          },
-          {
-            type: "input",
-            id: "serviceType",
-            label: "Service Type",
-            input: (
-              <FormSelect
-                name="serviceType"
-                options={RouteForm.serviceTypeOptions}
-              />
-            ),
-          },
-          {
-            type: "blank",
           },
           {
             type: "input",
@@ -291,16 +257,6 @@ export default function MasterRoute() {
             header: "Route Description",
             type: "text",
             isSortable: true,
-          },
-          {
-            id: "serviceType",
-            header: "Service Type",
-            type: "text",
-          },
-          {
-            id: "containerType",
-            header: "Container Type",
-            type: "text",
           },
           {
             id: "status",

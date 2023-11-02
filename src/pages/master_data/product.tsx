@@ -7,10 +7,11 @@ import {
   FormText,
 } from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
-import { ProductForm } from "@/server/dtos/product.dto";
+import { ProductForm, productInput } from "@/server/dtos/product.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import {
   BookFill,
@@ -24,6 +25,7 @@ export function Save({ skuCode }: { skuCode?: string }) {
 
   const methods = useForm<ProductForm>({
     defaultValues: ProductForm.initial,
+    resolver: zodResolver(productInput),
   });
   const { reset } = methods;
 

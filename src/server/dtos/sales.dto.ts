@@ -1,23 +1,26 @@
+import { SelectOption } from "@/components/Elements";
 import { Sales } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
-import { validateDate, validateEmail, validatePhone, validateSelect, validateText } from "../validation";
-import { SelectOption } from "@/components/Elements";
+import {
+  validateEmail,
+  validatePhone,
+  validateSelect,
+  validateText,
+} from "../validation";
 
 export const jobPositions = ["Direktur", "Marketing"] as const;
-export type JobPosition = (typeof jobPositions)[number];
 
-export const salesInput = z
-  .object({
-    name: validateText(),
-    jobPosition: validateSelect(jobPositions),
-    nik: validateText(),
-    area: validateText(),
-    phoneNumber: validatePhone("mobile"),
-    telephone: validatePhone("telephone"),
-    fax: validatePhone("fax"),
-    email: validateEmail(),
-  })
+export const salesInput = z.object({
+  name: validateText(),
+  jobPosition: validateSelect(jobPositions),
+  nik: validateText(),
+  area: validateText(),
+  phoneNumber: validatePhone("mobile"),
+  telephone: validatePhone("telephone"),
+  fax: validatePhone("fax"),
+  email: validateEmail(),
+});
 export type SalesInput = z.infer<typeof salesInput>;
 
 export const createSalesCode = (codeNumber: number): string => {
@@ -55,7 +58,7 @@ export class SalesTableRow {
       model.telephone,
       model.fax,
       model.email,
-      model.status,
+      model.status
     );
   }
 }
@@ -71,7 +74,7 @@ export class SalesForm {
     public phoneNumber: string,
     public telephone: string,
     public fax: string,
-    public email: string,
+    public email: string
   ) {}
 
   static fromModel(model: Sales): SalesForm {
@@ -99,7 +102,7 @@ export class SalesForm {
     "",
     "",
     "",
-    "",
+    ""
   );
 
   static readonly typeOptions: SelectOption[] = [
@@ -107,4 +110,3 @@ export class SalesForm {
     { label: "Direktur", value: "Direktur" },
   ];
 }
-

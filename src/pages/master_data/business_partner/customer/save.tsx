@@ -11,9 +11,14 @@ import {
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
-import { CustomerForm, CustomerType } from "@/server/dtos/customer.dto";
+import {
+  CustomerForm,
+  CustomerType,
+  customerInput,
+} from "@/server/dtos/customer.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -39,6 +44,7 @@ export default function CustomerSavePage() {
 
   const methods = useForm<CustomerForm>({
     defaultValues: CustomerForm.initial(queryType),
+    resolver: zodResolver(customerInput),
   });
   const { reset, setValue } = methods;
 
@@ -198,9 +204,10 @@ export default function CustomerSavePage() {
                 id: "currency",
                 label: "Currency",
                 input: (
-                  <FormText
-                    name="currency"/>
-                  // di ubah menjadi form text sementara untuk mengecek
+                  <FormSelect
+                    name="currency"
+                    options={formQuery.data?.currencies ?? []}
+                  />
                 ),
               },
             ],

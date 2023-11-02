@@ -1,5 +1,5 @@
 import { router } from "../trpc";
-import { coaRouter } from "./coa.router";
+import { coasRouter } from "./coas.router";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
 import { portsRouter } from "./ports.router";
@@ -24,7 +24,7 @@ export const appRouter = router({
   prices: pricesRouter,
   productCategories: productCategoriesRouter,
   products: productsRouter,
-  coa: coaRouter,
+  coas: coasRouter,
 });
 
 export type AppRouter = typeof appRouter;

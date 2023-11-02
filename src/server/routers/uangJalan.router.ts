@@ -1,11 +1,11 @@
+import { DeepPartial } from "react-hook-form";
 import { z } from "zod";
 import {
   UangJalanForm,
   UangJalanTableRow,
   uangJalanInput,
 } from "../dtos/uangJalan.dto";
-import { findAllVendor } from "../stores/customer.store";
-import { findAllRoute } from "../stores/route.store";
+import { findAllPriceVendorDetails } from "../stores/price.store";
 import {
   createUangJalan,
   deleteUangJalan,
@@ -26,29 +26,80 @@ export const uangJalanRouter = router({
     .input(
       z.object({
         id: z.string().optional(),
+        vendor: z.string().optional(),
+        route: z.string().optional(),
+        bbm: z.number().default(0),
+        toll: z.number().default(0),
+        labourCost: z.number().default(0),
+        meal: z.number().default(0),
+        etc: z.number().default(0),
+        isDefault: z.boolean().default(false),
       })
     )
     .query<{
-      value: UangJalanForm;
+      value: DeepPartial<UangJalanForm>;
+      defaultValue?: UangJalanForm;
       vendors: { label: string; value: string }[];
       routes: { label: string; value: string }[];
+      containerSizes: { label: string; value: string }[];
     }>(async ({ input }) => {
-      const vendors = (await findAllVendor()).map((vendor) => ({
-        label: `${vendor.code} (${vendor.name})`,
-        value: vendor.code,
-      }));
+      const vendors: { label: string; value: string }[] = [];
+      const routes: { label: string; value: string }[] = [];
+      const containerSizes: { label: string; value: string }[] = [];
 
-      const routes = (await findAllRoute()).map((route) => ({
-        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
-        value: route.code,
-      }));
+      const priceVendorDetails = await findAllPriceVendorDetails();
+      for (const priceVendorDetail of priceVendorDetails) {
+        if (
+          !vendors.find(
+            (vendor) =>
+              vendor.value === priceVendorDetail.priceVendor.vendor.code
+          )
+        ) {
+          vendors.push({
+            label: `${priceVendorDetail.priceVendor.vendor.code} (${priceVendorDetail.priceVendor.vendor.name})`,
+            value: priceVendorDetail.priceVendor.vendor.code,
+          });
+        }
 
-      let value = UangJalanForm.initial;
-      if (input.id) {
-        value = UangJalanForm.fromModel(await findUangJalanById(input.id));
+        if (
+          !!input.vendor &&
+          priceVendorDetail.priceVendor.vendor.code === input.vendor &&
+          !routes.find((route) => route.value === priceVendorDetail.route.code)
+        ) {
+          routes.push({
+            label: `${priceVendorDetail.route.code} (${priceVendorDetail.route.startDescription} - ${priceVendorDetail.route.endDescription})`,
+            value: priceVendorDetail.route.code,
+          });
+
+          if (
+            !!input.route &&
+            priceVendorDetail.route.code === input.route &&
+            !containerSizes.find(
+              (containerSize) =>
+                containerSize.value === priceVendorDetail.containerSize
+            )
+          ) {
+            containerSizes.push({
+              label: priceVendorDetail.containerSize,
+              value: priceVendorDetail.containerSize,
+            });
+          }
+        }
       }
 
-      return { value, vendors, routes };
+      const value: DeepPartial<UangJalanForm> = {};
+
+      let defaultValue: UangJalanForm | undefined = undefined;
+      if (!!input.id && input.isDefault) {
+        defaultValue = UangJalanForm.fromModel(
+          await findUangJalanById(input.id)
+        );
+      }
+
+      value.total =
+        input.bbm + input.toll + input.labourCost + input.meal + input.etc;
+
+      return { value, defaultValue, vendors, routes, containerSizes };
     }),
 
   save: publicProcedure

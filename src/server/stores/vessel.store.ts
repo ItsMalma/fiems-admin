@@ -1,22 +1,20 @@
 import { Vessel } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import {
-  VesselInput,
-} from "../dtos/vessel.dto";
+import { VesselInput } from "../dtos/vessel.dto";
 import prisma from "../prisma";
 
 export async function findAllVessel() {
   return await prisma.vessel.findMany({
     include: {
-        shipping: true,
-    }
+      shipping: true,
+    },
   });
 }
 
 export async function findVesselById(id: string) {
-  const vessel = await prisma.vessel.findFirst({ 
-    where: { id }, 
-    include: { shipping: true }
+  const vessel = await prisma.vessel.findFirst({
+    where: { id },
+    include: { shipping: true },
   });
   if (!vessel) {
     throw new TRPCError({
@@ -28,23 +26,20 @@ export async function findVesselById(id: string) {
   return vessel;
 }
 
-export async function createVessel(
-  input: VesselInput
-): Promise<Vessel> {
-
-	if (input.shipping === undefined) {
-		throw new TRPCError({
-			code: "BAD_REQUEST",
-			message: "Invalid vendor code",
-		});
-	}
+export async function createVessel(input: VesselInput): Promise<Vessel> {
+  if (input.shipping === undefined) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Invalid vendor code",
+    });
+  }
   return await prisma.vessel.create({
     data: {
       shipping: { connect: { code: input.shipping } },
       name: input.name,
       capacity: input.capacity,
       unit: input.unit,
-      status: false
+      status: true,
     },
   });
 }
@@ -58,9 +53,9 @@ export async function updateVessel(
       id,
     },
     data: {
-        name: input.name,
-        capacity: input.capacity,
-        unit: input.unit
+      name: input.name,
+      capacity: input.capacity,
+      unit: input.unit,
     },
   });
 }

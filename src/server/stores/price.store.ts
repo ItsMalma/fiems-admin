@@ -68,12 +68,41 @@ export async function findPriceShippingByID(id: string) {
 export async function createPriceVendor(
   input: PriceVendorInput
 ): Promise<PriceVendor> {
+  for (let detailIndex = 0; detailIndex < input.details.length; detailIndex++) {
+    const detail = input.details[detailIndex];
+
+    if (
+      (await prisma.priceVendor.count({
+        where: {
+          vendor: { code: input.vendor },
+          details: {
+            some: {
+              route: { code: detail.route },
+              port: { code: detail.port },
+              containerSize: detail.containerSize,
+            },
+          },
+        },
+      })) !== 0 ||
+      input.details.find(
+        (findDetail, findDetailIndex) =>
+          findDetailIndex !== detailIndex &&
+          findDetail.route === detail.route &&
+          findDetail.port === detail.port &&
+          findDetail.containerSize === detail.containerSize
+      )
+    ) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "There must be no prices with the same vendor, route, port and container size all together.",
+      });
+    }
+  }
+
   return await prisma.priceVendor.create({
     data: {
       vendor: { connect: { code: input.vendor } },
-      containerSize: input.containerSize,
-      containerType: input.containerType,
-      serviceType: input.serviceType,
       effectiveStartDate: input.effectiveStartDate,
       effectiveEndDate: input.effectiveEndDate,
       details: {
@@ -100,12 +129,41 @@ export async function createPriceVendor(
 export async function createPriceShipping(
   input: PriceShippingInput
 ): Promise<PriceShipping> {
+  for (let detailIndex = 0; detailIndex < input.details.length; detailIndex++) {
+    const detail = input.details[detailIndex];
+
+    if (
+      (await prisma.priceShipping.count({
+        where: {
+          shipping: { code: input.shipping },
+          details: {
+            some: {
+              route: { code: detail.route },
+              port: { code: detail.port },
+              containerSize: detail.containerSize,
+            },
+          },
+        },
+      })) !== 0 ||
+      input.details.find(
+        (findDetail, findDetailIndex) =>
+          findDetailIndex !== detailIndex &&
+          findDetail.route === detail.route &&
+          findDetail.port === detail.port &&
+          findDetail.containerSize === detail.containerSize
+      )
+    ) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "There must be no prices with the same shipping, route, port and container size all together.",
+      });
+    }
+  }
+
   return await prisma.priceShipping.create({
     data: {
       shipping: { connect: { code: input.shipping } },
-      containerSize: input.containerSize,
-      containerType: input.containerType,
-      serviceType: input.serviceType,
       effectiveStartDate: moment(input.effectiveStartDate).toDate(),
       effectiveEndDate: moment(input.effectiveEndDate).toDate(),
       details: {
@@ -193,15 +251,41 @@ export async function updatePriceVendor(
       }
     }
 
+    for (
+      let detailIndex = 0;
+      detailIndex < input.details.length;
+      detailIndex++
+    ) {
+      const detail = input.details[detailIndex];
+
+      if (
+        await prisma.priceVendor.count({
+          where: {
+            vendor: { code: input.vendor },
+            details: {
+              some: {
+                route: { code: detail.route },
+                port: { code: detail.port },
+                containerSize: detail.containerSize,
+              },
+            },
+          },
+        })
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "There must be no prices with the same vendor, route, port and container size all together.",
+        });
+      }
+    }
+
     return await tx.priceVendor.update({
       where: {
         id,
       },
       data: {
         vendor: { connect: { code: input.vendor } },
-        containerSize: input.containerSize,
-        containerType: input.containerType,
-        serviceType: input.serviceType,
         effectiveStartDate: moment(input.effectiveStartDate).toDate(),
         effectiveEndDate: moment(input.effectiveEndDate).toDate(),
         details: {},
@@ -280,15 +364,41 @@ export async function updatePriceShipping(
       }
     }
 
+    for (
+      let detailIndex = 0;
+      detailIndex < input.details.length;
+      detailIndex++
+    ) {
+      const detail = input.details[detailIndex];
+
+      if (
+        (await prisma.priceShipping.count({
+          where: {
+            shipping: { code: input.shipping },
+            details: {
+              some: {
+                route: { code: detail.route },
+                port: { code: detail.port },
+                containerSize: detail.containerSize,
+              },
+            },
+          },
+        })) !== 0
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "There must be no prices with the same shipping, route, port and container size all together.",
+        });
+      }
+    }
+
     return await tx.priceShipping.update({
       where: {
         id,
       },
       data: {
         shipping: { connect: { code: input.shipping } },
-        containerSize: input.containerSize,
-        containerType: input.containerType,
-        serviceType: input.serviceType,
         effectiveStartDate: moment(input.effectiveStartDate).toDate(),
         effectiveEndDate: moment(input.effectiveEndDate).toDate(),
         details: {},

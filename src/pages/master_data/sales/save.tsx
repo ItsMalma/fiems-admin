@@ -2,9 +2,11 @@ import { Form, FormCode, FormDate, FormSelect } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
-import { SalesForm } from "@/server/dtos/sales.dto";
+import { SalesForm, salesInput } from "@/server/dtos/sales.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SalesJobPosition } from "@prisma/client";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -29,6 +31,7 @@ export default function SalesSave() {
 
   const methods = useForm<SalesForm>({
     defaultValues: SalesForm.initial,
+    resolver: zodResolver(salesInput),
   });
   const { reset } = methods;
 
@@ -49,6 +52,7 @@ export default function SalesSave() {
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync({
       ...data,
+      jobPosition: data.jobPosition as SalesJobPosition,
       code: queryCode,
     });
 

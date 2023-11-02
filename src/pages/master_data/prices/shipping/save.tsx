@@ -10,9 +10,12 @@ import { filterValidObject, setValues } from "@/libs/functions";
 import { useQuery } from "@/libs/hooks";
 import { ContainerSizes, ContainerTypes, ServiceTypes } from "@/libs/options";
 import { trpc } from "@/libs/trpc";
-import { PriceShippingForm } from "@/server/dtos/price.dto";
+import { PriceShippingForm, priceShippingInput } from "@/server/dtos/price.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import useToast from "@/stores/toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -27,8 +30,10 @@ export default function SavePriceShippingPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Shipping");
-    setActive(1, 6, 2);
+    setActive(1, 6, 1);
   }, [setTitle, setActive]);
+
+  const { addToasts } = useToast();
 
   // Mendapatkan router
   const router = useRouter();
@@ -37,6 +42,7 @@ export default function SavePriceShippingPage() {
 
   const methods = useForm<PriceShippingForm>({
     defaultValues: PriceShippingForm.initial(),
+    resolver: zodResolver(priceShippingInput),
   });
   const { reset, setValue } = methods;
   const value = methods.watch();
@@ -48,10 +54,6 @@ export default function SavePriceShippingPage() {
     details: filterValidObject(value.details),
     isDefault,
   });
-
-  const shippingOptionsQuery = trpc.customers.getOptions.useQuery("Shipping");
-  const routeOptionsQuery = trpc.routes.getOptions.useQuery();
-  const portOptionsQuery = trpc.ports.getOptions.useQuery();
 
   React.useEffect(() => {
     if (formQuery.data?.value && setValue) {
@@ -71,12 +73,19 @@ export default function SavePriceShippingPage() {
   const saveMutation = trpc.prices.saveShipping.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    await saveMutation.mutateAsync({
-      ...data,
-      id: queryID,
-    });
-
-    await router.push("/master_data/prices/shipping");
+    await saveMutation
+      .mutateAsync({
+        ...data,
+        id: queryID,
+      })
+      .then(async () => {
+        await router.push("/master_data/prices/shipping");
+      })
+      .catch((err) => {
+        if (err instanceof TRPCClientError) {
+          addToasts({ type: "error", message: err.message });
+        }
+      });
   });
 
   return (
@@ -120,7 +129,7 @@ export default function SavePriceShippingPage() {
                 input: (
                   <FormSelect
                     name="shipping"
-                    options={shippingOptionsQuery.data ?? []}
+                    options={formQuery.data?.shippings ?? []}
                   />
                 ),
               },
@@ -148,28 +157,6 @@ export default function SavePriceShippingPage() {
                 label: "Shipping City",
                 input: <FormText name="shippingCity" readOnly />,
               },
-              {
-                type: "input",
-                id: "containerSize",
-                label: "Container Size",
-                input: (
-                  <FormSelect name="containerSize" options={ContainerSizes} />
-                ),
-              },
-              {
-                type: "input",
-                id: "containerType",
-                label: "Container Type",
-                input: (
-                  <FormSelect name="containerType" options={ContainerTypes} />
-                ),
-              },
-              {
-                type: "input",
-                id: "serviceType",
-                label: "Service Type",
-                input: <FormSelect name="serviceType" options={ServiceTypes} />,
-              },
             ],
           },
           {
@@ -183,7 +170,7 @@ export default function SavePriceShippingPage() {
                 input: (
                   <FormSelect
                     name="route"
-                    options={routeOptionsQuery.data ?? []}
+                    options={formQuery.data?.routes ?? []}
                   />
                 ),
               },
@@ -225,7 +212,7 @@ export default function SavePriceShippingPage() {
                 input: (
                   <FormSelect
                     name="port"
-                    options={portOptionsQuery.data ?? []}
+                    options={formQuery.data?.ports ?? []}
                   />
                 ),
               },

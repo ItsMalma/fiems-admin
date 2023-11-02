@@ -1,4 +1,4 @@
-import { InputText } from "@/components/Elements";
+import { InputMoney } from "@/components/Elements";
 import { ControlPrefix } from "@/components/Forms/prefix.context";
 import clsx from "clsx";
 import React from "react";
@@ -19,7 +19,7 @@ export function FormMoney(props: FormMoneyProps) {
   });
 
   return (
-    <InputText
+    <InputMoney
       id={props.id ?? field.name}
       name={field.name}
       value={field.value}
@@ -31,7 +31,6 @@ export function FormMoney(props: FormMoneyProps) {
         }
         field.onChange(valueAsNumber);
       }}
-      onBlur={field.onBlur}
       isError={!!fieldState.error}
       readOnly={props.readOnly}
       className={clsx("basis-2/3", props.className)}

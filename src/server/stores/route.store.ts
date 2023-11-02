@@ -11,6 +11,16 @@ export async function findAllRoute() {
   return await prisma.route.findMany();
 }
 
+export async function findAllRouteFromPriceVendor(vendorCode: string) {
+  return await prisma.route.findMany({
+    where: {
+      priceVendorDetails: {
+        some: { priceVendor: { vendor: { code: vendorCode } } },
+      },
+    },
+  });
+}
+
 export async function findRouteByCode(code: string) {
   const route = await prisma.route.findFirst({ where: { code } });
   if (!route) {
@@ -44,9 +54,6 @@ export async function createRoute(
   return await prisma.route.create({
     data: {
       code: code,
-      containerSize: input.containerSize,
-      containerType: input.containerType,
-      serviceType: input.serviceType,
       province: input.province,
       city: input.city,
       startDescription: input.startDescription,
@@ -66,9 +73,6 @@ export async function updateRoute(
       code,
     },
     data: {
-      containerSize: input.containerSize,
-      containerType: input.containerType,
-      serviceType: input.serviceType,
       province: input.province,
       city: input.city,
       startDescription: input.startDescription,

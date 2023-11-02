@@ -1,6 +1,12 @@
-import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
+import {
+  Button,
+  Label,
+  Modal,
+  Search,
+  Select,
+  Table,
+} from "@/components/Elements";
 import { trpc } from "@/libs/trpc";
-import { AccountType } from "@/server/dtos/coa.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
@@ -46,12 +52,12 @@ export default function MasterAccountCOA() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.coa.getTableRows.useQuery();
+  const tableRowsQuery = trpc.coas.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.coa.delete.useMutation();
+  const deleteMutation = trpc.coas.delete.useMutation();
 
   return (
     <>
@@ -82,31 +88,31 @@ export default function MasterAccountCOA() {
         isSelectable
         columns={[
           {
-            id: "description",
+            id: "mainCOA",
             header: "Main COA",
             type: "text",
             isSortable: true,
           },
           {
-            id: "coa1Description",
-            header: "Sub COA1",
+            id: "sub1COA",
+            header: "Sub 1 COA",
             type: "text",
             isSortable: true,
           },
           {
-            id: "coa2description",
-            header: "Sub COA2",
+            id: "sub2COA",
+            header: "Sub 2 COA",
             type: "text",
             isSortable: true,
           },
           {
-            id: "number",
+            id: "accountNumber",
             header: "Account Number",
             type: "code",
             isSortable: true,
           },
           {
-            id: "type",
+            id: "accountType",
             header: "Account Type",
             type: "text",
             isSortable: true,
@@ -129,6 +135,11 @@ export default function MasterAccountCOA() {
             type: "text",
             isSortable: true,
           },
+          {
+            id: "status",
+            header: "Status",
+            type: "status",
+          },
         ]}
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
@@ -143,9 +154,9 @@ export default function MasterAccountCOA() {
 
           const coa = tableRowsQuery.data[selectedRowIndex];
 
-          // Redirect ke halaman save customer
+          // Redirect ke halaman save coa
           router.push(
-            `/master_data/business_partner/account_coa/save?number=${coa.number}&type=${coa.accountType}`
+            `/master_data/account_coa/save?number=${coa.accountNumber}`
           );
         }}
         onDelete={async () => {
@@ -161,11 +172,10 @@ export default function MasterAccountCOA() {
 
           // Hapus coa yang dipilih di table
           await deleteMutation.mutateAsync({
-            type: coa.accountType as AccountType,
-            number: coa.number,
+            number: coa.accountNumber,
           });
 
-          // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          // Karena coa yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
           // Tutup modal

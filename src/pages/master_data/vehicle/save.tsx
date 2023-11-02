@@ -1,10 +1,17 @@
-import { Form, FormDate, FormSelect, FormText } from "@/components/Forms";
+import {
+  Form,
+  FormCounter,
+  FormDate,
+  FormSelect,
+  FormText,
+} from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
-import { VehicleForm } from "@/server/dtos/vehicle.dto";
+import { VehicleForm, vehicleInput } from "@/server/dtos/vehicle.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -29,6 +36,7 @@ export default function VehicleSavePage() {
 
   const methods = useForm<VehicleForm>({
     defaultValues: VehicleForm.initial,
+    resolver: zodResolver(vehicleInput),
   });
   const { reset } = methods;
 
@@ -137,7 +145,7 @@ export default function VehicleSavePage() {
                 type: "input",
                 id: "cylinder",
                 label: "Silinder",
-                input: <FormText name="cylinder" />,
+                input: <FormCounter name="cylinder" min={0} />,
               },
               {
                 type: "input",

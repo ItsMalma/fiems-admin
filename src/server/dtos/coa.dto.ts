@@ -1,222 +1,222 @@
-import { Coa, Coa1, Prisma } from "@prisma/client";
-import moment from "moment";
-import { z } from "zod";
-import { validateCode, validateSelect, validateText } from "../validation";
 import { SelectOption } from "@/components/Elements";
+import { MainCOA, Prisma } from "@prisma/client";
+import { z } from "zod";
+import { validateCode, validateText } from "../validation";
 
-export const accountTypes = ["Main Coa", "Sub Coa 1", "Sub Coa 2"] as const;
+export const accountTypes = ["Main", "Sub 1", "Sub 2"] as const;
 export type AccountType = (typeof accountTypes)[number];
 
-export const coaInput = z
-  .object({
-    accountType: validateSelect(accountTypes),
-    description: validateText(),
-    type: validateText(),
-    category: validateText(),
-    transaction: validateText(),
-    currency: validateText(),
+export const mainCOAInput = z.object({
+  accountName: validateText(),
+  accountType: validateText(),
+  category: validateText(),
+  transaction: validateText(),
+  currency: validateText(),
+});
+export type MainCOAInput = z.infer<typeof mainCOAInput>;
 
-    mainCoa: validateCode(
-      (value) => !isNaN(extractCoaCode(value))
-    ).optional(),
-    subCoa1: validateCode(
-      (value) => !isNaN(extractCoaCode(value))
-    ).optional(),
-    subCoa2: validateCode(
-      (value) => !isNaN(extractCoaCode(value))
-    ).optional(),
-  })
-export type CoaInput = z.infer<typeof coaInput>;
+export const sub1COAInput = z.object({
+  main: validateCode((code) => !isNaN(Number(code))).transform((value) =>
+    Number(value)
+  ),
+  sub1Description: validateText(),
+});
+export type Sub1COAInput = z.infer<typeof sub1COAInput>;
 
-export const createCoaCode = (codeNumber: number): string => {
-  return codeNumber.toString().padStart(2, "0");
-};
+export const sub2COAInput = z.object({
+  main: validateCode((code) => !isNaN(Number(code))).transform((value) =>
+    Number(value)
+  ),
+  sub1: validateCode((code) => !isNaN(Number(code))).transform((value) =>
+    Number(value)
+  ),
+  sub2Description: validateText(),
+});
+export type Sub2COAInput = z.infer<typeof sub2COAInput>;
 
-export const extractCoaCode = (number: string): number => {
-  return Number(number);
-};
+export function extractCOANumber(coaNumber: string): {
+  main: number;
+  sub1?: number;
+  sub2?: number;
+} {
+  const splittedCOANumber = coaNumber.split(".");
+  return {
+    main: Number(splittedCOANumber[0]),
+    sub1:
+      splittedCOANumber.length >= 2 ? Number(splittedCOANumber[1]) : undefined,
+    sub2:
+      splittedCOANumber.length >= 3 ? Number(splittedCOANumber[2]) : undefined,
+  };
+}
 
-export class CoaTableRow {
+export class COATableRow {
   constructor(
-    public accountType: AccountType,
-    public description: string,
-    public subCoa1: string,
-    public subCoa2: string,
-    public number: string,
-    public type: string,
+    public mainCOA: string,
+    public sub1COA: string,
+    public sub2COA: string,
+    public accountNumber: string,
+    public accountType: string,
     public category: string,
     public transaction: string,
     public currency: string,
     public status: boolean
   ) {}
 
-  static fromMainCoaModel(model: Coa): CoaTableRow {
-    return new CoaTableRow(
-      "Main Coa",
-      model.description,
-      "",
-      "",
-      model.number,
-      model.type,
-      model.category,
-      model.transaction,
-      model.currency,
-      model.status,
-    );
+  static fromMainModel(model: MainCOA): COATableRow[] {
+    return [
+      new COATableRow(
+        model.accountName,
+        "",
+        "",
+        model.number.toString(),
+        model.accountType,
+        model.category,
+        model.transaction,
+        model.currency,
+        model.status
+      ),
+      ...model.subs.flatMap((sub1, sub1Index) => {
+        return [
+          new COATableRow(
+            model.accountName,
+            sub1.description,
+            "",
+            `${model.number}.${sub1Index + 1}`,
+            model.accountType,
+            model.category,
+            model.transaction,
+            model.currency,
+            sub1.status
+          ),
+          ...sub1.subs.flatMap(
+            (sub2, sub2Index) =>
+              new COATableRow(
+                model.accountName,
+                sub1.description,
+                sub2.description,
+                `${model.number}.${sub1Index + 1}.${sub2Index + 1}`,
+                model.accountType,
+                model.category,
+                model.transaction,
+                model.currency,
+                sub2.status
+              )
+          ),
+        ];
+      }),
+    ];
   }
-  
-  static fromSubCoa1Model(model: Prisma.Coa1GetPayload<{include: { coa: true }}>): CoaTableRow {
-    return new CoaTableRow(
-      "Sub Coa 1",
-      model.coa.description,
-      model.description,
-      "",
-      model.coa.number,
-      model.coa.type,
-      model.coa.category,
-      model.coa.transaction,
-      model.coa.currency,
-      model.coa.status,
-    );
-  }
-
-  static fromSubCoa2Model(model: Prisma.Coa2GetPayload<{include: { coa1: {include: {coa: true}} }}>): CoaTableRow {
-    return new CoaTableRow(
-      "Sub Coa 2",
-      model.coa1.coa.description,
-      model.coa1.description,
-      model.description,
-      model.coa1.coa.number,
-      model.coa1.coa.type,
-      model.coa1.coa.category,
-      model.coa1.coa.transaction,
-      model.coa1.coa.currency,
-      model.coa1.coa.status,
-    );
-  }
-
 }
 
-export class CoaForm {
+export class COAForm {
   constructor(
-    public accountType: AccountType,
+    public type: AccountType,
     public createDate: string | Date,
-    public number: string,
-    public description: string,
-    public type: string,
+    public accountName: string,
+    public accountType: string,
     public category: string,
     public transaction: string,
     public currency: string,
-
-    public coa1?: string,
-    public coa1Description?: string,
-    
-    public coa2?: string,
-    public coa2Description?: string,
+    public main?: number,
+    public sub1?: number,
+    public sub1Description?: string,
+    public sub2?: number,
+    public sub2Description?: string
   ) {}
 
-  static fromMainCoaModel(model: Coa): CoaForm {
-    return new CoaForm(
-      "Main Coa",
-      model.createDate,
-      model.number,
-      model.description,
-      model.type,
-      model.category,
-      model.transaction,
-      model.currency,
-      "",
-      "",
-      "",
-      "",
+  static fromMainModel(mainModel: MainCOA): COAForm {
+    return new COAForm(
+      "Main",
+      mainModel.createDate,
+      mainModel.accountName,
+      mainModel.accountType,
+      mainModel.category,
+      mainModel.transaction,
+      mainModel.currency,
+      mainModel.number
     );
   }
 
-  static fromSubCoa1Model(model: Prisma.Coa1GetPayload<{include: { coa: true }}>): CoaForm {
-    return new CoaForm(
-      "Sub Coa 1",
-      model.coa.createDate,
-      model.coa.number,
-      model.coa.description,
-      model.coa.type,
-      model.coa.category,
-      model.coa.transaction,
-      model.coa.currency,
-      "",
-      model.description,
-      "",
-      "",
-    );
-  }
-  
-  static fromSubCoa2Model(model: Prisma.Coa2GetPayload<{include: { coa1: {include: {coa: true}} }}>): CoaForm {
-    return new CoaForm(
-      "Sub Coa 2",
-      model.coa1.coa.createDate,
-      model.coa1.coa.number,
-      model.coa1.coa.description,
-      model.coa1.coa.type,
-      model.coa1.coa.category,
-      model.coa1.coa.transaction,
-      model.coa1.coa.currency,
-
-      model.coa1.number,
-      model.coa1.description,
-
-      model.number,
-      model.description
+  static fromSub1Model(
+    sub1Model: Prisma.Sub1COAGetPayload<{}>,
+    sub1Index: number,
+    mainModel: MainCOA
+  ): COAForm {
+    return new COAForm(
+      "Sub 1",
+      mainModel.createDate,
+      mainModel.accountName,
+      mainModel.accountType,
+      mainModel.category,
+      mainModel.transaction,
+      mainModel.currency,
+      mainModel.number,
+      sub1Index + 1,
+      sub1Model.description
     );
   }
 
-  static mainCoaInitial = (type: AccountType) => ({
-    accountType: type,
-    createDate: new Date(),
-    number: createCoaCode(1),
-    description: "",
-    type: "",
-    category: "",
-    transaction: "",
-    currency: "",
-    coa1: "",
-    coa1Description: "",
-    coa2: "",
-    coa2Description: ""
-  });
+  static fromSub2Model(
+    sub2Model: Prisma.Sub2COAGetPayload<{}>,
+    sub2Index: number,
+    sub1Model: Prisma.Sub1COAGetPayload<{}>,
+    sub1Index: number,
+    mainModel: MainCOA
+  ): COAForm {
+    return new COAForm(
+      "Sub 2",
+      mainModel.createDate,
+      mainModel.accountName,
+      mainModel.accountType,
+      mainModel.category,
+      mainModel.transaction,
+      mainModel.currency,
+      mainModel.number,
+      sub1Index + 1,
+      sub1Model.description,
+      sub2Index,
+      sub2Model.description
+    );
+  }
 
-  static subCoa1Initial = (type: AccountType, coa: Coa) => ({
-    accountType: type,
-    createDate: new Date(),
-    number: "",
-    description: "",
-    type: "",
-    category: "",
-    transaction: "",
-    currency: "",
-    coa1: `${coa.number}${createCoaCode(1)}`,
-    coa1Description: "",
-    coa2: "",
-    coa2Description: ""
-  });
-
-  static subCoa2Initial = (type: AccountType, coa1: Prisma.Coa1GetPayload<{include: { coa: true }}>) => ({
-    accountType: type,
-    createDate: new Date(),
-    number: "",
-    description: "",
-    type: "",
-    category: "",
-    transaction: "",
-    currency: "",
-    coa1: "",
-    coa1Description: "",
-    coa2: `${coa1.coa.number}${coa1.number}${createCoaCode(1)}`,
-    coa2Description: ""
-  });
+  static initial = (type: AccountType) => {
+    switch (type) {
+      case "Main":
+        return new COAForm("Main", new Date(), "", "", "", "", "", 100);
+      case "Sub 1":
+        return new COAForm(
+          "Sub 1",
+          new Date(),
+          "",
+          "",
+          "",
+          "",
+          "",
+          undefined,
+          1,
+          ""
+        );
+      case "Sub 2":
+        return new COAForm(
+          "Sub 1",
+          new Date(),
+          "",
+          "",
+          "",
+          "",
+          "",
+          undefined,
+          undefined,
+          "",
+          1,
+          ""
+        );
+    }
+  };
 
   static readonly typeOptions: SelectOption[] = [
-    { label: "Main Coa", value: "Main Coa" },
-    { label: "Sub Coa 1", value: "Sub Coa 1" },
-    { label: "Sub Coa 2", value: "Sub Coa 2" },
+    { label: "Main COA", value: "Main" },
+    { label: "Sub COA 1", value: "Sub 1" },
+    { label: "Sub COA 2", value: "Sub 2" },
   ];
 }
-

@@ -1,10 +1,14 @@
 import { Button, Modal, Search, Table } from "@/components/Elements";
 import { Form, FormCode, FormDate, FormText } from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
-import { ProductCategoryForm } from "@/server/dtos/productCategory.dto";
+import {
+  ProductCategoryForm,
+  productCategoryInput,
+} from "@/server/dtos/productCategory.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import {
   BookmarkPlusFill,
@@ -18,6 +22,7 @@ export function Save({ reff }: { reff?: string }) {
 
   const methods = useForm<ProductCategoryForm>({
     defaultValues: ProductCategoryForm.initial,
+    resolver: zodResolver(productCategoryInput),
   });
   const { reset } = methods;
 

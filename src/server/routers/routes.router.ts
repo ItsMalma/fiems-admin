@@ -61,15 +61,6 @@ export const routesRouter = router({
       return { defaultValue, provinces, cities };
     }),
 
-  getOptions: publicProcedure.query<{ label: string; value: string }[]>(
-    async () => {
-      return (await findAllRoute()).map((route) => ({
-        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
-        value: route.code,
-      }));
-    }
-  ),
-
   save: publicProcedure
     .input(routeInput)
     .input(

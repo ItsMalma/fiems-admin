@@ -24,7 +24,7 @@ export default function PriceShippingPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Shipping");
-    setActive(1, 6, 2);
+    setActive(1, 6, 1);
   }, [setTitle, setActive]);
 
   // Mendapatkan router
@@ -113,67 +113,67 @@ export default function PriceShippingPage() {
           {
             id: "freight",
             header: "Freight",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "thcOPT",
             header: "THC OPT",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "thcOPP",
             header: "THC OPP",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "adminBL",
             header: "Admin BL",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "cleaning",
             header: "Cleaning",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "alihKapal",
             header: "Alih Kapal",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "materai",
             header: "Materai",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "lolo",
             header: "LOLO",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "segel",
             header: "Segel",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "rc",
             header: "RC",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {
             id: "lss",
             header: "LSS",
-            type: "text",
+            type: "money",
             isSortable: true,
           },
           {

@@ -59,15 +59,6 @@ export const portsRouter = router({
       return { defaultValue, provinces, cities };
     }),
 
-  getOptions: publicProcedure.query<{ label: string; value: string }[]>(
-    async () => {
-      return (await findAllPort()).map((port) => ({
-        label: `${port.code} (${port.name})`,
-        value: port.code,
-      }));
-    }
-  ),
-
   save: publicProcedure
     .input(portInput)
     .input(

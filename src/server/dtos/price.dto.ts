@@ -2,7 +2,6 @@ import { Prisma } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
 import {
-  isObjectID,
   validateAppend,
   validateCode,
   validateDate,
@@ -20,9 +19,6 @@ export const priceVendorInput = z.object({
   effectiveStartDate: validateDate(),
   effectiveEndDate: validateDate(),
   vendor: validateCode((code) => !isNaN(extractCustomerCode(code))),
-  containerSize: validateText(),
-  containerType: validateText(),
-  serviceType: validateText(),
   details: validateAppend(
     z.object({
       id: z.string().optional(),
@@ -47,12 +43,9 @@ export const priceShippingInput = z.object({
   effectiveStartDate: validateDate(),
   effectiveEndDate: validateDate(),
   shipping: validateCode((code) => !isNaN(extractCustomerCode(code))),
-  containerSize: validateText(),
-  containerType: validateText(),
-  serviceType: validateText(),
   details: validateAppend(
     z.object({
-      id: validateCode(isObjectID).optional(),
+      id: z.string().optional(),
       route: validateCode((code) => !isNaN(extractRouteCode(code))),
       containerSize: validateText(),
       containerType: validateText(),
@@ -227,9 +220,6 @@ export class PriceVendorForm {
     public vendorAddress: string,
     public vendorProvince: string,
     public vendorCity: string,
-    public containerSize: string,
-    public containerType: string,
-    public serviceType: string,
     public details: {
       id: string;
       route: string;
@@ -270,9 +260,6 @@ export class PriceVendorForm {
       model.vendor.address,
       model.vendor.province,
       model.vendor.city,
-      model.containerSize,
-      model.containerType,
-      model.serviceType,
       model.details.map((detail) => ({
         id: detail.id,
         route: detail.route.code,
@@ -319,19 +306,9 @@ export class PriceVendorForm {
   });
 
   static initial: () => PriceVendorForm = () =>
-    new PriceVendorForm(
-      new Date(),
-      new Date(),
-      new Date(),
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      [this.initialDetail()]
-    );
+    new PriceVendorForm(new Date(), new Date(), new Date(), "", "", "", "", [
+      this.initialDetail(),
+    ]);
 }
 
 export class PriceShippingForm {
@@ -343,9 +320,6 @@ export class PriceShippingForm {
     public shippingAddress: string,
     public shippingProvince: string,
     public shippingCity: string,
-    public containerSize: string,
-    public containerType: string,
-    public serviceType: string,
     public details: {
       id: string;
       route: string;
@@ -390,9 +364,6 @@ export class PriceShippingForm {
       model.shipping.address,
       model.shipping.province,
       model.shipping.city,
-      model.containerSize,
-      model.containerType,
-      model.serviceType,
       model.details.map((detail) => ({
         id: detail.id,
         route: detail.route.code,
@@ -451,17 +422,7 @@ export class PriceShippingForm {
   });
 
   static initial: () => PriceShippingForm = () =>
-    new PriceShippingForm(
-      new Date(),
-      new Date(),
-      new Date(),
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      [this.initialDetail()]
-    );
+    new PriceShippingForm(new Date(), new Date(), new Date(), "", "", "", "", [
+      this.initialDetail(),
+    ]);
 }

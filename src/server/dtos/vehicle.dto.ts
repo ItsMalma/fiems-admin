@@ -1,44 +1,24 @@
 import { SelectOption } from "@/components/Elements";
+import { TruckTypes } from "@/libs/options";
 import { Prisma } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
 import {
   validateCode,
+  validateCounter,
   validateDate,
-  validateSelect,
   validateText,
 } from "../validation";
 import { extractCustomerCode } from "./customer.dto";
 
-export const brands = [
-  "Mitsubishi",
-  "Nissan UD",
-  "Hino",
-  "Isuzu",
-  "FAW",
-  "Scania",
-  "Toyota",
-] as const;
-export type Brand = (typeof brands)[number];
-
-export const types = [
-  "Tronton",
-  "Trintin",
-  "Trinton",
-  "Trailer",
-  "Fuso",
-  "Engkel",
-] as const;
-export type type = (typeof types)[number];
-
 export const vehicleInput = z.object({
   vendor: validateCode((value) => !isNaN(extractCustomerCode(value))),
   truckNumber: validateText(),
-  brand: validateSelect(brands),
-  type: validateSelect(types),
+  brand: validateText(),
+  type: validateText(),
   machineNumber: validateText(),
   frameNumber: validateText(),
-  cylinder: validateText(),
+  cylinder: validateCounter(),
   color: validateText(),
   stnkExpired: validateDate(),
   taxExpired: validateDate(),
@@ -56,7 +36,7 @@ export class VehicleTableRow {
     public type: string,
     public machineNumber: string,
     public frameNumber: string,
-    public cylinder: string,
+    public cylinder: number,
     public color: string,
     public stnkExpired: Date,
     public taxExpired: Date,
@@ -72,7 +52,7 @@ export class VehicleTableRow {
     return new VehicleTableRow(
       moment(model.createDate).toString(),
       model.id,
-      `${model.vendorCode}/${model.vendor.name}`,
+      `${model.vendorCode} (${model.vendor.name})`,
       model.truckNumber,
       model.brand,
       model.type,
@@ -96,7 +76,7 @@ export class VehicleForm {
     public type: string,
     public machineNumber: string,
     public frameNumber: string,
-    public cylinder: string,
+    public cylinder: number,
     public color: string,
     public stnkExpired: string | Date,
     public taxExpired: string | Date,
@@ -132,7 +112,7 @@ export class VehicleForm {
     "",
     "",
     "",
-    "",
+    0,
     "",
     new Date(),
     new Date(),
@@ -145,12 +125,5 @@ export class VehicleForm {
     { label: "UD Trucks", value: "UD Trucks" },
   ];
 
-  static readonly truckTypeOptions: SelectOption[] = [
-    { label: "Tronton", value: "Tronton" },
-    { label: "Trintin", value: "Trintin" },
-    { label: "Trinton", value: "Trinton" },
-    { label: "Trailer", value: "Trailer" },
-    { label: "Fuso", value: "Fuso" },
-    { label: "Engkel", value: "Engkel" },
-  ];
+  static readonly truckTypeOptions: SelectOption[] = TruckTypes;
 }

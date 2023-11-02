@@ -26,3 +26,12 @@ export const ServiceTypes: SelectOption[] = [
   { label: "CY to Port", value: "CY to Port" },
   { label: "CY to CY", value: "CY to CY" },
 ];
+
+export const TruckTypes: SelectOption[] = [
+  { label: "Tronton", value: "Tronton" },
+  { label: "Trintin", value: "Trintin" },
+  { label: "Trinton", value: "Trinton" },
+  { label: "Trailer", value: "Trailer" },
+  { label: "Fuso", value: "Fuso" },
+  { label: "Engkel", value: "Engkel" },
+];

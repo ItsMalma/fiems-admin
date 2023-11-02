@@ -1,6 +1,8 @@
+import { Toast } from "@/components/Elements";
 import MainLayout from "@/components/Layouts/MainLayout";
 import { trpc } from "@/libs/trpc";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import "@/styles/globals.css";
 import clsx from "clsx";
 import type { AppProps } from "next/app";
@@ -11,6 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
+  const { toasts, removeToast } = useToast();
 
   const router = useRouter();
   let content;
@@ -54,6 +57,18 @@ function App({ Component, pageProps }: AppProps) {
         )}
       >
         {current}
+      </div>
+
+      <div className="fixed right-5 bottom-5 flex flex-col">
+        {toasts.map((toast, toastIndex) => (
+          <Toast
+            key={toastIndex}
+            {...toast}
+            onClose={() => {
+              removeToast(toastIndex);
+            }}
+          />
+        ))}
       </div>
     </>
   );
