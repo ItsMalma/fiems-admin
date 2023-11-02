@@ -174,8 +174,8 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
       >
         <div
           className={clsx(
-            "bg-white border-[1.5px] border-gray-300 rounded-lg text-gray-700 flex items-center overflow-hidden gap-[9px] 2xl:gap-3",
-            (props.disabled || props.readOnly) && "!bg-gray-100",
+            "bg-white dark:bg-gray-600 border-[1.5px] border-gray-300 rounded-lg text-gray-700 dark:text-gray-300 flex items-center overflow-hidden gap-[9px] 2xl:gap-3",
+            (props.disabled || props.readOnly) && "!bg-gray-100 dark:bg-gray-700",
             isError && "border-statusInactive"
           )}
           onClick={() => {
@@ -233,7 +233,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
           <div
             ref={menuRef}
             className={clsx(
-              "absolute z-50 min-w-full max-h-36 bg-white flex flex-col border-[1.5px] border-gray-300 rounded-lg overflow-auto",
+              "absolute z-50 min-w-full max-h-36 bg-white dark:bg-gray-600 flex flex-col border-[1.5px] border-gray-300 rounded-lg overflow-auto",
               menuPosition === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
             )}
           >
@@ -241,7 +241,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
               <div
                 key={option.value}
                 className={clsx(
-                  "px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 hover:bg-primaryHover hover:text-white cursor-default whitespace-nowrap",
+                  "px-3 py-1.5 2xl:px-4 2xl:py-2 text-gray-700 dark:text-gray-300 hover:bg-primaryHover hover:text-white dark:hover:text-gray-600 cursor-default whitespace-nowrap",
                   actives.find((active) => active.value === option.value) &&
                     "bg-primaryActive text-white font-semibold hover:!bg-primaryActive"
                 )}

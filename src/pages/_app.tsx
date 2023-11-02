@@ -8,6 +8,10 @@ import clsx from "clsx";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
+import React from "react";
+import Image from "next/image";
+import LogoCel from "@/../public/logo-cel.png"
+import PrintLayout from "@/components/Layouts/PrintLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +22,15 @@ function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   let content;
 
+  React.useEffect(() => {
+    window.onbeforeprint = () => {
+      setIsPrint(true);
+    }
+    window.onafterprint = () => {
+      setIsPrint(false);
+    }
+  }, [isPrint]);
+
   if (router.asPath === "/login") {
     content = (
       <div className="min-h-screen max-h-screen min-w-full bg-neutral-200 flex justify-center items-center overflow-x-hidden">
@@ -26,9 +39,9 @@ function App({ Component, pageProps }: AppProps) {
     );
   } else if (router.asPath.endsWith("/print")) {
     content = (
-      <div className="">
+      <PrintLayout>
         <Component {...pageProps} />
-      </div>
+      </PrintLayout>
     );
   } else {
     content = (

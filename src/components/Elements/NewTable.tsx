@@ -155,7 +155,7 @@ function TableHead(props: TableHeadProps) {
       case "asc":
         return (
           <span
-            className="text-gray-700 cursor-pointer"
+            className="text-gray-700 dark:text-white cursor-pointer"
             onClick={() => {
               if (props.onSort) {
                 props.onSort("desc");
@@ -168,7 +168,7 @@ function TableHead(props: TableHeadProps) {
       case "desc":
         return (
           <span
-            className="text-gray-700 cursor-pointer"
+            className="text-gray-700 dark:text-white cursor-pointer"
             onClick={() => {
               if (props.onSort) {
                 props.onSort(null);
@@ -199,7 +199,7 @@ function TableHead(props: TableHeadProps) {
   return (
     <th
       className={clsx(
-        "bg-gray-100 p-3 2xl:p-4",
+        "bg-gray-100 dark:bg-gray-800 p-3 2xl:p-4",
         (props.isParent || props.isChildren) && "py-0.5",
         props.isParent && "border-b border-b-gray-300"
       )}
