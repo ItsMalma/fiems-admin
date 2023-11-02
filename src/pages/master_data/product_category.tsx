@@ -1,193 +1,95 @@
-import React from "react";
+import { Button, Modal, Search, Table } from "@/components/Elements";
+import { Form, FormCode, FormDate, FormText } from "@/components/Forms";
+import { trpc } from "@/libs/trpc";
+import {
+  ProductCategoryForm,
+  productCategoryInput,
+} from "@/server/dtos/productCategory.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import DatePicker from "@/components/Elements/DatePicker";
-import InputText from "@/components/Elements/InputText";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import Select from "@/components/Elements/Select";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import {
   BookmarkPlusFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
-import moment from "moment";
-import Table from "@/components/Elements/NewTable";
-import {
-  ProductCategoryOutput,
-  SaveProductCategoryInput,
-} from "@/models/productCategory.model";
-import {
-  createProductCategory,
-  deleteProductCategory,
-  updateProductCategory,
-  useProductCategories,
-  useNextProductCategoryReff,
-} from "@/api/product_categories";
-import { FormikProvider, useFormik } from "formik";
-import { saveProductCategorySchema } from "@/validations/productCategory.validation";
-import { formikValidateWithZod } from "@/libs/error";
+import { useForm } from "react-hook-form";
 
-type SaveProps = {
-  productCategory?: ProductCategoryOutput;
-};
-
-export function Save(props: SaveProps) {
-  // Gunakan formik
-  const formik = useFormik<SaveProductCategoryInput>({
-    initialValues: {
-      name: props.productCategory?.name ?? "",
-    },
-    onSubmit: async (values) => {
-      // Cek apakah product category ada di props
-      // Jika ada maka lakukan update saja
-      // Jika tidak ada maka lakukan penambahan
-      if (props.productCategory) {
-        await updateProductCategory(props.productCategory.reff, values);
-      } else {
-        await createProductCategory(values);
-      }
-
-      // Tutup modal
-      setModal(null);
-    },
-    validate: formikValidateWithZod(saveProductCategorySchema),
-  });
-
-  // Decomposition formik
-  const { handleSubmit, handleChange, values, errors, validateForm } = formik;
-
-  // Effect untuk mengvalidasi form
-  React.useEffect(() => {
-    validateForm();
-  }, [validateForm]);
-
-  // Menggunakan function setModal dari store useModal
+export function Save({ reff }: { reff?: string }) {
   const { setModal } = useModal();
 
-  // Memo untuk menampung create date
-  const defaultCreateDate = React.useMemo(
-    () =>
-      props.productCategory?.createDate
-        ? moment(props.productCategory.createDate, "DD/MM/YYYY").toDate()
-        : new Date(),
-    [props.productCategory?.createDate]
-  );
+  const methods = useForm<ProductCategoryForm>({
+    defaultValues: ProductCategoryForm.initial,
+    resolver: zodResolver(productCategoryInput),
+  });
+  const { reset } = methods;
 
-  // Panggil api untuk mendapatkan reff product category selanjutnya
-  const { reff, error, isLoading } = useNextProductCategoryReff();
-
-  // State untuk menyimpan default value dari reff product category
-  const [defaultReffCategory, setDefaultReffCategory] =
-    React.useState<string>();
-
-  // Effect untuk mengset value dari default product category reff
-  // dimana jika product category ada di props maka set dengan reff product category tersebut
-  // tapi jika tidak ada maka set dengan reff yang diambil dari api
+  const formQuery = trpc.productCategories.getForm.useQuery({
+    reff,
+  });
   React.useEffect(() => {
-    if (props.productCategory?.reff) {
-      setDefaultReffCategory(props.productCategory.reff);
-    } else if (reff) {
-      setDefaultReffCategory(reff);
+    if (formQuery.data && reset) {
+      reset(formQuery.data, {
+        keepDirtyValues: true,
+        keepErrors: true,
+      });
     }
-  }, [reff, props.productCategory?.reff]);
+  }, [formQuery.data, reset]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan reff product category selanjutnya masih loading
-  if (isLoading) {
-    return <></>;
-  }
+  const saveMutation = trpc.productCategories.save.useMutation();
 
-  // Cek apakah pemanggilan api untuk mendapatkan reff product category selanjutnya menghasilkan error
-  if (error) {
-    throw error;
-  }
+  const onSubmit = methods.handleSubmit(async (data) => {
+    await saveMutation.mutateAsync({
+      ...data,
+      reff,
+    });
+
+    setModal(null);
+  });
 
   return (
-    <Modal title="Add New Product Category" type="save" onDone={handleSubmit}>
-      <FormikProvider value={formik}>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Create Date" />
-                <DatePicker
-                  id="createDate"
-                  name="createDate"
-                  className="basis-2/3"
-                  defaultValue={defaultCreateDate}
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Reff Category" />
-                <InputText
-                  id="reff"
-                  name="reff"
-                  className="basis-2/3"
-                  defaultValue={defaultReffCategory}
-                  readOnly
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-6 items-center">
-                <Label className="basis-1/3" name="Product Category" />
-                <InputText
-                  id="name"
-                  name="name"
-                  placeholder="Enter origin description"
-                  className="basis-2/3"
-                  value={values.name}
-                  onChange={handleChange}
-                  isError={!!errors.name}
-                />
-              </div>
-              <div className="flex gap-6 items-center">
-                <div className="basis-1/3"></div>
-                <p className="basis-2/3 text-statusInactive">{errors.name}</p>
-              </div>
-            </div>
-          </div>
-        </form>
-      </FormikProvider>
+    <Modal
+      title="Add New Product Category"
+      type="save"
+      onDone={onSubmit}
+      isLoading={!formQuery.data}
+    >
+      <Form
+        methods={methods}
+        singleTab
+        controls={[
+          {
+            type: "input",
+            id: "createDate",
+            label: "Create Date",
+            input: <FormDate name="createDate" readOnly />,
+          },
+          {
+            type: "input",
+            id: "reff",
+            label: "Reff",
+            input: <FormCode name="reff" readOnly />,
+          },
+          {
+            type: "input",
+            id: "name",
+            label: "Name",
+            input: <FormText name="name" />,
+          },
+        ]}
+      />
     </Modal>
   );
 }
 
-export function Export() {
-  return (
-    <Modal title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            placeholder="Choose file type"
-            options={[{ label: "Excel", value: "excel" }]}
-            onChange={() => {}}
-            className="basis-2/3"
-            isSearchable
-          />
-        </div>
-      </form>
-    </Modal>
-  );
-}
-
-export default function MasterProductCategory() {
+export default function ProductCategoryPage() {
   // Gunakan store useHeader untuk merubah judul header
   const { setTitle } = useHeader();
 
   // Gunakan store useMenu untuk mengset menu yang active
   const { setActive } = useMenu();
-
-  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
-  const { setModal, current } = useModal();
 
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
@@ -195,29 +97,23 @@ export default function MasterProductCategory() {
     setActive(1, 8, 0);
   }, [setTitle, setActive]);
 
+  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
+  const { setModal, current } = useModal();
+
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua product category
-  const { productCategories, isLoading, error } = useProductCategories([
-    current,
-  ]);
+  const tableRowsQuery = trpc.productCategories.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua product category
-  // masih loading atau data masih belum didapatkan
-  if (isLoading || !productCategories) {
-    return <></>;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua productCategory menghasilkan error
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.productCategories.delete.useMutation();
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search ProductCategory Reff" />
+        <Search placeholder="Search Product Category" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Product Category"
@@ -234,11 +130,18 @@ export default function MasterProductCategory() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
+            onClick={() => {}}
+          />
+          <Button
+            text="Print"
+            icon={<FileEarmarkArrowUpFill />}
+            variant="outlined"
+            onClick={() => {}}
           />
         </div>
       </div>
       <Table
+        isLoading={!tableRowsQuery.data}
         className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
         isSelectable
         columns={[
@@ -250,38 +153,43 @@ export default function MasterProductCategory() {
           },
           {
             id: "reff",
-            header: "Reff Category",
+            header: "Reff",
             type: "code",
-            isSortable: true,
           },
           {
             id: "name",
-            header: "Product Category",
+            header: "Name",
             type: "text",
             isSortable: true,
           },
         ]}
-        rows={productCategories}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada row yang dipilih di table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Buka modal untuk membuat product category
-          setModal(
-            <Save productCategory={productCategories[selectedRowIndex]} />
-          );
+          setModal(<Save reff={tableRowsQuery.data[selectedRowIndex].reff} />);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada row yang dipilih di table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Hapus product category yang dipilih di table
-          await deleteProductCategory(productCategories[selectedRowIndex].reff);
+          await deleteMutation.mutateAsync({
+            reff: tableRowsQuery.data[selectedRowIndex].reff,
+          });
 
           // Karena product category yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

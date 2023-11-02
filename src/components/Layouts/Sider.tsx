@@ -1,30 +1,10 @@
-import React from "react";
 import Image from "next/image";
 import {
-  Icon,
-  ChevronDown,
-  ChevronUp,
-  Grid1x2,
-  Grid1x2Fill,
   Database,
   DatabaseFill,
-  BarChart,
-  BarChartFill,
-  Gear,
-  GearFill,
-  Cart,
-  CartFill,
-  HouseDoor,
-  HouseDoorFill,
-  PiggyBank,
-  PiggyBankFill,
-  People,
-  PeopleFill,
+  Grid1x2,
+  Grid1x2Fill,
   InfoCircleFill,
-  PersonGear,
-  PersonFillGear,
-  Person,
-  PersonFill,
 } from "react-bootstrap-icons";
 import Menu from "./Menu";
 
@@ -53,7 +33,7 @@ export default function Sider() {
                   },
                   {
                     name: "Customers",
-                    url: "/master_data/business_partner/customers",
+                    url: "/master_data/business_partner/customer",
                   },
                 ],
               },
@@ -80,11 +60,11 @@ export default function Sider() {
               {
                 name: "Master Price",
                 childrens: [
-                  { name: "Price Factory", url: "/master_data/price/factory" },
-                  { name: "Price Vendor", url: "/master_data/price/vendor" },
+                  // { name: "Price Factory", url: "/master_data/prices/factory" },
+                  { name: "Price Vendor", url: "/master_data/prices/vendor" },
                   {
                     name: "Price Shipping",
-                    url: "/master_data/price/shipping",
+                    url: "/master_data/prices/shipping",
                   },
                 ],
               },
@@ -100,133 +80,106 @@ export default function Sider() {
                 name: "Master Product",
                 url: "/master_data/product",
               },
-              {
-                name: "Account COA",
-                url: "/master_data/account_coa",
-              },
             ],
           },
-          {
-            name: "Marketing",
-            icon: BarChart,
-            activeIcon: BarChartFill,
-            childrens: [
-              {
-                name: "Price Calculation",
-                url: "/marketing/price_calculation",
-              },
-              {
-                name: "Form Quotation",
-                url: "/marketing/quotation",
-              },
-              {
-                name: "Inquiry Container",
-                url: "/marketing/inquiry_container",
-              },
-              {
-                name: "Vessel Schedule",
-                url: "/marketing/vessel_schedule",
-              },
-            ],
-          },
-          {
-            name: "Operational",
-            icon: Gear,
-            activeIcon: GearFill,
-            childrens: [
-              {
-                name: "Job Order",
-                url: "/operation/job_order",
-              },
-              {
-                name: "Delivery Report",
-                url: "/operation/delivery_report",
-              },
-              {
-                name: "Operational Docs.",
-                childrens: [
-                  {
-                    name: "SPM Report",
-                    url: "/operation/document/spmuj",
-                  },
-                  {
-                    name: "Surat Jalan",
-                    url: "/operation/document/surat_jalan",
-                  },
-                  {
-                    name: "BAST Report",
-                    url: "/operation/document/bast",
-                  },
-                  {
-                    name: "Packing List",
-                    url: "/operation/document/packing",
-                  },
-                  {
-                    name: "Shipping Instruction",
-                    url: "/operation/document/si",
-                  },
-                  {
-                    name: "Insurance",
-                    url: "/operation/document/insurance",
-                  },
-                  {
-                    name: "Request",
-                    url: "/operation/document/request",
-                  },
-                ],
-              },
-              {
-                name: "Ship Schedule",
-                url: "/operation/ship_schedule",
-              },
-              {
-                name: "Dooring",
-                url: "/operation/dooring",
-              },
-              {
-                name: "Change Dooring",
-                url: "/operation/change_dooring",
-              },
-            ],
-          },
-          {
-            name: "HRD",
-            icon: Person,
-            activeIcon: PersonFill,
-            childrens: [
-              {
-                name: "Employee",
-                childrens: [
-                  {
-                    name: "Employee List",
-                    url: "/hrd/employee/list",
-                  },
-                  {
-                    name: "Attendance",
-                    url: "/hrd/employee/attendance",
-                  },
-                  {
-                    name: "Leave",
-                    url: "/hrd/employee/leave",
-                  },
-                ],
-              },
-              {
-                name: "Payroll",
-                url: "/marketing/quotation",
-              },
-              {
-                name: "Recruitment",
-                url: "/marketing/inquiry_container",
-              },
-            ],
-          },
-          {
-            name: "User Management",
-            icon: PersonGear,
-            activeIcon: PersonFillGear,
-            url: "/user",
-          },
+          // {
+          //   name: "Operational",
+          //   icon: Gear,
+          //   activeIcon: GearFill,
+          //   childrens: [
+          //     {
+          //       name: "Job Order",
+          //       url: "/operation/job_order",
+          //     },
+          //     {
+          //       name: "Delivery Report",
+          //       url: "/operation/delivery_report",
+          //     },
+          //     {
+          //       name: "Operational Docs.",
+          //       childrens: [
+          //         {
+          //           name: "SPM Report",
+          //           url: "/operation/document/spmuj",
+          //         },
+          //         {
+          //           name: "Surat Jalan",
+          //           url: "/operation/document/surat_jalan",
+          //         },
+          //         {
+          //           name: "BAST Report",
+          //           url: "/operation/document/bast",
+          //         },
+          //         {
+          //           name: "Packing List",
+          //           url: "/operation/document/packing",
+          //         },
+          //         {
+          //           name: "Shipping Instruction",
+          //           url: "/operation/document/si",
+          //         },
+          //         {
+          //           name: "Insurance",
+          //           url: "/operation/document/insurance",
+          //         },
+          //         {
+          //           name: "Request",
+          //           url: "/operation/document/request",
+          //         },
+          //       ],
+          //     },
+          //     {
+          //       name: "Ship Schedule",
+          //       url: "/operation/ship_schedule",
+          //     },
+          //     {
+          //       name: "Dooring",
+          //       url: "/operation/dooring",
+          //     },
+          //     {
+          //       name: "Change Dooring",
+          //       url: "/operation/change_dooring",
+          //     },
+          //   ],
+          // },
+          // {
+          //   name: "HRD",
+          //   icon: Person,
+          //   activeIcon: PersonFill,
+          //   childrens: [
+          //     {
+          //       name: "Employee",
+          //       childrens: [
+          //         {
+          //           name: "Employee List",
+          //           url: "/hrd/employee/list",
+          //         },
+          //         {
+          //           name: "Attendance",
+          //           url: "/hrd/employee/attendance",
+          //         },
+          //         {
+          //           name: "Leave",
+          //           url: "/hrd/employee/leave",
+          //         },
+          //       ],
+          //     },
+          //     {
+          //       name: "Payroll",
+          //       url: "/marketing/quotation",
+          //     },
+          //     {
+          //       name: "Recruitment",
+          //       url: "/marketing/inquiry_container",
+          //     },
+          //   ],
+          // },
+          // {
+          //   name: "User Management",
+          //   icon: PersonGear,
+          //   activeIcon: PersonFillGear,
+          //   url: "/user",
+          // },
         ]}
       />
       <div className="mt-auto px-[18px] py-[9px] 2xl:px-6 2xl:py-3 flex items-center">

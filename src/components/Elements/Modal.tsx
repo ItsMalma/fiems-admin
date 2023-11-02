@@ -1,7 +1,8 @@
-import Button from "./Button";
 import useModal from "@/stores/modal";
 import clsx from "clsx";
+import React from "react";
 import { SaveFill, X } from "react-bootstrap-icons";
+import { Button, Loading } from ".";
 
 type ModalType = "info" | "save" | "import" | "confirm";
 
@@ -10,6 +11,7 @@ type ModalProps = {
   title: string;
   type: ModalType;
   children: React.ReactNode;
+  isLoading?: boolean;
   onDone: () => void | Promise<void>;
   onClose?: () => void | Promise<void>;
 };
@@ -26,7 +28,7 @@ function getDoneText(modalType: ModalType): string {
   return "";
 }
 
-export default function Modal(props: ModalProps) {
+export function Modal(props: ModalProps) {
   const { setModal } = useModal();
 
   let doneText = getDoneText(props.type);
@@ -37,6 +39,8 @@ export default function Modal(props: ModalProps) {
     }
     setModal(null);
   };
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   return (
     <div
@@ -54,7 +58,13 @@ export default function Modal(props: ModalProps) {
           onClick={async () => await close()}
         />
       </div>
-      <div className="grow">{props.children}</div>
+      <div className="grow">
+        {props.isLoading ? (
+          <Loading size="lg" color="primary" />
+        ) : (
+          props.children
+        )}
+      </div>
       {props.type !== "info" && (
         <div className="flex justify-end gap-3">
           <Button
@@ -62,8 +72,12 @@ export default function Modal(props: ModalProps) {
             variant="filled"
             icon={props.type === "confirm" ? null : <SaveFill />}
             text={doneText}
+            isLoading={isLoading}
             onClick={async () => {
-              await Promise.resolve(props.onDone());
+              Promise.resolve(props.onDone()).finally(() => {
+                setIsLoading(false);
+              });
+              setIsLoading(true);
             }}
           />
           {props.type === "confirm" && (

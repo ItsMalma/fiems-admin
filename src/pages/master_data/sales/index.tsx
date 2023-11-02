@@ -1,40 +1,15 @@
-import React from "react";
+import { Button, Search, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
-import Search from "@/components/Elements/Search";
-import Button from "@/components/Elements/Button";
-import Modal from "@/components/Elements/Modal";
-import Label from "@/components/Elements/Label";
-import Select from "@/components/Elements/Select";
+import React from "react";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  PersonFillAdd,
 } from "react-bootstrap-icons";
-import Table from "@/components/Elements/NewTable";
-import { deleteSales, useListSales } from "@/api/sales";
-import { toTitleCase } from "@/libs/utils";
-
-export function Export() {
-  return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            placeholder="Choose city"
-            options={[{ label: "Excel", value: "excel" }]}
-            value="excel"
-            onChange={() => {}}
-            className="basis-2/3"
-          />
-        </div>
-      </form>
-    </Modal>
-  );
-}
 
 export default function SalesPage() {
   // Gunakan store useMenu untuk mengset menu yang aktif
@@ -58,24 +33,17 @@ export default function SalesPage() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  // Pemanggilan api untuk mendapatkan semua data sales
-  const { listSales, isLoading, error } = useListSales([current]);
+  const tableRowsQuery = trpc.sales.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua data sales
-  // masih loading atau data nya masih belum terload
-  if (isLoading || !listSales) {
-    return <></>;
-  }
-
-  // Cek apakah pemanggilan api untuk mendapatkan semua data sales terdapat error
-  if (error) {
-    throw error;
-  }
+  const deleteMutation = trpc.sales.delete.useMutation();
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Sales Code" />
+        <Search placeholder="Search Sales" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Sales"
@@ -92,7 +60,7 @@ export default function SalesPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -131,7 +99,7 @@ export default function SalesPage() {
             isSortable: true,
           },
           {
-            id: "cabang",
+            id: "area",
             header: "Cabang",
             type: "text",
             isSortable: true,
@@ -162,39 +130,44 @@ export default function SalesPage() {
           },
           {
             id: "status",
-            header: "Description",
+            header: "Status",
             type: "status",
           },
         ]}
-        rows={listSales.map((sales) => ({
-          ...sales,
-          jobPosition: toTitleCase(sales.jobPosition),
-        }))}
+        rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Redirect ke halaman save sales
           router.push(
-            `/master_data/sales/save?code=${listSales[selectedRowIndex].code}`
+            `/master_data/sales/save?code=${tableRowsQuery.data[selectedRowIndex].code}`
           );
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
-          if (selectedRowIndex === undefined) {
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
             return;
           }
 
           // Hapus sales yang dipilih di table
-          await deleteSales(listSales[selectedRowIndex].code);
+          await deleteMutation.mutateAsync({
+            code: tableRowsQuery.data[selectedRowIndex].code,
+          });
 
           // Karena sales yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
-          // Tutup modal
+          //tutup modal
           setModal(null);
         }}
       />

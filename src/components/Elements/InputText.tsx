@@ -32,4 +32,4 @@ const InputText = React.forwardRef<HTMLInputElement, InputTextProps>(
 
 InputText.displayName = "InputText";
 
-export default InputText;
+export { InputText };

@@ -1,38 +1,15 @@
-import React from "react";
+import { Form, FormDate, FormMoney, FormSelect } from "@/components/Forms";
+import SaveLayout from "@/components/Layouts/SaveLayout";
+import { setValues } from "@/libs/functions";
+import { useQuery } from "@/libs/hooks";
+import { trpc } from "@/libs/trpc";
+import { UangJalanForm, uangJalanInput } from "@/server/dtos/uangJalan.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
-import FormLayout, { InputRow } from "@/components/Layouts/FormLayout";
-import InputMoney from "@/components/Elements/Forms/InputMoney";
-import SelectInput from "@/components/Elements/Forms/SelectInput";
-import DatePickerInput from "@/components/Elements/Forms/DatePickerInput";
-import InputText from "@/components/Elements/InputText";
-import {
-  createUangJalan,
-  updateUangJalan,
-  useUangJalan,
-} from "@/api/uang_jalan";
-import { useCustomers } from "@/api/customers";
-import { FormikProvider, useFormik } from "formik";
-import { SaveUangJalanInput, UangJalanOutput } from "@/models/uangJalan.model";
-import {
-  ApiResponsePayload,
-  ContainerSizes,
-  TruckTypes,
-  toTitleCase,
-} from "@/libs/utils";
-import { formikValidateWithZod } from "@/libs/error";
-import { saveUangJalanSchema } from "@/validations/uangJalan.validation";
-import moment from "moment";
-import { useRoutes } from "@/api/routes";
-
-type UangJalanFormValues = Omit<
-  SaveUangJalanInput,
-  "truckType" | "containerSize"
-> & {
-  truckType: SaveUangJalanInput["truckType"] | "";
-  containerSize: SaveUangJalanInput["containerSize"] | "";
-};
+import React from "react";
+import { useForm } from "react-hook-form";
 
 export default function UangJalanSavePage() {
   // Gunakan store useHeader untuk mengset judul di header
@@ -51,294 +28,153 @@ export default function UangJalanSavePage() {
   const router = useRouter();
 
   // Ambil id uang jalan dari query
-  // Jika ada query nya maka akan mengembalikan id uang jalan nya
-  // Jika tidak ada query nya, maka akan mengembalikan null
-  const idUangJalan = React.useMemo(() => {
-    if (!router.query.id) {
-      return null;
-    } else if (typeof router.query.id === "string") {
-      return Number(router.query.id);
-    } else {
-      return Number(router.query.id[0]) ?? null;
-    }
-  }, [router.query.id]);
+  const queryID = useQuery("id");
 
-  // Pemanggilan api untuk mendapatkan uang jalan berdasarkan number nya (dari query)
-  const { uangJalan, error: errorUangJalan } = useUangJalan(idUangJalan);
+  const methods = useForm<UangJalanForm>({
+    defaultValues: UangJalanForm.initial,
+    resolver: zodResolver(uangJalanInput),
+  });
+  const { setValue, reset } = methods;
 
-  // Memo untuk menampung create date
-  const defaultCreateDate = React.useMemo(
-    () =>
-      uangJalan?.createDate
-        ? moment(uangJalan.createDate, "DD/MM/YYYY").toDate()
-        : new Date(),
-    [uangJalan?.createDate]
-  );
+  const value = methods.watch();
 
-  // Pemanggilan api untuk mendapatkan semua customer
-  const {
-    customers,
-    isLoading: loadingCustomers,
-    error: errorCustomers,
-  } = useCustomers();
-
-  // Pemanggilan api untuk mendapatkan semua route
-  const { routes, isLoading: loadingRoutes, error: errorRoutes } = useRoutes();
-
-  // Penggunaan formik
-  const formik = useFormik<UangJalanFormValues>({
-    enableReinitialize: true,
-    initialValues: {
-      customer: uangJalan?.customer.code ?? "",
-      route: uangJalan?.route ?? "",
-      truckType: uangJalan?.truckType ?? "",
-      containerSize: uangJalan?.containerSize ?? "",
-      fuelOil: uangJalan?.fuelOil ?? 0,
-      toll: uangJalan?.toll ?? 0,
-      labourCosts: uangJalan?.labourCosts ?? 0,
-      meal: uangJalan?.meal ?? 0,
-      etc: uangJalan?.etc ?? 0,
-    },
-    onSubmit: async (values, helpers) => {
-      let res: ApiResponsePayload<UangJalanOutput> | null = null;
-      if (uangJalan) {
-        res = await updateUangJalan(uangJalan.id, values as SaveUangJalanInput);
-      } else {
-        res = await createUangJalan(values as SaveUangJalanInput);
-      }
-
-      if (res.error) {
-        if (typeof res.error !== "string") {
-          const errors = res.error;
-
-          Object.keys(errors).forEach((field) => {
-            helpers.setFieldError(field, errors[field]);
-          });
-        } else {
-          // TODO: tampilin notif gagal
-        }
-      } else {
-        await router.push("/master_data/uang_jalan");
-      }
-    },
-    validate: formikValidateWithZod(saveUangJalanSchema),
+  const [isDefault, setIsDefault] = React.useState(true);
+  const formQuery = trpc.uangJalan.getForm.useQuery({
+    ...value,
+    id: queryID,
+    isDefault,
   });
 
-  // Decomposition formik
-  const { handleSubmit, handleChange, values, errors } = formik;
+  React.useEffect(() => {
+    if (formQuery.data?.value && setValue) {
+      setValues(formQuery.data.value, (name, value) => {
+        setValue(name, value);
+      });
+    }
+  }, [formQuery.data?.value, setValue]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan uang jalan berdasarkan id nya (dari query)
-  // mengalami error
-  if (errorUangJalan) {
-    throw errorUangJalan;
-  }
+  React.useEffect(() => {
+    if (formQuery.data?.defaultValue && reset) {
+      reset(formQuery.data.defaultValue);
+      setIsDefault(false);
+    }
+  }, [formQuery.data?.defaultValue, reset]);
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua customer
-  // mengalami error
-  if (errorCustomers) {
-    throw errorCustomers;
-  }
+  const saveMutation = trpc.uangJalan.save.useMutation();
 
-  // Cek apakah pemanggilan api untuk mendapatkan semua route
-  // mengalami error
-  if (errorRoutes) {
-    throw errorRoutes;
-  }
+  const onSubmit = methods.handleSubmit(async (data) => {
+    await saveMutation.mutateAsync({
+      ...data,
+      id: queryID,
+    });
+
+    await router.push("/master_data/uang_jalan");
+  });
 
   return (
-    <FormikProvider value={formik}>
-      <FormLayout
-        onSave={handleSubmit}
-        title="Input Uang Jalan Data"
+    <SaveLayout onSave={onSubmit} title="Input Uang Jalan" isLoading={!value}>
+      <Form
+        methods={methods}
         tabs={[
           {
+            id: "generalInformation",
             name: "General Information",
-            component: (
-              <>
-                <InputRow
-                  firstCol={{
-                    label: "Create Date",
-                    input: (
-                      <DatePickerInput
-                        id="createDate"
-                        name="createDate"
-                        className="basis-3/5"
-                        defaultValue={defaultCreateDate}
-                        readOnly
-                      />
-                    ),
-                  }}
-                  secondCol={{
-                    label: "Fuel Oil",
-                    input: (
-                      <InputMoney
-                        id="fuelOil"
-                        name="fuelOil"
-                        placeholder="Enter fuel oil"
-                        className="basis-3/5"
-                      />
-                    ),
-                    error: errors.fuelOil,
-                  }}
-                />
-                <InputRow
-                  firstCol={{
-                    label: "Customer",
-                    input: (
-                      <SelectInput
-                        id="customer"
-                        name="customer"
-                        placeholder="Choose customer"
-                        className="basis-3/5"
-                        options={
-                          customers
-                            ? customers.map((customer) => ({
-                                label: `${customer.code} - ${customer.name}`,
-                                value: customer.code,
-                              }))
-                            : []
-                        }
-                        isSearchable
-                      />
-                    ),
-                    error: errors.customer,
-                  }}
-                  secondCol={{
-                    label: "Toll",
-                    input: (
-                      <InputMoney
-                        id="toll"
-                        name="toll"
-                        placeholder="Enter toll"
-                        className="basis-3/5"
-                      />
-                    ),
-                    error: errors.toll,
-                  }}
-                />
-                <InputRow
-                  firstCol={{
-                    label: "Route",
-                    input: (
-                      <SelectInput
-                        id="route"
-                        name="route"
-                        placeholder="Choose route"
-                        className="basis-3/5"
-                        options={
-                          routes
-                            ? routes.map((route) => ({
-                                label: route.code,
-                                value: route.code,
-                              }))
-                            : []
-                        }
-                        isSearchable
-                      />
-                    ),
-                    error: errors.route,
-                  }}
-                  secondCol={{
-                    label: "Labour Costs",
-                    input: (
-                      <InputMoney
-                        id="labourCosts"
-                        name="labourCosts"
-                        placeholder="Enter labour costs"
-                        className="basis-3/5"
-                      />
-                    ),
-                    error: errors.labourCosts,
-                  }}
-                />
-                <InputRow
-                  firstCol={{
-                    label: "Truck Type",
-                    input: (
-                      <SelectInput
-                        id="truckType"
-                        name="truckType"
-                        placeholder="Choose truck type"
-                        className="basis-3/5"
-                        options={TruckTypes.map((truckType) => ({
-                          label: toTitleCase(truckType),
-                          value: truckType,
-                        }))}
-                        isSearchable
-                      />
-                    ),
-                    error: errors.truckType,
-                  }}
-                  secondCol={{
-                    label: "Meal",
-                    input: (
-                      <InputMoney
-                        id="meal"
-                        name="meal"
-                        placeholder="Enter meal"
-                        className="basis-3/5"
-                      />
-                    ),
-                    error: errors.meal,
-                  }}
-                />
-                <InputRow
-                  firstCol={{
-                    label: "Container Size",
-                    input: (
-                      <SelectInput
-                        id="containerSize"
-                        name="containerSize"
-                        placeholder="Choose container size"
-                        className="basis-3/5"
-                        options={ContainerSizes.map((containerSize) => ({
-                          label: toTitleCase(containerSize),
-                          value: containerSize,
-                        }))}
-                        isSearchable
-                      />
-                    ),
-                    error: errors.containerSize,
-                  }}
-                  secondCol={{
-                    label: "Etc",
-                    input: (
-                      <InputMoney
-                        id="etc"
-                        name="etc"
-                        placeholder="Enter etc"
-                        className="basis-3/5"
-                      />
-                    ),
-                    error: errors.etc,
-                  }}
-                />
-                <InputRow
-                  secondCol={{
-                    label: "Total",
-                    input: (
-                      <InputText
-                        id="total"
-                        name="total"
-                        placeholder="Enter total"
-                        className="basis-3/5"
-                        readOnly
-                        value={
-                          values.fuelOil +
-                          values.toll +
-                          values.labourCosts +
-                          values.meal +
-                          values.etc
-                        }
-                      />
-                    ),
-                  }}
-                />
-              </>
-            ),
+            controls: [
+              {
+                type: "input",
+                id: "createDate",
+                label: "Create Date",
+                input: <FormDate name="createDate" readOnly />,
+              },
+              {
+                type: "separator",
+              },
+              {
+                type: "input",
+                id: "vendor",
+                label: "Vendor",
+                input: (
+                  <FormSelect
+                    name="vendor"
+                    options={formQuery.data?.vendors ?? []}
+                  />
+                ),
+              },
+              {
+                type: "input",
+                id: "route",
+                label: "Route",
+                input: (
+                  <FormSelect
+                    name="route"
+                    options={formQuery.data?.routes ?? []}
+                    readOnly={!value.vendor}
+                  />
+                ),
+              },
+              {
+                type: "input",
+                id: "containerSize",
+                label: "Container Size",
+                input: (
+                  <FormSelect
+                    name="containerSize"
+                    options={formQuery.data?.containerSizes ?? []}
+                    readOnly={!value.route}
+                  />
+                ),
+              },
+              {
+                type: "input",
+                id: "truckType",
+                label: "Truck Type",
+                input: (
+                  <FormSelect
+                    name="truckType"
+                    options={UangJalanForm.truckTypeOptions}
+                  />
+                ),
+              },
+              {
+                type: "input",
+                id: "bbm",
+                label: "BBM",
+                input: <FormMoney name="bbm" />,
+              },
+              {
+                type: "input",
+                id: "toll",
+                label: "Toll",
+                input: <FormMoney name="toll" />,
+              },
+              {
+                type: "input",
+                id: "labourCost",
+                label: "Biaya Buruh",
+                input: <FormMoney name="labourCost" />,
+              },
+              {
+                type: "input",
+                id: "meal",
+                label: "Meal",
+                input: <FormMoney name="meal" />,
+              },
+              {
+                type: "input",
+                id: "etc",
+                label: "Etc.",
+                input: <FormMoney name="etc" />,
+              },
+              {
+                type: "input",
+                id: "total",
+                label: "Total",
+                input: <FormMoney name="total" readOnly />,
+              },
+            ],
           },
         ]}
       />
-    </FormikProvider>
+    </SaveLayout>
   );
 }

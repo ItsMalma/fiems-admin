@@ -1,0 +1,290 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model CustomerGroup {
+  code        String   @id @map("_id") @db.String
+  name        String
+  description String
+  createDate  DateTime @default(now())
+
+  factories Factory[]
+}
+
+type CustomerPic {
+  name        String
+  email       String
+  phoneNumber String
+  telephone   String
+  fax         String
+}
+
+model Factory {
+  code       String        @id @map("_id") @db.String
+  name       String
+  group      CustomerGroup @relation(fields: [groupCode], references: [code], onDelete: Restrict)
+  groupCode  String        @db.String
+  address    String
+  province   String
+  city       String
+  telephone  String
+  fax        String
+  email      String
+  top        Int
+  currency   String
+  purchasing CustomerPic
+  operation  CustomerPic
+  finance    CustomerPic
+  createDate DateTime      @default(now())
+  status     Boolean       @default(true)
+}
+
+model Vendor {
+  code         String        @id @map("_id") @db.String
+  name         String
+  address      String
+  province     String
+  city         String
+  telephone    String
+  fax          String
+  email        String
+  top          Int
+  currency     String
+  purchasing   CustomerPic
+  operation    CustomerPic
+  finance      CustomerPic
+  createDate   DateTime      @default(now())
+  status       Boolean       @default(true)
+  priceVendors PriceVendor[]
+  vehicles     Vehicle[]
+  uangJalan    UangJalan[]
+}
+
+model Shipping {
+  code          String          @id @map("_id") @db.String
+  name          String
+  address       String
+  province      String
+  city          String
+  telephone     String
+  fax           String
+  email         String
+  top           Int
+  currency      String
+  purchasing    CustomerPic
+  operation     CustomerPic
+  finance       CustomerPic
+  createDate    DateTime        @default(now())
+  status        Boolean         @default(true)
+  PriceShipping PriceShipping[]
+  Vessel        Vessel[]
+}
+
+model Route {
+  code                 String                @id @map("_id") @db.String
+  province             String
+  city                 String
+  startDescription     String
+  endDescription       String
+  effectiveStartDate   DateTime
+  effectiveEndDate     DateTime
+  createDate           DateTime              @default(now())
+  priceVendorDetails   PriceVendorDetail[]
+  priceShippingDetails PriceShippingDetail[]
+  UangJalan            UangJalan[]
+}
+
+model Port {
+  code                 String                @id @map("_id") @db.String
+  province             String
+  city                 String
+  name                 String
+  createDate           DateTime              @default(now())
+  priceVendorDetails   PriceVendorDetail[]
+  priceShippingDetails PriceShippingDetail[]
+}
+
+model Sales {
+  code        String           @id @map("_id") @db.String
+  jobPosition SalesJobPosition
+  name        String
+  nik         String
+  area        String
+  phoneNumber String
+  telephone   String
+  fax         String
+  email       String
+  status      Boolean          @default(true)
+  createDate  DateTime         @default(now())
+}
+
+enum SalesJobPosition {
+  Marketing
+  Direktur
+}
+
+model Vehicle {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendor        Vendor   @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode    String   @db.String
+  truckNumber   String
+  brand         String
+  type          String
+  machineNumber String
+  frameNumber   String
+  cylinder      Int
+  color         String
+  stnkExpired   DateTime
+  taxExpired    DateTime
+  keurExpired   DateTime
+  createDate    DateTime @default(now())
+  status        Boolean  @default(true)
+}
+
+model Vessel {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  shipping     Shipping @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
+  shippingCode String   @db.String
+  name         String
+  unit         String
+  capacity     Int
+  createDate   DateTime @default(now())
+  status       Boolean  @default(true)
+}
+
+model UangJalan {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  vendor        Vendor   @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode    String   @db.String
+  route         Route    @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode     String   @db.String
+  truckType     String
+  containerSize String
+  bbm           Int
+  toll          Int
+  labourCost    Int
+  meal          Int
+  etc           Int
+  total         Int
+  createDate    DateTime @default(now())
+}
+
+model PriceVendorDetail {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  priceVendor   PriceVendor @relation(fields: [priceVendorId], references: [id], onDelete: Restrict)
+  priceVendorId String      @db.ObjectId
+  route         Route       @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode     String      @db.String
+  containerSize String
+  containerType String
+  serviceType   String
+  port          Port        @relation(fields: [portCode], references: [code], onDelete: Restrict)
+  portCode      String      @db.String
+  tracking      Int
+  buruh         Int
+  thcOPT        Int
+  thcOPP        Int
+  adminBL       Int
+  cleaning      Int
+  materai       Int
+}
+
+model PriceVendor {
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  vendor             Vendor              @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode         String              @db.String
+  effectiveStartDate DateTime
+  effectiveEndDate   DateTime
+  details            PriceVendorDetail[]
+  createDate         DateTime            @default(now())
+  status             Boolean             @default(true)
+}
+
+model PriceShippingDetail {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  priceShipping   PriceShipping @relation(fields: [priceShippingId], references: [id], onDelete: Restrict)
+  priceShippingId String        @db.ObjectId
+  route           Route         @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode       String        @db.String
+  containerSize   String
+  containerType   String
+  serviceType     String
+  port            Port          @relation(fields: [portCode], references: [code], onDelete: Restrict)
+  portCode        String        @db.String
+  freight         Int
+  thcOPT          Int
+  thcOPP          Int
+  adminBL         Int
+  cleaning        Int
+  alihKapal       Int
+  materai         Int
+  lolo            Int
+  segel           Int
+  rc              Int
+  lss             Int
+}
+
+model PriceShipping {
+  id                 String                @id @default(auto()) @map("_id") @db.ObjectId
+  shipping           Shipping              @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
+  shippingCode       String                @db.String
+  effectiveStartDate DateTime
+  effectiveEndDate   DateTime
+  details            PriceShippingDetail[]
+  createDate         DateTime              @default(now())
+  status             Boolean               @default(true)
+}
+
+model ProductCategory {
+  reff       String    @id @map("_id") @db.String
+  name       String
+  createDate DateTime  @default(now())
+  products   Product[]
+}
+
+enum ProductType {
+  Product
+  Sparepart
+  ATK
+}
+
+model Product {
+  skuCode             String           @id @map("_id") @db.String
+  type                ProductType
+  productCategory     ProductCategory? @relation(fields: [productCategoryReff], references: [reff], onDelete: Restrict)
+  productCategoryReff String?          @db.String
+  name                String
+  unit                String
+  createDate          DateTime         @default(now())
+}
+
+model MainCOA {
+  number      Int       @id @map("_id")
+  accountName String
+  accountType String    @map("type")
+  category    String
+  transaction String
+  currency    String
+  status      Boolean   @default(true)
+  createDate  DateTime  @default(now())
+  subs        Sub1COA[]
+}
+
+type Sub1COA {
+  description String
+  status      Boolean   @default(true)
+  subs        Sub2COA[]
+}
+
+type Sub2COA {
+  description String
+  status      Boolean @default(true)
+}

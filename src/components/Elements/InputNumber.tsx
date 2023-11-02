@@ -1,5 +1,5 @@
-import React from "react";
 import clsx from "clsx";
+import React from "react";
 
 type InputNumberProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -32,4 +32,4 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
 
 InputNumber.displayName = "InputNumber";
 
-export default InputNumber;
+export { InputNumber };

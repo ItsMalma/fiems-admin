@@ -1,9 +1,12 @@
+import { Toast } from "@/components/Elements";
+import MainLayout from "@/components/Layouts/MainLayout";
+import { trpc } from "@/libs/trpc";
+import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import "@/styles/globals.css";
+import clsx from "clsx";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
-import clsx from "clsx";
-import useModal from "@/stores/modal";
-import MainLayout from "@/components/Layouts/MainLayout";
 import { useRouter } from "next/router";
 import React from "react";
 import Image from "next/image";
@@ -12,9 +15,9 @@ import PrintLayout from "@/components/Layouts/PrintLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
-  const [isPrint, setIsPrint] = React.useState(true)
+  const { toasts, removeToast } = useToast();
 
   const router = useRouter();
   let content;
@@ -68,6 +71,20 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         {current}
       </div>
+
+      <div className="fixed right-5 bottom-5 flex flex-col">
+        {toasts.map((toast, toastIndex) => (
+          <Toast
+            key={toastIndex}
+            {...toast}
+            onClose={() => {
+              removeToast(toastIndex);
+            }}
+          />
+        ))}
+      </div>
     </>
   );
 }
+
+export default trpc.withTRPC(App);

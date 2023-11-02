@@ -6,20 +6,13 @@ type LabelProps = {
   optional?: string | string[] | (string | string[])[][];
 };
 
-export default function Label(props: LabelProps) {
+export function Label(props: LabelProps) {
   return (
     <label
-      className={clsx(
-        "text-gray-700 font-semibold flex",
-        props.className
-      )}
+      className={clsx("text-gray-700 font-semibold flex", props.className)}
     >
       {props.name}
-      {props.optional &&
-        <i className="font-normal ml-1">
-          ({props.optional})
-        </i>
-      }
+      {props.optional && <i className="font-normal ml-1">({props.optional})</i>}
     </label>
   );
 }
