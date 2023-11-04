@@ -106,6 +106,15 @@ export function validateText() {
     .min(1, "Must be filled");
 }
 
+export function validatePassword() {
+  return z
+    .string({
+      invalid_type_error: "Invalid value",
+      required_error: "Must be filled",
+    })
+    .min(1, "Must be filled");
+}
+
 export function validateMoney() {
   return z.number({
     invalid_type_error: "Invalid value",

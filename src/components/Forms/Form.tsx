@@ -19,6 +19,7 @@ type FormControl = {
       id: string;
       label: string;
       input: React.ReactNode;
+      full?: boolean;
     }
   | { type: "separator" }
   | { type: "blank" }
@@ -91,7 +92,13 @@ function FormControls(props: FormControlsProps) {
           switch (control.type) {
             case "input":
               return (
-                <div key={control.id} className="flex flex-col gap-1">
+                <div
+                  key={control.id}
+                  className={clsx(
+                    "flex flex-col gap-1",
+                    control.full && "col-span-full"
+                  )}
+                >
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <Label name={control.label} className="basis-1/3" />
                     {control.input}

@@ -7,7 +7,7 @@ import "@/styles/globals.css";
 import clsx from "clsx";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
-import { useRouter } from "next/router";
+import { CookiesProvider } from "react-cookie";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,10 +15,8 @@ function App({ Component, pageProps }: AppProps) {
   const { current } = useModal();
   const { toasts, removeToast } = useToast();
 
-  const router = useRouter();
-
   return (
-    <>
+    <CookiesProvider>
       <style jsx global>
         {`
           * {
@@ -51,7 +49,7 @@ function App({ Component, pageProps }: AppProps) {
           />
         ))}
       </div>
-    </>
+    </CookiesProvider>
   );
 }
 
