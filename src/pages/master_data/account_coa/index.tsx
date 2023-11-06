@@ -170,7 +170,6 @@ export default function MasterAccountCOA() {
 
           const coa = tableRowsQuery.data[selectedRowIndex];
 
-          console.log(coa.accountNumber);
           // Hapus coa yang dipilih di table
           await deleteMutation.mutateAsync({
             number: coa.accountNumber,

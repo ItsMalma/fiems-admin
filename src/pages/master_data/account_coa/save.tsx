@@ -133,7 +133,6 @@ export default function COASave() {
   const saveSub2Mutation = trpc.coas.saveSub2.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    console.log(data);
     switch (data.type) {
       case "Main":
         await saveMainMutation.mutateAsync({
