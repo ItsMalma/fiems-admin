@@ -80,6 +80,10 @@ export default function Sider() {
                 name: "Master Product",
                 url: "/master_data/product",
               },
+              {
+                name: "Account COA",
+                url: "/master_data/account_coa",
+              },
             ],
           },
           // {

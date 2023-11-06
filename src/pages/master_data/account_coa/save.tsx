@@ -6,12 +6,17 @@ import {
   FormText,
 } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
-import { setValues } from "@/libs/functions";
 import { useQuery } from "@/libs/hooks";
 import { trpc } from "@/libs/trpc";
-import { COAForm } from "@/server/dtos/coa.dto";
+import {
+  COAForm,
+  mainCOAInput,
+  sub1COAInput,
+  sub2COAInput,
+} from "@/server/dtos/coa.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -28,61 +33,136 @@ export default function COASave() {
   const router = useRouter();
 
   const queryNumber = useQuery("number");
+  const coaQuery = trpc.coas.getCOAForm.useQuery(queryNumber);
+  const nextAccountNumber = trpc.coas.getNextCOANumber.useQuery();
+  const mainCOAs = trpc.coas.getCOAs.useQuery();
 
   const methods = useForm<COAForm>({
     defaultValues: COAForm.initial("Main"),
+    resolver: (value, ctx, opts) => {
+      switch (value.type) {
+        case "Main":
+          return zodResolver(mainCOAInput)(value, ctx, opts);
+        case "Sub 1":
+          return zodResolver(sub1COAInput)(value, ctx, opts);
+        case "Sub 2":
+          return zodResolver(sub2COAInput)(value, ctx, opts);
+      }
+    },
   });
   const { setValue, reset } = methods;
+  const values = methods.watch();
 
-  const value = methods.watch();
+  // Memo for main coa options
+  const mainCOAsOptions = React.useMemo(() => {
+    return (
+      mainCOAs.data?.map((mainCOA) => ({
+        label: `${mainCOA.number} (${mainCOA.accountName})`,
+        value: mainCOA.number,
+      })) ?? []
+    );
+  }, [mainCOAs?.data]);
 
-  const [isDefault, setIsDefault] = React.useState(true);
+  // Set default
   React.useEffect(() => {
-    setIsDefault(true);
-  }, [setValue, value.type]);
-
-  const formQuery = trpc.coas.getForm.useQuery({
-    number: queryNumber,
-    type: value.type,
-    main: value.type === "Main" ? undefined : value.main,
-    sub1: value.sub1,
-    sub2: value.sub2,
-    isDefault,
-  });
-
-  React.useEffect(() => {
-    if (formQuery.data?.value && setValue) {
-      setValues(formQuery.data.value, (name, value) => {
-        setValue(name, value);
-      });
+    if (!queryNumber) {
+      reset(COAForm.initial(values.type));
+    } else if (coaQuery.data) {
+      reset(coaQuery.data);
     }
-  }, [formQuery.data?.value, setValue]);
+  }, [coaQuery.data, queryNumber, reset, values.type]);
+  // React.useEffect(() => {
+  //   if (coaQuery.data) {
+  //     reset(coaQuery.data);
+  //   }
+  // }, [queryNumber, coaQuery.data, mainCOAs.data, reset]);
 
   React.useEffect(() => {
-    if (formQuery.data?.defaultValue && reset) {
-      reset(formQuery.data.defaultValue);
-      setIsDefault(false);
+    if (nextAccountNumber.data && values.type !== "Sub 1" && !queryNumber) {
+      setValue("main", nextAccountNumber.data);
     }
-  }, [formQuery.data?.defaultValue, reset]);
+  }, [nextAccountNumber.data, values.type, setValue, queryNumber]);
+
+  // Memo untuk nyimpen main coa yang diselect
+  const mainCOA = React.useMemo(() => {
+    return mainCOAs.data?.find((mainCOA) => mainCOA.number === values.main);
+  }, [mainCOAs.data, values.main]);
+
+  // Memo untuk nyimpen sub 1 coa yang diselect
+  const sub1COA = React.useMemo(() => {
+    return mainCOA?.subs.find(
+      (_, sub1COAIndex) => sub1COAIndex + 1 === values.sub1
+    );
+  }, [mainCOA?.subs, values.sub1]);
+
+  React.useEffect(() => {
+    if (mainCOA && values.type !== "Main") {
+      setValue("accountName", mainCOA.accountName);
+      setValue("accountType", mainCOA.accountType);
+      setValue("category", mainCOA.category);
+      setValue("currency", mainCOA.currency);
+      setValue("transaction", mainCOA.transaction);
+      if (mainCOA.number !== coaQuery.data?.main) {
+        setValue("sub1", mainCOA.subs.length + 1);
+      }
+    } else if (values.type === "Main") {
+      setValue("accountName", "");
+      setValue("accountType", "");
+      setValue("category", "");
+      setValue("currency", "");
+      setValue("transaction", "");
+    }
+  }, [mainCOA, values.type, setValue, coaQuery.data]);
+
+  React.useEffect(() => {
+    if (sub1COA && values.type === "Sub 2") {
+      setValue("sub1Description", sub1COA.description);
+      if (values.sub1 !== coaQuery.data?.sub1) {
+        setValue("sub2", sub1COA.subs.length + 1);
+      }
+    } else if (values.type === "Sub 2") {
+      setValue("sub1", 0);
+      setValue("sub1Description", "");
+    }
+  }, [coaQuery.data?.sub1, setValue, sub1COA, values.sub1, values.type]);
+
+  const currencies = trpc.coas.getCurrencies.useQuery();
 
   const saveMainMutation = trpc.coas.saveMain.useMutation();
   const saveSub1Mutation = trpc.coas.saveSub1.useMutation();
   const saveSub2Mutation = trpc.coas.saveSub2.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    console.log(data);
     switch (data.type) {
       case "Main":
         await saveMainMutation.mutateAsync({
           ...data,
-          accountName: data.accountName,
+          number: queryNumber,
         });
+        break;
+      case "Sub 1":
+        await saveSub1Mutation.mutateAsync({
+          ...data,
+          main: data.main.toString(),
+          number: queryNumber,
+        });
+        break;
+      case "Sub 2":
+        await saveSub2Mutation.mutateAsync({
+          ...data,
+          main: data.main.toString(),
+          sub1: data.sub1.toString(),
+          number: queryNumber,
+        });
+        break;
     }
 
     await router.push("/master_data/account_coa");
   });
 
   return (
-    <SaveLayout onSave={onSubmit} title="Input COA Data" isLoading={!value}>
+    <SaveLayout onSave={onSubmit} title="Input COA Data" isLoading={!values}>
       <Form
         methods={methods}
         tabs={[
@@ -116,13 +196,10 @@ export default function COASave() {
                 id: "main",
                 label: "Account Number",
                 input:
-                  value.type === "Main" ? (
+                  values.type === "Main" ? (
                     <FormCode name="main" readOnly />
                   ) : (
-                    <FormSelect
-                      name="main"
-                      options={formQuery.data?.mainCOAs ?? []}
-                    />
+                    <FormSelect name="main" options={mainCOAsOptions} />
                   ),
               },
               {
@@ -132,7 +209,7 @@ export default function COASave() {
                 input: (
                   <FormText
                     name="accountName"
-                    readOnly={value.type !== "Main"}
+                    readOnly={values.type !== "Main"}
                   />
                 ),
               },
@@ -143,7 +220,7 @@ export default function COASave() {
                 input: (
                   <FormText
                     name="accountType"
-                    readOnly={value.type !== "Main"}
+                    readOnly={values.type !== "Main"}
                   />
                 ),
               },
@@ -152,7 +229,7 @@ export default function COASave() {
                 id: "category",
                 label: "Category",
                 input: (
-                  <FormText name="category" readOnly={value.type !== "Main"} />
+                  <FormText name="category" readOnly={values.type !== "Main"} />
                 ),
               },
               {
@@ -162,7 +239,7 @@ export default function COASave() {
                 input: (
                   <FormText
                     name="transaction"
-                    readOnly={value.type !== "Main"}
+                    readOnly={values.type !== "Main"}
                   />
                 ),
               },
@@ -173,29 +250,43 @@ export default function COASave() {
                 input: (
                   <FormSelect
                     name="currency"
-                    options={formQuery.data?.currencies ?? []}
-                    readOnly={value.type !== "Main"}
+                    options={
+                      currencies.data
+                        ? currencies.data.map((currency) => ({
+                            label: currency,
+                            value: currency,
+                          }))
+                        : []
+                    }
+                    readOnly={values.type !== "Main"}
                   />
                 ),
               },
               {
                 type: "separator",
-                isHidden: value.type === "Main" || !!value.main,
+                isHidden: values.type === "Main",
               },
               {
                 type: "input",
                 id: "sub1",
                 label: "Account COA 1",
                 input:
-                  value.type === "Sub 1" ? (
+                  values.type === "Sub 1" ? (
                     <FormCode name="sub1" readOnly />
                   ) : (
                     <FormSelect
                       name="sub1"
-                      options={formQuery.data?.sub1COAs ?? []}
+                      options={
+                        mainCOA?.subs.map((sub1COA, sub1COAIndex) => ({
+                          label: `${mainCOA.number}.${sub1COAIndex + 1} (${
+                            sub1COA.description
+                          })`,
+                          value: sub1COAIndex + 1,
+                        })) ?? []
+                      }
                     />
                   ),
-                isHidden: value.type === "Main" || !!value.main,
+                isHidden: values.type === "Main",
               },
               {
                 type: "input",
@@ -204,28 +295,28 @@ export default function COASave() {
                 input: (
                   <FormText
                     name="sub1Description"
-                    readOnly={value.type !== "Sub 1"}
+                    readOnly={values.type !== "Sub 1"}
                   />
                 ),
-                isHidden: value.type === "Main" || !!value.main,
+                isHidden: values.type === "Main",
               },
               {
                 type: "separator",
-                isHidden: value.type !== "Sub 2" || !!value.sub1,
+                isHidden: values.type !== "Sub 2",
               },
               {
                 type: "input",
                 id: "sub2",
                 label: "Account COA 2",
-                input: <FormCode name="sub1" readOnly />,
-                isHidden: value.type !== "Sub 2" || !!value.sub1,
+                input: <FormCode name="sub2" readOnly />,
+                isHidden: values.type !== "Sub 2",
               },
               {
                 type: "input",
                 id: "sub2Description",
                 label: "Account Description",
                 input: <FormText name="sub2Description" />,
-                isHidden: value.type !== "Sub 2" || !!value.sub1,
+                isHidden: values.type !== "Sub 2",
               },
             ],
           },
