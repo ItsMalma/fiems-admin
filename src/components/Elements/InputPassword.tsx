@@ -32,4 +32,4 @@ const InputPassword = React.forwardRef<HTMLInputElement, InputPasswordProps>(
 
 InputPassword.displayName = "InputPassword";
 
-export default InputPassword;
+export { InputPassword };

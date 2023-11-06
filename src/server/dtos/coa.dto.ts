@@ -1,12 +1,13 @@
 import { SelectOption } from "@/components/Elements";
 import { MainCOA, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { validateCode, validateText } from "../validation";
+import { validateCode, validateSelect, validateText } from "../validation";
 
-export const accountTypes = ["Main", "Sub 1", "Sub 2"] as const;
-export type AccountType = (typeof accountTypes)[number];
+export const coaTypes = ["Main", "Sub 1", "Sub 2"] as const;
+export type COAType = (typeof coaTypes)[number];
 
 export const mainCOAInput = z.object({
+  type: validateSelect(coaTypes),
   accountName: validateText(),
   accountType: validateText(),
   category: validateText(),
@@ -16,19 +17,21 @@ export const mainCOAInput = z.object({
 export type MainCOAInput = z.infer<typeof mainCOAInput>;
 
 export const sub1COAInput = z.object({
-  main: validateCode((code) => !isNaN(Number(code))).transform((value) =>
-    Number(value)
+  type: validateSelect(coaTypes),
+  main: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
+    (value) => Number(value)
   ),
   sub1Description: validateText(),
 });
 export type Sub1COAInput = z.infer<typeof sub1COAInput>;
 
 export const sub2COAInput = z.object({
-  main: validateCode((code) => !isNaN(Number(code))).transform((value) =>
-    Number(value)
+  type: validateSelect(coaTypes),
+  main: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
+    (value) => Number(value)
   ),
-  sub1: validateCode((code) => !isNaN(Number(code))).transform((value) =>
-    Number(value)
+  sub1: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
+    (value) => Number(value)
   ),
   sub2Description: validateText(),
 });
@@ -110,18 +113,18 @@ export class COATableRow {
 
 export class COAForm {
   constructor(
-    public type: AccountType,
+    public type: COAType,
     public createDate: string | Date,
     public accountName: string,
     public accountType: string,
     public category: string,
     public transaction: string,
     public currency: string,
-    public main?: number,
-    public sub1?: number,
-    public sub1Description?: string,
-    public sub2?: number,
-    public sub2Description?: string
+    public main: number,
+    public sub1: number,
+    public sub1Description: string,
+    public sub2: number,
+    public sub2Description: string
   ) {}
 
   static fromMainModel(mainModel: MainCOA): COAForm {
@@ -133,7 +136,11 @@ export class COAForm {
       mainModel.category,
       mainModel.transaction,
       mainModel.currency,
-      mainModel.number
+      mainModel.number,
+      0,
+      "",
+      0,
+      ""
     );
   }
 
@@ -151,8 +158,10 @@ export class COAForm {
       mainModel.transaction,
       mainModel.currency,
       mainModel.number,
-      sub1Index + 1,
-      sub1Model.description
+      sub1Index,
+      sub1Model.description,
+      0,
+      ""
     );
   }
 
@@ -172,17 +181,30 @@ export class COAForm {
       mainModel.transaction,
       mainModel.currency,
       mainModel.number,
-      sub1Index + 1,
+      sub1Index,
       sub1Model.description,
       sub2Index,
       sub2Model.description
     );
   }
 
-  static initial = (type: AccountType) => {
+  static initial = (type: COAType) => {
     switch (type) {
       case "Main":
-        return new COAForm("Main", new Date(), "", "", "", "", "", 100);
+        return new COAForm(
+          "Main",
+          new Date(),
+          "",
+          "",
+          "",
+          "",
+          "",
+          0,
+          0,
+          "",
+          0,
+          ""
+        );
       case "Sub 1":
         return new COAForm(
           "Sub 1",
@@ -192,23 +214,25 @@ export class COAForm {
           "",
           "",
           "",
-          undefined,
-          1,
+          0,
+          0,
+          "",
+          0,
           ""
         );
       case "Sub 2":
         return new COAForm(
-          "Sub 1",
+          "Sub 2",
           new Date(),
           "",
           "",
           "",
           "",
           "",
-          undefined,
-          undefined,
+          0,
+          0,
           "",
-          1,
+          0,
           ""
         );
     }

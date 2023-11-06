@@ -1,4 +1,5 @@
 import { router } from "../trpc";
+import { authRouter } from "./auth.router";
 import { coasRouter } from "./coas.router";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
@@ -13,6 +14,7 @@ import { vehicleRouter } from "./vehicles.router";
 import { vesselRouter } from "./vessels.router";
 
 export const appRouter = router({
+  auth: authRouter,
   customerGroups: customerGroupsRouter,
   customers: customersRouter,
   routes: routesRouter,

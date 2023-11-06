@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { MainCOAInput } from "../dtos/coa.dto";
 import prisma from "../prisma";
@@ -47,7 +48,11 @@ export async function createCOA(number: number, input: MainCOAInput) {
   });
 }
 
-export async function updateCOA(number: number, input: MainCOAInput) {
+export async function updateCOA(
+  number: number,
+  input: MainCOAInput,
+  subs: Prisma.Sub1COAGetPayload<{}>[]
+) {
   return await prisma.mainCOA.update({
     where: {
       number,
@@ -59,7 +64,7 @@ export async function updateCOA(number: number, input: MainCOAInput) {
       transaction: input.transaction,
       currency: input.currency,
       status: true,
-      subs: [],
+      subs: subs,
     },
   });
 }

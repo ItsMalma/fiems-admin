@@ -1,3 +1,5 @@
+"use client";
+
 import clsx from "clsx";
 import React from "react";
 import { CaretDownFill, CaretUpFill, Icon } from "react-bootstrap-icons";
@@ -94,7 +96,7 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
     const [menuPosition, setMenuPosition] = React.useState<"top" | "bottom">(
       "bottom"
     );
-    React.useLayoutEffect(() => {
+    React.useEffect(() => {
       if (!menuRef.current || !expand) {
         return;
       }
@@ -175,7 +177,8 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
         <div
           className={clsx(
             "bg-white dark:bg-gray-600 border-[1.5px] border-gray-300 rounded-lg text-gray-700 dark:text-gray-300 flex items-center overflow-hidden gap-[9px] 2xl:gap-3",
-            (props.disabled || props.readOnly) && "!bg-gray-100 dark:bg-gray-700",
+            (props.disabled || props.readOnly) &&
+              "!bg-gray-100 dark:bg-gray-700",
             isError && "border-statusInactive"
           )}
           onClick={() => {

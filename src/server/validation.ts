@@ -15,7 +15,7 @@ export function isFax(value: string): boolean {
 }
 
 export function validateCode(checker?: (code: string) => boolean) {
-  return z
+  return z.coerce
     .string({
       invalid_type_error: "Invalid value",
       required_error: "Must be filled",
@@ -98,6 +98,15 @@ export function validateSelectEnum(options: z.EnumLike) {
 }
 
 export function validateText() {
+  return z
+    .string({
+      invalid_type_error: "Invalid value",
+      required_error: "Must be filled",
+    })
+    .min(1, "Must be filled");
+}
+
+export function validatePassword() {
   return z
     .string({
       invalid_type_error: "Invalid value",
