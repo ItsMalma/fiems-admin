@@ -6,6 +6,7 @@ import clsx from "clsx";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +15,7 @@ function App({ Component, pageProps }: AppProps) {
 
   const router = useRouter();
   let content;
+  let title = "";
 
   if (router.asPath === "/login") {
     content = (
@@ -35,8 +37,20 @@ function App({ Component, pageProps }: AppProps) {
     );
   }
 
+  if (router.asPath.includes("master_data")) {
+    title = "| Master Data"
+  } else if (router.asPath.includes("marketing")) {
+    title = "| Marketing"
+  } else if (router.asPath.includes("operation")) {
+    title = "| Operational"
+  } 
+
   return (
     <>
+      <Head>
+        <title>FIEMS {title}</title>
+      </Head>
+
       <style jsx global>
         {`
           * {

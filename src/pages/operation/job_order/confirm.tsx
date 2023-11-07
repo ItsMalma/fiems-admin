@@ -1,13 +1,12 @@
-import DatePicker from "@/components/Elements/DatePicker";
-import InputText from "@/components/Elements/InputText";
-import Label from "@/components/Elements/Label";
-import Select from "@/components/Elements/Select";
+import { Form, FormCode, FormDate, FormSelect, FormText } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import useMenu from "@/stores/menu";
 import React from "react";
 
 export default function JobOrderConfirm() {
   const { setActive } = useMenu();
+
+  let methods:any
 
   const [combo, setCombo] = React.useState(0);
 
@@ -17,252 +16,308 @@ export default function JobOrderConfirm() {
 
   return (
     <SaveLayout
-      onSave={() => {}}
-      title="Confirm Job Order"
-      tabs={[
-        {
-          name: "General Information",
-          component: (
-            <>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Confirm Date" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="JO Num." className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Inq. Date" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Inq. Num." className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Marketing" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-              </div>
-              <hr></hr>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Load Date" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Route" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer Name" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Address" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Customer To" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Cont. Type" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Cont. Size" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <hr></hr>
-              <h1 className="text-gray-800 font-bold text-2xl mb-1.5">
-                Confirmation
-              </h1>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Type Order" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="RO Number" className="basis-2/5" />
-                  <InputText
-                    placeholder="Enter RO number"
-                    className="basis-3/5"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Consignee" className="basis-2/5" />
-                  <Select
-                    placeholder="Choose vendor"
-                    options={[
-                      { label: "Sales 1", value: 1 },
-                      { label: "Sales 2", value: 2 },
-                    ]}
-                    onChange={() => {}}
-                    className="basis-3/5"
-                  />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Email" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Address" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Telephone Number" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="City" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Phone Number" className="basis-2/5" />
-                  <InputText placeholder="" className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center my-4">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <div
-                    className="flex px-3 py-[9px] 2xl:px-4 2xl:py-3 justify-center items-center gap-3 2xl:gap-4 rounded-[10px] font-semibold bg-primary text-white cursor-pointer"
-                    onClick={() => setCombo(1)}
-                  >
-                    Convert to Combo
-                  </div>
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Stuffing Date" className="basis-2/5" />
-                  <DatePicker className="basis-3/5" />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2"></div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Tracking Route" className="basis-2/5" />
-                  <Select
-                    placeholder="Choose route"
-                    options={[
-                      { label: "Sales 1", value: 1 },
-                      { label: "Sales 2", value: 2 },
-                    ]}
-                    onChange={() => {}}
-                    className="basis-3/5"
-                  />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Truck Number" className="basis-2/5" />
-                  <Select
-                    placeholder="Choose vendor"
-                    options={[
-                      { label: "Sales 1", value: 1 },
-                      { label: "Sales 2", value: 2 },
-                    ]}
-                    onChange={() => {}}
-                    className="basis-3/5"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Tracking Name" className="basis-2/5" />
-                  <Select
-                    placeholder="Choose tracking name"
-                    options={[
-                      { label: "Sales 1", value: 1 },
-                      { label: "Sales 2", value: 2 },
-                    ]}
-                    onChange={() => {}}
-                    className="basis-3/5"
-                  />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Truck Type" className="basis-2/5" />
-                  <InputText className="basis-3/5" disabled />
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Driver Name" className="basis-2/5" />
-                  <InputText
-                    placeholder="Enter driver name"
-                    className="basis-3/5"
-                  />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Cont. Number" className="basis-2/5" />
-                  <div className="flex gap-3 basis-3/5 items-center">
-                    <InputText
-                      placeholder="Enter container number"
-                      className="w-2/5 grow"
-                    />
-                    <Label name="Seal" />
-                    <InputText
-                      placeholder="Enter seal number"
-                      className="w-2/5 grow"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  <Label name="Phone Number" className="basis-2/5" />
-                  <InputText
-                    placeholder="Enter phone number"
-                    className="basis-3/5"
-                  />
-                </div>
-                <div className="flex gap-[18px] 2xl:gap-6 items-center basis-1/2">
-                  {combo === 1 && (
-                    <>
-                      <Label name="Cont. Number" className="basis-2/5" />
-                      <div className="flex gap-3 basis-3/5 items-center">
-                        <InputText
-                          placeholder="Enter container number"
-                          className="w-2/5 grow"
-                        />
-                        <Label name="Seal" />
-                        <InputText
-                          placeholder="Enter seal number"
-                          className="w-2/5 grow"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </>
-          ),
-        },
-      ]}
-    />
+        onSave={() => {}}
+        title="Confirm Job Order"
+        isLoading={false}
+      >
+        <Form
+          methods={methods}
+          tabs={[
+            {
+              id: "generalInformation",
+              name: "General Information",
+              controls :[
+                {
+                  type: "input",
+                  id: "createDate",
+                  label: "Create Date",
+                  input: <FormDate name="createDate" readOnly />,
+                },
+                {
+                  type: "input",
+                  id: "inquiryDate",
+                  label: "Inquiry Date",
+                  input: <FormDate name="inquiryDate" readOnly />,
+                },
+                {
+                  type: "input",
+                  id: "jobOrderCode",
+                  label: "J.O. Code",
+                  input: <FormCode name="jobOrder" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "inquiryCode",
+                  label: "Inquiry Code",
+                  input: <FormCode name="inquiryCode" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "marketingName",
+                  label: "Marketing Name",
+                  input: <FormText name="marketingName" readOnly/>,
+                },
+                {
+                  type: "separator",
+                },
+                {
+                  type: "heading",
+                  label: "Shipping Detail"
+                },
+                {
+                  type: "input",
+                  id: "shippingName",
+                  label: "Shipping Name",
+                  input: <FormText name="shippingName" readOnly/>,
+                },
+                {
+                  type: "blank",
+                },
+                {
+                  type: "input",
+                  id: "vesselName",
+                  label: "Vessel Name",
+                  input: <FormText name="vesselName" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "voyage",
+                  label: "Voyage",
+                  input: <FormText name="voyage" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "etd",
+                  label: "ETD",
+                  input: <FormDate name="etd" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "eta",
+                  label: "ETA",
+                  input: <FormDate name="eta" readOnly/>,
+                },
+                {
+                  type: "separator",
+                },
+                {
+                  type: "heading",
+                  label: "Order Detail"
+                },
+                {
+                  type: "input",
+                  id: "loadDate",
+                  label: "Load Date",
+                  input: <FormDate name="loadDate" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "route",
+                  label: "Route",
+                  input: <FormText name="route" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "customerName",
+                  label: "Customer Name",
+                  input: <FormText name="customerName" readOnly/>,
+                },
+                // address dan city untuk customer asli
+                {
+                  type: "input",
+                  id: "address",
+                  label: "Address",
+                  input: <FormText name="address" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "customerTo",
+                  label: "Customer To",
+                  input: <FormText name="customerTo" readOnly/>,
+                },
+                // city untuk customer to
+                {
+                  type: "input",
+                  id: "city",
+                  label: "City",
+                  input: <FormText name="city" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "containerType",
+                  label: "Container Type",
+                  input: <FormText name="containerType" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "containerSize",
+                  label: "Container Size",
+                  input: <FormText name="containerSize" readOnly/>,
+                },
+                {
+                  type: "separator",
+                },
+                {
+                  type: "heading",
+                  label: "Confirmation Order"
+                },
+                {
+                  type: "input",
+                  id: "typeOrder",
+                  label: "Type Order",
+                  input: <FormText name="typeOrder" readOnly/>,
+                },
+                {
+                  type: "blank"
+                },
+                {
+                  type: "input",
+                  id: "roNumber",
+                  label: "RO Number",
+                  input: <FormText name="roNumber"/>,
+                },
+                {
+                  type: "blank"
+                },
+                {
+                  type: "input",
+                  id: "consignee",
+                  label: "Consignee",
+                  input: <FormSelect name="consignee" options={[]}/>,
+                },
+                {
+                  type: "input",
+                  id: "consigneeEmail",
+                  label: "Email",
+                  input: <FormText name="consigneeEmail" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "consigneeAddress",
+                  label: "Address",
+                  input: <FormText name="consigneeAddress" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "consigneeTelephoneNumber",
+                  label: "Telephone Number",
+                  input: <FormText name="consigneeTelephoneNumber" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "consigneeCity",
+                  label: "City",
+                  input: <FormText name="consigneeCity" readOnly/>,
+                },
+                {
+                  type: "input",
+                  id: "consigneePhoneNumber",
+                  label: "Phone Number",
+                  input: <FormText name="consigneePhoneNumber" readOnly/>,
+                },
+                {
+                  type: "separator",
+                },
+                {
+                  type: "tools",
+                  label: "Convert To Combo",
+                  onClick: () => {}
+                },
+                {
+                  type: "input",
+                  id: "stuffingDate",
+                  label: "Stuffing Date",
+                  input: <FormDate name="stuffingDate"/>,
+                },
+                {
+                  type: "blank"
+                },
+                // THIS RIGHT HERE MIGHT BE THERE'S SOME CHANGE - trackingName trackingRoute
+                {
+                  type: "input",
+                  id: "trackingName",
+                  label: "Tracking Name",
+                  input: <FormText name="trackingName"/>,
+                },
+                {
+                  type: "input",
+                  id: "containerNumber1",
+                  label: "Container Number",
+                  input: <FormText name="containerNumber1"/>,
+                },
+                // {
+                //   type: "blank"
+                // },
+                {
+                  type: "input",
+                  id: "trackingRoute",
+                  label: "Tracking Route",
+                  input: <FormSelect name="trackingRoute" options={[]}/>,
+                },
+                {
+                  type: "input",
+                  id: "sealNumber1",
+                  label: "Seal Number",
+                  input: <FormText name="sealNumber1"/>,
+                },
+                // {
+                //   type: "blank"
+                // },
+                {
+                  type: "input",
+                  id: "driverName",
+                  label: "Driver Name",
+                  input: <FormText name="driverName"/>,
+                },
+                {
+                  type: "input",
+                  id: "containerNumber2",
+                  label: "Container Number",
+                  input: <FormText name="containerNumber2"/>,
+                },
+                // {
+                //   type: "blank"
+                // },
+                {
+                  type: "input",
+                  id: "driverPhoneNumber",
+                  label: "Phone Number",
+                  input: <FormText name="driverPhoneNumber"/>,
+                },
+                {
+                  type: "input",
+                  id: "sealNumber2",
+                  label: "Seal Number",
+                  input: <FormText name="sealNumber2"/>,
+                },
+                // {
+                //   type: "blank"
+                // },
+
+
+                // TRUCK NUMBER???
+                {
+                  type: "input",
+                  id: "truckNumber",
+                  label: "Truck Number",
+                  input: <FormSelect name="truckNumber" options={[]}/>,
+                },
+                {
+                  type: "blank"
+                },
+                {
+                  type: "input",
+                  id: "truckType",
+                  label: "Truck Type",
+                  input: <FormText name="truckType"/>,
+                },
+                {
+                  type: "blank"
+                },
+              ]
+            }
+          ]}
+        />
+    </SaveLayout>
   );
 }

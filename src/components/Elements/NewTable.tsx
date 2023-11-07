@@ -74,6 +74,7 @@ type TableProps = {
 };
 
 type TableHeadProps = {
+  className?: string | undefined;
   id: string;
   value: string;
 
@@ -151,6 +152,7 @@ function getHeaderRows(
 
 function TableHead(props: TableHeadProps) {
   function TableHeadSort() {
+    if ('sort' in props) {
     switch (props.sort) {
       case "asc":
         return (
@@ -193,15 +195,17 @@ function TableHead(props: TableHeadProps) {
         );
       default:
         <></>;
+      }
     }
   }
 
   return (
     <th
       className={clsx(
-        "bg-gray-100 p-3 2xl:p-4",
+        "bg-gray-100 p-3",
         (props.isParent || props.isChildren) && "py-0.5",
-        props.isParent && "border-b border-b-gray-300"
+        props.isParent && "border-b border-b-gray-300",
+        props.className
       )}
       rowSpan={props.rowSpan}
       colSpan={props.colSpan}
@@ -241,6 +245,7 @@ type TableCellProps = (
     }
 ) & {
   isChildren?: boolean;
+  className?: string | undefined;
 };
 
 function TableCell(props: TableCellProps) {
@@ -280,7 +285,7 @@ function TableCell(props: TableCellProps) {
   }
 
   return (
-    <td className="p-3 2xl:p-4">
+    <td className={clsx("p-3 2xl:p-4", props.className)}>
       <div
         className={clsx(
           "flex items-center gap-[7.5px] 2xl:gap-2.5",
@@ -537,7 +542,7 @@ export function Table(props: TableProps) {
             {columns.length < 1 ? (
               <></>
             ) : (
-              <table className="w-full h-fit rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate">
+              <table className={clsx("w-full h-fit rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate", headerRows[0].length > 9 && "text-xs")}>
                 <thead className="sticky top-0">
                   {headerRows.map((headerRow, headerRowIndex) => (
                     <tr key={headerRowIndex}>
@@ -548,6 +553,7 @@ export function Table(props: TableProps) {
                           onSort={(direction) =>
                             setSort({ id: header.id, direction })
                           }
+                          className={clsx(headerRows[0].length > 9 && "!px-[3px]")}
                         />
                       ))}
                     </tr>
@@ -573,7 +579,7 @@ export function Table(props: TableProps) {
                         />
                       )}
                       {cellRow.map((cell, cellIndex) => (
-                        <TableCell key={cellIndex} {...cell} />
+                        <TableCell key={cellIndex} {...cell} className={clsx(headerRows[0].length > 9 && "!px-[3px]")}/>
                       ))}
                     </tr>
                   ))}

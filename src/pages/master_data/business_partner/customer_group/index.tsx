@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 
 function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
+  
 
   const saveMutation = trpc.customerGroups.save.useMutation();
 
@@ -91,7 +92,7 @@ function Save({ code }: { code?: string }) {
 
 export default function CustomerGroupPage() {
   // Gunakan store useHeader untuk merubah judul header
-  const { setTitle } = useHeader();
+  const { setHeader } = useHeader();
 
   // Gunakan store useMenu untuk mengset menu yang active
   const { setActive } = useMenu();
@@ -101,9 +102,9 @@ export default function CustomerGroupPage() {
 
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
-    setTitle("Master Data | Customer Group");
+    setHeader("Master Data | Customer Group");
     setActive(1, 0, 0);
-  }, [setTitle, setActive]);
+  }, [setActive]);
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();

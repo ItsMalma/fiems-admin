@@ -40,7 +40,7 @@ export function Export() {
 
 export default function CustomersPage() {
   // Gunakan store useHeader untuk mengset judul di header
-  const { setTitle } = useHeader();
+  const { setHeader } = useHeader();
 
   // Gunakan store useMenu untuk mengset menu yang aktif
   const { setActive } = useMenu();
@@ -50,9 +50,9 @@ export default function CustomersPage() {
 
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Master Data | Customers");
+    setHeader("Master Data | Customers");
     setActive(1, 0, 1);
-  }, [setTitle, setActive]);
+  }, [setHeader, setActive]);
 
   // Mendapatkan router
   const router = useRouter();

@@ -14,6 +14,15 @@ type FormControl = {
       input: React.ReactNode;
     }
   | { type: "separator" }
+  | { 
+      type: "heading";
+      label: string; 
+    }
+  | { 
+      type: "tools";
+      label: string;
+      onClick?:() => void; 
+    }
   | { type: "blank" }
 );
 
@@ -90,6 +99,18 @@ function FormControls(props: FormControlsProps) {
               );
             case "blank":
               return <div key={controlIndex}></div>;
+            case "heading":
+              return (
+              <h1 key={controlIndex} className="text-gray-800 font-bold text-2xl mb-1.5 col-span-full">{control.label}</h1>
+              );
+            case "tools":
+              return (
+              <div key={controlIndex} className="col-span-full">
+                <div onClick={control.onClick} className="flex px-3 py-[9px] 2xl:px-4 2xl:py-3 justify-center items-center gap-3 2xl:gap-4 rounded-[10px] font-semibold bg-primary text-white">
+                  {control.label}
+                </div>
+              </div>
+              );
             case "separator":
               return <hr key={controlIndex} className="col-span-full" />;
           }

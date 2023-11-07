@@ -1,7 +1,3 @@
-import Button from "@/components/Elements/Button";
-import Search from "@/components/Elements/Search";
-import Select from "@/components/Elements/Select";
-import Table from "@/components/Elements/Table";
 import useMenu from "@/stores/menu";
 import React from "react";
 import VerticalLine from "@/components/Icons/VerticalLine";
@@ -16,6 +12,7 @@ import {
   Filter,
 } from "react-bootstrap-icons";
 import { useRouter } from "next/router";
+import { Button, Search, Select, Table } from "@/components/Elements";
 
 export default function InquiryContainer() {
   const router = useRouter();
@@ -26,6 +23,8 @@ export default function InquiryContainer() {
     setTitle("Operational | Job Order");
     setActive(3, 0, 0);
   }, [setTitle, setActive]);
+
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
   return (
     <>
@@ -44,151 +43,152 @@ export default function InquiryContainer() {
           />
         </div>
       </div>
-      <div className="flex flex-col p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm gap-[18px] 2xl:gap-6 grow overflow-auto">
-        <div className="flex justify-between">
-          <div className="flex items-center">
-            <Button
-              text="Edit"
-              icon={<Pencil />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-            <VerticalLine />
-            <Button
-              text="Delete"
-              icon={<Trash />}
-              iconPosition="left"
-              variant="normal"
-              className="!border-gray-300 !text-gray-300"
-            />
-          </div>
-          <div className="flex gap-4 items-center">
-            <Select
-              icon={Calendar}
-              placeholder="Date Range"
-              options={[
-                { label: "Today", value: "today" },
-                { label: "Yesterday", value: "yesterday" },
-                { label: "Weeks Ago", value: "weeksAgo" },
-              ]}
-              onChange={() => {}}
-              isSearchable
-            />
-            <Select
-              icon={Filter}
-              placeholder="Filter"
-              options={[
-                { label: "Inquiry Date", value: "inquiryDate" },
-                { label: "Inquiry Number", value: "inquiryNumber" },
-                { label: "Sales Name", value: "salesName" },
-                { label: "Customer", value: "customer" },
-                { label: "Customer Group", value: "customerGroup" },
-                { label: "Customer Address", value: "customerAddress" },
-                { label: "Purchase", value: "purchase" },
-                { label: "Purchase Address", value: "purchaseAddress" },
-                { label: "Job Order Type", value: "jobOrderType" },
-                { label: "Order Type", value: "orderType" },
-                { label: "Customer To", value: "customerTo" },
-                { label: "City", value: "city" },
-                { label: "Route", value: "route" },
-                { label: "Service Type", value: "serviceType" },
-                { label: "Cont. Type", value: "contType" },
-                { label: "Cont. Size", value: "contSize" },
-                { label: "PPN", value: "ppn" },
-                { label: "Insurance", value: "insurance" },
-                { label: "PPFTZ", value: "ppftz" },
-                { label: "Shipping", value: "shipping" },
-                { label: "Vessel Name", value: "vesselName" },
-                { label: "Voyage", value: "voyage" },
-                { label: "ETD", value: "etd" },
-                { label: "ETA", value: "eta" },
-                { label: "Action", value: "action" },
-              ]}
-              onChange={() => {}}
-              isMulti
-              isSearchable
-            />
-            <Select
-              options={[
-                { label: "Show 10 entries", value: 10 },
-                { label: "Show 25 entries", value: 25 },
-                { label: "Show 50 entries", value: 50 },
-              ]}
-              value={10}
-              onChange={() => {}}
-              isSearchable
-            />
-          </div>
-        </div>
-        <Table
-          fields={[
-            { type: "option" },
-            { type: "date", name: "Inquiry Date", isSortable: true },
-            { type: "link", name: "Inquiry Number", isSortable: true },
-            { type: "text", name: "Sales Name", isSortable: true },
-            { type: "text", name: "Customer", isSortable: true },
-            { type: "text", name: "Customer Group", isSortable: true },
-            { type: "text", name: "Customer Address", isSortable: true },
-            { type: "text", name: "Purchase", isSortable: true },
-            { type: "text", name: "Purchase Address", isSortable: true },
-            { type: "text", name: "Job Order Type", isSortable: true },
-            { type: "text", name: "Order Type", isSortable: true },
-            { type: "text", name: "Customer To", isSortable: true },
-            { type: "text", name: "City", isSortable: true },
-            { type: "text", name: "Route", isSortable: true },
-            { type: "text", name: "Service Type", isSortable: true },
-            { type: "text", name: "Cont. Type", isSortable: true },
-            { type: "text", name: "Cont. Size", isSortable: true },
-            { type: "text", name: "PPN", isSortable: true },
-            { type: "text", name: "Insurance", isSortable: true },
-            { type: "text", name: "PPFTZ", isSortable: true },
-            { type: "text", name: "Shipping", isSortable: true },
-            { type: "text", name: "Vessel Name", isSortable: true },
-            { type: "text", name: "Voyage", isSortable: true },
-            { type: "text", name: "ETD", isSortable: true },
-            { type: "text", name: "ETA", isSortable: true },
-            { type: "tool", name: "Action" },
-          ]}
-          records={[
-            [
-              false,
-              new Date(),
-              "REQ00001",
-              "Hadi Ahmad Akbar",
-              "Customer Name",
-              "Customer Address",
-              "Customer Group",
-              "Purchase Name",
-              "Purchase Address",
-              "J.O Type",
-              "Order Type",
-              "Customer To",
-              "City",
-              "Route",
-              "Service Type",
-              "Container Type",
-              "Container Size",
-              "PPN",
-              "Insurance",
-              "PPFTZ",
-              "Shipping",
-              "Vessel Name",
-              "Voyage",
-              "",
-              "",
-              // <Button
-              //   text="Confirm"
-              //   variant="filled"
-              //   onClick={() => router.push("/operation/job_order/confirm")}
-              // />,
-            ],
-          ]}
-        />
-        <div className="flex mt-auto">
-          <p className="font-medium text-gray-500">Showing 10 entries</p>
-        </div>
-      </div>
+      <Table
+        className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
+        isSelectable
+        columns={[
+          {
+            id: "inquiryDate",
+            header: "Inquiry Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "inquiryCode",
+            header: "Inquiry Code",
+            type: "code",
+            isSortable: true,
+          },
+          {
+            id: "sales",
+            header: "Sales",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "customer",
+            header: "Customer",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "customerGroup",
+            header: "Customer Group",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "customerAddress",
+            header: "Customer Address",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "purchase",
+            header: "Purchase",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "purchaseAddress",
+            header: "Purchase Address",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "jobOrderType",
+            header: "J.O. Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "customerTo",
+            header: "Customer To",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "city",
+            header: "City",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "route",
+            header: "Route",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "serviceType",
+            header: "Service Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "containerType",
+            header: "Container Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "containerSize",
+            header: "Container Size",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "ppn",
+            header: "PPN",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "insurance",
+            header: "Insurance",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "ppftz",
+            header: "PPFTZ",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "shipping",
+            header: "Shipping",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "vesselName",
+            header: "Vessel Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "voyage",
+            header: "Voyage",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "etd",
+            header: "ETD",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "eta",
+            header: "ETA",
+            type: "text",
+            isSortable: true,
+          },
+        ]}
+        rows={[]}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+      />
     </>
   );
 }

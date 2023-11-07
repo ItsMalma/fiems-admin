@@ -190,16 +190,16 @@ export function Export() {
 
 export default function MasterRoute() {
   // Gunakan store useHeader untuk merubah judul header
-  const { setTitle } = useHeader();
+  const { setHeader } = useHeader();
 
   // Gunakan store useMenu untuk mengset menu yang active
   const { setActive } = useMenu();
 
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
-    setTitle("Master Data | Master Route");
+    setHeader("Master Data | Master Route");
     setActive(1, 1, 0);
-  }, [setTitle, setActive]);
+  }, [setHeader, setActive]);
 
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();

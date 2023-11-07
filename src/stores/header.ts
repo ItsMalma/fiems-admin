@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
 interface HeaderState {
-  title: String
-  setTitle: (newTitle?: String) => void
+  header: String
+  setHeader: (newHeader?: String) => void
 }
 
 const useHeader = create<HeaderState>()(set => ({
-  title: "",
-  setTitle: (newTitle) => set({title: newTitle})
+  header: "",
+  setHeader: (newHeader) => set({header: newHeader})
 }));
 
 export default useHeader;
