@@ -9,6 +9,7 @@ type FormSelectProps = {
   readOnly?: boolean;
   className?: string;
   options: SelectOption[];
+  isCreatable?: boolean;
 };
 
 export function FormSelect(props: FormSelectProps) {
@@ -23,6 +24,7 @@ export function FormSelect(props: FormSelectProps) {
       name={field.name}
       options={props.options}
       isSearchable
+      isCreatable={props.isCreatable}
       value={field.value}
       onChange={(option) => {
         field.onChange(option?.value);

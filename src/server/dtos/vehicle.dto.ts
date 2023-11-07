@@ -1,32 +1,49 @@
-import { Prisma, Vehicle } from "@prisma/client";
+import { SelectOption } from "@/components/Elements";
+import { Prisma } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
-import { validateCode, validateDate, validateSelect, validateText } from "../validation";
-import { SelectOption } from "@/components/Elements";
+import {
+  validateCode,
+  validateDate,
+  validateSelect,
+  validateText,
+} from "../validation";
 import { extractCustomerCode } from "./customer.dto";
 
-export const brands = ["Mitsubishi", "Nissan UD", "Hino", "Isuzu", "FAW", "Scania", "Toyota"]  as const;
+export const brands = [
+  "Mitsubishi",
+  "Nissan UD",
+  "Hino",
+  "Isuzu",
+  "FAW",
+  "Scania",
+  "Toyota",
+] as const;
 export type Brand = (typeof brands)[number];
 
-export const types = ["Tronton", "Trintin", "Trinton", "Trailer", "Fuso", "Engkel"]  as const;
+export const types = [
+  "Tronton",
+  "Trintin",
+  "Trinton",
+  "Trailer",
+  "Fuso",
+  "Engkel",
+] as const;
 export type type = (typeof types)[number];
 
-export const vehicleInput = z
-  .object({
-    vendor: validateCode(
-        (value) => !isNaN(extractCustomerCode(value))
-    ),
-    truckNumber: validateText(),
-    brand: validateSelect(brands),
-    type: validateSelect(types),
-    machineNumber: validateText(),
-    frameNumber: validateText(),
-    cylinder: validateText(),
-    color: validateText(),
-    stnkExpired: validateDate(),
-    taxExpired: validateDate(),
-    keurExpired: validateDate(),
-  })
+export const vehicleInput = z.object({
+  vendor: validateCode((value) => !isNaN(extractCustomerCode(value))),
+  truckNumber: validateText(),
+  brand: validateSelect(brands),
+  type: validateSelect(types),
+  machineNumber: validateText(),
+  frameNumber: validateText(),
+  cylinder: validateText(),
+  color: validateText(),
+  stnkExpired: validateDate(),
+  taxExpired: validateDate(),
+  keurExpired: validateDate(),
+});
 export type VehicleInput = z.infer<typeof vehicleInput>;
 
 export class VehicleTableRow {
@@ -49,8 +66,9 @@ export class VehicleTableRow {
 
   static fromModel(
     model: Prisma.VehicleGetPayload<{
-        include: {vendor: true}
-    }>): VehicleTableRow {
+      include: { vendor: true };
+    }>
+  ): VehicleTableRow {
     return new VehicleTableRow(
       moment(model.createDate).toString(),
       model.id,
@@ -65,7 +83,7 @@ export class VehicleTableRow {
       model.stnkExpired,
       model.taxExpired,
       model.keurExpired,
-      model.status,
+      model.status
     );
   }
 }
@@ -83,13 +101,13 @@ export class VehicleForm {
     public stnkExpired: string | Date,
     public taxExpired: string | Date,
     public keurExpired: string | Date,
-    public vendor: string,
-    ) {}
+    public vendor: string
+  ) {}
 
   static fromModel(
     model: Prisma.VehicleGetPayload<{
-        include: {vendor: true}
-  }>
+      include: { vendor: true };
+    }>
   ): VehicleForm {
     return new VehicleForm(
       model.createDate,
@@ -103,7 +121,7 @@ export class VehicleForm {
       model.stnkExpired,
       model.taxExpired,
       model.keurExpired,
-      model.vendor.code,
+      model.vendor.code
     );
   }
 
@@ -119,20 +137,15 @@ export class VehicleForm {
     new Date(),
     new Date(),
     new Date(),
-    "",
+    ""
   );
 
   static readonly brandOptions: SelectOption[] = [
-    { label: "Mitsubishi", value: "Mitsubishi" },
-    { label: "Nissan UD", value: "Nissan UD" },
     { label: "Hino", value: "Hino" },
-    { label: "Isuzu", value: "Isuzu" },
-    { label: "FAW", value: "FAW" },
-    { label: "Scania", value: "Scania" },
-    { label: "Toyota", value: "Toyota" },
+    { label: "UD Trucks", value: "UD Trucks" },
   ];
 
-  static readonly typeOptions: SelectOption[] = [
+  static readonly truckTypeOptions: SelectOption[] = [
     { label: "Tronton", value: "Tronton" },
     { label: "Trintin", value: "Trintin" },
     { label: "Trinton", value: "Trinton" },
@@ -141,4 +154,3 @@ export class VehicleForm {
     { label: "Engkel", value: "Engkel" },
   ];
 }
-

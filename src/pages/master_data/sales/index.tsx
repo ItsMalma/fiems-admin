@@ -1,34 +1,15 @@
-import React from "react";
+import { Button, Search, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
+import React from "react";
 import {
-  PersonFillAdd,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
+  PersonFillAdd,
 } from "react-bootstrap-icons";
-import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
-import { trpc } from "@/libs/trpc";
-
-export function Export() {
-  return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            placeholder="Choose city"
-            options={[{ label: "Excel", value: "excel" }]}
-            value="excel"
-            onChange={() => {}}
-            className="basis-2/3"
-          />
-        </div>
-      </form>
-    </Modal>
-  );
-}
 
 export default function SalesPage() {
   // Gunakan store useMenu untuk mengset menu yang aktif
@@ -52,7 +33,6 @@ export default function SalesPage() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-
   const tableRowsQuery = trpc.sales.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
@@ -63,7 +43,7 @@ export default function SalesPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Sales Code" />
+        <Search placeholder="Search Sales" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Sales"
@@ -80,7 +60,7 @@ export default function SalesPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -150,7 +130,7 @@ export default function SalesPage() {
           },
           {
             id: "status",
-            header: "Description",
+            header: "Status",
             type: "status",
           },
         ]}
@@ -181,14 +161,14 @@ export default function SalesPage() {
 
           // Hapus sales yang dipilih di table
           await deleteMutation.mutateAsync({
-            code: tableRowsQuery.data[selectedRowIndex].code
+            code: tableRowsQuery.data[selectedRowIndex].code,
           });
 
           // Karena sales yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
           //tutup modal
-          setModal(null);          
+          setModal(null);
         }}
       />
     </>

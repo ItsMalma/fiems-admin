@@ -1,18 +1,23 @@
-import React from "react";
+import { Button, Modal, Search, Table } from "@/components/Elements";
+import {
+  Form,
+  FormCounter,
+  FormDate,
+  FormSelect,
+  FormText,
+} from "@/components/Forms";
+import { trpc } from "@/libs/trpc";
+import { VesselForm } from "@/server/dtos/vessel.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import React from "react";
 import {
   BoxFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
-import moment from "moment";
-import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
-import { Form, FormCounter, FormDate, FormSelect, FormText } from "@/components/Forms";
 import { useForm } from "react-hook-form";
-import { VesselForm } from "@/server/dtos/vessel.dto";
-import { trpc } from "@/libs/trpc";
 
 export function Save({ id }: { id?: string }) {
   // Menggunakan function setModal dari store useModal
@@ -21,18 +26,19 @@ export function Save({ id }: { id?: string }) {
   const methods = useForm<VesselForm>({
     defaultValues: VesselForm.initial,
   });
-  const { reset, setValue } = methods;
+  const { reset } = methods;
+
   const formQuery = trpc.vessel.getForm.useQuery({
-    id
+    id,
   });
   React.useEffect(() => {
-    if (formQuery.data?.defaultValue && reset) {
-      reset(formQuery.data.defaultValue, {
+    if (formQuery.data?.value && reset) {
+      reset(formQuery.data.value, {
         keepDirtyValues: true,
         keepErrors: true,
       });
     }
-  }, [formQuery.data?.defaultValue, reset]);
+  }, [formQuery.data?.value, reset]);
 
   const saveMutation = trpc.vessel.save.useMutation();
 
@@ -62,19 +68,30 @@ export function Save({ id }: { id?: string }) {
             input: <FormDate name="createDate" readOnly />,
           },
           {
+            type: "separator",
+          },
+          {
             type: "input",
             id: "shipping",
             label: "Shipping",
-            input: <FormSelect name="shipping" options={formQuery.data?.shippings ?? []}/>,
+            input: (
+              <FormSelect
+                name="shipping"
+                options={formQuery.data?.shippings ?? []}
+              />
+            ),
           },
           {
-            type: "separator",
+            type: "blank",
           },
           {
             type: "input",
             id: "name",
             label: "Vessel Name",
             input: <FormText name="name" />,
+          },
+          {
+            type: "blank",
           },
           {
             type: "input",
@@ -86,35 +103,10 @@ export function Save({ id }: { id?: string }) {
             type: "input",
             id: "unit",
             label: "Satuan",
-            input: (
-              <FormSelect
-                name="unit"
-                options={VesselForm.unitOptions}
-              />
-            ),
-          },          
+            input: <FormSelect name="unit" options={VesselForm.unitOptions} />,
+          },
         ]}
       />
-    </Modal>
-  );
-}
-
-export function Export() {
-  return (
-    <Modal title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            placeholder="Choose file type"
-            options={[{ label: "Excel", value: "excel" }]}
-            onChange={() => {}}
-            value={null}
-            className="basis-2/3"
-            isSearchable
-          />
-        </div>
-      </form>
     </Modal>
   );
 }
@@ -147,7 +139,7 @@ export default function MasterVessel() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Route Code" />
+        <Search placeholder="Search Vessel" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Vessel"
@@ -164,7 +156,7 @@ export default function MasterVessel() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
+            onClick={() => {}}
           />
         </div>
       </div>

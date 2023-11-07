@@ -1,13 +1,18 @@
-import { validateCode } from "@/server/validation";
 import { z } from "zod";
 import {
   VehicleForm,
   VehicleTableRow,
   vehicleInput,
 } from "../dtos/vehicle.dto";
-import { publicProcedure, router } from "../trpc";
-import { createVehicle, deleteVehicle, findAllVehicle, findVehicleById, updateVehicle } from "../stores/vehicle.store";
 import { findAllVendor } from "../stores/customer.store";
+import {
+  createVehicle,
+  deleteVehicle,
+  findAllVehicle,
+  findVehicleById,
+  updateVehicle,
+} from "../stores/vehicle.store";
+import { publicProcedure, router } from "../trpc";
 
 export const vehicleRouter = router({
   getTableRows: publicProcedure.query<VehicleTableRow[]>(async () => {
@@ -23,21 +28,20 @@ export const vehicleRouter = router({
       })
     )
     .query<{
-      defaultValue: VehicleForm;
+      value: VehicleForm;
       vendors: { label: string; value: string }[];
     }>(async ({ input }) => {
-
       const vendors = (await findAllVendor()).map((vendor) => ({
-        label: `${vendor.code} | ${vendor.name}`,
+        label: `${vendor.code} (${vendor.name})`,
         value: vendor.code,
       }));
 
-      let defaultValue = VehicleForm.initial;
+      let value = VehicleForm.initial;
       if (input.id) {
-        defaultValue = VehicleForm.fromModel(await findVehicleById(input.id));
+        value = VehicleForm.fromModel(await findVehicleById(input.id));
       }
 
-      return { defaultValue, vendors };
+      return { value, vendors };
     }),
 
   save: publicProcedure

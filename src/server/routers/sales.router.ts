@@ -30,16 +30,16 @@ export const salesRouter = router({
       })
     )
     .query<{
-      defaultValue: SalesForm;
+      value: SalesForm;
     }>(async ({ input }) => {
-      let defaultValue = SalesForm.initial;
-      defaultValue.code = await findNextSalesCode();
+      let value = SalesForm.initial;
+      value.code = await findNextSalesCode();
 
       if (input.code) {
-        defaultValue = SalesForm.fromModel(await findSalesByCode(input.code));
+        value = SalesForm.fromModel(await findSalesByCode(input.code));
       }
 
-      return { defaultValue };
+      return { value };
     }),
 
   save: publicProcedure

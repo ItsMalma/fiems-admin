@@ -1,60 +1,15 @@
-import React from "react";
+import { Button, Search, Table } from "@/components/Elements";
+import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
+import React from "react";
 import {
-  GeoAltFill,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  Upload,
+  GeoAltFill,
 } from "react-bootstrap-icons";
-import { Button, Label, Modal, Search, Select, Table } from "@/components/Elements";
-import { trpc } from "@/libs/trpc";
-
-function Export() {
-  return (
-    <Modal title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex gap-6 items-center justify-between">
-          <Label name="File Type" />
-          <Select
-            className="basis-3/5"
-            placeholder="Choose city"
-            options={[{ label: "Excel", value: "excel" }]}
-            value={null}
-            onChange={() => {}}
-          />
-        </div>
-      </form>
-    </Modal>
-  );
-}
-
-function Import() {
-  return (
-    <Modal title="Export Data" type="save" onDone={() => {}}>
-      <form>
-        <div className="flex flex-col gap-3">
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="File Type" />
-            <Select
-              className="basis-2/3"
-              placeholder="Choose file type"
-              options={[{ label: "Excel", value: "excel" }]}
-              value={null}
-              onChange={() => {}}
-            />
-          </div>
-          <div className="flex gap-6 items-center justify-between">
-            <Label name="Upload File" />
-            <Upload className="basis-2/3" />
-          </div>
-        </div>
-      </form>
-    </Modal>
-  );
-}
 
 export default function MasterUangJalan() {
   // Gunakan store useHeader untuk mengset judul di header
@@ -87,7 +42,7 @@ export default function MasterUangJalan() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Route Code" />
+        <Search placeholder="Search Uang Jalan" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Uang Jalan"
@@ -99,13 +54,13 @@ export default function MasterUangJalan() {
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
-            onClick={() => setModal(<Import />)}
+            onClick={() => {}}
           />
           <Button
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => setModal(<Export />)}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -173,11 +128,6 @@ export default function MasterUangJalan() {
             type: "money",
             isSortable: true,
           },
-          {
-            id: "status",
-            header: "Status",
-            type: "status",
-          },
         ]}
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
@@ -206,7 +156,7 @@ export default function MasterUangJalan() {
 
           // Hapus uang jalan yang dipilih di table
           await deleteMutation.mutateAsync({
-            id: tableRowsQuery.data[selectedRowIndex].id
+            id: tableRowsQuery.data[selectedRowIndex].id,
           });
 
           // Karena uang jalan yang dipilih telah dihapus, maka set ulang baris yang dipilih di table

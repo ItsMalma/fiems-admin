@@ -1,13 +1,14 @@
-import { validateCode } from "@/server/validation";
 import { z } from "zod";
-import {
-  VesselForm,
-  VesselTableRow,
-  vesselInput,
-} from "../dtos/vessel.dto";
-import { publicProcedure, router } from "../trpc";
-import { createVessel, deleteVessel, findAllVessel, findVesselById, updateVessel } from "../stores/vessel.store";
+import { VesselForm, VesselTableRow, vesselInput } from "../dtos/vessel.dto";
 import { findAllShipping } from "../stores/customer.store";
+import {
+  createVessel,
+  deleteVessel,
+  findAllVessel,
+  findVesselById,
+  updateVessel,
+} from "../stores/vessel.store";
+import { publicProcedure, router } from "../trpc";
 
 export const vesselRouter = router({
   getTableRows: publicProcedure.query<VesselTableRow[]>(async () => {
@@ -23,21 +24,20 @@ export const vesselRouter = router({
       })
     )
     .query<{
-      defaultValue: VesselForm;
+      value: VesselForm;
       shippings: { label: string; value: string }[];
     }>(async ({ input }) => {
-
       const shippings = (await findAllShipping()).map((shipping) => ({
-        label: `${shipping.code} | ${shipping.name}`,
+        label: `${shipping.code} (${shipping.name})`,
         value: shipping.code,
       }));
 
-      let defaultValue = VesselForm.initial;
+      let value = VesselForm.initial;
       if (input.id) {
-        defaultValue = VesselForm.fromModel(await findVesselById(input.id));
+        value = VesselForm.fromModel(await findVesselById(input.id));
       }
 
-      return { defaultValue, shippings };
+      return { value, shippings };
     }),
 
   save: publicProcedure
