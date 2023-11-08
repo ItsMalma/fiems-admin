@@ -9,13 +9,7 @@ import {
   priceTypeInput,
   priceVendorInput,
 } from "../dtos/price.dto";
-import {
-  findAllShipping,
-  findAllVendor,
-  findShippingByCode,
-  findVendorByCode,
-} from "../stores/customer.store";
-import { findAllPort } from "../stores/port.store";
+import { findShippingByCode, findVendorByCode } from "../stores/customer.store";
 import {
   createPriceShipping,
   createPriceVendor,
@@ -28,7 +22,7 @@ import {
   updatePriceShipping,
   updatePriceVendor,
 } from "../stores/price.store";
-import { findAllRoute, findRouteByCode } from "../stores/route.store";
+import { findRouteByCode } from "../stores/route.store";
 import { publicProcedure, router } from "../trpc";
 import { isObjectID, validateCode } from "../validation";
 
@@ -76,25 +70,7 @@ export const pricesRouter = router({
     .query<{
       defaultValue?: PriceVendorForm;
       value?: DeepPartial<PriceVendorForm>;
-      vendors: { label: string; value: string }[];
-      routes: { label: string; value: string }[];
-      ports: { label: string; value: string }[];
     }>(async ({ input }) => {
-      const vendors = (await findAllVendor()).map((vendor) => ({
-        label: `${vendor.code} (${vendor.name})`,
-        value: vendor.code,
-      }));
-
-      let routes = (await findAllRoute()).map((route) => ({
-        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
-        value: route.code,
-      }));
-
-      let ports = (await findAllPort()).map((port) => ({
-        label: `${port.code} (${port.name})`,
-        value: port.code,
-      }));
-
       const value: DeepPartial<PriceVendorForm> = {
         createDate: new Date(),
       };
@@ -138,7 +114,7 @@ export const pricesRouter = router({
         );
       }
 
-      return { value, defaultValue, vendors, routes, ports };
+      return { value, defaultValue };
     }),
 
   getFormShipping: publicProcedure
@@ -170,25 +146,7 @@ export const pricesRouter = router({
     .query<{
       defaultValue?: PriceShippingForm;
       value?: DeepPartial<PriceShippingForm>;
-      shippings: { label: string; value: string }[];
-      routes: { label: string; value: string }[];
-      ports: { label: string; value: string }[];
     }>(async ({ input }) => {
-      const shippings = (await findAllShipping()).map((shipping) => ({
-        label: `${shipping.code} (${shipping.name})`,
-        value: shipping.code,
-      }));
-
-      let routes = (await findAllRoute()).map((route) => ({
-        label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
-        value: route.code,
-      }));
-
-      let ports = (await findAllPort()).map((port) => ({
-        label: `${port.code} (${port.name})`,
-        value: port.code,
-      }));
-
       const value: DeepPartial<PriceShippingForm> = {
         createDate: new Date(),
       };
@@ -236,7 +194,7 @@ export const pricesRouter = router({
         );
       }
 
-      return { value, defaultValue, shippings, routes, ports };
+      return { value, defaultValue };
     }),
 
   saveVendor: publicProcedure
@@ -250,6 +208,7 @@ export const pricesRouter = router({
       if (input.id === undefined) {
         return await createPriceVendor(input);
       }
+      console.log("update");
       return await updatePriceVendor(input.id, input);
     }),
 

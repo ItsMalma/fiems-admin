@@ -45,13 +45,17 @@ export default function SavePriceVendorPage() {
     resolver: zodResolver(priceVendorInput),
   });
   const { reset, setValue } = methods;
-  const value = methods.watch();
+  const values = methods.watch();
+
+  const routesOptions = trpc.routes.getOptions.useQuery();
+  const vendorsOptions = trpc.customers.getOptions.useQuery("Vendor");
+  const portsOptions = trpc.ports.getOptions.useQuery();
 
   const [isDefault, setIsDefault] = React.useState(true);
   const formQuery = trpc.prices.getFormVendor.useQuery({
     id: queryID,
-    vendor: value.vendor,
-    details: filterValidObject(value.details),
+    vendor: values.vendor,
+    details: filterValidObject(values.details),
     isDefault,
   });
 
@@ -71,7 +75,6 @@ export default function SavePriceVendorPage() {
   }, [formQuery.data?.defaultValue, reset]);
 
   const saveMutation = trpc.prices.saveVendor.useMutation();
-
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation
       .mutateAsync({
@@ -89,7 +92,11 @@ export default function SavePriceVendorPage() {
   });
 
   return (
-    <SaveLayout onSave={onSubmit} title="Input Price Vendor" isLoading={!value}>
+    <SaveLayout
+      onSave={onSubmit}
+      title="Input Price Vendor"
+      isLoading={!values}
+    >
       <Form
         methods={methods}
         tabs={[
@@ -125,7 +132,7 @@ export default function SavePriceVendorPage() {
                 input: (
                   <FormSelect
                     name="vendor"
-                    options={formQuery.data?.vendors ?? []}
+                    options={vendorsOptions.data ?? []}
                   />
                 ),
               },
@@ -164,10 +171,7 @@ export default function SavePriceVendorPage() {
                 id: "route",
                 label: "Route",
                 input: (
-                  <FormSelect
-                    name="route"
-                    options={formQuery.data?.routes ?? []}
-                  />
+                  <FormSelect name="route" options={routesOptions.data ?? []} />
                 ),
               },
               {
@@ -206,10 +210,7 @@ export default function SavePriceVendorPage() {
                 id: "port",
                 label: "Port",
                 input: (
-                  <FormSelect
-                    name="port"
-                    options={formQuery.data?.ports ?? []}
-                  />
+                  <FormSelect name="port" options={portsOptions.data ?? []} />
                 ),
               },
               {

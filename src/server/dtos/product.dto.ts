@@ -44,7 +44,7 @@ export class ProductTableRow {
     return new ProductTableRow(
       moment(model.createDate).toString(),
       model.type,
-      model.name,
+      model.skuCode,
       model.productCategory?.name ?? "",
       model.name,
       model.unit

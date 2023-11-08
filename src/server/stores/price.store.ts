@@ -227,6 +227,34 @@ export async function updatePriceVendor(
       }
     }
 
+    for (
+      let detailIndex = 0;
+      detailIndex < input.details.length;
+      detailIndex++
+    ) {
+      const inputDetail = input.details[detailIndex];
+
+      const detail = await prisma.priceVendorDetail.findFirst({
+        where: {
+          priceVendor: { vendor: { code: input.vendor } },
+          route: { code: inputDetail.route },
+          port: { code: inputDetail.port },
+          containerSize: inputDetail.containerSize,
+        },
+      });
+      if (!detail) {
+        continue;
+      }
+
+      if (detail.id !== inputDetail.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "There must be no prices with the same vendor, route, port and container size all together.",
+        });
+      }
+    }
+
     for (let i = 0; i < input.details.length; i++) {
       const inputDetail = input.details[i];
 
@@ -247,35 +275,6 @@ export async function updatePriceVendor(
             route: { connect: { code: inputDetail.route } },
             port: { connect: { code: inputDetail.port } },
           },
-        });
-      }
-    }
-
-    for (
-      let detailIndex = 0;
-      detailIndex < input.details.length;
-      detailIndex++
-    ) {
-      const detail = input.details[detailIndex];
-
-      if (
-        await prisma.priceVendor.count({
-          where: {
-            vendor: { code: input.vendor },
-            details: {
-              some: {
-                route: { code: detail.route },
-                port: { code: detail.port },
-                containerSize: detail.containerSize,
-              },
-            },
-          },
-        })
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "There must be no prices with the same vendor, route, port and container size all together.",
         });
       }
     }
@@ -334,6 +333,35 @@ export async function updatePriceShipping(
       }
     }
 
+    for (
+      let detailIndex = 0;
+      detailIndex < input.details.length;
+      detailIndex++
+    ) {
+      const inputDetail = input.details[detailIndex];
+
+      const detail = await prisma.priceShipping.count({
+        where: {
+          shipping: { code: input.shipping },
+          details: {
+            some: {
+              route: { code: inputDetail.route },
+              port: { code: inputDetail.port },
+              containerSize: inputDetail.containerSize,
+            },
+          },
+        },
+      });
+
+      if (!detail) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "There must be no prices with the same shipping, route, port and container size all together.",
+        });
+      }
+    }
+
     for (let i = 0; i < input.details.length; i++) {
       const inputDetail = input.details[i];
 
@@ -364,35 +392,6 @@ export async function updatePriceShipping(
       }
     }
 
-    for (
-      let detailIndex = 0;
-      detailIndex < input.details.length;
-      detailIndex++
-    ) {
-      const detail = input.details[detailIndex];
-
-      if (
-        (await prisma.priceShipping.count({
-          where: {
-            shipping: { code: input.shipping },
-            details: {
-              some: {
-                route: { code: detail.route },
-                port: { code: detail.port },
-                containerSize: detail.containerSize,
-              },
-            },
-          },
-        })) !== 0
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "There must be no prices with the same shipping, route, port and container size all together.",
-        });
-      }
-    }
-
     return await tx.priceShipping.update({
       where: {
         id,
@@ -419,8 +418,9 @@ export async function deletePriceVendorDetail(
     include: { priceVendor: { include: { details: true } } },
   });
 
-  if (detail.priceVendor.details.length === 0) {
-    await deletePriceVendor(detail.priceVendor.id);
+  const priceVendor = await findPriceVendorByID(detail.priceVendor.id);
+  if (priceVendor.details.length === 0) {
+    await deletePriceVendor(priceVendor.id);
   }
 
   return detail;
@@ -438,8 +438,9 @@ export async function deletePriceShippingDetail(
     include: { priceShipping: { include: { details: true } } },
   });
 
-  if (detail.priceShipping.details.length === 0) {
-    await deletePriceShipping(detail.priceShipping.id);
+  const priceShipping = await findPriceShippingByID(detail.priceShipping.id);
+  if (priceShipping.details.length === 0) {
+    await deletePriceShipping(priceShipping.id);
   }
 
   return detail;

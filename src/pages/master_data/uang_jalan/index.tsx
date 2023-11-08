@@ -148,7 +148,7 @@ export default function MasterUangJalan() {
 
           // Redirect ke halaman save sales
           router.push(
-            `/master_data/uangJalan/save?id=${tableRowsQuery.data[selectedRowIndex].id}`
+            `/master_data/uang_jalan/save?id=${tableRowsQuery.data[selectedRowIndex].id}`
           );
         }}
         onDelete={async () => {
