@@ -20,9 +20,15 @@ type FormControl = {
       label: string;
       input: React.ReactNode;
       full?: boolean;
+      detail?: () => void;
     }
-  | { type: "separator" }
+  | { type: "separator"; label?: string }
   | { type: "blank" }
+  | {
+      type: "button";
+      text: string;
+      onClick: () => void | Promise<void>;
+    }
 );
 
 type FormTab = {
@@ -40,6 +46,7 @@ type FormTab = {
       fieldName: string;
       controls: FormControl[];
       defaultValue?: any;
+      onChangeItem?: (index: number) => void;
     }
 );
 
@@ -79,6 +86,8 @@ type FormControlsProps = {
 };
 
 function FormControls(props: FormControlsProps) {
+  const namePrefix = React.useContext(ControlPrefix);
+
   return (
     <div
       className={clsx(
@@ -103,11 +112,21 @@ function FormControls(props: FormControlsProps) {
                     <Label name={control.label} className="basis-1/3" />
                     {control.input}
                   </div>
+                  {control.detail && (
+                    <div className="flex flex-row-reverse">
+                      <p
+                        className="text-sm text-gray-700 underline underline-offset-2 cursor-pointer"
+                        onClick={() => control.detail!()}
+                      >
+                        + Show Detail
+                      </p>
+                    </div>
+                  )}
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <span className="basis-1/3"></span>
                     <p className="basis-2/3 text-statusInactive">
                       {lodash
-                        .get(props.errors, control.id)
+                        .get(props.errors, namePrefix + control.id)
                         ?.message?.toString()}
                     </p>
                   </div>
@@ -116,7 +135,29 @@ function FormControls(props: FormControlsProps) {
             case "blank":
               return <div key={controlIndex}></div>;
             case "separator":
-              return <hr key={controlIndex} className="col-span-full" />;
+              return (
+                <React.Fragment key={controlIndex}>
+                  <hr className="col-span-full" />
+                  {control.label && (
+                    <h1 className="text-xl text-gray-700 font-semibold col-span-full">
+                      {control.label}
+                    </h1>
+                  )}
+                </React.Fragment>
+              );
+            case "button":
+              return (
+                <div key={controlIndex} className="flex flex-col gap-1">
+                  <Button
+                    variant="filled"
+                    text={control.text}
+                    onClick={async () =>
+                      await Promise.resolve(control.onClick())
+                    }
+                  />
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center"></div>
+                </div>
+              );
           }
         })}
     </div>
@@ -130,9 +171,10 @@ type FormAppendProps = {
   controls: FormControl[];
   errors: FieldErrors<any>;
   defaultValue: any;
+  onChangeItem?: (index: number) => void;
 };
 
-function FormAppend(props: FormAppendProps) {
+function FormAppend({ onChangeItem, ...props }: FormAppendProps) {
   const { fields, append, remove } = useFieldArray({ name: props.fieldName });
 
   const [active, setActive] = React.useState(0);
@@ -142,6 +184,12 @@ function FormAppend(props: FormAppendProps) {
     if (active < 0) setActive(0);
     else if (active >= fields.length) setActive(fields.length - 1);
   }, [active, fields.length]);
+
+  React.useEffect(() => {
+    if (onChangeItem) {
+      onChangeItem(active);
+    }
+  }, [active, onChangeItem]);
 
   return (
     <div
@@ -254,6 +302,7 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
                       name={tab.itemName}
                       fieldName={tab.fieldName}
                       defaultValue={tab.defaultValue}
+                      onChangeItem={tab.onChangeItem}
                     />
                   ) : (
                     <FormControls

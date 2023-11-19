@@ -13,10 +13,12 @@ const InputMoney = React.forwardRef<HTMLInputElement, InputMoneyProps>(
     const [isBlur, setIsBlur] = React.useState(true);
 
     const displayValue = React.useMemo(() => {
+      const valueNumber = Number(props.value);
+
       return Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
-      }).format(Number(props.value));
+      }).format(isNaN(valueNumber) ? 0 : valueNumber);
     }, [props.value]);
 
     return (

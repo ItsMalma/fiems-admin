@@ -208,7 +208,6 @@ export const pricesRouter = router({
       if (input.id === undefined) {
         return await createPriceVendor(input);
       }
-      console.log("update");
       return await updatePriceVendor(input.id, input);
     }),
 

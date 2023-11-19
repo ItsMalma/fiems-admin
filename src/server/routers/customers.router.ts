@@ -88,6 +88,22 @@ export const customersRouter = router({
       }
     }),
 
+  getSingle: publicProcedure
+    .input(
+      z.object({ type: z.enum(customerTypes), code: z.string().optional() })
+    )
+    .query(async ({ input }) => {
+      if (!input.code) return null;
+      switch (input.type) {
+        case "Factory":
+          return await findFactoryByCode(input.code);
+        case "Vendor":
+          return await findVendorByCode(input.code);
+        case "Shipping":
+          return await findShippingByCode(input.code);
+      }
+    }),
+
   getForm: publicProcedure
     .input(
       z.object({

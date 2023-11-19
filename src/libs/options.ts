@@ -35,3 +35,9 @@ export const TruckTypes: SelectOption[] = [
   { label: "Fuso", value: "Fuso" },
   { label: "Engkel", value: "Engkel" },
 ];
+
+export const QuotationStatus: SelectOption[] = [
+  { label: "Include", value: "Include" },
+  { label: "Exclude", value: "Exclude" },
+  { label: "Tidak Ada", value: "TidakAda" },
+];

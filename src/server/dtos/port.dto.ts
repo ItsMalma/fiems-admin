@@ -3,6 +3,10 @@ import moment from "moment";
 import { z } from "zod";
 import { refineDateRange, validateText } from "../validation";
 
+export function validatePortCode(code: string): boolean {
+  return /^PC\d{4}$/.test(code);
+}
+
 export const portInput = z
   .object({
     province: validateText(),

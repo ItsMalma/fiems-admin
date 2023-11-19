@@ -1,13 +1,17 @@
 import { SelectOption } from "@/components/Elements";
 import { MainCOA, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { validateCode, validateSelect, validateText } from "../validation";
+import {
+  validateCode,
+  validateSelectWithEnum,
+  validateText,
+} from "../validation";
 
 export const coaTypes = ["Main", "Sub 1", "Sub 2"] as const;
 export type COAType = (typeof coaTypes)[number];
 
 export const mainCOAInput = z.object({
-  type: validateSelect(coaTypes),
+  type: validateSelectWithEnum(coaTypes),
   accountName: validateText(),
   accountType: validateText(),
   category: validateText(),
@@ -17,7 +21,7 @@ export const mainCOAInput = z.object({
 export type MainCOAInput = z.infer<typeof mainCOAInput>;
 
 export const sub1COAInput = z.object({
-  type: validateSelect(coaTypes),
+  type: validateSelectWithEnum(coaTypes),
   main: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
     (value) => Number(value)
   ),
@@ -26,7 +30,7 @@ export const sub1COAInput = z.object({
 export type Sub1COAInput = z.infer<typeof sub1COAInput>;
 
 export const sub2COAInput = z.object({
-  type: validateSelect(coaTypes),
+  type: validateSelectWithEnum(coaTypes),
   main: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
     (value) => Number(value)
   ),

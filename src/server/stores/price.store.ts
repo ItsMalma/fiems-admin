@@ -9,12 +9,67 @@ import moment from "moment";
 import { PriceShippingInput, PriceVendorInput } from "../dtos/price.dto";
 import prisma from "../prisma";
 
+export async function findPriceVendorByVendor(vendorCode: string) {
+  return await prisma.priceVendor.findFirst({
+    where: { vendor: { code: vendorCode } },
+    include: {
+      vendor: true,
+      details: {
+        include: {
+          port: true,
+          route: true,
+        },
+      },
+    },
+  });
+}
+
+export async function findAllPriceVendors() {
+  return await prisma.priceVendor.findMany({
+    include: {
+      vendor: true,
+      details: {
+        include: {
+          port: true,
+          route: true,
+        },
+      },
+    },
+  });
+}
+
 export async function findAllPriceVendorDetails() {
   return await prisma.priceVendorDetail.findMany({
     include: {
       priceVendor: { include: { vendor: true } },
       route: true,
       port: true,
+    },
+  });
+}
+
+export async function findPriceShippingByShipping(shippingCode: string) {
+  return await prisma.priceShipping.findFirst({
+    where: { shipping: { code: shippingCode } },
+    include: {
+      shipping: true,
+      details: {
+        include: {
+          port: true,
+          route: true,
+        },
+      },
+    },
+  });
+}
+
+export async function findAllPriceShippings() {
+  return await prisma.priceShipping.findMany({
+    include: {
+      shipping: true,
+      details: {
+        include: { port: true, route: true },
+      },
     },
   });
 }

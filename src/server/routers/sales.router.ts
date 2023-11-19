@@ -23,6 +23,13 @@ export const salesRouter = router({
     );
   }),
 
+  getOptions: publicProcedure.query(async () =>
+    (await findAllSales()).map((sales) => ({
+      label: `${sales.code} (${sales.name})`,
+      value: sales.code,
+    }))
+  ),
+
   getForm: publicProcedure
     .input(
       z.object({

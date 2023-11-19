@@ -1,13 +1,15 @@
 import React from "react";
 
-type RadioType = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">;
+type RadioType = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> & {
+  label?: string;
+};
 
 const Radio = React.forwardRef<HTMLInputElement, RadioType>(
   ({ ...props }, ref) => {
     return (
       <div className="flex items-center gap-2">
         <input ref={ref} type="radio" className="w-4 h-4" {...props} />
-        <p className="text-gray-800">{props.value}</p>
+        <p className="text-gray-800">{props.label || props.value}</p>
       </div>
     );
   }
@@ -15,4 +17,4 @@ const Radio = React.forwardRef<HTMLInputElement, RadioType>(
 
 Radio.displayName = "Radio";
 
-export default Radio;
+export { Radio };

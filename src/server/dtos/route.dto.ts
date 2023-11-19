@@ -5,6 +5,10 @@ import moment from "moment";
 import { z } from "zod";
 import { refineDateRange, validateDate, validateText } from "../validation";
 
+export function validateRouteCode(code: string): boolean {
+  return /^RC\d{4}$/.test(code);
+}
+
 export const routeInput = z
   .object({
     province: validateText(),

@@ -1,5 +1,4 @@
-import { Select } from "@/components/Elements";
-import { SelectOption } from "@/components/Elements/Select";
+import { Select, SelectOption } from "@/components/Elements";
 import { ControlPrefix } from "@/components/Forms/prefix.context";
 import clsx from "clsx";
 import React from "react";

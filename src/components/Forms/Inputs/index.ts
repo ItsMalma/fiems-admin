@@ -3,6 +3,8 @@ export * from "./FormCounter";
 export * from "./FormDate";
 export * from "./FormEmail";
 export * from "./FormMoney";
+export * from "./FormPassword";
 export * from "./FormPhone";
+export * from "./FormRadio";
 export * from "./FormSelect";
 export * from "./FormText";

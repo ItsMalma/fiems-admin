@@ -5,15 +5,19 @@ import { z } from "zod";
 import {
   validateEmail,
   validatePhone,
-  validateSelect,
+  validateSelectWithEnum,
   validateText,
 } from "../validation";
+
+export function validateSalesCode(code: string): boolean {
+  return /^SC\d{4}$/.test(code);
+}
 
 export const jobPositions = ["Direktur", "Marketing"] as const;
 
 export const salesInput = z.object({
   name: validateText(),
-  jobPosition: validateSelect(jobPositions),
+  jobPosition: validateSelectWithEnum(jobPositions),
   nik: validateText(),
   area: validateText(),
   phoneNumber: validatePhone("mobile"),

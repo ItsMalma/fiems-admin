@@ -6,14 +6,14 @@ import {
   validateCode,
   validateDate,
   validateMoney,
-  validateSelect,
+  validateSelectWithEnum,
   validateText,
 } from "../validation";
 import { extractCustomerCode } from "./customer.dto";
 import { extractPortCode } from "./port.dto";
 import { extractRouteCode } from "./route.dto";
 
-export const priceTypeInput = validateSelect(["Vendor", "Shipping"]);
+export const priceTypeInput = validateSelectWithEnum(["Vendor", "Shipping"]);
 
 export const priceVendorInput = z.object({
   effectiveStartDate: validateDate(),
