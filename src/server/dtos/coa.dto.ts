@@ -1,13 +1,17 @@
 import { SelectOption } from "@/components/Elements";
 import { MainCOA, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { validateCode, validateSelect, validateText } from "../validation";
+import {
+  validateCode,
+  validateSelectWithEnum,
+  validateText,
+} from "../validation";
 
 export const coaTypes = ["Main", "Sub 1", "Sub 2"] as const;
 export type COAType = (typeof coaTypes)[number];
 
 export const mainCOAInput = z.object({
-  type: validateSelect(coaTypes),
+  type: validateSelectWithEnum(coaTypes),
   accountName: validateText(),
   accountType: validateText(),
   category: validateText(),
@@ -17,8 +21,8 @@ export const mainCOAInput = z.object({
 export type MainCOAInput = z.infer<typeof mainCOAInput>;
 
 export const sub1COAInput = z.object({
-  type: validateSelect(coaTypes),
-  main: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
+  type: validateSelectWithEnum(coaTypes),
+  main: validateCode((code) => code !== "" && !isNaN(Number(code))).transform(
     (value) => Number(value)
   ),
   sub1Description: validateText(),
@@ -26,11 +30,11 @@ export const sub1COAInput = z.object({
 export type Sub1COAInput = z.infer<typeof sub1COAInput>;
 
 export const sub2COAInput = z.object({
-  type: validateSelect(coaTypes),
-  main: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
+  type: validateSelectWithEnum(coaTypes),
+  main: validateCode((code) => code !== "" && !isNaN(Number(code))).transform(
     (value) => Number(value)
   ),
-  sub1: validateCode((code) => code !== "0" && !isNaN(Number(code))).transform(
+  sub1: validateCode((code) => code !== "" && !isNaN(Number(code))).transform(
     (value) => Number(value)
   ),
   sub2Description: validateText(),
@@ -120,10 +124,10 @@ export class COAForm {
     public category: string,
     public transaction: string,
     public currency: string,
-    public main: number,
-    public sub1: number,
+    public main: string,
+    public sub1: string,
     public sub1Description: string,
-    public sub2: number,
+    public sub2: string,
     public sub2Description: string
   ) {}
 
@@ -136,10 +140,10 @@ export class COAForm {
       mainModel.category,
       mainModel.transaction,
       mainModel.currency,
-      mainModel.number,
-      0,
+      mainModel.number.toString(),
       "",
-      0,
+      "",
+      "",
       ""
     );
   }
@@ -157,10 +161,10 @@ export class COAForm {
       mainModel.category,
       mainModel.transaction,
       mainModel.currency,
-      mainModel.number,
-      sub1Index,
+      mainModel.number.toString(),
+      sub1Index.toString(),
       sub1Model.description,
-      0,
+      "",
       ""
     );
   }
@@ -180,10 +184,10 @@ export class COAForm {
       mainModel.category,
       mainModel.transaction,
       mainModel.currency,
-      mainModel.number,
-      sub1Index,
+      mainModel.number.toString(),
+      sub1Index.toString(),
       sub1Model.description,
-      sub2Index,
+      sub2Index.toString(),
       sub2Model.description
     );
   }
@@ -199,10 +203,10 @@ export class COAForm {
           "",
           "",
           "",
-          0,
-          0,
           "",
-          0,
+          "",
+          "",
+          "",
           ""
         );
       case "Sub 1":
@@ -214,10 +218,10 @@ export class COAForm {
           "",
           "",
           "",
-          0,
-          0,
           "",
-          0,
+          "",
+          "",
+          "",
           ""
         );
       case "Sub 2":
@@ -229,10 +233,10 @@ export class COAForm {
           "",
           "",
           "",
-          0,
-          0,
           "",
-          0,
+          "",
+          "",
+          "",
           ""
         );
     }

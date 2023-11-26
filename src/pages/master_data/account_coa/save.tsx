@@ -58,7 +58,7 @@ export default function COASave() {
     return (
       mainCOAs.data?.map((mainCOA) => ({
         label: `${mainCOA.number} (${mainCOA.accountName})`,
-        value: mainCOA.number,
+        value: mainCOA.number.toString(),
       })) ?? []
     );
   }, [mainCOAs?.data]);
@@ -79,19 +79,21 @@ export default function COASave() {
 
   React.useEffect(() => {
     if (nextAccountNumber.data && values.type !== "Sub 1" && !queryNumber) {
-      setValue("main", nextAccountNumber.data);
+      setValue("main", nextAccountNumber.data.toString());
     }
   }, [nextAccountNumber.data, values.type, setValue, queryNumber]);
 
   // Memo untuk nyimpen main coa yang diselect
   const mainCOA = React.useMemo(() => {
-    return mainCOAs.data?.find((mainCOA) => mainCOA.number === values.main);
+    return mainCOAs.data?.find(
+      (mainCOA) => mainCOA.number.toString() === values.main
+    );
   }, [mainCOAs.data, values.main]);
 
   // Memo untuk nyimpen sub 1 coa yang diselect
   const sub1COA = React.useMemo(() => {
     return mainCOA?.subs.find(
-      (_, sub1COAIndex) => sub1COAIndex + 1 === values.sub1
+      (_, sub1COAIndex) => (sub1COAIndex + 1).toString() === values.sub1
     );
   }, [mainCOA?.subs, values.sub1]);
 
@@ -102,8 +104,8 @@ export default function COASave() {
       setValue("category", mainCOA.category);
       setValue("currency", mainCOA.currency);
       setValue("transaction", mainCOA.transaction);
-      if (mainCOA.number !== coaQuery.data?.main) {
-        setValue("sub1", mainCOA.subs.length + 1);
+      if (mainCOA.number.toString() !== coaQuery.data?.main) {
+        setValue("sub1", (mainCOA.subs.length + 1).toString());
       }
     } else if (values.type === "Main") {
       setValue("accountName", "");
@@ -118,10 +120,10 @@ export default function COASave() {
     if (sub1COA && values.type === "Sub 2") {
       setValue("sub1Description", sub1COA.description);
       if (values.sub1 !== coaQuery.data?.sub1) {
-        setValue("sub2", sub1COA.subs.length + 1);
+        setValue("sub2", (sub1COA.subs.length + 1).toString());
       }
     } else if (values.type === "Sub 2") {
-      setValue("sub1", 0);
+      setValue("sub1", "");
       setValue("sub1Description", "");
     }
   }, [coaQuery.data?.sub1, setValue, sub1COA, values.sub1, values.type]);
@@ -280,7 +282,7 @@ export default function COASave() {
                           label: `${mainCOA.number}.${sub1COAIndex + 1} (${
                             sub1COA.description
                           })`,
-                          value: sub1COAIndex + 1,
+                          value: (sub1COAIndex + 1).toString(),
                         })) ?? []
                       }
                     />

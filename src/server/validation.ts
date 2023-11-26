@@ -1,3 +1,4 @@
+import { SelectOption } from "@/components/Elements";
 import moment from "moment";
 import isMobilePhone from "validator/lib/isMobilePhone";
 import { z } from "zod";
@@ -82,13 +83,34 @@ export function validatePhone(
     }, "Invalid format");
 }
 
-export function validateSelect<
+export function validateSelectWithEnum<
   U extends string,
   T extends Readonly<[U, ...U[]]>,
 >(options: T) {
   return z.enum(options, {
     errorMap: () => ({ message: "Invalid value" }),
   });
+}
+
+export function validateSelect(options: SelectOption[]) {
+  return z.union(
+    [
+      z.literal(options[0].value, {
+        errorMap: () => ({ message: "Invalid value" }),
+      }),
+      z.literal(options[1].value, {
+        errorMap: () => ({ message: "Invalid value" }),
+      }),
+      ...options.slice(2).map((option) =>
+        z.literal(option.value, {
+          errorMap: () => ({ message: "Invalid value" }),
+        })
+      ),
+    ],
+    {
+      errorMap: () => ({ message: "Invalid value" }),
+    }
+  );
 }
 
 export function validateSelectEnum(options: z.EnumLike) {

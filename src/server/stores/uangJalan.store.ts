@@ -1,27 +1,25 @@
 import { UangJalan } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import {
-  UangJalanInput,
-} from "../dtos/uangJalan.dto";
+import { UangJalanInput } from "../dtos/uangJalan.dto";
 import prisma from "../prisma";
 
 export async function findAllUangJalan() {
   return await prisma.uangJalan.findMany({
     include: {
       vendor: true,
-      route: true
-    }
+      route: true,
+    },
   });
 }
 
 export async function findUangJalanById(id: string) {
   const uangJalan = await prisma.uangJalan.findFirst({
-     where: { id },
-     include: {
+    where: { id },
+    include: {
       vendor: true,
-      route: true
-     } 
-    });
+      route: true,
+    },
+  });
   if (!uangJalan) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -37,8 +35,8 @@ export async function createUangJalan(
 ): Promise<UangJalan> {
   return await prisma.uangJalan.create({
     data: {
-      vendor: {connect: {code: input.vendor}},
-      route: {connect: {code: input.route}},
+      vendor: { connect: { code: input.vendor } },
+      route: { connect: { code: input.route } },
       truckType: input.truckType,
       containerSize: input.containerSize,
       bbm: input.bbm,
@@ -46,7 +44,7 @@ export async function createUangJalan(
       labourCost: input.labourCost,
       meal: input.meal,
       etc: input.etc,
-      total: input.total
+      total: input.total,
     },
   });
 }
@@ -67,7 +65,7 @@ export async function updateUangJalan(
       labourCost: input.labourCost,
       meal: input.meal,
       etc: input.etc,
-      total: input.total
+      total: input.total,
     },
   });
 }

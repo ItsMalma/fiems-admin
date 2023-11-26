@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import React from "react";
-import { Download, XCircle } from "react-bootstrap-icons";
+import { CheckCircle, Download, Pencil, XCircle } from "react-bootstrap-icons";
 import { Button, Loading } from "../Elements";
 
 type SaveLayoutProps = {
@@ -9,7 +9,13 @@ type SaveLayoutProps = {
   children: React.ReactNode;
   isLoading?: boolean;
   onSave: () => void | Promise<void>;
-};
+} & (
+  | { isConfirm?: false }
+  | {
+      isConfirm: true;
+      onEdit: () => void | Promise<void>;
+    }
+);
 
 export default function SaveLayout(props: SaveLayoutProps) {
   const router = useRouter();
@@ -28,11 +34,20 @@ export default function SaveLayout(props: SaveLayoutProps) {
             icon={<XCircle />}
             onClick={() => router.back()}
           />
+          {props.isConfirm && (
+            <Button
+              type="button"
+              variant="outlined"
+              text="Edit"
+              icon={<Pencil />}
+              onClick={async () => await Promise.resolve(props.onEdit())}
+            />
+          )}
           <Button
             type="button"
             variant="filled"
-            text="Save"
-            icon={<Download />}
+            text={props.isConfirm ? "Confirm" : "Save"}
+            icon={props.isConfirm ? <CheckCircle /> : <Download />}
             onClick={async () => await Promise.resolve(props.onSave())}
           />
         </div>

@@ -16,7 +16,7 @@ import {
 } from "../stores/product.store";
 import { findAllProductCategory } from "../stores/productCategory.store";
 import { publicProcedure, router } from "../trpc";
-import { validateCode, validateSelect } from "../validation";
+import { validateCode, validateSelectWithEnum } from "../validation";
 
 export const productsRouter = router({
   getTableRows: publicProcedure.query<ProductTableRow[]>(async () => {
@@ -28,7 +28,7 @@ export const productsRouter = router({
   getForm: publicProcedure
     .input(
       z.object({
-        type: validateSelect(productTypes).optional(),
+        type: validateSelectWithEnum(productTypes).optional(),
         skuCode: validateCode(
           (value) => !isNaN(extractProductSKUCode(value))
         ).optional(),

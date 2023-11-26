@@ -157,7 +157,7 @@ export function Export() {
           <Select
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
-            value={null}
+            value={""}
             onChange={() => {}}
             className="basis-2/3"
             isSearchable

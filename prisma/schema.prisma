@@ -34,78 +34,87 @@ type CustomerPic {
 }
 
 model Factory {
-  code       String        @id @map("_id") @db.String
-  name       String
-  group      CustomerGroup @relation(fields: [groupCode], references: [code], onDelete: Restrict)
-  groupCode  String        @db.String
-  address    String
-  province   String
-  city       String
-  telephone  String
-  fax        String
-  email      String
-  top        Int
-  currency   String
-  purchasing CustomerPic
-  operation  CustomerPic
-  finance    CustomerPic
-  createDate DateTime      @default(now())
-  status     Boolean       @default(true)
+  code             String            @id @map("_id") @db.String
+  name             String
+  group            CustomerGroup     @relation(fields: [groupCode], references: [code], onDelete: Restrict)
+  groupCode        String            @db.String
+  address          String
+  province         String
+  city             String
+  telephone        String
+  fax              String
+  email            String
+  top              Int
+  currency         String
+  purchasing       CustomerPic
+  operation        CustomerPic
+  finance          CustomerPic
+  createDate       DateTime          @default(now())
+  status           Boolean           @default(true)
+  quotations       Quotation[]
+  quotationDetails QuotationDetail[]
 }
 
 model Vendor {
-  code         String        @id @map("_id") @db.String
-  name         String
-  address      String
-  province     String
-  city         String
-  telephone    String
-  fax          String
-  email        String
-  top          Int
-  currency     String
-  purchasing   CustomerPic
-  operation    CustomerPic
-  finance      CustomerPic
-  createDate   DateTime      @default(now())
-  status       Boolean       @default(true)
-  priceVendors PriceVendor[]
-  vehicles     Vehicle[]
-  uangJalan    UangJalan[]
+  code           String                          @id @map("_id") @db.String
+  name           String
+  address        String
+  province       String
+  city           String
+  telephone      String
+  fax            String
+  email          String
+  top            Int
+  currency       String
+  purchasing     CustomerPic
+  operation      CustomerPic
+  finance        CustomerPic
+  createDate     DateTime                        @default(now())
+  status         Boolean                         @default(true)
+  priceVendors   PriceVendor[]
+  vehicles       Vehicle[]
+  uangJalan      UangJalan[]
+  trackingAsal   QuotationDetailTrackingAsal[]
+  trackingTujuan QuotationDetailTrackingTujuan[]
 }
 
 model Shipping {
-  code          String          @id @map("_id") @db.String
-  name          String
-  address       String
-  province      String
-  city          String
-  telephone     String
-  fax           String
-  email         String
-  top           Int
-  currency      String
-  purchasing    CustomerPic
-  operation     CustomerPic
-  finance       CustomerPic
-  createDate    DateTime        @default(now())
-  status        Boolean         @default(true)
-  PriceShipping PriceShipping[]
-  Vessel        Vessel[]
+  code           String                          @id @map("_id") @db.String
+  name           String
+  address        String
+  province       String
+  city           String
+  telephone      String
+  fax            String
+  email          String
+  top            Int
+  currency       String
+  purchasing     CustomerPic
+  operation      CustomerPic
+  finance        CustomerPic
+  createDate     DateTime                        @default(now())
+  status         Boolean                         @default(true)
+  priceShippings PriceShipping[]
+  vessels        Vessel[]
+  shippingDetail QuotationDetailShippingDetail[]
 }
 
 model Route {
-  code                 String                @id @map("_id") @db.String
+  code                 String                          @id @map("_id") @db.String
   province             String
   city                 String
   startDescription     String
   endDescription       String
   effectiveStartDate   DateTime
   effectiveEndDate     DateTime
-  createDate           DateTime              @default(now())
+  createDate           DateTime                        @default(now())
   priceVendorDetails   PriceVendorDetail[]
   priceShippingDetails PriceShippingDetail[]
-  UangJalan            UangJalan[]
+  uangJalan            UangJalan[]
+  quotationDetails     QuotationDetail[]
+  trackingAsal         QuotationDetailTrackingAsal[]
+  trackingTujuan       QuotationDetailTrackingTujuan[]
+  shippingDetail       QuotationDetailShippingDetail[]
 }
 
 model Port {
@@ -116,6 +125,7 @@ model Port {
   createDate           DateTime              @default(now())
   priceVendorDetails   PriceVendorDetail[]
   priceShippingDetails PriceShippingDetail[]
+  quotationDetails     QuotationDetail[]
 }
 
 model Sales {
@@ -130,6 +140,7 @@ model Sales {
   email       String
   status      Boolean          @default(true)
   createDate  DateTime         @default(now())
+  quotations  Quotation[]
 }
 
 enum SalesJobPosition {
@@ -185,7 +196,7 @@ model UangJalan {
 
 model PriceVendorDetail {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  priceVendor   PriceVendor @relation(fields: [priceVendorId], references: [id], onDelete: Restrict)
+  priceVendor   PriceVendor @relation(fields: [priceVendorId], references: [id], onDelete: Cascade)
   priceVendorId String      @db.ObjectId
   route         Route       @relation(fields: [routeCode], references: [code], onDelete: Restrict)
   routeCode     String      @db.String
@@ -216,7 +227,7 @@ model PriceVendor {
 
 model PriceShippingDetail {
   id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  priceShipping   PriceShipping @relation(fields: [priceShippingId], references: [id], onDelete: Restrict)
+  priceShipping   PriceShipping @relation(fields: [priceShippingId], references: [id], onDelete: Cascade)
   priceShippingId String        @db.ObjectId
   route           Route         @relation(fields: [routeCode], references: [code], onDelete: Restrict)
   routeCode       String        @db.String
@@ -293,4 +304,95 @@ type Sub1COA {
 type Sub2COA {
   description String
   status      Boolean @default(true)
+}
+
+model Quotation {
+  number             String            @id @map("_id") @db.String
+  serviceType        String
+  sales              Sales             @relation(fields: [salesCode], references: [code], onDelete: Restrict)
+  salesCode          String            @db.String
+  effectiveStartDate DateTime
+  effectiveEndDate   DateTime
+  factory            Factory           @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
+  factoryCode        String            @db.String
+  details            QuotationDetail[]
+  createDate         DateTime          @default(now())
+}
+
+model QuotationDetail {
+  id              String                         @id @default(auto()) @map("_id") @db.ObjectId
+  quotation       Quotation                      @relation(fields: [quotationNumber], references: [number], onDelete: Cascade)
+  quotationNumber String                         @map("quotationID") @db.String
+  route           Route                          @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode       String                         @db.String
+  factory         Factory                        @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
+  factoryCode     String                         @db.String
+  port            Port                           @relation(fields: [portCode], references: [code], onDelete: Restrict)
+  portCode        String                         @db.String
+  containerSize   String
+  containerType   String
+  trackingAsal    QuotationDetailTrackingAsal?
+  trackingTujuan  QuotationDetailTrackingTujuan?
+  shippingDetail  QuotationDetailShippingDetail?
+  otherExpanses   QuotationDetailOtherExpanses?
+  summaryDetail   QuotationDetailSummaryDetail?
+  completed       Boolean                        @default(false)
+}
+
+model QuotationDetailTrackingAsal {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @unique @db.ObjectId
+  vendor            Vendor          @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode        String          @db.String
+  route             Route           @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode         String          @db.String
+}
+
+model QuotationDetailTrackingTujuan {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @unique @db.ObjectId
+  vendor            Vendor          @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode        String          @db.String
+  route             Route           @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode         String          @db.String
+}
+
+model QuotationDetailShippingDetail {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @unique @db.ObjectId
+  shipping          Shipping        @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
+  shippingCode      String          @db.String
+  route             Route           @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode         String          @db.String
+}
+
+type QuotationDetailOtherExpanses {
+  adminBL       Int
+  cleaning      Int
+  alihKapal     Int
+  materai       Int
+  biayaBuruh    Int
+  stuffingDalam Int
+  stuffingLuar  Int
+  biayaCetakRC  Int
+  biayaCetakIR  Int
+}
+
+enum QuotationDetailSummaryDetailStatus {
+  Include
+  Exclude
+  TidakAda
+}
+
+type QuotationDetailSummaryDetail {
+  ppftz          QuotationDetailSummaryDetailStatus
+  nilaiPPFTZ     Int
+  insurance      QuotationDetailSummaryDetailStatus
+  nilaiInsurance Int
+  biayaAdmin     Int
+  ppn            QuotationDetailSummaryDetailStatus
+  hargaJual      Int
 }

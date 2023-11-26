@@ -57,7 +57,7 @@ export function Save({ skuCode }: { skuCode?: string }) {
 
   return (
     <Modal
-      title="Add New Product Category"
+      title="Add New Product"
       type="save"
       onDone={onSubmit}
       isLoading={!formQuery.data}

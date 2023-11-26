@@ -1,7 +1,7 @@
 import { SelectOption } from "@/components/Elements";
 import {
   validateCode,
-  validateSelect,
+  validateSelectWithEnum,
   validateText,
 } from "@/server/validation";
 import { Prisma, ProductType } from "@prisma/client";
@@ -11,7 +11,7 @@ import { z } from "zod";
 export const productTypes = ["Product", "Sparepart", "ATK"] as const;
 
 export const productInput = z.object({
-  type: validateSelect(productTypes),
+  type: validateSelectWithEnum(productTypes),
   category: validateCode(
     (code) => !isNaN(extractProductSKUCode(code))
   ).optional(),
@@ -44,7 +44,7 @@ export class ProductTableRow {
     return new ProductTableRow(
       moment(model.createDate).toString(),
       model.type,
-      model.name,
+      model.skuCode,
       model.productCategory?.name ?? "",
       model.name,
       model.unit

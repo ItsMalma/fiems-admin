@@ -7,6 +7,7 @@ import { portsRouter } from "./ports.router";
 import { pricesRouter } from "./price.router";
 import { productCategoriesRouter } from "./productCategories.router";
 import { productsRouter } from "./products.router";
+import { quotationsRouter } from "./quotations.router";
 import { routesRouter } from "./routes.router";
 import { salesRouter } from "./sales.router";
 import { uangJalanRouter } from "./uangJalan.router";
@@ -27,6 +28,7 @@ export const appRouter = router({
   productCategories: productCategoriesRouter,
   products: productsRouter,
   coas: coasRouter,
+  quotations: quotationsRouter,
 });
 
 export type AppRouter = typeof appRouter;

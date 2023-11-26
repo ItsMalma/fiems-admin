@@ -7,7 +7,7 @@ import {
   validateCounter,
   validateEmail,
   validatePhone,
-  validateSelect,
+  validateSelectWithEnum,
   validateText,
 } from "../validation";
 import { extractCustomerGroupCode } from "./customerGroup.dto";
@@ -15,8 +15,20 @@ import { extractCustomerGroupCode } from "./customerGroup.dto";
 export const customerTypes = ["Factory", "Vendor", "Shipping"] as const;
 export type CustomerType = (typeof customerTypes)[number];
 
+export function validateFactoryCode(code: string): boolean {
+  return /^CFC\d{4}$/.test(code);
+}
+
+export function validateVendorCode(code: string): boolean {
+  return /^CVC\d{4}$/.test(code);
+}
+
+export function validateShippingCode(code: string): boolean {
+  return /^CSC\d{4}$/.test(code);
+}
+
 export const customerInput = z.object({
-  type: validateSelect(customerTypes),
+  type: validateSelectWithEnum(customerTypes),
   name: validateText(),
   group: validateCode(
     (value) => !isNaN(extractCustomerGroupCode(value))

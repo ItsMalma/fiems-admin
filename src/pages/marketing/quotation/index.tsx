@@ -8,10 +8,10 @@ import React from "react";
 import {
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  GeoAltFill,
+  PersonFillAdd,
 } from "react-bootstrap-icons";
 
-export default function MasterUangJalan() {
+export default function QuotationPage() {
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
@@ -19,12 +19,12 @@ export default function MasterUangJalan() {
   const { setActive } = useMenu();
 
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
-  const { setModal, current } = useModal();
+  const { setModal } = useModal();
 
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Master Data | Master Uang Jalan");
-    setActive(1, 7, 0);
+    setTitle("Marketing | Form Quotation");
+    setActive(2, 1, 0);
   }, [setTitle, setActive]);
 
   // Mendapatkan router
@@ -33,28 +33,27 @@ export default function MasterUangJalan() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.uangJalan.getTableRows.useQuery();
-  React.useEffect(() => {
-    tableRowsQuery.refetch();
-  }, [current, tableRowsQuery]);
+  const tableRowsQuery = trpc.quotations.getTableRows.useQuery({
+    completed: false,
+  });
 
-  const deleteMutation = trpc.uangJalan.delete.useMutation();
+  const deleteMutation = trpc.quotations.deleteDetail.useMutation();
+
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Uang Jalan" />
+        <Search placeholder="Search Price Vendor" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Uang Jalan"
-            icon={<GeoAltFill />}
+            text="Add New Price Vendor"
+            icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/master_data/uang_jalan/save")}
+            onClick={() => router.push("/master_data/prices/vendor/save")}
           />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
-            onClick={() => {}}
           />
           <Button
             text="Export"
@@ -69,14 +68,31 @@ export default function MasterUangJalan() {
         isSelectable
         columns={[
           {
+            id: "number",
+            header: "Quotation Number",
+            type: "code",
+            isSortable: true,
+          },
+          {
             id: "createDate",
             header: "Create Date",
             type: "date",
             isSortable: true,
           },
           {
-            id: "vendor",
-            header: "Vendor",
+            id: "serviceType",
+            header: "Service Type",
+            type: "text",
+          },
+          {
+            id: "sales",
+            header: "Sales",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "customer",
+            header: "Customer",
             type: "text",
             isSortable: true,
           },
@@ -87,8 +103,8 @@ export default function MasterUangJalan() {
             isSortable: true,
           },
           {
-            id: "truckType",
-            header: "Truck Type",
+            id: "port",
+            header: "Port",
             type: "text",
             isSortable: true,
           },
@@ -96,43 +112,73 @@ export default function MasterUangJalan() {
             id: "containerSize",
             header: "Container Size",
             type: "text",
-            isSortable: true,
           },
           {
-            id: "bbm",
-            header: "BBM",
+            id: "containerType",
+            header: "Container Type",
+            type: "text",
+          },
+          {
+            id: "trackingAsal",
+            header: "Tracking Asal",
             type: "money",
             isSortable: true,
           },
           {
-            id: "toll",
-            header: "Toll",
+            id: "trackingTujuan",
+            header: "Tracking Tujuan",
             type: "money",
             isSortable: true,
           },
           {
-            id: "labourCost",
-            header: "Biaya Buruh",
+            id: "shippingDetail",
+            header: "Shipping Detail",
             type: "money",
             isSortable: true,
           },
           {
-            id: "meal",
-            header: "Meal",
+            id: "otherExpanses",
+            header: "Other Expanses",
             type: "money",
             isSortable: true,
           },
           {
-            id: "etc",
-            header: "Etc",
+            id: "ppftz",
+            header: "PPFTZ",
             type: "money",
             isSortable: true,
           },
           {
-            id: "total",
-            header: "Total",
+            id: "ppftzStatus",
+            header: "PPFTZ Status",
+            type: "text",
+          },
+          {
+            id: "insurance",
+            header: "Insurance",
             type: "money",
             isSortable: true,
+          },
+          {
+            id: "insuranceStatus",
+            header: "Insurance Status",
+            type: "text",
+          },
+          {
+            id: "ppn",
+            header: "PPN",
+            type: "text",
+          },
+          {
+            id: "hargaJual",
+            header: "Harga Jual",
+            type: "money",
+            isSortable: true,
+          },
+          {
+            id: "status",
+            header: "Status",
+            type: "status",
           },
         ]}
         rows={tableRowsQuery.data ?? []}
@@ -146,10 +192,10 @@ export default function MasterUangJalan() {
             return;
           }
 
-          // Redirect ke halaman save sales
-          router.push(
-            `/master_data/uang_jalan/save?id=${tableRowsQuery.data[selectedRowIndex].id}`
-          );
+          const quotation = tableRowsQuery.data[selectedRowIndex];
+
+          // Redirect ke halaman save price vendor
+          router.push(`/marketing/quotation/save?number=${quotation.number}`);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
@@ -160,16 +206,32 @@ export default function MasterUangJalan() {
             return;
           }
 
-          // Hapus uang jalan yang dipilih di table
-          await deleteMutation.mutateAsync({
-            id: tableRowsQuery.data[selectedRowIndex].id,
-          });
+          const quotation = tableRowsQuery.data[selectedRowIndex];
 
-          // Karena uang jalan yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          // Hapus price vendor yang dipilih di table
+          await deleteMutation.mutateAsync(quotation.detailID);
+
+          // Karena price vendor yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
           // Tutup modal
           setModal(null);
+        }}
+        onConfirm={async () => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
+            return;
+          }
+
+          const quotation = tableRowsQuery.data[selectedRowIndex];
+
+          // Redirect ke halaman save price vendor
+          router.push(
+            `/marketing/quotation/save?number=${quotation.number}&id=${quotation.detailID}`
+          );
         }}
       />
     </>

@@ -47,6 +47,10 @@ export default function SavePriceShippingPage() {
   const { reset, setValue } = methods;
   const value = methods.watch();
 
+  const routesOptions = trpc.routes.getOptions.useQuery();
+  const shippingsOptions = trpc.customers.getOptions.useQuery("Shipping");
+  const portsOptions = trpc.ports.getOptions.useQuery();
+
   const [isDefault, setIsDefault] = React.useState(true);
   const formQuery = trpc.prices.getFormShipping.useQuery({
     id: queryID,
@@ -129,7 +133,7 @@ export default function SavePriceShippingPage() {
                 input: (
                   <FormSelect
                     name="shipping"
-                    options={formQuery.data?.shippings ?? []}
+                    options={shippingsOptions.data ?? []}
                   />
                 ),
               },
@@ -168,10 +172,7 @@ export default function SavePriceShippingPage() {
                 id: "route",
                 label: "Route",
                 input: (
-                  <FormSelect
-                    name="route"
-                    options={formQuery.data?.routes ?? []}
-                  />
+                  <FormSelect name="route" options={routesOptions.data ?? []} />
                 ),
               },
               {
@@ -210,10 +211,7 @@ export default function SavePriceShippingPage() {
                 id: "port",
                 label: "Port",
                 input: (
-                  <FormSelect
-                    name="port"
-                    options={formQuery.data?.ports ?? []}
-                  />
+                  <FormSelect name="port" options={portsOptions.data ?? []} />
                 ),
               },
               {

@@ -25,6 +25,13 @@ export const portsRouter = router({
     return (await findAllPort()).map((port) => PortTableRow.fromModel(port));
   }),
 
+  getOptions: publicProcedure.query(async () =>
+    (await findAllPort()).map((port) => ({
+      label: `${port.code} (${port.name})`,
+      value: port.code,
+    }))
+  ),
+
   getForm: publicProcedure
     .input(
       z.object({

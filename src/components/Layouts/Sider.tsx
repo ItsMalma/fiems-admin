@@ -1,5 +1,7 @@
 import Image from "next/image";
 import {
+  BarChart,
+  BarChartFill,
   Database,
   DatabaseFill,
   Grid1x2,
@@ -83,6 +85,24 @@ export default function Sider() {
               {
                 name: "Account COA",
                 url: "/master_data/account_coa",
+              },
+            ],
+          },
+          {
+            name: "Marketing",
+            icon: BarChart,
+            activeIcon: BarChartFill,
+            childrens: [
+              {
+                name: "Price Calculation",
+                url: "/marketing/quotation/save",
+              },
+              {
+                name: "Form Quotation",
+                childrens: [
+                  { name: "Incomplete", url: "/marketing/quotation" },
+                  { name: "Complete", url: "/marketing/quotation/complete" },
+                ],
               },
             ],
           },

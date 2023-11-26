@@ -1,5 +1,4 @@
-import { Select } from "@/components/Elements";
-import { SelectOption } from "@/components/Elements/Select";
+import { Select, SelectOption } from "@/components/Elements";
 import { ControlPrefix } from "@/components/Forms/prefix.context";
 import clsx from "clsx";
 import React from "react";
@@ -31,7 +30,7 @@ export function FormSelect(props: FormSelectProps) {
       isCreatable={props.isCreatable}
       value={field.value}
       onChange={(option) => {
-        field.onChange(option?.value);
+        field.onChange(option);
       }}
       onBlur={field.onBlur}
       isError={!!fieldState.error}

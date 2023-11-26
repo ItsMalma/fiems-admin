@@ -18,7 +18,7 @@ export const vehicleInput = z.object({
   type: validateText(),
   machineNumber: validateText(),
   frameNumber: validateText(),
-  cylinder: validateCounter(),
+  cylinder: validateCounter(0),
   color: validateText(),
   stnkExpired: validateDate(),
   taxExpired: validateDate(),

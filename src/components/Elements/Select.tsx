@@ -6,7 +6,7 @@ import { CaretDownFill, CaretUpFill, Icon } from "react-bootstrap-icons";
 
 type SelectOption = {
   label: string;
-  value: any;
+  value: string;
 };
 
 type SelectProps = Omit<
@@ -31,16 +31,16 @@ type SelectProps = Omit<
     | {
         isMulti: true;
 
-        value: any[];
+        value: string[];
 
-        onChange: (options: any[]) => void;
+        onChange: (options: string[]) => void;
       }
     | {
         isMulti?: false;
 
-        value: any;
+        value: string;
 
-        onChange: (option: any) => void;
+        onChange: (option: string) => void;
       }
   );
 
@@ -150,16 +150,20 @@ const Select = React.forwardRef<HTMLInputElement, SelectProps>(
         if (actives.find((active) => active.value === option.value)) {
           // remove option from actives
           if (isMulti) {
-            onChange(actives.filter((active) => active.value !== option.value));
+            onChange(
+              actives
+                .filter((active) => active.value !== option.value)
+                .map((active) => active.value)
+            );
           } else {
-            onChange(null);
+            onChange("");
           }
         } else {
           // add option to actives
           if (isMulti) {
-            onChange([...actives, option]);
+            onChange([...actives.map((active) => active.value), option.value]);
           } else {
-            onChange(option);
+            onChange(option.value);
           }
         }
         setExpand(false);

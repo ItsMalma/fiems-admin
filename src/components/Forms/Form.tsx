@@ -20,9 +20,15 @@ type FormControl = {
       label: string;
       input: React.ReactNode;
       full?: boolean;
+      detail?: () => void;
     }
-  | { type: "separator" }
+  | { type: "separator"; label?: string }
   | { type: "blank" }
+  | {
+      type: "button";
+      text: string;
+      onClick: () => void | Promise<void>;
+    }
 );
 
 type FormTab = {
@@ -39,7 +45,10 @@ type FormTab = {
       itemName: string;
       fieldName: string;
       controls: FormControl[];
+      readOnly?: boolean;
+      hideItems?: boolean;
       defaultValue?: any;
+      onChangeItem?: (index: number) => void;
     }
 );
 
@@ -79,6 +88,8 @@ type FormControlsProps = {
 };
 
 function FormControls(props: FormControlsProps) {
+  const namePrefix = React.useContext(ControlPrefix);
+
   return (
     <div
       className={clsx(
@@ -103,11 +114,21 @@ function FormControls(props: FormControlsProps) {
                     <Label name={control.label} className="basis-1/3" />
                     {control.input}
                   </div>
+                  {control.detail && (
+                    <div className="flex flex-row-reverse">
+                      <p
+                        className="text-sm text-gray-700 underline underline-offset-2 cursor-pointer"
+                        onClick={() => control.detail!()}
+                      >
+                        + Show Detail
+                      </p>
+                    </div>
+                  )}
                   <div className="flex gap-[18px] 2xl:gap-6 items-center">
                     <span className="basis-1/3"></span>
                     <p className="basis-2/3 text-statusInactive">
                       {lodash
-                        .get(props.errors, control.id)
+                        .get(props.errors, namePrefix + control.id)
                         ?.message?.toString()}
                     </p>
                   </div>
@@ -116,7 +137,29 @@ function FormControls(props: FormControlsProps) {
             case "blank":
               return <div key={controlIndex}></div>;
             case "separator":
-              return <hr key={controlIndex} className="col-span-full" />;
+              return (
+                <React.Fragment key={controlIndex}>
+                  <hr className="col-span-full" />
+                  {control.label && (
+                    <h1 className="text-xl text-gray-700 font-semibold col-span-full">
+                      {control.label}
+                    </h1>
+                  )}
+                </React.Fragment>
+              );
+            case "button":
+              return (
+                <div key={controlIndex} className="flex flex-col gap-1">
+                  <Button
+                    variant="filled"
+                    text={control.text}
+                    onClick={async () =>
+                      await Promise.resolve(control.onClick())
+                    }
+                  />
+                  <div className="flex gap-[18px] 2xl:gap-6 items-center"></div>
+                </div>
+              );
           }
         })}
     </div>
@@ -129,10 +172,13 @@ type FormAppendProps = {
   fieldName: string;
   controls: FormControl[];
   errors: FieldErrors<any>;
+  readOnly?: boolean;
+  hideItems?: boolean;
   defaultValue: any;
+  onChangeItem?: (index: number) => void;
 };
 
-function FormAppend(props: FormAppendProps) {
+function FormAppend({ onChangeItem, ...props }: FormAppendProps) {
   const { fields, append, remove } = useFieldArray({ name: props.fieldName });
 
   const [active, setActive] = React.useState(0);
@@ -143,6 +189,12 @@ function FormAppend(props: FormAppendProps) {
     else if (active >= fields.length) setActive(fields.length - 1);
   }, [active, fields.length]);
 
+  React.useEffect(() => {
+    if (onChangeItem) {
+      onChangeItem(active);
+    }
+  }, [active, onChangeItem]);
+
   return (
     <div
       className={clsx(
@@ -151,45 +203,49 @@ function FormAppend(props: FormAppendProps) {
       )}
     >
       <>
-        <div className="sticky left-0 basis-1/5 flex flex-col gap-3 2xl:gap-4">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className={clsx(
-                "flex items-center px-3 py-2 2xl:px-4 gap-3 2xl:gap-4 rounded-[10px] font-semibold border-[1.5px]",
-                index === active && "text-black border-black",
-                index !== active &&
-                  "text-gray-200 border-gray-200 cursor-pointer"
-              )}
-              onClick={() => setActive(index)}
-            >
-              <p>{`${props.name} ${index + 1}`}</p>
-              {index === active && fields.length > 1 && (
-                <span
-                  className="ml-auto cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    remove(index);
-                  }}
-                >
-                  <X size={16} />
-                </span>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            variant="outlined"
-            text="Add Item"
-            iconPosition="left"
-            icon={<PlusCircle size={16} />}
-            className="!py-2"
-            onClick={async () => {
-              append(props.defaultValue);
-              setActive(fields.length);
-            }}
-          />
-        </div>
+        {!props.hideItems && (
+          <div className="sticky left-0 basis-1/5 flex flex-col gap-3 2xl:gap-4">
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className={clsx(
+                  "flex items-center px-3 py-2 2xl:px-4 gap-3 2xl:gap-4 rounded-[10px] font-semibold border-[1.5px]",
+                  index === active && "text-black border-black",
+                  index !== active &&
+                    "text-gray-200 border-gray-200 cursor-pointer"
+                )}
+                onClick={() => setActive(index)}
+              >
+                <p>{`${props.name} ${index + 1}`}</p>
+                {index === active && fields.length > 1 && !props.readOnly && (
+                  <span
+                    className="ml-auto cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      remove(index);
+                    }}
+                  >
+                    <X size={16} />
+                  </span>
+                )}
+              </div>
+            ))}
+            {!props.readOnly && (
+              <Button
+                type="button"
+                variant="outlined"
+                text="Add Item"
+                iconPosition="left"
+                icon={<PlusCircle size={16} />}
+                className="!py-2"
+                onClick={async () => {
+                  append(props.defaultValue);
+                  setActive(fields.length);
+                }}
+              />
+            )}
+          </div>
+        )}
         {fields.map((field, index) => {
           return (
             <ControlPrefix.Provider
@@ -253,7 +309,10 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
                       errors={props.methods.formState.errors}
                       name={tab.itemName}
                       fieldName={tab.fieldName}
+                      readOnly={tab.readOnly}
+                      hideItems={tab.hideItems}
                       defaultValue={tab.defaultValue}
+                      onChangeItem={tab.onChangeItem}
                     />
                   ) : (
                     <FormControls
