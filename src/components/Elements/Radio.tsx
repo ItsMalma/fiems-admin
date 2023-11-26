@@ -5,10 +5,16 @@ type RadioType = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> & {
 };
 
 const Radio = React.forwardRef<HTMLInputElement, RadioType>(
-  ({ ...props }, ref) => {
+  ({ readOnly, ...props }, ref) => {
     return (
       <div className="flex items-center gap-2">
-        <input ref={ref} type="radio" className="w-4 h-4" {...props} />
+        <input
+          ref={ref}
+          type="radio"
+          className="w-4 h-4"
+          disabled={readOnly}
+          {...props}
+        />
         <p className="text-gray-800">{props.label || props.value}</p>
       </div>
     );

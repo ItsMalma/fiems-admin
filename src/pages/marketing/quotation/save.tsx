@@ -21,6 +21,9 @@ import {
   QuotationDetailShippingPrices,
   QuotationDetailTrackingPrices,
   QuotationForm,
+  calculateOtherExpanses,
+  calculateShippingTotal,
+  calculateTrackingTotal,
   defaultQuotationDetailForm,
   defaultQuotationForm,
   quotationValidationSchema,
@@ -28,8 +31,10 @@ import {
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PriceShippingDetail, PriceVendorDetail } from "@prisma/client";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -265,6 +270,9 @@ export default function SaveQuotationPage() {
 
   const { setModal } = useModal();
 
+  const { addToasts } = useToast();
+
+  const queryNumber = useQuery("number");
   const queryID = useQuery("id");
 
   const [appendIndex, setAppendIndex] = React.useState(0);
@@ -275,6 +283,25 @@ export default function SaveQuotationPage() {
   });
   const { reset, setValue } = methods;
   const values = methods.watch();
+
+  const defaultFormByNumberQuery =
+    trpc.quotations.getDefaultFormByNumber.useQuery(queryNumber);
+  React.useEffect(() => {
+    if (defaultFormByNumberQuery.data) {
+      if (queryID) {
+        reset({
+          ...defaultFormByNumberQuery.data,
+          details: [
+            defaultFormByNumberQuery.data.details.find(
+              (detail) => detail.id === queryID
+            ),
+          ],
+        });
+      } else {
+        reset(defaultFormByNumberQuery.data);
+      }
+    }
+  }, [defaultFormByNumberQuery.data, reset, queryID]);
 
   // Memo untuk menyimpan value detail dari append yang dipilih
   const detail = React.useMemo(
@@ -287,10 +314,10 @@ export default function SaveQuotationPage() {
 
   const nextNumberQuery = trpc.quotations.getNextNumber.useQuery();
   React.useEffect(() => {
-    if (nextNumberQuery.data) {
+    if (nextNumberQuery.data && !queryNumber) {
       setValue("number", nextNumberQuery.data);
     }
-  }, [nextNumberQuery.data, setValue]);
+  }, [nextNumberQuery.data, queryNumber, setValue]);
 
   const salesOptionsQuery = trpc.sales.getOptions.useQuery();
 
@@ -335,6 +362,27 @@ export default function SaveQuotationPage() {
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
+  React.useEffect(() => {
+    if (
+      detail?.trackingAsal.vendor &&
+      !trackingVendorOptionsQuery.data?.find(
+        (option) => option.value === detail.trackingAsal.vendor
+      )
+    ) {
+      setValue(`details.${appendIndex}.trackingAsal.vendor`, "");
+      setValue(`details.${appendIndex}.trackingAsal.route`, "");
+    }
+    if (
+      detail?.trackingTujuan.vendor &&
+      !trackingVendorOptionsQuery.data?.find(
+        (option) => option.value === detail.trackingTujuan.vendor
+      )
+    ) {
+      setValue(`details.${appendIndex}.trackingTujuan.vendor`, "");
+      setValue(`details.${appendIndex}.trackingTujuan.route`, "");
+    }
+  }, [trackingVendorOptionsQuery.data, detail, setValue, appendIndex]);
+
   const trackingAsalRouteOptionsQuery =
     trpc.quotations.getTrackingRouteOptions.useQuery({
       vendor: detail?.trackingAsal.vendor,
@@ -342,6 +390,17 @@ export default function SaveQuotationPage() {
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
+  React.useEffect(() => {
+    if (
+      detail?.trackingAsal.route &&
+      !trackingAsalRouteOptionsQuery.data?.find(
+        (option) => option.value === detail.trackingAsal.route
+      )
+    ) {
+      setValue(`details.${appendIndex}.trackingAsal.route`, "");
+    }
+  }, [trackingAsalRouteOptionsQuery.data, detail, setValue, appendIndex]);
+
   const trackingAsalDetailQuery = trpc.quotations.getTrackingDetail.useQuery({
     vendor: detail?.trackingAsal.vendor,
     route: detail?.trackingAsal.route,
@@ -350,16 +409,12 @@ export default function SaveQuotationPage() {
     containerType: detail?.containerType,
   });
   React.useEffect(() => {
-    if (trackingAsalDetailQuery.data) {
+    if (trackingAsalDetailQuery.data !== undefined) {
       setValue(
         `details.${appendIndex}.trackingAsal.price`,
-        trackingAsalDetailQuery.data.tracking +
-          trackingAsalDetailQuery.data.buruh +
-          trackingAsalDetailQuery.data.thcOPT +
-          trackingAsalDetailQuery.data.thcOPP +
-          trackingAsalDetailQuery.data.adminBL +
-          trackingAsalDetailQuery.data.cleaning +
-          trackingAsalDetailQuery.data.materai
+        trackingAsalDetailQuery.data
+          ? calculateTrackingTotal(trackingAsalDetailQuery.data)
+          : 0
       );
     }
   }, [trackingAsalDetailQuery.data, setValue, appendIndex]);
@@ -372,6 +427,17 @@ export default function SaveQuotationPage() {
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
+  React.useEffect(() => {
+    if (
+      detail?.trackingTujuan.route &&
+      !trackingTujuanRouteOptionsQuery.data?.find(
+        (option) => option.value === detail.trackingTujuan.route
+      )
+    ) {
+      setValue(`details.${appendIndex}.trackingTujuan.route`, "");
+    }
+  }, [trackingTujuanRouteOptionsQuery.data, detail, setValue, appendIndex]);
+
   const trackingTujuanDetailQuery = trpc.quotations.getTrackingDetail.useQuery({
     vendor: detail?.trackingTujuan.vendor,
     route: detail?.trackingTujuan.route,
@@ -380,16 +446,12 @@ export default function SaveQuotationPage() {
     containerType: detail?.containerType,
   });
   React.useEffect(() => {
-    if (trackingTujuanDetailQuery.data) {
+    if (trackingTujuanDetailQuery.data !== undefined) {
       setValue(
         `details.${appendIndex}.trackingTujuan.price`,
-        trackingTujuanDetailQuery.data.tracking +
-          trackingTujuanDetailQuery.data.buruh +
-          trackingTujuanDetailQuery.data.thcOPT +
-          trackingTujuanDetailQuery.data.thcOPP +
-          trackingTujuanDetailQuery.data.adminBL +
-          trackingTujuanDetailQuery.data.cleaning +
-          trackingTujuanDetailQuery.data.materai
+        trackingTujuanDetailQuery.data
+          ? calculateTrackingTotal(trackingTujuanDetailQuery.data)
+          : 0
       );
     }
   }, [trackingTujuanDetailQuery.data, setValue, appendIndex]);
@@ -400,6 +462,18 @@ export default function SaveQuotationPage() {
     containerSize: detail?.containerSize,
     containerType: detail?.containerType,
   });
+  React.useEffect(() => {
+    if (
+      detail?.shippingDetail.shipping &&
+      !shippingOptionsQuery.data?.find(
+        (option) => option.value === detail.shippingDetail.shipping
+      )
+    ) {
+      setValue(`details.${appendIndex}.shippingDetail.shipping`, "");
+      setValue(`details.${appendIndex}.shippingDetail.route`, "");
+    }
+  }, [shippingOptionsQuery.data, detail, setValue, appendIndex]);
+
   const shippingRouteOptionsQuery =
     trpc.quotations.getShippingRouteOptions.useQuery({
       shipping: detail?.shippingDetail.shipping,
@@ -407,6 +481,17 @@ export default function SaveQuotationPage() {
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
+  React.useEffect(() => {
+    if (
+      detail?.shippingDetail.route &&
+      !shippingRouteOptionsQuery.data?.find(
+        (option) => option.value === detail.shippingDetail.route
+      )
+    ) {
+      setValue(`details.${appendIndex}.shippingDetail.route`, "");
+    }
+  }, [shippingRouteOptionsQuery.data, detail, setValue, appendIndex]);
+
   const shippingDetailQuery = trpc.quotations.getShippingDetail.useQuery({
     shipping: detail?.shippingDetail.shipping,
     route: detail?.shippingDetail.route,
@@ -415,20 +500,12 @@ export default function SaveQuotationPage() {
     containerType: detail?.containerType,
   });
   React.useEffect(() => {
-    if (shippingDetailQuery.data) {
+    if (shippingDetailQuery.data !== undefined) {
       setValue(
         `details.${appendIndex}.shippingDetail.price`,
-        shippingDetailQuery.data.freight +
-          shippingDetailQuery.data.thcOPT +
-          shippingDetailQuery.data.thcOPP +
-          shippingDetailQuery.data.adminBL +
-          shippingDetailQuery.data.cleaning +
-          shippingDetailQuery.data.alihKapal +
-          shippingDetailQuery.data.materai +
-          shippingDetailQuery.data.lolo +
-          shippingDetailQuery.data.segel +
-          shippingDetailQuery.data.rc +
-          shippingDetailQuery.data.lss
+        shippingDetailQuery.data
+          ? calculateShippingTotal(shippingDetailQuery.data)
+          : 0
       );
     }
   }, [shippingDetailQuery.data, setValue, appendIndex]);
@@ -438,15 +515,7 @@ export default function SaveQuotationPage() {
     if (detail) {
       setValue(
         `details.${appendIndex}.otherExpanses.price`,
-        (detail?.otherExpanses.adminBL ?? 0) +
-          (detail?.otherExpanses.cleaning ?? 0) +
-          (detail?.otherExpanses.alihKapal ?? 0) +
-          (detail?.otherExpanses.materai ?? 0) +
-          (detail?.otherExpanses.biayaBuruh ?? 0) +
-          (detail?.otherExpanses.stuffingDalam ?? 0) +
-          (detail?.otherExpanses.stuffingLuar ?? 0) +
-          (detail?.otherExpanses.biayaCetakRC ?? 0) +
-          (detail?.otherExpanses.biayaCetakIR ?? 0)
+        calculateOtherExpanses(detail.otherExpanses)
       );
     }
   }, [
@@ -537,10 +606,27 @@ export default function SaveQuotationPage() {
   ]);
 
   const saveMutation = trpc.quotations.saveQuotation.useMutation();
+  const confirmMutation = trpc.quotations.confirmDetail.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    await saveMutation.mutateAsync(data);
-    console.log(saveMutation.error);
+    if (queryID && detail?.id) {
+      await confirmMutation.mutateAsync(detail.id);
+      await router.push("/marketing/quotation");
+    } else {
+      await saveMutation
+        .mutateAsync({
+          ...data,
+          number: queryNumber,
+        })
+        .then(async () => {
+          await router.push("/marketing/quotation");
+        })
+        .catch((err) => {
+          if (err instanceof TRPCClientError) {
+            addToasts({ type: "error", message: err.message });
+          }
+        });
+    }
   });
 
   return (
@@ -548,6 +634,10 @@ export default function SaveQuotationPage() {
       onSave={onSubmit}
       title="Input Price Calculation"
       isLoading={!nextNumberQuery.data}
+      isConfirm={!!queryID}
+      onEdit={async () => {
+        await router.push(`/marketing/quotation/save?number=${queryNumber}`);
+      }}
     >
       <Form
         methods={methods}
@@ -575,7 +665,13 @@ export default function SaveQuotationPage() {
                 type: "input",
                 id: "serviceType",
                 label: "Service Type",
-                input: <FormSelect name="serviceType" options={ServiceTypes} />,
+                input: (
+                  <FormSelect
+                    name="serviceType"
+                    options={ServiceTypes}
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 type: "blank",
@@ -588,6 +684,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="sales"
                     options={salesOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -598,13 +695,17 @@ export default function SaveQuotationPage() {
                 type: "input",
                 id: "effectiveStartDate",
                 label: "Effective Start Date",
-                input: <FormDate name="effectiveStartDate" />,
+                input: (
+                  <FormDate name="effectiveStartDate" readOnly={!!queryID} />
+                ),
               },
               {
                 type: "input",
                 id: "effectiveEndDate",
                 label: "Effective End Date",
-                input: <FormDate name="effectiveEndDate" />,
+                input: (
+                  <FormDate name="effectiveEndDate" readOnly={!!queryID} />
+                ),
               },
               {
                 type: "input",
@@ -614,6 +715,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="factory"
                     options={factoriesOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -637,6 +739,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="route"
                     options={routesOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -648,6 +751,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="factory"
                     options={factoriesOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -677,6 +781,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="port"
                     options={portsOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -688,7 +793,11 @@ export default function SaveQuotationPage() {
                 id: "containerSize",
                 label: "Container Size",
                 input: (
-                  <FormSelect name="containerSize" options={ContainerSizes} />
+                  <FormSelect
+                    name="containerSize"
+                    options={ContainerSizes}
+                    readOnly={!!queryID}
+                  />
                 ),
               },
               {
@@ -696,7 +805,11 @@ export default function SaveQuotationPage() {
                 id: "containerType",
                 label: "Container Type",
                 input: (
-                  <FormSelect name="containerType" options={ContainerTypes} />
+                  <FormSelect
+                    name="containerType"
+                    options={ContainerTypes}
+                    readOnly={!!queryID}
+                  />
                 ),
               },
               {
@@ -711,6 +824,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="trackingAsal.vendor"
                     options={trackingVendorOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -722,6 +836,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="trackingAsal.route"
                     options={trackingAsalRouteOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -752,6 +867,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="trackingTujuan.vendor"
                     options={trackingVendorOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -763,6 +879,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="trackingTujuan.route"
                     options={trackingTujuanRouteOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -793,6 +910,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="shippingDetail.shipping"
                     options={shippingOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -804,6 +922,7 @@ export default function SaveQuotationPage() {
                   <FormSelect
                     name="shippingDetail.route"
                     options={shippingRouteOptionsQuery.data ?? []}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -830,55 +949,100 @@ export default function SaveQuotationPage() {
                 id: "otherExpanses.adminBL",
                 label: "Admin BL",
                 type: "input",
-                input: <FormMoney name="otherExpanses.adminBL" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.adminBL"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.cleaning",
                 label: "Cleaning",
                 type: "input",
-                input: <FormMoney name="otherExpanses.cleaning" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.cleaning"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.alihKapal",
                 label: "Alih Kapal",
                 type: "input",
-                input: <FormMoney name="otherExpanses.alihKapal" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.alihKapal"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.materai",
                 label: "Materai",
                 type: "input",
-                input: <FormMoney name="otherExpanses.materai" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.materai"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.biayaBuruh",
                 label: "Biaya Buruh",
                 type: "input",
-                input: <FormMoney name="otherExpanses.biayaBuruh" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.biayaBuruh"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.stuffingDalam",
                 label: "Stuffing Dalam",
                 type: "input",
-                input: <FormMoney name="otherExpanses.stuffingDalam" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.stuffingDalam"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.stuffingLuar",
                 label: "Stuffing Luar",
                 type: "input",
-                input: <FormMoney name="otherExpanses.stuffingLuar" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.stuffingLuar"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.biayaCetakRC",
                 label: "Biaya Cetak RC",
                 type: "input",
-                input: <FormMoney name="otherExpanses.biayaCetakRC" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.biayaCetakRC"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.biayaCetakIR",
                 label: "Biaya Cetak IR",
                 type: "input",
-                input: <FormMoney name="otherExpanses.biayaCetakIR" />,
+                input: (
+                  <FormMoney
+                    name="otherExpanses.biayaCetakIR"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 id: "otherExpanses.price",
@@ -898,6 +1062,7 @@ export default function SaveQuotationPage() {
                   <FormRadio
                     name="summaryDetail.ppftz"
                     options={QuotationStatus}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -911,7 +1076,9 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormMoney
                     name="summaryDetail.nilaiPPFTZ"
-                    readOnly={detail?.summaryDetail.ppftz === "TidakAda"}
+                    readOnly={
+                      detail?.summaryDetail.ppftz === "TidakAda" || !!queryID
+                    }
                   />
                 ),
               },
@@ -926,6 +1093,7 @@ export default function SaveQuotationPage() {
                   <FormRadio
                     name="summaryDetail.insurance"
                     options={QuotationStatus}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -939,7 +1107,10 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormMoney
                     name="summaryDetail.nilaiInsurance"
-                    readOnly={detail?.summaryDetail.insurance === "TidakAda"}
+                    readOnly={
+                      detail?.summaryDetail.insurance === "TidakAda" ||
+                      !!queryID
+                    }
                   />
                 ),
               },
@@ -959,7 +1130,10 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormMoney
                     name="summaryDetail.biayaAdmin"
-                    readOnly={detail?.summaryDetail.insurance === "TidakAda"}
+                    readOnly={
+                      detail?.summaryDetail.insurance === "TidakAda" ||
+                      !!queryID
+                    }
                   />
                 ),
               },
@@ -989,6 +1163,7 @@ export default function SaveQuotationPage() {
                   <FormRadio
                     name="summaryDetail.ppn"
                     options={QuotationStatus.slice(0, 2)}
+                    readOnly={!!queryID}
                   />
                 ),
               },
@@ -999,7 +1174,12 @@ export default function SaveQuotationPage() {
                 type: "input",
                 id: "summaryDetail.hargaJual",
                 label: "Harga Jual",
-                input: <FormMoney name="summaryDetail.hargaJual" />,
+                input: (
+                  <FormMoney
+                    name="summaryDetail.hargaJual"
+                    readOnly={!!queryID}
+                  />
+                ),
               },
               {
                 type: "input",
@@ -1029,6 +1209,8 @@ export default function SaveQuotationPage() {
             fieldName: "details",
             onChangeItem: (index) => setAppendIndex(index),
             defaultValue: defaultQuotationDetailForm,
+            readOnly: !!queryID,
+            hideItems: !!queryID,
           },
         ]}
       />

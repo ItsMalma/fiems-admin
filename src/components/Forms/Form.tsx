@@ -45,6 +45,8 @@ type FormTab = {
       itemName: string;
       fieldName: string;
       controls: FormControl[];
+      readOnly?: boolean;
+      hideItems?: boolean;
       defaultValue?: any;
       onChangeItem?: (index: number) => void;
     }
@@ -170,6 +172,8 @@ type FormAppendProps = {
   fieldName: string;
   controls: FormControl[];
   errors: FieldErrors<any>;
+  readOnly?: boolean;
+  hideItems?: boolean;
   defaultValue: any;
   onChangeItem?: (index: number) => void;
 };
@@ -199,45 +203,49 @@ function FormAppend({ onChangeItem, ...props }: FormAppendProps) {
       )}
     >
       <>
-        <div className="sticky left-0 basis-1/5 flex flex-col gap-3 2xl:gap-4">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className={clsx(
-                "flex items-center px-3 py-2 2xl:px-4 gap-3 2xl:gap-4 rounded-[10px] font-semibold border-[1.5px]",
-                index === active && "text-black border-black",
-                index !== active &&
-                  "text-gray-200 border-gray-200 cursor-pointer"
-              )}
-              onClick={() => setActive(index)}
-            >
-              <p>{`${props.name} ${index + 1}`}</p>
-              {index === active && fields.length > 1 && (
-                <span
-                  className="ml-auto cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    remove(index);
-                  }}
-                >
-                  <X size={16} />
-                </span>
-              )}
-            </div>
-          ))}
-          <Button
-            type="button"
-            variant="outlined"
-            text="Add Item"
-            iconPosition="left"
-            icon={<PlusCircle size={16} />}
-            className="!py-2"
-            onClick={async () => {
-              append(props.defaultValue);
-              setActive(fields.length);
-            }}
-          />
-        </div>
+        {!props.hideItems && (
+          <div className="sticky left-0 basis-1/5 flex flex-col gap-3 2xl:gap-4">
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className={clsx(
+                  "flex items-center px-3 py-2 2xl:px-4 gap-3 2xl:gap-4 rounded-[10px] font-semibold border-[1.5px]",
+                  index === active && "text-black border-black",
+                  index !== active &&
+                    "text-gray-200 border-gray-200 cursor-pointer"
+                )}
+                onClick={() => setActive(index)}
+              >
+                <p>{`${props.name} ${index + 1}`}</p>
+                {index === active && fields.length > 1 && !props.readOnly && (
+                  <span
+                    className="ml-auto cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      remove(index);
+                    }}
+                  >
+                    <X size={16} />
+                  </span>
+                )}
+              </div>
+            ))}
+            {!props.readOnly && (
+              <Button
+                type="button"
+                variant="outlined"
+                text="Add Item"
+                iconPosition="left"
+                icon={<PlusCircle size={16} />}
+                className="!py-2"
+                onClick={async () => {
+                  append(props.defaultValue);
+                  setActive(fields.length);
+                }}
+              />
+            )}
+          </div>
+        )}
         {fields.map((field, index) => {
           return (
             <ControlPrefix.Provider
@@ -301,6 +309,8 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
                       errors={props.methods.formState.errors}
                       name={tab.itemName}
                       fieldName={tab.fieldName}
+                      readOnly={tab.readOnly}
+                      hideItems={tab.hideItems}
                       defaultValue={tab.defaultValue}
                       onChangeItem={tab.onChangeItem}
                     />

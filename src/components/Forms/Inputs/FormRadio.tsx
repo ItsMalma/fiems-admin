@@ -28,6 +28,7 @@ export function FormRadio(props: FormRadioProps) {
           onChange={field.onChange}
           onBlur={field.onBlur}
           checked={field.value === option.value}
+          readOnly={props.readOnly}
         />
       ))}
     </div>

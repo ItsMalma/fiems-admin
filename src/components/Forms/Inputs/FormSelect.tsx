@@ -30,7 +30,7 @@ export function FormSelect(props: FormSelectProps) {
       isCreatable={props.isCreatable}
       value={field.value}
       onChange={(option) => {
-        field.onChange(option?.value);
+        field.onChange(option);
       }}
       onBlur={field.onBlur}
       isError={!!fieldState.error}

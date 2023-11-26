@@ -40,6 +40,19 @@ export type QuotationDetailTrackingPrices = {
   cleaning: number;
   materai: number;
 };
+export function calculateTrackingTotal(
+  tracking: QuotationDetailTrackingPrices
+) {
+  return (
+    tracking.tracking +
+    tracking.buruh +
+    tracking.thcOPT +
+    tracking.thcOPP +
+    tracking.adminBL +
+    tracking.cleaning +
+    tracking.materai
+  );
+}
 
 export type QuotationDetailShippingPrices = {
   freight: number;
@@ -54,6 +67,23 @@ export type QuotationDetailShippingPrices = {
   rc: number;
   lss: number;
 };
+export function calculateShippingTotal(
+  shipping: QuotationDetailShippingPrices
+) {
+  return (
+    shipping.freight +
+    shipping.thcOPT +
+    shipping.thcOPP +
+    shipping.adminBL +
+    shipping.cleaning +
+    shipping.alihKapal +
+    shipping.materai +
+    shipping.lolo +
+    shipping.segel +
+    shipping.rc +
+    shipping.lss
+  );
+}
 
 export type QuotationDetailTrackingForm = {
   vendor: string;
@@ -79,6 +109,21 @@ export type QuotationDetailOtherExpansesForm = {
   biayaCetakIR: number;
   price: number;
 };
+export function calculateOtherExpanses(
+  otherExpanses: Omit<QuotationDetailOtherExpansesForm, "price">
+) {
+  return (
+    otherExpanses.adminBL +
+    otherExpanses.cleaning +
+    otherExpanses.alihKapal +
+    otherExpanses.materai +
+    otherExpanses.biayaBuruh +
+    otherExpanses.stuffingDalam +
+    otherExpanses.stuffingLuar +
+    otherExpanses.biayaCetakRC +
+    otherExpanses.biayaCetakIR
+  );
+}
 
 export type QuotationDetailSummaryDetailForm = {
   ppftz: QuotationDetailSummaryDetailStatus;
@@ -89,7 +134,7 @@ export type QuotationDetailSummaryDetailForm = {
   biayaAdmin: number;
   insuranceSum: number;
   hpp: number;
-  ppn: Exclude<QuotationDetailSummaryDetailStatus, "TidakAda">;
+  ppn: QuotationDetailSummaryDetailStatus;
   hargaJual: number;
   hargaJual2: number;
   hargaJual3: number;
@@ -97,6 +142,7 @@ export type QuotationDetailSummaryDetailForm = {
 };
 
 export type QuotationDetailForm = {
+  id: string;
   route: string;
   factory: string;
   factoryAddress: string;
@@ -112,6 +158,7 @@ export type QuotationDetailForm = {
 };
 
 export const defaultQuotationDetailForm: QuotationDetailForm = {
+  id: "",
   route: "",
   factory: "",
   factoryAddress: "",
@@ -153,11 +200,11 @@ export const defaultQuotationDetailForm: QuotationDetailForm = {
 
 export type QuotationForm = {
   number: string;
-  createDate: Date;
+  createDate: Date | string;
   serviceType: string;
   sales: string;
-  effectiveStartDate: Date;
-  effectiveEndDate: Date;
+  effectiveStartDate: Date | string;
+  effectiveEndDate: Date | string;
   factory: string;
   factoryAddress: string;
   details: QuotationDetailForm[];
@@ -177,18 +224,19 @@ export const defaultQuotationForm: QuotationForm = {
 
 export const quotationValidationSchema = z
   .object({
-    serviceType: validateSelect<string>(ServiceTypes),
+    serviceType: validateSelect(ServiceTypes),
     sales: validateCode(validateSalesCode),
     effectiveStartDate: validateDate(),
     effectiveEndDate: validateDate(),
     factory: validateCode(validateFactoryCode),
     details: validateAppend(
       z.object({
+        id: z.string().optional(),
         route: validateCode(validateRouteCode),
         factory: validateCode(validateFactoryCode),
         port: validateCode(validatePortCode),
-        containerSize: validateSelect<string>(ContainerSizes),
-        containerType: validateSelect<string>(ContainerTypes),
+        containerSize: validateSelect(ContainerSizes),
+        containerType: validateSelect(ContainerTypes),
         trackingAsal: z.object({
           vendor: validateCode(validateVendorCode),
           route: validateCode(validateRouteCode),
@@ -213,16 +261,12 @@ export const quotationValidationSchema = z
           biayaCetakIR: validateMoney(),
         }),
         summaryDetail: z.object({
-          ppftz:
-            validateSelect<QuotationDetailSummaryDetailStatus>(QuotationStatus),
+          ppftz: validateSelect(QuotationStatus),
           nilaiPPFTZ: validateMoney(),
-          insurance:
-            validateSelect<QuotationDetailSummaryDetailStatus>(QuotationStatus),
+          insurance: validateSelect(QuotationStatus),
           nilaiInsurance: validateMoney(),
           biayaAdmin: validateMoney(),
-          ppn: validateSelect<QuotationDetailSummaryDetailStatus>(
-            QuotationStatus
-          ),
+          ppn: validateSelect(QuotationStatus),
           hargaJual: validateMoney(),
         }),
       })
@@ -230,3 +274,41 @@ export const quotationValidationSchema = z
   })
   .superRefine(refineDateRange("effectiveStartDate", "effectiveEndDate"));
 export type QuotationInput = z.infer<typeof quotationValidationSchema>;
+
+export function transformQuotationStatus(
+  status: QuotationDetailSummaryDetailStatus
+) {
+  switch (status) {
+    case "Include":
+      return "Include";
+    case "Exclude":
+      return "Exclude";
+    case "TidakAda":
+      return "Tidak Ada";
+  }
+}
+
+export type QuotationTableRow = {
+  detailID: string;
+  number: string;
+  createDate: Date;
+  serviceType: string;
+  sales: string;
+  customer: string;
+  route: string;
+  deliveryTo: string;
+  port: string;
+  containerSize: string;
+  containerType: string;
+  trackingAsal: number;
+  trackingTujuan: number;
+  shippingDetail: number;
+  otherExpanses: number;
+  ppftz: number;
+  ppftzStatus: string;
+  insurance: number;
+  insuranceStatus: string;
+  ppn: string;
+  hargaJual: number;
+  status: boolean;
+};

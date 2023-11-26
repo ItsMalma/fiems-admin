@@ -92,19 +92,17 @@ export function validateSelectWithEnum<
   });
 }
 
-export function validateSelect<T extends z.Primitive = string>(
-  options: SelectOption[]
-) {
+export function validateSelect(options: SelectOption[]) {
   return z.union(
     [
-      z.literal<T>(options[0].value, {
+      z.literal(options[0].value, {
         errorMap: () => ({ message: "Invalid value" }),
       }),
-      z.literal<T>(options[1].value, {
+      z.literal(options[1].value, {
         errorMap: () => ({ message: "Invalid value" }),
       }),
       ...options.slice(2).map((option) =>
-        z.literal<T>(option.value, {
+        z.literal(option.value, {
           errorMap: () => ({ message: "Invalid value" }),
         })
       ),

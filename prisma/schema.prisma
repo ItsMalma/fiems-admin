@@ -320,53 +320,53 @@ model Quotation {
 }
 
 model QuotationDetail {
-  id               String                        @id @default(auto()) @map("_id") @db.ObjectId
-  quotation        Quotation                     @relation(fields: [quotationID], references: [number], onDelete: Cascade)
-  quotationID      String                        @db.String
-  route            Route                         @relation(fields: [routeCode], references: [code], onDelete: Restrict)
-  routeCode        String                        @db.String
-  factory          Factory                       @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
-  factoryCode      String                        @db.String
-  port             Port                          @relation(fields: [portCode], references: [code], onDelete: Restrict)
-  portCode         String                        @db.String
-  containerSize    String
-  containerType    String
-  trackingAsal     QuotationDetailTrackingAsal   @relation(fields: [trackingAsalID], references: [id])
-  trackingAsalID   String                        @unique @db.ObjectId
-  trackingTujuan   QuotationDetailTrackingTujuan @relation(fields: [trackingTujuanID], references: [id])
-  trackingTujuanID String                        @unique @db.ObjectId
-  shippingDetail   QuotationDetailShippingDetail @relation(fields: [shippingDetailID], references: [id])
-  shippingDetailID String                        @unique @db.ObjectId
-  otherExpanses    QuotationDetailOtherExpanses
-  summaryDetail    QuotationDetailSummaryDetail
-  completed        Boolean                       @default(false)
+  id              String                         @id @default(auto()) @map("_id") @db.ObjectId
+  quotation       Quotation                      @relation(fields: [quotationNumber], references: [number], onDelete: Cascade)
+  quotationNumber String                         @map("quotationID") @db.String
+  route           Route                          @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode       String                         @db.String
+  factory         Factory                        @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
+  factoryCode     String                         @db.String
+  port            Port                           @relation(fields: [portCode], references: [code], onDelete: Restrict)
+  portCode        String                         @db.String
+  containerSize   String
+  containerType   String
+  trackingAsal    QuotationDetailTrackingAsal?
+  trackingTujuan  QuotationDetailTrackingTujuan?
+  shippingDetail  QuotationDetailShippingDetail?
+  otherExpanses   QuotationDetailOtherExpanses?
+  summaryDetail   QuotationDetailSummaryDetail?
+  completed       Boolean                        @default(false)
 }
 
 model QuotationDetailTrackingAsal {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  quotationDetail QuotationDetail?
-  vendor          Vendor           @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
-  vendorCode      String           @db.String
-  route           Route            @relation(fields: [routeCode], references: [code], onDelete: Restrict)
-  routeCode       String           @db.String
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @unique @db.ObjectId
+  vendor            Vendor          @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode        String          @db.String
+  route             Route           @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode         String          @db.String
 }
 
 model QuotationDetailTrackingTujuan {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  quotationDetail QuotationDetail?
-  vendor          Vendor           @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
-  vendorCode      String           @db.String
-  route           Route            @relation(fields: [routeCode], references: [code], onDelete: Restrict)
-  routeCode       String           @db.String
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @unique @db.ObjectId
+  vendor            Vendor          @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
+  vendorCode        String          @db.String
+  route             Route           @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode         String          @db.String
 }
 
 model QuotationDetailShippingDetail {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  quotationDetail QuotationDetail?
-  shipping        Shipping         @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
-  shippingCode    String           @db.String
-  route           Route            @relation(fields: [routeCode], references: [code], onDelete: Restrict)
-  routeCode       String           @db.String
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @unique @db.ObjectId
+  shipping          Shipping        @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
+  shippingCode      String          @db.String
+  route             Route           @relation(fields: [routeCode], references: [code], onDelete: Restrict)
+  routeCode         String          @db.String
 }
 
 type QuotationDetailOtherExpanses {

@@ -140,7 +140,7 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             onChange={() => {}}
-            value={null}
+            value={""}
             className="basis-2/3"
             isSearchable
           />

@@ -5,6 +5,7 @@ import moment from "moment";
 import React from "react";
 import {
   Calendar,
+  CheckSquare,
   ChevronLeft,
   ChevronRight,
   Filter,
@@ -15,13 +16,13 @@ import {
   SquareFill,
   Trash,
 } from "react-bootstrap-icons";
-import { Button, Loading, Modal, Select, SelectOption } from ".";
+import { Button, Loading, Modal, Select } from ".";
 import VerticalLine from "../Icons/VerticalLine";
 
 const entriesOptions = [
-  { label: "Show 10 entries", value: 10 },
-  { label: "Show 25 entries", value: 25 },
-  { label: "Show 50 entries", value: 50 },
+  { label: "Show 10 entries", value: "10" },
+  { label: "Show 25 entries", value: "25" },
+  { label: "Show 50 entries", value: "50" },
 ];
 
 type DateRangeOption = "today" | "yesterday" | "weeksAgo";
@@ -69,6 +70,7 @@ type TableProps = {
 
   onEdit?: (rowIndex: number) => void | Promise<void>;
   onDelete?: (rowIndex: number) => void | Promise<void>;
+  onConfirm?: (rowIndex: number) => void | Promise<void>;
 
   isLoading?: boolean;
 };
@@ -370,7 +372,7 @@ export function Table(props: TableProps) {
   const filterOptions = React.useMemo(() => {
     return props.columns.flatMap((column, columnIndex) => ({
       label: column.header,
-      value: columnIndex,
+      value: columnIndex.toString(),
     }));
   }, [props.columns]);
   const [filterValue, setFilterValue] = React.useState(
@@ -417,12 +419,11 @@ export function Table(props: TableProps) {
 
   // Callback untuk handle perubahan pada filter
   const handleFilterChange = React.useCallback(
-    (options: SelectOption[]) => {
-      const optionsValue = options.map((option) => option.value);
+    (optionsValue: string[]) => {
       setFilterValue(optionsValue);
       setColumns(
         props.columns.filter((_, columnIndex) =>
-          optionsValue.includes(columnIndex)
+          optionsValue.includes(columnIndex.toString())
         )
       );
     },
@@ -442,60 +443,89 @@ export function Table(props: TableProps) {
         <>
           <div className="flex justify-between items-center">
             <div className="flex items-center">
-              <Button
-                text="Edit"
-                icon={<Pencil />}
-                iconPosition="left"
-                variant="normal"
-                className={clsx(
-                  rowSelected === undefined
-                    ? "!border-gray-300 !text-gray-300"
-                    : "!border-gray-700 !text-gray-700 cursor-pointer"
-                )}
-                onClick={() => {
-                  if (rowSelected !== undefined && props.onEdit) {
-                    props.onEdit(rowSelected);
-                  }
-                }}
-              />
-              <VerticalLine />
-              <Button
-                text="Delete"
-                icon={<Trash />}
-                iconPosition="left"
-                variant="normal"
-                className={clsx(
-                  rowSelected === undefined
-                    ? "!border-gray-300 !text-gray-300"
-                    : "!border-gray-700 !text-gray-700 cursor-pointer"
-                )}
-                onClick={() => {
-                  if (rowSelected !== undefined) {
-                    setModal(
-                      <Modal
-                        type="confirm"
-                        title="Delete"
-                        onDone={async () => {
-                          if (props.onDelete) {
-                            await Promise.resolve(props.onDelete(rowSelected));
-                          }
-                        }}
-                      >
-                        <p className="text-lg text-gray-700 font-medium">
-                          Are you sure want to delete this row?
-                        </p>
-                      </Modal>
-                    );
-                  }
-                }}
-              />
+              {props.onEdit && (
+                <Button
+                  text="Edit"
+                  icon={<Pencil />}
+                  iconPosition="left"
+                  variant="normal"
+                  className={clsx(
+                    rowSelected === undefined
+                      ? "!border-gray-300 !text-gray-300"
+                      : "!border-gray-700 !text-gray-700 cursor-pointer"
+                  )}
+                  onClick={() => {
+                    if (rowSelected !== undefined && props.onEdit) {
+                      props.onEdit(rowSelected);
+                    }
+                  }}
+                />
+              )}
+              {props.onDelete && (
+                <>
+                  {props.onEdit && <VerticalLine />}
+                  <Button
+                    text="Delete"
+                    icon={<Trash />}
+                    iconPosition="left"
+                    variant="normal"
+                    className={clsx(
+                      rowSelected === undefined
+                        ? "!border-gray-300 !text-gray-300"
+                        : "!border-gray-700 !text-gray-700 cursor-pointer"
+                    )}
+                    onClick={() => {
+                      if (rowSelected !== undefined) {
+                        setModal(
+                          <Modal
+                            type="confirm"
+                            title="Delete"
+                            onDone={async () => {
+                              if (props.onDelete) {
+                                await Promise.resolve(
+                                  props.onDelete(rowSelected)
+                                );
+                              }
+                            }}
+                          >
+                            <p className="text-lg text-gray-700 font-medium">
+                              Are you sure want to delete this row?
+                            </p>
+                          </Modal>
+                        );
+                      }
+                    }}
+                  />
+                </>
+              )}
+              {props.onConfirm && (
+                <>
+                  {(props.onEdit || props.onDelete) && <VerticalLine />}
+                  <Button
+                    text="Confirm"
+                    icon={<CheckSquare />}
+                    iconPosition="left"
+                    variant="normal"
+                    className={clsx(
+                      rowSelected === undefined
+                        ? "!border-gray-300 !text-gray-300"
+                        : "!border-gray-700 !text-gray-700 cursor-pointer"
+                    )}
+                    onClick={() => {
+                      if (rowSelected !== undefined && props.onConfirm) {
+                        props.onConfirm(rowSelected);
+                      }
+                    }}
+                  />
+                </>
+              )}
             </div>
             <div className="flex items-center gap-3 2xl:gap-4">
               <Select
                 className="w-40"
                 icon={Calendar}
                 placeholder="Date Range"
-                value={null}
+                value=""
                 options={[
                   { label: "Today", value: "today" },
                   { label: "Yesterday", value: "yesterday" },
@@ -503,7 +533,7 @@ export function Table(props: TableProps) {
                 ]}
                 onChange={(option) =>
                   props.onSelectDateRange &&
-                  props.onSelectDateRange(option.value)
+                  props.onSelectDateRange(option as DateRangeOption)
                 }
                 isSearchable
               />
@@ -521,13 +551,14 @@ export function Table(props: TableProps) {
                 className="w-40"
                 options={entriesOptions}
                 onChange={(option) => {
-                  setRowTotal(option);
+                  setRowTotal(Number(option));
                   setPage(1);
                 }}
                 value={
                   entriesOptions.find(
-                    (entriesOption) => entriesOption.value === rowTotal
-                  )?.value
+                    (entriesOption) =>
+                      entriesOption.value === rowTotal.toString()
+                  )?.value ?? ""
                 }
                 isSearchable
               />
