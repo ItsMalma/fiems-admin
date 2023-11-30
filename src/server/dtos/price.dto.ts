@@ -9,24 +9,37 @@ import {
   validateSelectWithEnum,
   validateText,
 } from "../validation";
-import { extractCustomerCode } from "./customer.dto";
-import { extractPortCode } from "./port.dto";
-import { extractRouteCode } from "./route.dto";
+import { validateShippingCode, validateVendorCode } from "./customer.dto";
+import { validatePortCode } from "./port.dto";
+import { validateQuotationNumber } from "./quotation.dto";
+import { validateRouteCode } from "./route.dto";
 
-export const priceTypeInput = validateSelectWithEnum(["Vendor", "Shipping"]);
+export const priceTypeInput = validateSelectWithEnum([
+  "Factory",
+  "Vendor",
+  "Shipping",
+]);
+
+export const priceFactoryInput = z.object({
+  quotation: validateCode(validateQuotationNumber),
+  route: validateCode(validateRouteCode),
+  containerSize: validateText(),
+  etcCost: validateMoney(),
+});
+export type PriceFactoryInput = z.infer<typeof priceFactoryInput>;
 
 export const priceVendorInput = z.object({
   effectiveStartDate: validateDate(),
   effectiveEndDate: validateDate(),
-  vendor: validateCode((code) => !isNaN(extractCustomerCode(code))),
+  vendor: validateCode(validateVendorCode),
   details: validateAppend(
     z.object({
       id: z.string().optional(),
-      route: validateCode((code) => !isNaN(extractRouteCode(code))),
+      route: validateCode(validateRouteCode),
       containerSize: validateText(),
       containerType: validateText(),
       serviceType: validateText(),
-      port: validateCode((code) => !isNaN(extractPortCode(code))),
+      port: validateCode(validatePortCode),
       tracking: validateMoney(),
       buruh: validateMoney(),
       thcOPT: validateMoney(),
@@ -42,15 +55,15 @@ export type PriceVendorInput = z.infer<typeof priceVendorInput>;
 export const priceShippingInput = z.object({
   effectiveStartDate: validateDate(),
   effectiveEndDate: validateDate(),
-  shipping: validateCode((code) => !isNaN(extractCustomerCode(code))),
+  shipping: validateCode(validateShippingCode),
   details: validateAppend(
     z.object({
       id: z.string().optional(),
-      route: validateCode((code) => !isNaN(extractRouteCode(code))),
+      route: validateCode(validateRouteCode),
       containerSize: validateText(),
       containerType: validateText(),
       serviceType: validateText(),
-      port: validateCode((code) => !isNaN(extractPortCode(code))),
+      port: validateCode(validatePortCode),
       freight: validateMoney(),
       thcOPT: validateMoney(),
       thcOPP: validateMoney(),
@@ -66,6 +79,24 @@ export const priceShippingInput = z.object({
   ),
 });
 export type PriceShippingInput = z.infer<typeof priceShippingInput>;
+
+export class PriceFactoryTableRow {
+  constructor(
+    public id: string,
+    public createDate: string,
+    public quotation: string,
+    public route: string,
+    public factory: string,
+    public containerSize: string,
+    public serviceType: string,
+    public containerType: string,
+    public port: string,
+    public etcCost: number,
+    public hpp: number,
+    public hppAfter: number,
+    public status: boolean
+  ) {}
+}
 
 export class PriceVendorTableRow {
   constructor(
@@ -209,6 +240,40 @@ export class PriceShippingTableRow {
         )
     );
   }
+}
+
+export class PriceFactoryForm {
+  constructor(
+    public createDate: string | Date,
+    public quotation: string,
+    public route: string,
+    public factory: string,
+    public effectiveStartDate: string | Date,
+    public effectiveEndDate: string | Date,
+    public containerSize: string,
+    public serviceType: string,
+    public containerType: string,
+    public port: string,
+    public etcCost: number,
+    public hpp: number,
+    public hppAfter: number
+  ) {}
+
+  static initial: () => PriceFactoryForm = () => ({
+    createDate: new Date(),
+    quotation: "",
+    route: "",
+    factory: "",
+    effectiveStartDate: new Date(),
+    effectiveEndDate: new Date(),
+    containerSize: "",
+    serviceType: "",
+    containerType: "",
+    port: "",
+    etcCost: 0,
+    hpp: 0,
+    hppAfter: 0,
+  });
 }
 
 export class PriceVendorForm {

@@ -30,7 +30,7 @@ export default function SavePriceVendorPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Vendor");
-    setActive(1, 6, 0);
+    setActive(1, 6, 1);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();

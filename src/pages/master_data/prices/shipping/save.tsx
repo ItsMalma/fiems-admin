@@ -30,7 +30,7 @@ export default function SavePriceShippingPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Shipping");
-    setActive(1, 6, 1);
+    setActive(1, 6, 2);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();

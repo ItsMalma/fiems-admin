@@ -23,12 +23,16 @@ import { validatePortCode } from "./port.dto";
 import { validateRouteCode } from "./route.dto";
 import { validateSalesCode } from "./sales.dto";
 
+export function validateQuotationNumber(number: string): boolean {
+  return /^QUO\d{4}$/.test(number);
+}
+
 export function extractNumberQuotation(number: string): number {
   return Number(number.slice(3));
 }
 
 export function createQuotationNumber(number: number): string {
-  return "QUO" + number.toString().padStart(5, "0");
+  return "QUO" + number.toString().padStart(4, "0");
 }
 
 export type QuotationDetailTrackingPrices = {

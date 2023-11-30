@@ -11,7 +11,7 @@ import {
   PersonFillAdd,
 } from "react-bootstrap-icons";
 
-export default function PriceVendorPage() {
+export default function PriceFactoryPage() {
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
@@ -23,8 +23,8 @@ export default function PriceVendorPage() {
 
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Master Data | Price Vendor");
-    setActive(1, 6, 1);
+    setTitle("Master Data | Price Factory");
+    setActive(1, 6, 0);
   }, [setTitle, setActive]);
 
   // Mendapatkan router
@@ -33,23 +33,23 @@ export default function PriceVendorPage() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.prices.getTableRows.useQuery("Vendor");
+  const tableRowsQuery = trpc.prices.getTableRows.useQuery("Factory");
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.prices.deleteVendor.useMutation();
+  const deleteMutation = trpc.prices.deleteFactory.useMutation();
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Price Vendor" />
+        <Search placeholder="Search Price Factory" />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Price Vendor"
+            text="Add New Price Factory"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/master_data/prices/vendor/save")}
+            onClick={() => router.push("/master_data/prices/factory/save")}
           />
           <Button
             text="Import"
@@ -75,8 +75,8 @@ export default function PriceVendorPage() {
             isSortable: true,
           },
           {
-            id: "vendor",
-            header: "Vendor",
+            id: "quotation",
+            header: "Quotation",
             type: "text",
             isSortable: true,
           },
@@ -87,8 +87,8 @@ export default function PriceVendorPage() {
             isSortable: true,
           },
           {
-            id: "port",
-            header: "Port",
+            id: "factory",
+            header: "Delivery To",
             type: "text",
             isSortable: true,
           },
@@ -99,62 +99,38 @@ export default function PriceVendorPage() {
             isSortable: true,
           },
           {
-            id: "containerType",
-            header: "Container Type",
-            type: "text",
-            isSortable: true,
-          },
-          {
             id: "serviceType",
             header: "Service Type",
             type: "text",
             isSortable: true,
           },
           {
-            id: "tracking",
-            header: "Tracking",
+            id: "containerType",
+            header: "Container Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "port",
+            header: "Port",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "etcCost",
+            header: "ETC Cost",
             type: "money",
             isSortable: true,
           },
           {
-            id: "buruh",
-            header: "Buruh",
+            id: "hpp",
+            header: "HPP",
             type: "money",
             isSortable: true,
           },
           {
-            id: "thcOPT",
-            header: "THC OPT",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "thcOPP",
-            header: "THC OPP",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "adminBL",
-            header: "Admin BL",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "cleaning",
-            header: "Cleaning",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "materai",
-            header: "Materai",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "total",
-            header: "Total",
+            id: "hppAfter",
+            header: "HPP after ETC Cost",
             type: "money",
             isSortable: true,
           },
@@ -175,10 +151,10 @@ export default function PriceVendorPage() {
             return;
           }
 
-          const priceVendor = tableRowsQuery.data[selectedRowIndex];
+          const priceFactory = tableRowsQuery.data[selectedRowIndex];
 
-          // Redirect ke halaman save price vendor
-          router.push(`/master_data/prices/vendor/save?id=${priceVendor.id}`);
+          // Redirect ke halaman save price factory
+          router.push(`/master_data/prices/factory/save?id=${priceFactory.id}`);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
@@ -189,12 +165,12 @@ export default function PriceVendorPage() {
             return;
           }
 
-          const priceVendor = tableRowsQuery.data[selectedRowIndex];
+          const priceFactory = tableRowsQuery.data[selectedRowIndex];
 
-          // Hapus price vendor yang dipilih di table
-          await deleteMutation.mutateAsync(priceVendor.detailId);
+          // Hapus price factory yang dipilih di table
+          await deleteMutation.mutateAsync(priceFactory.id);
 
-          // Karena price vendor yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          // Karena price factory yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
           // Tutup modal

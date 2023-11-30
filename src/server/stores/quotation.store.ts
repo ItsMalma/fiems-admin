@@ -1,7 +1,14 @@
+import {
+  findPriceShippingByShipping,
+  findPriceVendorByVendor,
+} from "@/server/stores/price.store";
 import { QuotationDetailSummaryDetailStatus } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   QuotationInput,
+  calculateOtherExpanses,
+  calculateShippingTotal,
+  calculateTrackingTotal,
   createQuotationNumber,
   extractNumberQuotation,
 } from "../dtos/quotation.dto";
@@ -101,6 +108,31 @@ export async function createQuotation(input: QuotationInput) {
   });
 }
 
+export async function findAllQuotations() {
+  return await prisma.quotation.findMany({
+    include: {
+      factory: true,
+      sales: true,
+      details: {
+        include: {
+          factory: true,
+          port: true,
+          route: true,
+          shippingDetail: {
+            include: { route: true, shipping: true },
+          },
+          trackingAsal: {
+            include: { route: true, vendor: true },
+          },
+          trackingTujuan: {
+            include: { route: true, vendor: true },
+          },
+        },
+      },
+    },
+  });
+}
+
 export async function findQuotationByNumber(number: string) {
   const quotation = await prisma.quotation.findFirst({
     where: { number },
@@ -109,6 +141,7 @@ export async function findQuotationByNumber(number: string) {
       sales: true,
       details: {
         include: {
+          quotation: true,
           factory: true,
           port: true,
           route: true,
@@ -171,6 +204,121 @@ export async function findAllQuotationDetails() {
       },
     },
   });
+}
+
+export async function findQuotationDetail(id: string) {
+  const quotationDetail = await prisma.quotationDetail.findFirst({
+    where: { id },
+    include: {
+      quotation: true,
+      factory: true,
+      port: true,
+      route: true,
+      shippingDetail: {
+        include: { route: true, shipping: true },
+      },
+      trackingAsal: {
+        include: { route: true, vendor: true },
+      },
+      trackingTujuan: {
+        include: { route: true, vendor: true },
+      },
+    },
+  });
+  if (!quotationDetail) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Quotation detail with id ${id} not exists`,
+    });
+  }
+
+  return quotationDetail;
+}
+
+export async function findQuotationDetailHPP(id: string) {
+  const quotationDetail = await findQuotationDetail(id);
+
+  return (
+    calculateTrackingTotal(
+      (await findQuotationTrackingDetail({
+        vendor: quotationDetail.trackingAsal!.vendor.code,
+        route: quotationDetail.trackingAsal!.route.code,
+        port: quotationDetail.port.code,
+        containerSize: quotationDetail.containerSize,
+        containerType: quotationDetail.containerType,
+      }))!
+    ) +
+    calculateTrackingTotal(
+      (await findQuotationTrackingDetail({
+        vendor: quotationDetail.trackingTujuan!.vendor.code,
+        route: quotationDetail.trackingTujuan!.route.code,
+        port: quotationDetail.port.code,
+        containerSize: quotationDetail.containerSize,
+        containerType: quotationDetail.containerType,
+      }))!
+    ) +
+    calculateShippingTotal(
+      (await findQuotationShippingDetail({
+        shipping: quotationDetail.shippingDetail!.shipping.code,
+        route: quotationDetail.shippingDetail!.route.code,
+        port: quotationDetail.port.code,
+        containerSize: quotationDetail.containerSize,
+        containerType: quotationDetail.containerType,
+      }))!
+    ) +
+    calculateOtherExpanses(quotationDetail.otherExpanses!) +
+    quotationDetail.summaryDetail!.nilaiPPFTZ +
+    quotationDetail.summaryDetail!.nilaiInsurance / 1000 +
+    quotationDetail.summaryDetail!.biayaAdmin
+  );
+}
+
+export async function findQuotationTrackingDetail(input: {
+  vendor: string;
+  route: string;
+  port: string;
+  containerSize: string;
+  containerType: string;
+}) {
+  const priceVendor = await findPriceVendorByVendor(input.vendor);
+  if (!priceVendor) {
+    return null;
+  }
+
+  const priceVendorDetail = priceVendor.details.find(
+    (priceVendorDetail) =>
+      priceVendorDetail.route.code === input.route &&
+      priceVendorDetail.port.code === input.port &&
+      priceVendorDetail.containerSize === input.containerSize &&
+      priceVendorDetail.containerType === input.containerType
+  );
+  if (!priceVendorDetail) return null;
+
+  return priceVendorDetail;
+}
+
+export async function findQuotationShippingDetail(input: {
+  shipping: string;
+  route: string;
+  port: string;
+  containerSize: string;
+  containerType: string;
+}) {
+  const priceShipping = await findPriceShippingByShipping(input.shipping);
+  if (!priceShipping) {
+    return null;
+  }
+
+  const priceShippingDetail = priceShipping.details.find(
+    (priceShippingDetail) =>
+      priceShippingDetail.route.code === input.route &&
+      priceShippingDetail.port.code === input.port &&
+      priceShippingDetail.containerSize === input.containerSize &&
+      priceShippingDetail.containerType === input.containerType
+  );
+  if (!priceShippingDetail) return null;
+
+  return priceShippingDetail;
 }
 
 export async function updateQuotation(number: string, input: QuotationInput) {

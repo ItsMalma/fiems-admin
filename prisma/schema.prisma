@@ -194,6 +194,15 @@ model UangJalan {
   createDate    DateTime @default(now())
 }
 
+model PriceFactory {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @db.ObjectId
+  etcCost           Int
+  createDate        DateTime        @default(now())
+  status            Boolean         @default(true)
+}
+
 model PriceVendorDetail {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   priceVendor   PriceVendor @relation(fields: [priceVendorId], references: [id], onDelete: Cascade)
@@ -337,6 +346,7 @@ model QuotationDetail {
   otherExpanses   QuotationDetailOtherExpanses?
   summaryDetail   QuotationDetailSummaryDetail?
   completed       Boolean                        @default(false)
+  priceFactories  PriceFactory[]
 }
 
 model QuotationDetailTrackingAsal {

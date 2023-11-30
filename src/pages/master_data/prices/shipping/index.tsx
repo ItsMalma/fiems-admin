@@ -24,7 +24,7 @@ export default function PriceShippingPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Shipping");
-    setActive(1, 6, 1);
+    setActive(1, 6, 2);
   }, [setTitle, setActive]);
 
   // Mendapatkan router
