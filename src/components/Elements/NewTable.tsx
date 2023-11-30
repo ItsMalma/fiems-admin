@@ -33,7 +33,7 @@ type SortState = {
   direction: SortDirection | null;
 };
 
-type ColumnType = "code" | "date" | "text" | "status" | "money";
+type ColumnType = "code" | "date" | "text" | "status" | "money" | "time";
 
 type TableSubColumn = {
   id: string;
@@ -71,6 +71,8 @@ type TableProps = {
   onDelete?: (rowIndex: number) => void | Promise<void>;
 
   isLoading?: boolean;
+  isWithTools?: true | boolean;
+  isHiddenHeader?: false | boolean;
 };
 
 type TableHeadProps = {
@@ -84,7 +86,7 @@ type TableHeadProps = {
 
   isParent?: boolean;
   isChildren?: boolean;
-  isStatus?: boolean;
+  isStatus?: "true" | boolean;
 
   onSort?: (direction: SortDirection | null) => void;
 };
@@ -276,6 +278,12 @@ function TableCell(props: TableCellProps) {
             }).format(Number(props.value))}
           </p>
         );
+      case "time":
+        return (
+          <p className="text-gray-700 font-medium">
+            {moment(props.value).format("LT")}
+          </p>
+        );
     }
   }
 
@@ -440,105 +448,113 @@ export function Table(props: TableProps) {
         <Loading size="xl" color="primary" />
       ) : (
         <>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Button
-                text="Edit"
-                icon={<Pencil />}
-                iconPosition="left"
-                variant="normal"
-                className={clsx(
-                  rowSelected === undefined
-                    ? "!border-gray-300 !text-gray-300"
-                    : "!border-gray-700 !text-gray-700 cursor-pointer"
-                )}
-                onClick={() => {
-                  if (rowSelected !== undefined && props.onEdit) {
-                    props.onEdit(rowSelected);
+          {props.isWithTools && (
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <Button
+                  text="Edit"
+                  icon={<Pencil />}
+                  iconPosition="left"
+                  variant="normal"
+                  className={clsx(
+                    rowSelected === undefined
+                      ? "!border-gray-300 !text-gray-300"
+                      : "!border-gray-700 !text-gray-700 cursor-pointer"
+                  )}
+                  onClick={() => {
+                    if (rowSelected !== undefined && props.onEdit) {
+                      props.onEdit(rowSelected);
+                    }
+                  }}
+                />
+                <VerticalLine />
+                <Button
+                  text="Delete"
+                  icon={<Trash />}
+                  iconPosition="left"
+                  variant="normal"
+                  className={clsx(
+                    rowSelected === undefined
+                      ? "!border-gray-300 !text-gray-300"
+                      : "!border-gray-700 !text-gray-700 cursor-pointer"
+                  )}
+                  onClick={() => {
+                    if (rowSelected !== undefined) {
+                      setModal(
+                        <Modal
+                          type="confirm"
+                          title="Delete"
+                          onDone={async () => {
+                            if (props.onDelete) {
+                              await Promise.resolve(
+                                props.onDelete(rowSelected)
+                              );
+                            }
+                          }}
+                        >
+                          <p className="text-lg text-gray-700 font-medium">
+                            Are you sure want to delete this row?
+                          </p>
+                        </Modal>
+                      );
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex items-center gap-3 2xl:gap-4">
+                <Select
+                  className="w-40"
+                  icon={Calendar}
+                  placeholder="Date Range"
+                  value={null}
+                  options={[
+                    { label: "Today", value: "today" },
+                    { label: "Yesterday", value: "yesterday" },
+                    { label: "Weeks Ago", value: "weeksAgo" },
+                  ]}
+                  onChange={(option) =>
+                    props.onSelectDateRange &&
+                    props.onSelectDateRange(option.value)
                   }
-                }}
-              />
-              <VerticalLine />
-              <Button
-                text="Delete"
-                icon={<Trash />}
-                iconPosition="left"
-                variant="normal"
-                className={clsx(
-                  rowSelected === undefined
-                    ? "!border-gray-300 !text-gray-300"
-                    : "!border-gray-700 !text-gray-700 cursor-pointer"
-                )}
-                onClick={() => {
-                  if (rowSelected !== undefined) {
-                    setModal(
-                      <Modal
-                        type="confirm"
-                        title="Delete"
-                        onDone={async () => {
-                          if (props.onDelete) {
-                            await Promise.resolve(props.onDelete(rowSelected));
-                          }
-                        }}
-                      >
-                        <p className="text-lg text-gray-700 font-medium">
-                          Are you sure want to delete this row?
-                        </p>
-                      </Modal>
-                    );
+                  isSearchable
+                />
+                <Select
+                  className="w-40"
+                  icon={Filter}
+                  placeholder="Filter"
+                  options={filterOptions}
+                  value={filterValue}
+                  onChange={handleFilterChange}
+                  isSearchable
+                  isMulti
+                />
+                <Select
+                  className="w-40"
+                  options={entriesOptions}
+                  onChange={(option) => {
+                    setRowTotal(option);
+                    setPage(1);
+                  }}
+                  value={
+                    entriesOptions.find(
+                      (entriesOption) => entriesOption.value === rowTotal
+                    )?.value
                   }
-                }}
-              />
+                  isSearchable
+                />
+              </div>
             </div>
-            <div className="flex items-center gap-3 2xl:gap-4">
-              <Select
-                className="w-40"
-                icon={Calendar}
-                placeholder="Date Range"
-                value={null}
-                options={[
-                  { label: "Today", value: "today" },
-                  { label: "Yesterday", value: "yesterday" },
-                  { label: "Weeks Ago", value: "weeksAgo" },
-                ]}
-                onChange={(option) =>
-                  props.onSelectDateRange &&
-                  props.onSelectDateRange(option.value)
-                }
-                isSearchable
-              />
-              <Select
-                className="w-40"
-                icon={Filter}
-                placeholder="Filter"
-                options={filterOptions}
-                value={filterValue}
-                onChange={handleFilterChange}
-                isSearchable
-                isMulti
-              />
-              <Select
-                className="w-40"
-                options={entriesOptions}
-                onChange={(option) => {
-                  setRowTotal(option);
-                  setPage(1);
-                }}
-                value={
-                  entriesOptions.find(
-                    (entriesOption) => entriesOption.value === rowTotal
-                  )?.value
-                }
-                isSearchable
-              />
-            </div>
-          </div>
+          )}
           <div className="grow flex rounded-t-2xl overflow-auto">
             {columns.length < 1 ? (
               <></>
             ) : (
               <table className="w-full h-fit rounded-t-2xl overflow-hidden whitespace-nowrap border-spacing-0 border-separate">
-                <thead className="sticky top-0">
+                <thead
+                  className={`sticky top-0 ${
+                    props.isHiddenHeader ? "hidden" : ""
+                  }`}
+                >
                   {headerRows.map((headerRow, headerRowIndex) => (
                     <tr key={headerRowIndex}>
                       {headerRow.map((header) => (

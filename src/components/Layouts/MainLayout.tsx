@@ -17,7 +17,7 @@ export default function MainLayout(props: MainLayoutProps) {
         <Header />
         <div className="pl-[18px] pr-6 py-3 2xl:pl-6 2xl:pr-8 2xl:py-4 flex gap-6 2xl:gap-8 grow overflow-auto">
           {router.asPath !== "/login" && <Sider />}
-          <div className="basis-4/5 2xl:basis-5/6 flex-grow flex flex-col gap-[18px] 2xl:gap-6 overflow-auto">
+          <div className="basis-4/5 2xl:basis-5/6 flex-grow flex flex-col gap-[18px] 2xl:gap-6">
             {props.children}
             <Footer />
           </div>

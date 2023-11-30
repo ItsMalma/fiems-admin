@@ -1,0 +1,66 @@
+import { Button, Table } from "@/components/Elements";
+import { Card, CardBody, CardHeader } from "@/components/Hrd/Elements";
+import { PlusLg } from "react-bootstrap-icons";
+import { timeIn } from "@/constant";
+
+const Page = () => {
+  return (
+    <>
+      <div className="flex gap-4">
+        <Button
+          text="Add New Employee"
+          variant="filled"
+          icon={<PlusLg className="h-5 w-5" />}
+          iconPosition="left"
+        />
+        <Button
+          text="Add New Employee"
+          variant="filled"
+          icon={<PlusLg className="h-5 w-5" />}
+          iconPosition="left"
+        />
+      </div>
+
+      <div className="grid grid-cols-4 gap-6">
+        <Card className="col-span-2">
+          <CardHeader>
+            <h2 className="text-xl font-bold text-gray-800">
+              Attendance Today
+            </h2>
+
+            <select name="filter" id="filter" placeholder="All Data">
+              <option value="All Data">All Data</option>
+              <option value="On-time">On-time</option>
+            </select>
+          </CardHeader>
+          <CardBody>
+            <Table
+              columns={[
+                {
+                  id: "nama",
+                  header: "Name",
+                  type: "text",
+                },
+                {
+                  id: "id",
+                  header: "Employee Code",
+                  type: "code",
+                },
+                {
+                  id: "time_in",
+                  header: "Time in",
+                  type: "time",
+                },
+              ]}
+              rows={timeIn.slice(0, 5)}
+              isWithTools={false}
+              isHiddenHeader
+            />
+          </CardBody>
+        </Card>
+      </div>
+    </>
+  );
+};
+
+export default Page;

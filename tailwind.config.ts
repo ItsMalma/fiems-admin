@@ -6,7 +6,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -24,6 +24,10 @@ const config: Config = {
 
         statusActive: "#37E549",
         statusInactive: "#F50D0D",
+      },
+      boxShadow: {
+        medium:
+          "0px 0px 15px 0px rgba(0,0,0,.03),0px 2px 30px 0px rgba(0,0,0,.08),0px 0px 1px 0px rgba(0,0,0,.3)",
       },
     },
   },
