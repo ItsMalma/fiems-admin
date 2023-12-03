@@ -2,6 +2,7 @@ import React from "react";
 import { twMerge } from "tailwind-merge";
 import { Icon } from "react-bootstrap-icons";
 import clsx, { ClassValue } from "clsx";
+import { useRouter } from "next/navigation";
 
 type ButtonVariant = "solid" | "faded" | "bordered";
 
@@ -12,6 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   endContent?: React.ReactElement<Icon> | React.ReactNode;
   isIconOnly?: boolean;
   color?: "primary";
+  href?: string;
 }
 
 const Button = ({
@@ -23,6 +25,7 @@ const Button = ({
   isIconOnly = false,
   color = "primary",
   children,
+  href,
   ...props
 }: ButtonProps) => {
   const buttonVariant = (variant: ButtonVariant): ClassValue => {
@@ -41,6 +44,16 @@ const Button = ({
     }
   };
 
+  const router = useRouter();
+
+  const handleClick = (link: string) => {
+    if (link === undefined) {
+      return;
+    }
+
+    router.push(link);
+  };
+
   return (
     <button
       {...props}
@@ -52,6 +65,7 @@ const Button = ({
         ),
         className
       )}
+      onClick={() => handleClick(href!)}
     >
       {startContent}
       {children}

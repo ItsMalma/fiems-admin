@@ -57,6 +57,14 @@ const Dashboard = () => {
         >
           Create New Leave
         </Button>
+        <Button
+          startContent={
+            <PlusLg className="text-inherit" height={16} width={16} />
+          }
+          href="/hrd/employee/list"
+        >
+          Employee List
+        </Button>
       </div>
 
       <div className="flex gap-6">
