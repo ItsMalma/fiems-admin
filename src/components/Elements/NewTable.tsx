@@ -47,15 +47,15 @@ type TableColumn = {
   id: string;
   header: string;
 } & (
-  | {
+    | {
       type: ColumnType;
       isSortable?: boolean;
     }
-  | {
+    | {
       type: "group";
       columns: TableSubColumn[];
     }
-);
+  );
 
 type TableProps = {
   className?: string;
@@ -66,13 +66,14 @@ type TableProps = {
   columns: TableColumn[];
   rows: object[];
 
-  onSelectDateRange?: (option: DateRangeOption) => void;
-
   onEdit?: (rowIndex: number) => void | Promise<void>;
   onDelete?: (rowIndex: number) => void | Promise<void>;
   onConfirm?: (rowIndex: number) => void | Promise<void>;
 
   isLoading?: boolean;
+
+  search?: string;
+  dateRangeColumn?: string;
 };
 
 type TableHeadProps = {
@@ -212,7 +213,7 @@ function TableHead(props: TableHeadProps) {
         className={clsx(
           "flex gap-[7.5px] 2xl:gap-2.5 items-center",
           (props.isParent || props.isChildren || props.isStatus) &&
-            "justify-center"
+          "justify-center"
         )}
       >
         <p className="text-gray-400 font-semibold">{props.value}</p>
@@ -226,21 +227,21 @@ type TableCell = {};
 
 type TableCellProps = (
   | {
-      type: ColumnType;
-      value: string;
-    }
+    type: ColumnType;
+    value: string;
+  }
   | {
-      type: "date";
-      value: Date;
-    }
+    type: "date";
+    value: Date;
+  }
   | {
-      type: "status";
-      value: boolean;
-    }
+    type: "status";
+    value: boolean;
+  }
   | {
-      type: "money";
-      value: number;
-    }
+    type: "money";
+    value: number;
+  }
 ) & {
   isChildren?: boolean;
 };
@@ -317,9 +318,25 @@ function getCellRows(
   columns: TableColumn[],
   rows: object[],
   rowTotal: number,
-  page: number
+  page: number,
+  dateRangeValue: string,
+  search?: string,
+  dateRangeColumn?: string
 ): TableCellProps[][] {
   return rows
+    .filter((row) => {
+      if (dateRangeColumn) {
+        const dateRange = moment(lodash.get(row, dateRangeColumn));
+        if (dateRangeValue === 'today' && !dateRange.isSame(moment(), 'day')) {
+          return null;
+        } else if (dateRangeValue === 'yesterday' && !dateRange.isSame(moment().subtract(1, 'days'), 'day')) {
+          return null;
+        } else if (dateRangeValue === 'weeksAgo' && !dateRange.isSame(moment().subtract(1, 'weeks'), 'week')) {
+          return null;
+        }
+      }
+      return true;
+    })
     .map((row) => {
       return columns.flatMap<TableCellProps>((column) => {
         if (column.type === "group") {
@@ -336,6 +353,18 @@ function getCellRows(
         };
       });
     })
+    .filter((row) => {
+      if (search) {
+        return row.some((cell) => {
+          let strCellValue = String(cell.value).toLowerCase();
+          if (cell.type === "date") {
+            strCellValue = moment(strCellValue).format("DD/MM/YYYY");
+          }
+          return strCellValue.includes(search.toLowerCase());
+        });
+      }
+      return true;
+    })
     .slice((page - 1) * rowTotal, rowTotal * page);
 }
 
@@ -347,6 +376,8 @@ export function Table(props: TableProps) {
 
   const [rows, setRows] = React.useState(props.rows);
   React.useEffect(() => setRows(props.rows), [props.rows]);
+
+  const [dateRangeValue, setDateRangeValue] = React.useState("");
 
   // State untuk menyimpan nilai sort (id column dan direction sort nya)
   const [sort, setSort] = React.useState<SortState>({
@@ -403,8 +434,8 @@ export function Table(props: TableProps) {
   }, [maxPage]);
 
   const cellRows = React.useMemo(
-    () => getCellRows(columns, rows, rowTotal, page),
-    [columns, rows, rowTotal, page]
+    () => getCellRows(columns, rows, rowTotal, page, dateRangeValue, props.search, props.dateRangeColumn),
+    [columns, rows, rowTotal, page, dateRangeValue, props.search, props.dateRangeColumn]
   );
 
   // State untuk menyimpan row yang di-select (index dari row-nya)
@@ -525,16 +556,13 @@ export function Table(props: TableProps) {
                 className="w-40"
                 icon={Calendar}
                 placeholder="Date Range"
-                value=""
+                value={dateRangeValue}
                 options={[
                   { label: "Today", value: "today" },
                   { label: "Yesterday", value: "yesterday" },
                   { label: "Weeks Ago", value: "weeksAgo" },
                 ]}
-                onChange={(option) =>
-                  props.onSelectDateRange &&
-                  props.onSelectDateRange(option as DateRangeOption)
-                }
+                onChange={setDateRangeValue}
                 isSearchable
               />
               <Select

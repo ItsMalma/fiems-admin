@@ -18,6 +18,7 @@ import { PortForm, portInput } from "@/server/dtos/port.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import {
@@ -26,6 +27,7 @@ import {
   GeoAltFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
+import { TRPCClientError } from '@trpc/client';
 
 export function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
@@ -132,14 +134,14 @@ export function Save({ code }: { code?: string }) {
 
 export function Export() {
   return (
-    <Modal title="Export Data" type="save" onDone={() => {}}>
+    <Modal title="Export Data" type="save" onDone={() => { }}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
           <Select
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
-            onChange={() => {}}
+            onChange={() => { }}
             value={""}
             className="basis-2/3"
             isSearchable
@@ -160,11 +162,15 @@ export default function MasterPort() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();
 
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Port");
     setActive(1, 2, 0);
   }, [setTitle, setActive]);
+
+  const [search, setSearch] = React.useState("");
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
@@ -179,7 +185,7 @@ export default function MasterPort() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Port Code" />
+        <Search placeholder="Search Port" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Port"
@@ -202,7 +208,7 @@ export default function MasterPort() {
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -241,6 +247,8 @@ export default function MasterPort() {
             isSortable: true,
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -267,6 +275,10 @@ export default function MasterPort() {
           // Hapus port yang dipilih di table
           await deleteMutation.mutateAsync({
             code: tableRowsQuery.data[selectedRowIndex].code,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena port yang dipilih telah dihapus, maka hapus pilihan sebelumnya

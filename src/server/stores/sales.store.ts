@@ -12,7 +12,13 @@ export async function findAllSales() {
 }
 
 export async function findSalesByCode(code: string) {
-  const sales = await prisma.sales.findFirst({ where: { code } });
+  const sales = await prisma.sales.findFirst({
+    where: { code },
+    include: {
+      inquiries: true,
+      quotations: true,
+    },
+  });
   if (!sales) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -78,5 +84,18 @@ export async function updateSales(
 }
 
 export async function deleteSales(code: string): Promise<Sales> {
-  return await prisma.sales.delete({ where: { code } });
+  const sales = await findSalesByCode(code);
+
+  if (sales.quotations.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Sales ${sales.code} is used in Quotation ${sales.quotations[0].number}`,
+    });
+  if (sales.inquiries.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Sales ${sales.code} is used in Inquiry ${sales.inquiries[0].number}`,
+    });
+
+  return await prisma.sales.delete({ where: { code: sales.code } });
 }

@@ -62,7 +62,10 @@ export default function Sider() {
               {
                 name: "Master Price",
                 childrens: [
-                  // { name: "Price Factory", url: "/master_data/prices/factory" },
+                  {
+                    name: "Price Factory",
+                    url: "/master_data/prices/factory",
+                  },
                   { name: "Price Vendor", url: "/master_data/prices/vendor" },
                   {
                     name: "Price Shipping",

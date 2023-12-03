@@ -1,6 +1,5 @@
 import { Button, Search, Table } from "@/components/Elements";
 import { trpc } from "@/libs/trpc";
-import { PriceShippingTableRow } from "@/server/dtos/price.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
@@ -11,8 +10,10 @@ import {
   FileEarmarkArrowUpFill,
   PersonFillAdd,
 } from "react-bootstrap-icons";
+import useToast from '@/stores/toast';
+import { TRPCClientError } from '@trpc/client';
 
-export default function PriceShippingPage() {
+export default function PriceFactoryPage() {
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
@@ -22,10 +23,12 @@ export default function PriceShippingPage() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
   const { setModal, current } = useModal();
 
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Master Data | Price Shipping");
-    setActive(1, 6, 2);
+    setTitle("Master Data | Price Factory");
+    setActive(1, 6, 0);
   }, [setTitle, setActive]);
 
   // State untuk search
@@ -37,23 +40,23 @@ export default function PriceShippingPage() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.prices.getTableRows.useQuery("Shipping");
+  const tableRowsQuery = trpc.prices.getTableRows.useQuery("Factory");
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.prices.deleteShipping.useMutation();
+  const deleteMutation = trpc.prices.deleteFactory.useMutation();
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Price Shipping" onChange={setSearch} />
+        <Search placeholder="Search Price Factory" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Price Shipping"
+            text="Add New Price Factory"
             icon={<PersonFillAdd />}
             variant="filled"
-            onClick={() => router.push("/master_data/prices/shipping/save")}
+            onClick={() => router.push("/master_data/prices/factory/save")}
           />
           <Button
             text="Import"
@@ -79,8 +82,8 @@ export default function PriceShippingPage() {
             isSortable: true,
           },
           {
-            id: "shipping",
-            header: "Shipping",
+            id: "quotation",
+            header: "Quotation",
             type: "text",
             isSortable: true,
           },
@@ -91,8 +94,8 @@ export default function PriceShippingPage() {
             isSortable: true,
           },
           {
-            id: "port",
-            header: "Port",
+            id: "factory",
+            header: "Delivery To",
             type: "text",
             isSortable: true,
           },
@@ -103,86 +106,38 @@ export default function PriceShippingPage() {
             isSortable: true,
           },
           {
-            id: "containerType",
-            header: "Container Type",
-            type: "text",
-            isSortable: true,
-          },
-          {
             id: "serviceType",
             header: "Service Type",
             type: "text",
             isSortable: true,
           },
           {
-            id: "freight",
-            header: "Freight",
+            id: "containerType",
+            header: "Container Type",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "port",
+            header: "Port",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "etcCost",
+            header: "ETC Cost",
             type: "money",
             isSortable: true,
           },
           {
-            id: "thcOPT",
-            header: "THC OPT",
+            id: "hpp",
+            header: "HPP",
             type: "money",
             isSortable: true,
           },
           {
-            id: "thcOPP",
-            header: "THC OPP",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "adminBL",
-            header: "Admin BL",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "cleaning",
-            header: "Cleaning",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "alihKapal",
-            header: "Alih Kapal",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "materai",
-            header: "Materai",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "lolo",
-            header: "LOLO",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "segel",
-            header: "Segel",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "rc",
-            header: "RC",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "lss",
-            header: "LSS",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "total",
-            header: "Total",
+            id: "hppAfter",
+            header: "HPP after ETC Cost",
             type: "money",
             isSortable: true,
           },
@@ -205,12 +160,10 @@ export default function PriceShippingPage() {
             return;
           }
 
-          const priceShipping = tableRowsQuery.data[selectedRowIndex];
+          const priceFactory = tableRowsQuery.data[selectedRowIndex];
 
-          // Redirect ke halaman save price shipping
-          router.push(
-            `/master_data/prices/shipping/save?id=${priceShipping.id}`
-          );
+          // Redirect ke halaman save price factory
+          router.push(`/master_data/prices/factory/save?id=${priceFactory.id}`);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
@@ -221,12 +174,16 @@ export default function PriceShippingPage() {
             return;
           }
 
-          const priceShipping = tableRowsQuery.data[selectedRowIndex] as PriceShippingTableRow;
+          const priceFactory = tableRowsQuery.data[selectedRowIndex];
 
-          // Hapus price shipping yang dipilih di table
-          await deleteMutation.mutateAsync(priceShipping.detailId);
+          // Hapus price factory yang dipilih di table
+          await deleteMutation.mutateAsync(priceFactory.id).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
+          });
 
-          // Karena price shipping yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
+          // Karena price factory yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
           // Tutup modal

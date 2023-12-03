@@ -1,4 +1,5 @@
 import {
+  PriceFactory,
   PriceShipping,
   PriceShippingDetail,
   PriceVendor,
@@ -6,8 +7,36 @@ import {
 } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import moment from "moment";
-import { PriceShippingInput, PriceVendorInput } from "../dtos/price.dto";
+import {
+  PriceFactoryInput,
+  PriceShippingInput,
+  PriceVendorInput,
+} from "../dtos/price.dto";
 import prisma from "../prisma";
+
+export async function findAllPriceFactories() {
+  return await prisma.priceFactory.findMany({
+    include: {
+      quotationDetail: {
+        include: {
+          quotation: { include: { factory: true } },
+          route: true,
+          factory: true,
+          port: true,
+          trackingAsal: {
+            include: { route: true, vendor: true },
+          },
+          trackingTujuan: {
+            include: { route: true, vendor: true },
+          },
+          shippingDetail: {
+            include: { route: true, shipping: true },
+          },
+        },
+      },
+    },
+  });
+}
 
 export async function findPriceVendorByVendor(vendorCode: string) {
   return await prisma.priceVendor.findFirst({
@@ -84,6 +113,40 @@ export async function findAllPriceShippingDetails() {
   });
 }
 
+export async function findPriceFactoryByID(id: string) {
+  const priceFactory = await prisma.priceFactory.findFirst({
+    where: { id },
+    include: {
+      quotationDetail: {
+        include: {
+          quotation: true,
+          route: true,
+          factory: true,
+          port: true,
+          trackingAsal: {
+            include: { route: true, vendor: true },
+          },
+          trackingTujuan: {
+            include: { route: true, vendor: true },
+          },
+          shippingDetail: {
+            include: { route: true, shipping: true },
+          },
+        },
+      },
+      inquiryDetails: true,
+    },
+  });
+  if (!priceFactory) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Price factory with id ${id} not exists`,
+    });
+  }
+
+  return priceFactory;
+}
+
 export async function findPriceVendorByID(id: string) {
   const priceVendor = await prisma.priceVendor.findFirst({
     where: { id },
@@ -118,6 +181,47 @@ export async function findPriceShippingByID(id: string) {
   }
 
   return priceShipping;
+}
+
+export async function createPriceFactory(
+  input: PriceFactoryInput
+): Promise<PriceFactory> {
+  const quotationDetail = await prisma.quotationDetail.findFirst({
+    where: {
+      quotation: {
+        number: input.quotation,
+        details: {
+          some: {
+            route: { code: input.route },
+            containerSize: input.containerSize,
+          },
+        },
+      },
+    },
+  });
+  if (!quotationDetail) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Quotation detail not found`,
+    });
+  }
+
+  return await prisma.priceFactory.create({
+    data: {
+      quotationDetail: {
+        connect: {
+          id: quotationDetail.id,
+          route: { code: input.route },
+          containerSize: input.containerSize,
+        },
+      },
+      etcCost: input.etcCost,
+      status: true,
+    },
+    include: {
+      quotationDetail: true,
+    },
+  });
 }
 
 export async function createPriceVendor(
@@ -242,6 +346,49 @@ export async function createPriceShipping(
         })),
       },
       status: true,
+    },
+  });
+}
+
+export async function updatePriceFactory(
+  id: string,
+  input: PriceFactoryInput
+): Promise<PriceFactory> {
+  const quotationDetail = await prisma.quotationDetail.findFirst({
+    where: {
+      quotation: {
+        number: input.quotation,
+        details: {
+          some: {
+            route: { code: input.route },
+            containerSize: input.containerSize,
+          },
+        },
+      },
+    },
+  });
+  if (!quotationDetail) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Quotation detail not found`,
+    });
+  }
+
+  return await prisma.priceFactory.update({
+    where: { id },
+    data: {
+      quotationDetail: {
+        connect: {
+          id: quotationDetail.id,
+          route: { code: input.route },
+          containerSize: input.containerSize,
+        },
+      },
+      etcCost: input.etcCost,
+      status: true,
+    },
+    include: {
+      quotationDetail: true,
     },
   });
 }
@@ -461,8 +608,25 @@ export async function updatePriceShipping(
   });
 }
 
+export async function deletePriceFactory(id: string): Promise<PriceFactory> {
+  const priceFactory = await findPriceFactoryByID(id);
+
+  if (priceFactory.inquiryDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Price Factory that you want to delete is used in Inquiry ${priceFactory.inquiryDetails[0].inquiryNumber}`,
+    });
+
+  return await prisma.priceFactory.delete({
+    where: { id: priceFactory.id },
+    include: { quotationDetail: true },
+  });
+}
+
 export async function deletePriceVendor(id: string): Promise<PriceVendor> {
-  return await prisma.priceVendor.delete({ where: { id } });
+  const priceVendor = await findPriceVendorByID(id);
+
+  return await prisma.priceVendor.delete({ where: { id: priceVendor.id } });
 }
 
 export async function deletePriceVendorDetail(
@@ -482,7 +646,9 @@ export async function deletePriceVendorDetail(
 }
 
 export async function deletePriceShipping(id: string): Promise<PriceShipping> {
-  return await prisma.priceShipping.delete({ where: { id } });
+  const priceShipping = await findPriceShippingByID(id);
+
+  return await prisma.priceShipping.delete({ where: { id: priceShipping.id } });
 }
 
 export async function deletePriceShippingDetail(

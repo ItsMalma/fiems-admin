@@ -20,7 +20,7 @@ import {
 
 export function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => { }}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
@@ -28,7 +28,7 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             value="excel"
-            onChange={() => {}}
+            onChange={() => { }}
             className="basis-2/3"
           />
         </div>
@@ -48,6 +48,9 @@ export default function MasterAccountCOA() {
     setActive(1, 10, 0);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState("");
+
   // State untuk menyimpan index dari baris yang dipilih di table
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
@@ -62,7 +65,7 @@ export default function MasterAccountCOA() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Group Code" />
+        <Search placeholder="Search COA" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Account COA"
@@ -141,6 +144,8 @@ export default function MasterAccountCOA() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {

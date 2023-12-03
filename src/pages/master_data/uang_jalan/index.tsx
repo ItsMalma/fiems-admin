@@ -27,6 +27,9 @@ export default function MasterUangJalan() {
     setActive(1, 7, 0);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState("");
+
   // Mendapatkan router
   const router = useRouter();
 
@@ -42,7 +45,7 @@ export default function MasterUangJalan() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Uang Jalan" />
+        <Search placeholder="Search Uang Jalan" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Uang Jalan"
@@ -54,13 +57,13 @@ export default function MasterUangJalan() {
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
           <Button
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -135,6 +138,8 @@ export default function MasterUangJalan() {
             isSortable: true,
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {

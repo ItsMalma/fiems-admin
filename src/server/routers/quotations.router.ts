@@ -21,59 +21,15 @@ import {
   createQuotation,
   deleteQuotationDetailByID,
   findAllQuotationDetails,
+  findAllQuotations,
   findNextQuotationNumber,
   findQuotationByNumber,
+  findQuotationDetailHPP,
+  findQuotationShippingDetail,
+  findQuotationTrackingDetail,
   updateQuotation,
 } from "../stores/quotation.store";
 import { publicProcedure, router } from "../trpc";
-
-async function getTrackingDetail(input: {
-  vendor: string;
-  route: string;
-  port: string;
-  containerSize: string;
-  containerType: string;
-}) {
-  const priceVendor = await findPriceVendorByVendor(input.vendor);
-  if (!priceVendor) {
-    return null;
-  }
-
-  const priceVendorDetail = priceVendor.details.find(
-    (priceVendorDetail) =>
-      priceVendorDetail.route.code === input.route &&
-      priceVendorDetail.port.code === input.port &&
-      priceVendorDetail.containerSize === input.containerSize &&
-      priceVendorDetail.containerType === input.containerType
-  );
-  if (!priceVendorDetail) return null;
-
-  return priceVendorDetail;
-}
-
-async function getShippingDetail(input: {
-  shipping: string;
-  route: string;
-  port: string;
-  containerSize: string;
-  containerType: string;
-}) {
-  const priceShipping = await findPriceShippingByShipping(input.shipping);
-  if (!priceShipping) {
-    return null;
-  }
-
-  const priceShippingDetail = priceShipping.details.find(
-    (priceShippingDetail) =>
-      priceShippingDetail.route.code === input.route &&
-      priceShippingDetail.port.code === input.port &&
-      priceShippingDetail.containerSize === input.containerSize &&
-      priceShippingDetail.containerType === input.containerType
-  );
-  if (!priceShippingDetail) return null;
-
-  return priceShippingDetail;
-}
 
 export const quotationsRouter = router({
   getNextNumber: publicProcedure.query(
@@ -166,7 +122,7 @@ export const quotationsRouter = router({
         input.containerSize &&
         input.containerType
       ) {
-        return await getTrackingDetail({
+        return await findQuotationTrackingDetail({
           vendor: input.vendor,
           route: input.route,
           port: input.port,
@@ -264,7 +220,7 @@ export const quotationsRouter = router({
         input.containerSize &&
         input.containerType
       ) {
-        return await getShippingDetail({
+        return await findQuotationShippingDetail({
           shipping: input.shipping,
           route: input.route,
           port: input.port,
@@ -302,7 +258,7 @@ export const quotationsRouter = router({
       for (const quotationDetail of quotationDetails) {
         if (input.completed !== quotationDetail.completed) continue;
 
-        const trackingAsal = await getTrackingDetail({
+        const trackingAsal = await findQuotationTrackingDetail({
           vendor: quotationDetail.trackingAsal!.vendor.code,
           route: quotationDetail.trackingAsal!.route.code,
           port: quotationDetail.port.code,
@@ -311,7 +267,7 @@ export const quotationsRouter = router({
         });
         if (!trackingAsal) continue;
 
-        const trackingTujuan = await getTrackingDetail({
+        const trackingTujuan = await findQuotationTrackingDetail({
           vendor: quotationDetail.trackingTujuan!.vendor.code,
           route: quotationDetail.trackingTujuan!.route.code,
           port: quotationDetail.port.code,
@@ -320,7 +276,7 @@ export const quotationsRouter = router({
         });
         if (!trackingTujuan) continue;
 
-        const shippingDetail = await getShippingDetail({
+        const shippingDetail = await findQuotationShippingDetail({
           shipping: quotationDetail.shippingDetail!.shipping.code,
           route: quotationDetail.shippingDetail!.route.code,
           port: quotationDetail.port.code,
@@ -367,7 +323,7 @@ export const quotationsRouter = router({
       return rows;
     }),
 
-  getDefaultFormByNumber: publicProcedure
+  getDefaultForm: publicProcedure
     .input(z.string().optional())
     .query<QuotationForm | null>(async ({ input }) => {
       if (!input) return null;
@@ -386,7 +342,7 @@ export const quotationsRouter = router({
         details: await Promise.all(
           quotation.details.map(async (quotationDetail) => {
             const trackingAsalTotal = calculateTrackingTotal(
-              (await getTrackingDetail({
+              (await findQuotationTrackingDetail({
                 vendor: quotationDetail.trackingAsal!.vendor.code,
                 route: quotationDetail.trackingAsal!.route.code,
                 port: quotationDetail.port.code,
@@ -396,7 +352,7 @@ export const quotationsRouter = router({
             );
 
             const trackingTujuanTotal = calculateTrackingTotal(
-              (await getTrackingDetail({
+              (await findQuotationTrackingDetail({
                 vendor: quotationDetail.trackingTujuan!.vendor.code,
                 route: quotationDetail.trackingTujuan!.route.code,
                 port: quotationDetail.port.code,
@@ -406,7 +362,7 @@ export const quotationsRouter = router({
             );
 
             const shippingDetailTotal = calculateShippingTotal(
-              (await getShippingDetail({
+              (await findQuotationShippingDetail({
                 shipping: quotationDetail.shippingDetail!.shipping.code,
                 route: quotationDetail.shippingDetail!.route.code,
                 port: quotationDetail.port.code,
@@ -497,5 +453,20 @@ export const quotationsRouter = router({
     .input(z.string())
     .mutation(async ({ input }) => {
       await deleteQuotationDetailByID(input);
+    }),
+
+  getOptions: publicProcedure.query(async () => {
+    return (await findAllQuotations()).map((quotation) => ({
+      label: `${quotation.number} (${quotation.factory.name})`,
+      value: quotation.number,
+    }));
+  }),
+
+  getHPP: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input }) => {
+      if (!input) return;
+
+      return await findQuotationDetailHPP(input);
     }),
 });

@@ -53,6 +53,7 @@ model Factory {
   status           Boolean           @default(true)
   quotations       Quotation[]
   quotationDetails QuotationDetail[]
+  inquiries        Inquiry[]
 }
 
 model Vendor {
@@ -141,6 +142,7 @@ model Sales {
   status      Boolean          @default(true)
   createDate  DateTime         @default(now())
   quotations  Quotation[]
+  inquiries   Inquiry[]
 }
 
 enum SalesJobPosition {
@@ -167,14 +169,15 @@ model Vehicle {
 }
 
 model Vessel {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  shipping     Shipping @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
-  shippingCode String   @db.String
-  name         String
-  unit         String
-  capacity     Int
-  createDate   DateTime @default(now())
-  status       Boolean  @default(true)
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  shipping       Shipping        @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
+  shippingCode   String          @db.String
+  name           String
+  unit           String
+  capacity       Int
+  createDate     DateTime        @default(now())
+  status         Boolean         @default(true)
+  inquiryDetails InquiryDetail[]
 }
 
 model UangJalan {
@@ -192,6 +195,16 @@ model UangJalan {
   etc           Int
   total         Int
   createDate    DateTime @default(now())
+}
+
+model PriceFactory {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
+  quotationDetailID String          @db.ObjectId
+  etcCost           Int
+  createDate        DateTime        @default(now())
+  status            Boolean         @default(true)
+  inquiryDetails    InquiryDetail[]
 }
 
 model PriceVendorDetail {
@@ -337,6 +350,7 @@ model QuotationDetail {
   otherExpanses   QuotationDetailOtherExpanses?
   summaryDetail   QuotationDetailSummaryDetail?
   completed       Boolean                        @default(false)
+  priceFactories  PriceFactory[]
 }
 
 model QuotationDetailTrackingAsal {
@@ -395,4 +409,40 @@ type QuotationDetailSummaryDetail {
   biayaAdmin     Int
   ppn            QuotationDetailSummaryDetailStatus
   hargaJual      Int
+}
+
+enum JobOrderType {
+  Domestic
+  International
+}
+
+enum TypeOrder {
+  Muat
+  Bongkaran
+}
+
+model Inquiry {
+  number      String          @id @map("_id") @db.String
+  sales       Sales           @relation(fields: [salesCode], references: [code], onDelete: Restrict)
+  salesCode   String          @db.String
+  factory     Factory         @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
+  factoryCode String          @db.String
+  details     InquiryDetail[]
+  createDate  DateTime        @default(now())
+}
+
+model InquiryDetail {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  inquiry        Inquiry      @relation(fields: [inquiryNumber], references: [number], onDelete: Cascade)
+  inquiryNumber  String       @db.String
+  jobOrder       JobOrderType
+  typeOrder      TypeOrder
+  loadDate       DateTime
+  priceFactory   PriceFactory @relation(fields: [priceFactoryID], references: [id], onDelete: Restrict)
+  priceFactoryID String       @db.ObjectId
+  vessel         Vessel       @relation(fields: [vesselID], references: [id], onDelete: Restrict)
+  vesselID       String       @db.ObjectId
+  voyage         String
+  etd            DateTime
+  eta            DateTime
 }

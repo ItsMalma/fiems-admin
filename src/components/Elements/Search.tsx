@@ -2,6 +2,7 @@ import { Search as SearchIcon } from "react-bootstrap-icons";
 
 type SearchProps = {
   placeholder?: string;
+  onChange?: (content: string) => void;
 };
 
 export function Search(props: SearchProps) {
@@ -12,6 +13,9 @@ export function Search(props: SearchProps) {
         type="search"
         className="flex-grow outline-none bg-inherit"
         placeholder={props.placeholder ?? "Search"}
+        onChange={(event) => {
+          props.onChange && props.onChange(event.currentTarget.value);
+        }}
       />
     </div>
   );

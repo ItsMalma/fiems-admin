@@ -10,6 +10,8 @@ import {
   FileEarmarkArrowUpFill,
   PersonFillAdd,
 } from "react-bootstrap-icons";
+import useToast from '@/stores/toast';
+import { TRPCClientError } from '@trpc/client';
 
 export default function SalesPage() {
   // Gunakan store useMenu untuk mengset menu yang aktif
@@ -21,11 +23,16 @@ export default function SalesPage() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
   const { setModal, current } = useModal();
 
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Sales");
     setActive(1, 3, 0);
   }, [setTitle, setActive]);
+
+  // State untuk search
+  const [search, setSearch] = React.useState("");
 
   // Mendapatkan router
   const router = useRouter();
@@ -43,7 +50,7 @@ export default function SalesPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Sales" />
+        <Search placeholder="Search Sales" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Sales"
@@ -60,7 +67,7 @@ export default function SalesPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -134,6 +141,8 @@ export default function SalesPage() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -162,6 +171,10 @@ export default function SalesPage() {
           // Hapus sales yang dipilih di table
           await deleteMutation.mutateAsync({
             code: tableRowsQuery.data[selectedRowIndex].code,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena sales yang dipilih telah dihapus, maka set ulang baris yang dipilih di table

@@ -139,6 +139,9 @@ export default function ProductPage() {
     setActive(1, 9, 0);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState("");
+
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();
 
@@ -155,7 +158,7 @@ export default function ProductPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Product" />
+        <Search placeholder="Search Product" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Product"
@@ -172,13 +175,13 @@ export default function ProductPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
           <Button
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -223,6 +226,8 @@ export default function ProductPage() {
             isSortable: true,
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
