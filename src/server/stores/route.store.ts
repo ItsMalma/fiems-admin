@@ -22,7 +22,26 @@ export async function findAllRouteFromPriceVendor(vendorCode: string) {
 }
 
 export async function findRouteByCode(code: string) {
-  const route = await prisma.route.findFirst({ where: { code } });
+  const route = await prisma.route.findFirst({
+    where: { code },
+    include: {
+      priceShippingDetails: true,
+      priceVendorDetails: true,
+      quotationDetails: true,
+      shippingDetail: {
+        include: { quotationDetail: true },
+      },
+      trackingAsal: {
+        include: { quotationDetail: true },
+      },
+      trackingTujuan: {
+        include: {
+          quotationDetail: true,
+        },
+      },
+      uangJalan: true,
+    },
+  });
   if (!route) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -84,5 +103,43 @@ export async function updateRoute(
 }
 
 export async function deleteRoute(code: string): Promise<Route> {
-  return await prisma.route.delete({ where: { code } });
+  const route = await findRouteByCode(code);
+
+  if (route.priceShippingDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Price Shipping`,
+    });
+  if (route.priceVendorDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Price Vendor`,
+    });
+  if (route.quotationDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Quotation ${route.quotationDetails[0].quotationNumber}`,
+    });
+  if (route.trackingAsal.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Quotation ${route.trackingAsal[0].quotationDetail.quotationNumber}`,
+    });
+  if (route.trackingTujuan.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Quotation ${route.trackingTujuan[0].quotationDetail.quotationNumber}`,
+    });
+  if (route.shippingDetail.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Quotation ${route.shippingDetail[0].quotationDetail.quotationNumber}`,
+    });
+  if (route.uangJalan.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Route ${route.code} is used in Uang Jalan ${route.uangJalan[0]}`,
+    });
+
+  return await prisma.route.delete({ where: { code: route.code } });
 }

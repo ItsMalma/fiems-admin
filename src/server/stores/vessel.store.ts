@@ -14,7 +14,7 @@ export async function findAllVessel() {
 export async function findVesselById(id: string) {
   const vessel = await prisma.vessel.findFirst({
     where: { id },
-    include: { shipping: true },
+    include: { shipping: true, inquiryDetails: true },
   });
   if (!vessel) {
     throw new TRPCError({
@@ -61,5 +61,13 @@ export async function updateVessel(
 }
 
 export async function deleteVessel(id: string): Promise<Vessel> {
+  const vessel = await findVesselById(id);
+
+  if (vessel.inquiryDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Vessel that you want to delete is used in Inquiry ${vessel.inquiryDetails[0].inquiryNumber}`,
+    });
+
   return await prisma.vessel.delete({ where: { id } });
 }

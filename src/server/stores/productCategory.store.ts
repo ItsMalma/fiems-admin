@@ -14,6 +14,7 @@ export async function findAllProductCategory() {
 export async function findProductCategoryByReff(reff: string) {
   const productCategory = await prisma.productCategory.findFirst({
     where: { reff },
+    include: { products: true },
   });
   if (!productCategory) {
     throw new TRPCError({
@@ -70,5 +71,15 @@ export async function updateProductCategory(
 export async function deleteProductCategory(
   reff: string
 ): Promise<ProductCategory> {
-  return await prisma.productCategory.delete({ where: { reff } });
+  const productCategory = await findProductCategoryByReff(reff);
+
+  if (productCategory.products.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Product Category ${productCategory.reff} is used in Product ${productCategory.products[0].skuCode}`,
+    });
+
+  return await prisma.productCategory.delete({
+    where: { reff: productCategory.reff },
+  });
 }

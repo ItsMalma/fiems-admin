@@ -26,6 +26,8 @@ import {
   GeoAltFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
+import useToast from '@/stores/toast';
+import { TRPCClientError } from '@trpc/client';
 
 export function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
@@ -150,7 +152,7 @@ export function Save({ code }: { code?: string }) {
 
 export function Export() {
   return (
-    <Modal title="Export Data" type="save" onDone={() => {}}>
+    <Modal title="Export Data" type="save" onDone={() => { }}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
@@ -158,7 +160,7 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             value={""}
-            onChange={() => {}}
+            onChange={() => { }}
             className="basis-2/3"
             isSearchable
           />
@@ -181,8 +183,12 @@ export default function MasterRoute() {
     setActive(1, 1, 0);
   }, [setTitle, setActive]);
 
+  const [search, setSearch] = React.useState("");
+
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();
+
+  const { addToasts } = useToast();
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
@@ -197,7 +203,7 @@ export default function MasterRoute() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Route Code" />
+        <Search placeholder="Search Route" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Route"
@@ -220,7 +226,7 @@ export default function MasterRoute() {
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -264,6 +270,8 @@ export default function MasterRoute() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -290,6 +298,10 @@ export default function MasterRoute() {
           // Hapus route yang dipilih di table
           await deleteMutation.mutateAsync({
             code: tableRowsQuery.data[selectedRowIndex].code,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena route yang dipilih telah dihapus, maka hapus pilihan sebelumnya

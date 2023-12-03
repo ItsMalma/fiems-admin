@@ -18,10 +18,12 @@ import {
   FileEarmarkArrowUpFill,
   PersonFillAdd,
 } from "react-bootstrap-icons";
+import useToast from '@/stores/toast';
+import { TRPCClientError } from '@trpc/client';
 
 export function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => { }}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
@@ -29,7 +31,7 @@ export function Export() {
             placeholder="Choose city"
             options={[{ label: "Excel", value: "excel" }]}
             value="excel"
-            onChange={() => {}}
+            onChange={() => { }}
             className="basis-2/3"
           />
         </div>
@@ -48,11 +50,15 @@ export default function CustomersPage() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
   const { setModal, current } = useModal();
 
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Customers");
     setActive(1, 0, 1);
   }, [setTitle, setActive]);
+
+  const [search, setSearch] = React.useState("");
 
   // Mendapatkan router
   const router = useRouter();
@@ -70,7 +76,7 @@ export default function CustomersPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Customer" />
+        <Search placeholder="Search Customer" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Customer"
@@ -250,6 +256,8 @@ export default function CustomersPage() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -283,6 +291,10 @@ export default function CustomersPage() {
           await deleteMutation.mutateAsync({
             type: customer.type as CustomerType,
             code: customer.code,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table

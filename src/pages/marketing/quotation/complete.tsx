@@ -6,6 +6,7 @@ import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
 import React from "react";
 import {
+  CurrencyDollar,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
   PersonFillAdd,
@@ -27,6 +28,9 @@ export default function CompleteQuotationsPage() {
     setActive(2, 1, 1);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState("");
+
   // Mendapatkan router
   const router = useRouter();
 
@@ -39,13 +43,13 @@ export default function CompleteQuotationsPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Price Vendor" />
+        <Search placeholder="Search Quotation" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Price Vendor"
-            icon={<PersonFillAdd />}
+            text="Add New Quotation"
+            icon={<CurrencyDollar />}
             variant="filled"
-            onClick={() => router.push("/master_data/prices/vendor/save")}
+            onClick={() => router.push("/marketing/quotation/save")}
           />
           <Button
             text="Import"
@@ -56,7 +60,7 @@ export default function CompleteQuotationsPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -173,6 +177,8 @@ export default function CompleteQuotationsPage() {
             isSortable: true,
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
       />

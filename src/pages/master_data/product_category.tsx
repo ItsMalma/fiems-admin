@@ -16,6 +16,8 @@ import {
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
+import { TRPCClientError } from '@trpc/client';
+import useToast from '@/stores/toast';
 
 export function Save({ reff }: { reff?: string }) {
   const { setModal } = useModal();
@@ -97,8 +99,13 @@ export default function ProductCategoryPage() {
     setActive(1, 8, 0);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState("");
+
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();
+
+  const { addToasts } = useToast();
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
@@ -113,7 +120,7 @@ export default function ProductCategoryPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Product Category" />
+        <Search placeholder="Search Product Category" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Product Category"
@@ -130,13 +137,13 @@ export default function ProductCategoryPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
           <Button
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -163,6 +170,8 @@ export default function ProductCategoryPage() {
             isSortable: true,
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -189,6 +198,10 @@ export default function ProductCategoryPage() {
           // Hapus product category yang dipilih di table
           await deleteMutation.mutateAsync({
             reff: tableRowsQuery.data[selectedRowIndex].reff,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena product category yang dipilih telah dihapus, maka hapus pilihan sebelumnya

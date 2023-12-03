@@ -284,24 +284,23 @@ export default function SaveQuotationPage() {
   const { reset, setValue } = methods;
   const values = methods.watch();
 
-  const defaultFormByNumberQuery =
-    trpc.quotations.getDefaultFormByNumber.useQuery(queryNumber);
+  const defaultFormQuery = trpc.quotations.getDefaultForm.useQuery(queryNumber);
   React.useEffect(() => {
-    if (defaultFormByNumberQuery.data) {
+    if (defaultFormQuery.data) {
       if (queryID) {
         reset({
-          ...defaultFormByNumberQuery.data,
+          ...defaultFormQuery.data,
           details: [
-            defaultFormByNumberQuery.data.details.find(
+            defaultFormQuery.data.details.find(
               (detail) => detail.id === queryID
             ),
           ],
         });
       } else {
-        reset(defaultFormByNumberQuery.data);
+        reset(defaultFormQuery.data);
       }
     }
-  }, [defaultFormByNumberQuery.data, reset, queryID]);
+  }, [defaultFormQuery.data, reset, queryID]);
 
   // Memo untuk menyimpan value detail dari append yang dipilih
   const detail = React.useMemo(
@@ -363,9 +362,11 @@ export default function SaveQuotationPage() {
       containerType: detail?.containerType,
     });
   React.useEffect(() => {
+    if (!trackingVendorOptionsQuery.data) return;
+
     if (
       detail?.trackingAsal.vendor &&
-      !trackingVendorOptionsQuery.data?.find(
+      !trackingVendorOptionsQuery.data.find(
         (option) => option.value === detail.trackingAsal.vendor
       )
     ) {
@@ -374,7 +375,7 @@ export default function SaveQuotationPage() {
     }
     if (
       detail?.trackingTujuan.vendor &&
-      !trackingVendorOptionsQuery.data?.find(
+      !trackingVendorOptionsQuery.data.find(
         (option) => option.value === detail.trackingTujuan.vendor
       )
     ) {
@@ -391,9 +392,11 @@ export default function SaveQuotationPage() {
       containerType: detail?.containerType,
     });
   React.useEffect(() => {
+    if (!trackingAsalRouteOptionsQuery.data) return;
+
     if (
       detail?.trackingAsal.route &&
-      !trackingAsalRouteOptionsQuery.data?.find(
+      !trackingAsalRouteOptionsQuery.data.find(
         (option) => option.value === detail.trackingAsal.route
       )
     ) {
@@ -428,9 +431,11 @@ export default function SaveQuotationPage() {
       containerType: detail?.containerType,
     });
   React.useEffect(() => {
+    if (!trackingTujuanRouteOptionsQuery.data) return;
+
     if (
       detail?.trackingTujuan.route &&
-      !trackingTujuanRouteOptionsQuery.data?.find(
+      !trackingTujuanRouteOptionsQuery.data.find(
         (option) => option.value === detail.trackingTujuan.route
       )
     ) {
@@ -463,9 +468,11 @@ export default function SaveQuotationPage() {
     containerType: detail?.containerType,
   });
   React.useEffect(() => {
+    if (!shippingOptionsQuery.data) return;
+
     if (
       detail?.shippingDetail.shipping &&
-      !shippingOptionsQuery.data?.find(
+      !shippingOptionsQuery.data.find(
         (option) => option.value === detail.shippingDetail.shipping
       )
     ) {
@@ -482,9 +489,11 @@ export default function SaveQuotationPage() {
       containerType: detail?.containerType,
     });
   React.useEffect(() => {
+    if (!shippingRouteOptionsQuery.data) return;
+
     if (
       detail?.shippingDetail.route &&
-      !shippingRouteOptionsQuery.data?.find(
+      !shippingRouteOptionsQuery.data.find(
         (option) => option.value === detail.shippingDetail.route
       )
     ) {
@@ -632,8 +641,8 @@ export default function SaveQuotationPage() {
   return (
     <SaveLayout
       onSave={onSubmit}
-      title="Input Price Calculation"
-      isLoading={!nextNumberQuery.data}
+      title="Price Calculation"
+      isLoading={!values}
       isConfirm={!!queryID}
       onEdit={async () => {
         await router.push(`/marketing/quotation/save?number=${queryNumber}`);

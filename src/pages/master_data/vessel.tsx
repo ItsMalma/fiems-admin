@@ -19,6 +19,8 @@ import {
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
+import useToast from '@/stores/toast';
+import { TRPCClientError } from '@trpc/client';
 
 export function Save({ id }: { id?: string }) {
   // Menggunakan function setModal dari store useModal
@@ -123,11 +125,16 @@ export default function MasterVessel() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();
 
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Vessel");
     setActive(1, 5, 0);
   }, [setTitle, setActive]);
+
+  // State untuk search
+  const [search, setSearch] = React.useState<string>('');
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
@@ -141,7 +148,7 @@ export default function MasterVessel() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Vessel" />
+        <Search placeholder="Search Vessel" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Vessel"
@@ -158,7 +165,7 @@ export default function MasterVessel() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -201,6 +208,8 @@ export default function MasterVessel() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -227,6 +236,10 @@ export default function MasterVessel() {
           // Hapus vessel yang dipilih di table
           await deleteMutation.mutateAsync({
             id: tableRowsQuery.data[selectedRowIndex].id,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena vessel yang dipilih telah dihapus, maka hapus pilihan sebelumnya

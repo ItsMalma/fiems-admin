@@ -5,10 +5,10 @@ import { Moon, Bell, BellFill } from "react-bootstrap-icons";
 export default function Header() {
   const notificationBar = React.useRef<any>(null)
   const { title } = useHeader();
-  const [ showNotification, setShowNotification ] = React.useState(false);
-  const [ theme, setTheme ] = React.useState("light")
+  const [showNotification, setShowNotification] = React.useState(false);
+  const [theme, setTheme] = React.useState("light")
 
-  
+
   // React.useEffect(() => {
   //   const handleNotification = (event:any) => {
   //     if (showNotification) {
@@ -33,7 +33,7 @@ export default function Header() {
   }, [theme])
 
   return (
-    <header className="bg-primary dark:bg-primary3 w-full px-6 py-[18px] 2xl:px-8 2xl:py-6 flex items-center justify-between sticky top-0 z-50"> 
+    <header className="bg-primary dark:bg-primary3 w-full px-6 py-[18px] 2xl:px-8 2xl:py-6 flex items-center justify-between sticky top-0 z-50">
       <div>
         <h1 className="text-white text-[18px] 2xl:text-2xl font-bold">FIEMS</h1>
       </div>
@@ -41,7 +41,7 @@ export default function Header() {
         {title}
       </h1>
       <div className="relative flex gap-1 2xl:gap-2 items-center text-white">
-        <span className="select-none p-[9px] 2xl:p-3 transition duration-150 hover:bg-primary3 dark:hover:bg-primaryActive rounded-full">
+        {/* <span className="select-none p-[9px] 2xl:p-3 transition duration-150 hover:bg-primary3 dark:hover:bg-primaryActive rounded-full">
           <Moon onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="select-none cursor-pointer"/>
         </span>
         <span className="select-none p-[9px] 2xl:p-3 relative transition duration-150 hover:bg-primary3 dark:hover:bg-primaryActive rounded-full">
@@ -56,7 +56,7 @@ export default function Header() {
           </div>
         :
           null
-        }
+        } */}
       </div>
     </header>
   );

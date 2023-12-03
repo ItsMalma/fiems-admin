@@ -104,7 +104,7 @@ export const quotationsRouter = router({
       return [];
     }),
 
-  findQuotationTrackingDetail: publicProcedure
+  getTrackingDetail: publicProcedure
     .input(
       z.object({
         vendor: z.string().optional(),
@@ -202,7 +202,7 @@ export const quotationsRouter = router({
       return [];
     }),
 
-  findQuotationShippingDetail: publicProcedure
+  getShippingDetail: publicProcedure
     .input(
       z.object({
         shipping: z.string().optional(),
@@ -323,7 +323,7 @@ export const quotationsRouter = router({
       return rows;
     }),
 
-  getDefaultFormByNumber: publicProcedure
+  getDefaultForm: publicProcedure
     .input(z.string().optional())
     .query<QuotationForm | null>(async ({ input }) => {
       if (!input) return null;

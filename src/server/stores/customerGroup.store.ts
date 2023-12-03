@@ -13,9 +13,10 @@ export async function findAllCustomerGroup(): Promise<CustomerGroup[]> {
 
 export async function findCustomerGroupByCode(
   code: string
-): Promise<CustomerGroup> {
+) {
   const customerGroup = await prisma.customerGroup.findFirst({
     where: { code },
+    include: {factories: true}
   });
   if (!customerGroup) {
     throw new TRPCError({
@@ -82,5 +83,17 @@ export async function updateCustomerGroup(
 export async function deleteCustomerGroup(
   code: string
 ): Promise<CustomerGroup> {
-  return await prisma.customerGroup.delete({ where: { code } });
+  const customerGroup = await findCustomerGroupByCode(code);
+  if (customerGroup.factories.length > 0) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Customer Group ${customerGroup.code} is used in Factory ${customerGroup.factories[0].code}`
+    });
+  }
+
+  return await prisma.customerGroup.delete({
+    where: {
+      code: customerGroup.code,
+    },
+  });
 }

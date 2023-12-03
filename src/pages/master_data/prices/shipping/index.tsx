@@ -1,5 +1,6 @@
 import { Button, Search, Table } from "@/components/Elements";
 import { trpc } from "@/libs/trpc";
+import { PriceShippingTableRow } from "@/server/dtos/price.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
@@ -27,6 +28,9 @@ export default function PriceShippingPage() {
     setActive(1, 6, 2);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState<string>('');
+
   // Mendapatkan router
   const router = useRouter();
 
@@ -43,7 +47,7 @@ export default function PriceShippingPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Price Shipping" />
+        <Search placeholder="Search Price Shipping" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Price Shipping"
@@ -60,7 +64,7 @@ export default function PriceShippingPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -188,6 +192,8 @@ export default function PriceShippingPage() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -215,7 +221,7 @@ export default function PriceShippingPage() {
             return;
           }
 
-          const priceShipping = tableRowsQuery.data[selectedRowIndex];
+          const priceShipping = tableRowsQuery.data[selectedRowIndex] as PriceShippingTableRow;
 
           // Hapus price shipping yang dipilih di table
           await deleteMutation.mutateAsync(priceShipping.detailId);

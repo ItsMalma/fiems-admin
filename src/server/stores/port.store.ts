@@ -8,7 +8,14 @@ export async function findAllPort() {
 }
 
 export async function findPortByCode(code: string) {
-  const port = await prisma.port.findFirst({ where: { code } });
+  const port = await prisma.port.findFirst({
+    where: { code },
+    include: {
+      priceShippingDetails: true,
+      priceVendorDetails: true,
+      quotationDetails: true,
+    },
+  });
   if (!port) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -64,5 +71,23 @@ export async function updatePort(
 }
 
 export async function deletePort(code: string): Promise<Port> {
-  return await prisma.port.delete({ where: { code } });
+  const port = await findPortByCode(code);
+
+  if (port.priceShippingDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Port ${port.code} is used in Price Shipping`,
+    });
+  if (port.priceVendorDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Port ${port.code} is used in Price Vendor`,
+    });
+  if (port.quotationDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Port ${port.code} is used in Quotation ${port.quotationDetails[0].quotationNumber}`,
+    });
+
+  return await prisma.port.delete({ where: { code: port.code } });
 }

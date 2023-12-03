@@ -14,7 +14,9 @@ export async function findAllVehicle() {
 export async function findVehicleById(id: string) {
   const vehicle = await prisma.vehicle.findFirst({
     where: { id },
-    include: { vendor: true },
+    include: {
+      vendor: true,
+    },
   });
   if (!vehicle) {
     throw new TRPCError({

@@ -3,6 +3,8 @@ import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import {
@@ -21,11 +23,17 @@ export default function MasterVehicle() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
   const { setModal, current } = useModal();
 
+  // Gunakan store useToast untuk menambahkan toasts
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Vehicle");
     setActive(1, 4, 0);
   }, [setTitle, setActive]);
+
+  // State untuk search
+  const [search, setSearch] = React.useState("");
 
   // Mendapatkan router
   const router = useRouter();
@@ -43,7 +51,7 @@ export default function MasterVehicle() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Vehicle" />
+        <Search placeholder="Search Vehicle" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Vehicle"
@@ -60,7 +68,7 @@ export default function MasterVehicle() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -146,6 +154,8 @@ export default function MasterVehicle() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -174,6 +184,10 @@ export default function MasterVehicle() {
           // Hapus vehicle yang dipilih di table
           await deleteMutation.mutateAsync({
             id: tableRowsQuery.data[selectedRowIndex].id,
+          }).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
           });
 
           // Karena vehicle yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
@@ -186,3 +200,4 @@ export default function MasterVehicle() {
     </>
   );
 }
+

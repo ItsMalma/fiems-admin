@@ -16,6 +16,8 @@ import {
   PersonFillAdd,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
+import useToast from '@/stores/toast';
+import { TRPCClientError } from "@trpc/client";
 
 function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
@@ -104,11 +106,15 @@ export default function CustomerGroupPage() {
   // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang lagi aktif
   const { setModal, current } = useModal();
 
+  const { addToasts } = useToast();
+
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Customer Group");
     setActive(1, 0, 0);
   }, [setTitle, setActive]);
+
+  const [search, setSearch] = React.useState("");
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
@@ -123,7 +129,9 @@ export default function CustomerGroupPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white dark:bg-gray-700 rounded-2xl shadow-sm">
-        <Search placeholder="Search Group Code" />
+        <Search placeholder="Search Customer Group" onChange={(content) => {
+          setSearch(content);
+        }} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Group"
@@ -171,6 +179,8 @@ export default function CustomerGroupPage() {
             isSortable: true,
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         isLoading={!findQuery.data}
         rows={findQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
@@ -191,8 +201,12 @@ export default function CustomerGroupPage() {
 
           // Hapus customer group yang dipilih di table
           await deleteMutation.mutateAsync(
-            findQuery.data[selectedRowIndex].code
-          );
+            findQuery.data[selectedRowIndex].code,
+          ).catch((err) => {
+            if (err instanceof TRPCClientError) {
+              addToasts({ type: "error", message: err.message });
+            }
+          });
 
           // Karena customer group yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

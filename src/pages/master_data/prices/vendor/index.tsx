@@ -1,5 +1,6 @@
 import { Button, Search, Table } from "@/components/Elements";
 import { trpc } from "@/libs/trpc";
+import { PriceVendorTableRow } from "@/server/dtos/price.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
@@ -27,6 +28,9 @@ export default function PriceVendorPage() {
     setActive(1, 6, 1);
   }, [setTitle, setActive]);
 
+  // State untuk search
+  const [search, setSearch] = React.useState<string>('');
+
   // Mendapatkan router
   const router = useRouter();
 
@@ -43,7 +47,7 @@ export default function PriceVendorPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Price Vendor" />
+        <Search placeholder="Search Price Vendor" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Price Vendor"
@@ -60,7 +64,7 @@ export default function PriceVendorPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => {}}
+            onClick={() => { }}
           />
         </div>
       </div>
@@ -164,6 +168,8 @@ export default function PriceVendorPage() {
             type: "status",
           },
         ]}
+        search={search}
+        dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
         onEdit={() => {
@@ -189,7 +195,7 @@ export default function PriceVendorPage() {
             return;
           }
 
-          const priceVendor = tableRowsQuery.data[selectedRowIndex];
+          const priceVendor = tableRowsQuery.data[selectedRowIndex] as PriceVendorTableRow;
 
           // Hapus price vendor yang dipilih di table
           await deleteMutation.mutateAsync(priceVendor.detailId);

@@ -134,6 +134,7 @@ export async function findPriceFactoryByID(id: string) {
           },
         },
       },
+      inquiryDetails: true,
     },
   });
   if (!priceFactory) {
@@ -608,14 +609,24 @@ export async function updatePriceShipping(
 }
 
 export async function deletePriceFactory(id: string): Promise<PriceFactory> {
+  const priceFactory = await findPriceFactoryByID(id);
+
+  if (priceFactory.inquiryDetails.length > 0)
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: `Price Factory that you want to delete is used in Inquiry ${priceFactory.inquiryDetails[0].inquiryNumber}`,
+    });
+
   return await prisma.priceFactory.delete({
-    where: { id },
+    where: { id: priceFactory.id },
     include: { quotationDetail: true },
   });
 }
 
 export async function deletePriceVendor(id: string): Promise<PriceVendor> {
-  return await prisma.priceVendor.delete({ where: { id } });
+  const priceVendor = await findPriceVendorByID(id);
+
+  return await prisma.priceVendor.delete({ where: { id: priceVendor.id } });
 }
 
 export async function deletePriceVendorDetail(
@@ -635,7 +646,9 @@ export async function deletePriceVendorDetail(
 }
 
 export async function deletePriceShipping(id: string): Promise<PriceShipping> {
-  return await prisma.priceShipping.delete({ where: { id } });
+  const priceShipping = await findPriceShippingByID(id);
+
+  return await prisma.priceShipping.delete({ where: { id: priceShipping.id } });
 }
 
 export async function deletePriceShippingDetail(
