@@ -3,6 +3,7 @@ import { authRouter } from "./auth.router";
 import { coasRouter } from "./coas.router";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
+import { inquiriesRouter } from "./inquiries.router";
 import { portsRouter } from "./ports.router";
 import { pricesRouter } from "./price.router";
 import { productCategoriesRouter } from "./productCategories.router";
@@ -11,8 +12,8 @@ import { quotationsRouter } from "./quotations.router";
 import { routesRouter } from "./routes.router";
 import { salesRouter } from "./sales.router";
 import { uangJalanRouter } from "./uangJalan.router";
-import { vehicleRouter } from "./vehicles.router";
-import { vesselRouter } from "./vessels.router";
+import { vehiclesRouter } from "./vehicles.router";
+import { vesselsRouter } from "./vessels.router";
 
 export const appRouter = router({
   auth: authRouter,
@@ -21,14 +22,15 @@ export const appRouter = router({
   routes: routesRouter,
   ports: portsRouter,
   sales: salesRouter,
-  vehicle: vehicleRouter,
-  vessel: vesselRouter,
+  vehicles: vehiclesRouter,
+  vessels: vesselsRouter,
   uangJalan: uangJalanRouter,
   prices: pricesRouter,
   productCategories: productCategoriesRouter,
   products: productsRouter,
   coas: coasRouter,
   quotations: quotationsRouter,
+  inquiries: inquiriesRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -183,6 +183,14 @@ export async function findPriceShippingByID(id: string) {
   return priceShipping;
 }
 
+export async function checkPriceFactoryDuplicate(
+  quotationDetailID: string
+): Promise<boolean> {
+  return !!(await prisma.priceFactory.findFirst({
+    where: { quotationDetail: { id: quotationDetailID } },
+  }));
+}
+
 export async function createPriceFactory(
   input: PriceFactoryInput
 ): Promise<PriceFactory> {
@@ -202,7 +210,15 @@ export async function createPriceFactory(
   if (!quotationDetail) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: `Quotation detail not found`,
+      message: `Quotation not found`,
+    });
+  }
+
+  if (await checkPriceFactoryDuplicate(quotationDetail.id)) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message:
+        "There must be no price factories leading to the same quotation.",
     });
   }
 
@@ -370,7 +386,15 @@ export async function updatePriceFactory(
   if (!quotationDetail) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: `Quotation detail not found`,
+      message: `Quotation not found`,
+    });
+  }
+
+  if (await checkPriceFactoryDuplicate(quotationDetail.id)) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message:
+        "There must be no price factories leading to the same quotation.",
     });
   }
 

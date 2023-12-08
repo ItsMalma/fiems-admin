@@ -243,12 +243,12 @@ export const pricesRouter = router({
     .query(async ({ input }) => {
       if (!input.quotation) return [];
 
-      return (await findQuotationByNumber(input.quotation)).details.map(
-        ({ route }) => ({
+      return (await findQuotationByNumber(input.quotation)).details
+        .filter((detail) => detail.completed)
+        .map(({ route }) => ({
           label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
           value: route.code,
-        })
-      );
+        }));
     }),
 
   getFactoryContainerSizeOptions: publicProcedure
@@ -262,7 +262,9 @@ export const pricesRouter = router({
       if (!input.quotation || !input.route) return [];
 
       return (await findQuotationByNumber(input.quotation)).details
-        .filter((detail) => detail.route.code === input.route)
+        .filter(
+          (detail) => detail.completed && detail.route.code === input.route
+        )
         .map(({ containerSize }) => ({
           label: containerSize,
           value: containerSize,
@@ -281,8 +283,10 @@ export const pricesRouter = router({
       if (!input.quotation || !input.route || !input.containerSize) return null;
 
       return (await findQuotationByNumber(input.quotation)).details.find(
-        ({ route, containerSize }) =>
-          route.code === input.route && containerSize === input.containerSize
+        ({ route, containerSize, completed }) =>
+          route.code === input.route &&
+          containerSize === input.containerSize &&
+          completed
       );
     }),
 

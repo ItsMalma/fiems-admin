@@ -24,7 +24,7 @@ export const salesRouter = router({
   }),
 
   getOptions: publicProcedure.query(async () =>
-    (await findAllSales()).map((sales) => ({
+    (await findAllSales(true)).map((sales) => ({
       label: `${sales.code} (${sales.name})`,
       value: sales.code,
     }))

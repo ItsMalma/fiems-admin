@@ -6,52 +6,43 @@ import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
 import React from "react";
 import {
-  CurrencyDollar,
+  Box2,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 
-export default function QuotationPage() {
-  // Gunakan store useHeader untuk mengset judul di header
+export default function InquiryPage() {
   const { setTitle } = useHeader();
-
-  // Gunakan store useMenu untuk mengset menu yang aktif
   const { setActive } = useMenu();
-
-  // Gunakan store useModal untuk mengset modal dan mendapatkan modal yang aktif
-  const { setModal } = useModal();
-
-  // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
-    setTitle("Marketing | Form Quotation");
-    setActive(2, 1, 0);
+    setTitle("Marketing | Inquiry Container");
+    setActive(2, 2, 0);
   }, [setTitle, setActive]);
 
-  // State untuk search
-  const [search, setSearch] = React.useState("");
+  const { setModal, current } = useModal();
 
-  // Mendapatkan router
   const router = useRouter();
 
-  // State untuk menyimpan index dari baris yang dipilih di table
+  const [search, setSearch] = React.useState("");
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.quotations.getTableRows.useQuery({
-    completed: false,
-  });
+  const tableRowsQuery = trpc.inquiries.getTableRows.useQuery();
+  React.useEffect(() => {
+    tableRowsQuery.refetch();
+  }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.quotations.deleteDetail.useMutation();
+  const deleteMutation = trpc.inquiries.delete.useMutation();
 
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Quotation" onChange={setSearch} />
+        <Search placeholder="Search Inquiry" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Quotation"
-            icon={<CurrencyDollar />}
+            text="Add New Inquiry"
+            icon={<Box2 />}
             variant="filled"
-            onClick={() => router.push("/marketing/quotation/save")}
+            onClick={() => router.push("/marketing/inquiry/save")}
           />
           <Button
             text="Import"
@@ -72,7 +63,7 @@ export default function QuotationPage() {
         columns={[
           {
             id: "number",
-            header: "Quotation Number",
+            header: "Inquiry Number",
             type: "code",
             isSortable: true,
           },
@@ -83,33 +74,75 @@ export default function QuotationPage() {
             isSortable: true,
           },
           {
-            id: "serviceType",
-            header: "Service Type",
-            type: "text",
-          },
-          {
             id: "sales",
             header: "Sales",
             type: "text",
+          },
+          {
+            id: "factory",
+            header: "Factory",
+            type: "text",
+          },
+          {
+            id: "factoryGroup",
+            header: "Factory Group",
+            type: "text",
+          },
+          {
+            id: "factoryAddress",
+            header: "Factory Address",
+            type: "text",
+          },
+          {
+            id: "factoryCity",
+            header: "Factory City",
+            type: "text",
+          },
+          {
+            id: "purchase",
+            header: "Purchase",
+            type: "text",
+          },
+          {
+            id: "purchaseAddress",
+            header: "Purchase Address",
+            type: "text",
+          },
+          {
+            id: "purchaseCity",
+            header: "Purchase City",
+            type: "text",
+          },
+          {
+            id: "jobOrder",
+            header: "Job Order",
+            type: "text",
+          },
+          {
+            id: "typeOrder",
+            header: "Type Order",
+            type: "text",
+          },
+          {
+            id: "loadDate",
+            header: "Load Date",
+            type: "date",
             isSortable: true,
           },
           {
-            id: "customer",
-            header: "Customer",
+            id: "deliveryTo",
+            header: "Delivery To",
             type: "text",
-            isSortable: true,
+          },
+          {
+            id: "deliveryToCity",
+            header: "Delivery To (City)",
+            type: "text",
           },
           {
             id: "route",
             header: "Route",
             type: "text",
-            isSortable: true,
-          },
-          {
-            id: "port",
-            header: "Port",
-            type: "text",
-            isSortable: true,
           },
           {
             id: "containerSize",
@@ -122,49 +155,8 @@ export default function QuotationPage() {
             type: "text",
           },
           {
-            id: "trackingAsal",
-            header: "Tracking Asal",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "trackingTujuan",
-            header: "Tracking Tujuan",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "shippingDetail",
-            header: "Shipping Detail",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "otherExpanses",
-            header: "Other Expanses",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "ppftz",
-            header: "PPFTZ",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "ppftzStatus",
-            header: "PPFTZ Status",
-            type: "text",
-          },
-          {
-            id: "insurance",
-            header: "Insurance",
-            type: "money",
-            isSortable: true,
-          },
-          {
-            id: "insuranceStatus",
-            header: "Insurance Status",
+            id: "serviceType",
+            header: "Service Type",
             type: "text",
           },
           {
@@ -173,15 +165,53 @@ export default function QuotationPage() {
             type: "text",
           },
           {
-            id: "hargaJual",
-            header: "Harga Jual",
+            id: "nilaiInsurance",
+            header: "Insurance",
             type: "money",
             isSortable: true,
           },
           {
-            id: "status",
-            header: "Status",
-            type: "status",
+            id: "insurance",
+            header: "Insurance Status",
+            type: "text",
+          },
+          {
+            id: "nilaiPPFTZ",
+            header: "PPFTZ",
+            type: "money",
+            isSortable: true,
+          },
+          {
+            id: "ppftz",
+            header: "PPFTZ Status",
+            type: "text",
+          },
+          {
+            id: "shipping",
+            header: "Shipping",
+            type: "text",
+          },
+          {
+            id: "vessel",
+            header: "Vessel",
+            type: "text",
+          },
+          {
+            id: "voyage",
+            header: "Voyage",
+            type: "text",
+          },
+          {
+            id: "eta",
+            header: "ETA",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "etd",
+            header: "ETD",
+            type: "date",
+            isSortable: true,
           },
         ]}
         search={search}
@@ -197,10 +227,10 @@ export default function QuotationPage() {
             return;
           }
 
-          const quotation = tableRowsQuery.data[selectedRowIndex];
+          const inquiry = tableRowsQuery.data[selectedRowIndex];
 
           // Redirect ke halaman save price vendor
-          router.push(`/marketing/quotation/save?number=${quotation.number}`);
+          router.push(`/marketing/inquiry/save?number=${inquiry.number}`);
         }}
         onDelete={async () => {
           // Cek apakah tidak ada baris yang dipilih dari table
@@ -211,32 +241,16 @@ export default function QuotationPage() {
             return;
           }
 
-          const quotation = tableRowsQuery.data[selectedRowIndex];
+          const inquiry = tableRowsQuery.data[selectedRowIndex];
 
           // Hapus price vendor yang dipilih di table
-          await deleteMutation.mutateAsync(quotation.detailID);
+          await deleteMutation.mutateAsync(inquiry.detailID);
 
           // Karena price vendor yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
 
           // Tutup modal
           setModal(null);
-        }}
-        onConfirm={async () => {
-          // Cek apakah tidak ada baris yang dipilih dari table
-          if (
-            selectedRowIndex === undefined ||
-            tableRowsQuery.data === undefined
-          ) {
-            return;
-          }
-
-          const quotation = tableRowsQuery.data[selectedRowIndex];
-
-          // Redirect ke halaman save price vendor
-          router.push(
-            `/marketing/quotation/save?number=${quotation.number}&id=${quotation.detailID}`
-          );
         }}
       />
     </>

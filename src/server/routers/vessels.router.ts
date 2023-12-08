@@ -10,7 +10,7 @@ import {
 } from "../stores/vessel.store";
 import { publicProcedure, router } from "../trpc";
 
-export const vesselRouter = router({
+export const vesselsRouter = router({
   getTableRows: publicProcedure.query<VesselTableRow[]>(async () => {
     return (await findAllVessel()).map((vessel) =>
       VesselTableRow.fromModel(vessel)

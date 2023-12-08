@@ -7,8 +7,10 @@ import {
 } from "../dtos/sales.dto";
 import prisma from "../prisma";
 
-export async function findAllSales() {
-  return await prisma.sales.findMany();
+export async function findAllSales(onlyActive: boolean = false) {
+  return await prisma.sales.findMany({
+    where: { status: onlyActive ? true : {} },
+  });
 }
 
 export async function findSalesByCode(code: string) {

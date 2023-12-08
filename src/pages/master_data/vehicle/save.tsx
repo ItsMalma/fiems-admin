@@ -40,7 +40,7 @@ export default function VehicleSavePage() {
   });
   const { reset } = methods;
 
-  const formQuery = trpc.vehicle.getForm.useQuery({
+  const formQuery = trpc.vehicles.getForm.useQuery({
     id: queryId,
   });
   React.useEffect(() => {
@@ -52,7 +52,7 @@ export default function VehicleSavePage() {
     }
   }, [formQuery.data?.value, reset]);
 
-  const saveMutation = trpc.vehicle.save.useMutation();
+  const saveMutation = trpc.vehicles.save.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync({

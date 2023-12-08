@@ -41,12 +41,12 @@ export default function MasterVehicle() {
   // State untuk menyimpan index dari baris yang dipilih di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.vehicle.getTableRows.useQuery();
+  const tableRowsQuery = trpc.vehicles.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.vehicle.delete.useMutation();
+  const deleteMutation = trpc.vehicles.delete.useMutation();
 
   return (
     <>
@@ -68,7 +68,7 @@ export default function MasterVehicle() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -182,13 +182,15 @@ export default function MasterVehicle() {
           }
 
           // Hapus vehicle yang dipilih di table
-          await deleteMutation.mutateAsync({
-            id: tableRowsQuery.data[selectedRowIndex].id,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              id: tableRowsQuery.data[selectedRowIndex].id,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena vehicle yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);
@@ -200,4 +202,3 @@ export default function MasterVehicle() {
     </>
   );
 }
-
