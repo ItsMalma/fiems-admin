@@ -11,7 +11,9 @@ import { VesselForm, vesselInput } from "@/server/dtos/vessel.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import React from "react";
 import {
   BoxFill,
@@ -19,8 +21,6 @@ import {
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
-import useToast from '@/stores/toast';
-import { TRPCClientError } from '@trpc/client';
 
 export function Save({ id }: { id?: string }) {
   // Menggunakan function setModal dari store useModal
@@ -32,7 +32,7 @@ export function Save({ id }: { id?: string }) {
   });
   const { reset } = methods;
 
-  const formQuery = trpc.vessel.getForm.useQuery({
+  const formQuery = trpc.vessels.getForm.useQuery({
     id,
   });
   React.useEffect(() => {
@@ -44,7 +44,7 @@ export function Save({ id }: { id?: string }) {
     }
   }, [formQuery.data?.value, reset]);
 
-  const saveMutation = trpc.vessel.save.useMutation();
+  const saveMutation = trpc.vessels.save.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync({
@@ -134,17 +134,17 @@ export default function MasterVessel() {
   }, [setTitle, setActive]);
 
   // State untuk search
-  const [search, setSearch] = React.useState<string>('');
+  const [search, setSearch] = React.useState<string>("");
 
   // State untuk menyimpan row yang di-select di table
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.vessel.getTableRows.useQuery();
+  const tableRowsQuery = trpc.vessels.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
 
-  const deleteMutation = trpc.vessel.delete.useMutation();
+  const deleteMutation = trpc.vessels.delete.useMutation();
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
@@ -165,7 +165,7 @@ export default function MasterVessel() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -234,13 +234,15 @@ export default function MasterVessel() {
           }
 
           // Hapus vessel yang dipilih di table
-          await deleteMutation.mutateAsync({
-            id: tableRowsQuery.data[selectedRowIndex].id,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              id: tableRowsQuery.data[selectedRowIndex].id,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena vessel yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

@@ -14,7 +14,7 @@ import {
 } from "../stores/vehicle.store";
 import { publicProcedure, router } from "../trpc";
 
-export const vehicleRouter = router({
+export const vehiclesRouter = router({
   getTableRows: publicProcedure.query<VehicleTableRow[]>(async () => {
     return (await findAllVehicle()).map((vehicle) =>
       VehicleTableRow.fromModel(vehicle)

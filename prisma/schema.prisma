@@ -34,26 +34,28 @@ type CustomerPic {
 }
 
 model Factory {
-  code             String            @id @map("_id") @db.String
-  name             String
-  group            CustomerGroup     @relation(fields: [groupCode], references: [code], onDelete: Restrict)
-  groupCode        String            @db.String
-  address          String
-  province         String
-  city             String
-  telephone        String
-  fax              String
-  email            String
-  top              Int
-  currency         String
-  purchasing       CustomerPic
-  operation        CustomerPic
-  finance          CustomerPic
-  createDate       DateTime          @default(now())
-  status           Boolean           @default(true)
-  quotations       Quotation[]
-  quotationDetails QuotationDetail[]
-  inquiries        Inquiry[]
+  code              String            @id @map("_id") @db.String
+  name              String
+  group             CustomerGroup     @relation(fields: [groupCode], references: [code], onDelete: Restrict)
+  groupCode         String            @db.String
+  address           String
+  province          String
+  city              String
+  telephone         String
+  fax               String
+  email             String
+  top               Int
+  currency          String
+  purchasing        CustomerPic
+  operation         CustomerPic
+  finance           CustomerPic
+  createDate        DateTime          @default(now())
+  status            Boolean           @default(true)
+  quotations        Quotation[]
+  quotationDetails  QuotationDetail[]
+  factoryInquiries  Inquiry[]         @relation("factory")
+  purchaseInquiries Inquiry[]         @relation("purchase")
+  inquiryDetails    InquiryDetail[]
 }
 
 model Vendor {
@@ -80,24 +82,25 @@ model Vendor {
 }
 
 model Shipping {
-  code           String                          @id @map("_id") @db.String
-  name           String
-  address        String
-  province       String
-  city           String
-  telephone      String
-  fax            String
-  email          String
-  top            Int
-  currency       String
-  purchasing     CustomerPic
-  operation      CustomerPic
-  finance        CustomerPic
-  createDate     DateTime                        @default(now())
-  status         Boolean                         @default(true)
-  priceShippings PriceShipping[]
-  vessels        Vessel[]
-  shippingDetail QuotationDetailShippingDetail[]
+  code            String                          @id @map("_id") @db.String
+  name            String
+  address         String
+  province        String
+  city            String
+  telephone       String
+  fax             String
+  email           String
+  top             Int
+  currency        String
+  purchasing      CustomerPic
+  operation       CustomerPic
+  finance         CustomerPic
+  createDate      DateTime                        @default(now())
+  status          Boolean                         @default(true)
+  priceShippings  PriceShipping[]
+  vessels         Vessel[]
+  shippingDetails QuotationDetailShippingDetail[]
+  inquiryDetails  InquiryDetail[]
 }
 
 model Route {
@@ -115,7 +118,7 @@ model Route {
   quotationDetails     QuotationDetail[]
   trackingAsal         QuotationDetailTrackingAsal[]
   trackingTujuan       QuotationDetailTrackingTujuan[]
-  shippingDetail       QuotationDetailShippingDetail[]
+  shippingDetails      QuotationDetailShippingDetail[]
 }
 
 model Port {
@@ -411,7 +414,7 @@ type QuotationDetailSummaryDetail {
   hargaJual      Int
 }
 
-enum JobOrderType {
+enum JobOrder {
   Domestic
   International
 }
@@ -422,24 +425,30 @@ enum TypeOrder {
 }
 
 model Inquiry {
-  number      String          @id @map("_id") @db.String
-  sales       Sales           @relation(fields: [salesCode], references: [code], onDelete: Restrict)
-  salesCode   String          @db.String
-  factory     Factory         @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
-  factoryCode String          @db.String
-  details     InquiryDetail[]
-  createDate  DateTime        @default(now())
+  number       String          @id @map("_id") @db.String
+  sales        Sales           @relation(fields: [salesCode], references: [code], onDelete: Restrict)
+  salesCode    String          @db.String
+  factory      Factory         @relation("factory", fields: [factoryCode], references: [code], onDelete: Restrict)
+  factoryCode  String          @db.String
+  purchase     Factory         @relation("purchase", fields: [purchaseCode], references: [code], onDelete: Restrict)
+  purchaseCode String          @map("purchaseCode") @db.String
+  details      InquiryDetail[]
+  createDate   DateTime        @default(now())
 }
 
 model InquiryDetail {
   id             String       @id @default(auto()) @map("_id") @db.ObjectId
   inquiry        Inquiry      @relation(fields: [inquiryNumber], references: [number], onDelete: Cascade)
   inquiryNumber  String       @db.String
-  jobOrder       JobOrderType
+  jobOrder       JobOrder
   typeOrder      TypeOrder
   loadDate       DateTime
+  factory        Factory      @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
+  factoryCode    String       @db.String
   priceFactory   PriceFactory @relation(fields: [priceFactoryID], references: [id], onDelete: Restrict)
   priceFactoryID String       @db.ObjectId
+  shipping       Shipping     @relation(fields: [shippingCode], references: [code], onDelete: Restrict)
+  shippingCode   String       @db.String
   vessel         Vessel       @relation(fields: [vesselID], references: [id], onDelete: Restrict)
   vesselID       String       @db.ObjectId
   voyage         String

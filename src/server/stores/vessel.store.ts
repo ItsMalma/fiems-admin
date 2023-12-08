@@ -3,11 +3,12 @@ import { TRPCError } from "@trpc/server";
 import { VesselInput } from "../dtos/vessel.dto";
 import prisma from "../prisma";
 
-export async function findAllVessel() {
+export async function findAllVessel(onlyActive: boolean = false) {
   return await prisma.vessel.findMany({
     include: {
       shipping: true,
     },
+    where: { status: onlyActive ? true : {} },
   });
 }
 

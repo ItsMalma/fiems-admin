@@ -27,110 +27,13 @@ export async function findNextQuotationNumber() {
   );
 }
 
-export async function createQuotation(input: QuotationInput) {
-  for (let i = 0; i < input.details.length; i++) {
-    const detail = input.details[i];
-    if (
-      input.details.find(
-        (d, dI) =>
-          d.route === detail.route &&
-          d.containerSize === d.containerSize &&
-          dI !== i
-      )
-    ) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message:
-          "There must be no quotations with the same route and container size all together.",
-      });
-    }
-  }
-
-  return await prisma.quotation.create({
-    data: {
-      number: await findNextQuotationNumber(),
-      serviceType: input.serviceType,
-      sales: { connect: { code: input.sales } },
-      effectiveStartDate: input.effectiveStartDate,
-      effectiveEndDate: input.effectiveEndDate,
-      factory: { connect: { code: input.factory } },
-      details: {
-        create: input.details.map((detail) => ({
-          route: { connect: { code: detail.route } },
-          factory: { connect: { code: detail.factory } },
-          port: { connect: { code: detail.port } },
-          containerSize: detail.containerSize,
-          containerType: detail.containerType,
-          trackingAsal: {
-            create: {
-              vendor: { connect: { code: detail.trackingAsal.vendor } },
-              route: { connect: { code: detail.trackingAsal.route } },
-            },
-          },
-          trackingTujuan: {
-            create: {
-              vendor: { connect: { code: detail.trackingTujuan.vendor } },
-              route: { connect: { code: detail.trackingTujuan.route } },
-            },
-          },
-          shippingDetail: {
-            create: {
-              shipping: { connect: { code: detail.shippingDetail.shipping } },
-              route: { connect: { code: detail.shippingDetail.route } },
-            },
-          },
-          otherExpanses: {
-            adminBL: detail.otherExpanses.adminBL,
-            cleaning: detail.otherExpanses.cleaning,
-            alihKapal: detail.otherExpanses.alihKapal,
-            materai: detail.otherExpanses.materai,
-            biayaBuruh: detail.otherExpanses.biayaBuruh,
-            stuffingDalam: detail.otherExpanses.stuffingDalam,
-            stuffingLuar: detail.otherExpanses.stuffingLuar,
-            biayaCetakRC: detail.otherExpanses.biayaCetakRC,
-            biayaCetakIR: detail.otherExpanses.biayaCetakIR,
-          },
-          summaryDetail: {
-            ppftz: detail.summaryDetail
-              .ppftz as QuotationDetailSummaryDetailStatus,
-            nilaiPPFTZ: detail.summaryDetail.nilaiPPFTZ,
-            insurance: detail.summaryDetail
-              .insurance as QuotationDetailSummaryDetailStatus,
-            nilaiInsurance: detail.summaryDetail.nilaiInsurance,
-            biayaAdmin: detail.summaryDetail.biayaAdmin,
-            ppn: detail.summaryDetail.ppn as QuotationDetailSummaryDetailStatus,
-            hargaJual: detail.summaryDetail.hargaJual,
-          },
-          completed: false,
-        })),
-      },
-    },
-  });
-}
-
-export async function findAllQuotations() {
-  return await prisma.quotation.findMany({
-    include: {
-      factory: true,
-      sales: true,
-      details: {
-        include: {
-          factory: true,
-          port: true,
-          route: true,
-          shippingDetail: {
-            include: { route: true, shipping: true },
-          },
-          trackingAsal: {
-            include: { route: true, vendor: true },
-          },
-          trackingTujuan: {
-            include: { route: true, vendor: true },
-          },
-        },
-      },
-    },
-  });
+export async function checkQuotationDetailDuplicate(
+  routeCode: string,
+  containerSize: string
+): Promise<boolean> {
+  return !!(await prisma.quotationDetail.findFirst({
+    where: { route: { code: routeCode }, containerSize },
+  }));
 }
 
 export async function findQuotationByNumber(number: string) {
@@ -168,7 +71,10 @@ export async function findQuotationByNumber(number: string) {
   return quotation;
 }
 
-export async function findAllQuotationDetails() {
+export async function findAllQuotationDetails(
+  onlyActive: boolean = false,
+  onlyComplete: boolean = false
+) {
   return await prisma.quotationDetail.findMany({
     include: {
       quotation: {
@@ -202,6 +108,19 @@ export async function findAllQuotationDetails() {
           shipping: true,
         },
       },
+    },
+    where: {
+      quotation: onlyActive
+        ? {
+            effectiveStartDate: {
+              lte: new Date(),
+            },
+            effectiveEndDate: {
+              gte: new Date(),
+            },
+          }
+        : {},
+      completed: onlyComplete ? true : {},
     },
   });
 }
@@ -321,16 +240,110 @@ export async function findQuotationShippingDetail(input: {
   return priceShippingDetail;
 }
 
-export async function updateQuotation(number: string, input: QuotationInput) {
-  for (let i = 0; i < input.details.length; i++) {
-    const detail = input.details[i];
+export async function findAllQuotations() {
+  return await prisma.quotation.findMany({
+    include: {
+      factory: true,
+      sales: true,
+      details: {
+        include: {
+          factory: true,
+          port: true,
+          route: true,
+          shippingDetail: {
+            include: { route: true, shipping: true },
+          },
+          trackingAsal: {
+            include: { route: true, vendor: true },
+          },
+          trackingTujuan: {
+            include: { route: true, vendor: true },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function createQuotation(input: QuotationInput) {
+  for (const detail of input.details) {
     if (
-      input.details.find(
-        (d, dI) =>
-          d.route === detail.route &&
-          d.containerSize === d.containerSize &&
-          dI !== i
-      )
+      await checkQuotationDetailDuplicate(detail.route, detail.containerSize)
+    ) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "There must be no quotations with the same route and container size all together.",
+      });
+    }
+  }
+
+  return await prisma.quotation.create({
+    data: {
+      number: await findNextQuotationNumber(),
+      serviceType: input.serviceType,
+      sales: { connect: { code: input.sales } },
+      effectiveStartDate: input.effectiveStartDate,
+      effectiveEndDate: input.effectiveEndDate,
+      factory: { connect: { code: input.factory } },
+      details: {
+        create: input.details.map((detail) => ({
+          route: { connect: { code: detail.route } },
+          factory: { connect: { code: detail.factory } },
+          port: { connect: { code: detail.port } },
+          containerSize: detail.containerSize,
+          containerType: detail.containerType,
+          trackingAsal: {
+            create: {
+              vendor: { connect: { code: detail.trackingAsal.vendor } },
+              route: { connect: { code: detail.trackingAsal.route } },
+            },
+          },
+          trackingTujuan: {
+            create: {
+              vendor: { connect: { code: detail.trackingTujuan.vendor } },
+              route: { connect: { code: detail.trackingTujuan.route } },
+            },
+          },
+          shippingDetail: {
+            create: {
+              shipping: { connect: { code: detail.shippingDetail.shipping } },
+              route: { connect: { code: detail.shippingDetail.route } },
+            },
+          },
+          otherExpanses: {
+            adminBL: detail.otherExpanses.adminBL,
+            cleaning: detail.otherExpanses.cleaning,
+            alihKapal: detail.otherExpanses.alihKapal,
+            materai: detail.otherExpanses.materai,
+            biayaBuruh: detail.otherExpanses.biayaBuruh,
+            stuffingDalam: detail.otherExpanses.stuffingDalam,
+            stuffingLuar: detail.otherExpanses.stuffingLuar,
+            biayaCetakRC: detail.otherExpanses.biayaCetakRC,
+            biayaCetakIR: detail.otherExpanses.biayaCetakIR,
+          },
+          summaryDetail: {
+            ppftz: detail.summaryDetail
+              .ppftz as QuotationDetailSummaryDetailStatus,
+            nilaiPPFTZ: detail.summaryDetail.nilaiPPFTZ,
+            insurance: detail.summaryDetail
+              .insurance as QuotationDetailSummaryDetailStatus,
+            nilaiInsurance: detail.summaryDetail.nilaiInsurance,
+            biayaAdmin: detail.summaryDetail.biayaAdmin,
+            ppn: detail.summaryDetail.ppn as QuotationDetailSummaryDetailStatus,
+            hargaJual: detail.summaryDetail.hargaJual,
+          },
+          completed: false,
+        })),
+      },
+    },
+  });
+}
+
+export async function updateQuotation(number: string, input: QuotationInput) {
+  for (const detail of input.details) {
+    if (
+      await checkQuotationDetailDuplicate(detail.route, detail.containerSize)
     ) {
       throw new TRPCError({
         code: "BAD_REQUEST",

@@ -71,17 +71,17 @@ export const customersRouter = router({
     .query(async ({ input }) => {
       switch (input) {
         case "Factory":
-          return (await findAllFactory()).map((factory) => ({
+          return (await findAllFactory(true)).map((factory) => ({
             label: `${factory.code} (${factory.name})`,
             value: factory.code,
           }));
         case "Vendor":
-          return (await findAllVendor()).map((vendor) => ({
+          return (await findAllVendor(true)).map((vendor) => ({
             label: `${vendor.code} (${vendor.name})`,
             value: vendor.code,
           }));
         case "Shipping":
-          return (await findAllShipping()).map((shipping) => ({
+          return (await findAllShipping(true)).map((shipping) => ({
             label: `${shipping.code} (${shipping.name})`,
             value: shipping.code,
           }));

@@ -9,7 +9,7 @@ type FormSelectProps = {
   name: string;
   readOnly?: boolean;
   className?: string;
-  options: SelectOption[];
+  options: SelectOption[] | undefined;
   isCreatable?: boolean;
 };
 
@@ -19,18 +19,27 @@ export function FormSelect(props: FormSelectProps) {
   const { field, fieldState } = useController({
     name: namePrefix + props.name,
   });
+  const { value, onChange } = field;
+
+  React.useEffect(() => {
+    if (props.options === undefined) return;
+
+    if (!props.options.find((option) => option.value === value)) {
+      onChange("");
+    }
+  }, [props.options, value, onChange]);
 
   return (
     <Select
       ref={field.ref}
       id={props.id ?? field.name}
       name={field.name}
-      options={props.options}
+      options={props.options ?? []}
       isSearchable
       isCreatable={props.isCreatable}
-      value={field.value}
+      value={value}
       onChange={(option) => {
-        field.onChange(option);
+        onChange(option);
       }}
       onBlur={field.onBlur}
       isError={!!fieldState.error}

@@ -107,6 +107,10 @@ export default function Sider() {
                   { name: "Complete", url: "/marketing/quotation/complete" },
                 ],
               },
+              {
+                name: "Inquiry Container",
+                url: "/marketing/inquiry",
+              },
             ],
           },
           // {

@@ -620,7 +620,7 @@ export default function SaveQuotationPage() {
   const onSubmit = methods.handleSubmit(async (data) => {
     if (queryID && detail?.id) {
       await confirmMutation.mutateAsync(detail.id);
-      await router.push("/marketing/quotation");
+      await router.push("/marketing/quotation/complete");
     } else {
       await saveMutation
         .mutateAsync({

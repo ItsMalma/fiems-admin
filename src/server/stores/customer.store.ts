@@ -9,16 +9,23 @@ import {
 import prisma from "../prisma";
 import { findCustomerGroupByCode } from "./customerGroup.store";
 
-export async function findAllFactory() {
+export async function findAllFactory(onlyActive: boolean = false) {
   return await prisma.factory.findMany({
     include: {
       group: true,
     },
+    where: {
+      status: onlyActive ? true : {},
+    },
   });
 }
 
-export async function findAllVendor() {
-  return await prisma.vendor.findMany({});
+export async function findAllVendor(onlyActive: boolean = false) {
+  return await prisma.vendor.findMany({
+    where: {
+      status: onlyActive ? true : {},
+    },
+  });
 }
 
 export async function findUniqueVendorAtPrice() {
@@ -27,8 +34,12 @@ export async function findUniqueVendorAtPrice() {
   });
 }
 
-export async function findAllShipping() {
-  return await prisma.shipping.findMany({});
+export async function findAllShipping(onlyActive: boolean = false) {
+  return await prisma.shipping.findMany({
+    where: {
+      status: onlyActive ? true : {},
+    },
+  });
 }
 
 export async function findFactoryByCode(code: string) {
@@ -36,9 +47,15 @@ export async function findFactoryByCode(code: string) {
     where: { code },
     include: {
       group: true,
-      inquiries: true,
       quotations: true,
       quotationDetails: true,
+      factoryInquiries: true,
+      purchaseInquiries: true,
+      inquiryDetails: {
+        include: {
+          inquiry: true,
+        },
+      },
     },
   });
   if (!factory) {
@@ -77,7 +94,7 @@ export async function findShippingByCode(code: string) {
     where: { code },
     include: {
       priceShippings: true,
-      shippingDetail: { include: { quotationDetail: true } },
+      shippingDetails: { include: { quotationDetail: true } },
       vessels: true,
     },
   });
@@ -317,10 +334,20 @@ export async function deleteCustomer(
           code: "CONFLICT",
           message: `Factory ${factory.code} is used in Quotation ${factory.quotationDetails[0].quotationNumber}`,
         });
-      if (factory.inquiries.length > 0)
+      if (factory.factoryInquiries.length > 0)
         throw new TRPCError({
           code: "CONFLICT",
-          message: `Factory ${factory.code} is used in Inquiry ${factory.inquiries[0].number}`,
+          message: `Factory ${factory.code} is used in Inquiry ${factory.factoryInquiries[0].number}`,
+        });
+      if (factory.purchaseInquiries.length > 0)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: `Factory ${factory.code} is used in Inquiry ${factory.purchaseInquiries[0].number}`,
+        });
+      if (factory.inquiryDetails.length > 0)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: `Factory ${factory.code} is used in Inquiry ${factory.inquiryDetails[0].inquiry.number}`,
         });
       return await prisma.factory.delete({ where: { code: factory.code } });
     case "Vendor":
@@ -363,10 +390,10 @@ export async function deleteCustomer(
           code: "CONFLICT",
           message: `Shipping ${shipping.code} is used in Vessel`,
         });
-      if (shipping.shippingDetail.length > 0)
+      if (shipping.shippingDetails.length > 0)
         throw new TRPCError({
           code: "CONFLICT",
-          message: `Shipping ${shipping.code} is used in Quotation ${shipping.shippingDetail[0].quotationDetail.quotationNumber}`,
+          message: `Shipping ${shipping.code} is used in Quotation ${shipping.shippingDetails[0].quotationDetail.quotationNumber}`,
         });
       return await prisma.shipping.delete({ where: { code: shipping.code } });
   }

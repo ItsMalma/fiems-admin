@@ -28,7 +28,7 @@ export async function findRouteByCode(code: string) {
       priceShippingDetails: true,
       priceVendorDetails: true,
       quotationDetails: true,
-      shippingDetail: {
+      shippingDetails: {
         include: { quotationDetail: true },
       },
       trackingAsal: {
@@ -130,10 +130,10 @@ export async function deleteRoute(code: string): Promise<Route> {
       code: "CONFLICT",
       message: `Route ${route.code} is used in Quotation ${route.trackingTujuan[0].quotationDetail.quotationNumber}`,
     });
-  if (route.shippingDetail.length > 0)
+  if (route.shippingDetails.length > 0)
     throw new TRPCError({
       code: "CONFLICT",
-      message: `Route ${route.code} is used in Quotation ${route.shippingDetail[0].quotationDetail.quotationNumber}`,
+      message: `Route ${route.code} is used in Quotation ${route.shippingDetails[0].quotationDetail.quotationNumber}`,
     });
   if (route.uangJalan.length > 0)
     throw new TRPCError({
