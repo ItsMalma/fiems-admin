@@ -9,12 +9,20 @@ import {
   createVehicle,
   deleteVehicle,
   findAllVehicle,
-  findVehicleById,
+  findVehicleByID,
+  findVehicleByNumber,
   updateVehicle,
 } from "../stores/vehicle.store";
 import { publicProcedure, router } from "../trpc";
 
 export const vehiclesRouter = router({
+  getOptions: publicProcedure.query(async () =>
+    (await findAllVehicle(true)).map((vehicle) => ({
+      label: vehicle.truckNumber,
+      value: vehicle.truckNumber,
+    }))
+  ),
+
   getTableRows: publicProcedure.query<VehicleTableRow[]>(async () => {
     return (await findAllVehicle()).map((vehicle) =>
       VehicleTableRow.fromModel(vehicle)
@@ -38,10 +46,18 @@ export const vehiclesRouter = router({
 
       let value = VehicleForm.initial;
       if (input.id) {
-        value = VehicleForm.fromModel(await findVehicleById(input.id));
+        value = VehicleForm.fromModel(await findVehicleByID(input.id));
       }
 
       return { value, vendors };
+    }),
+
+  getSingle: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input }) => {
+      if (!input) return;
+
+      return await findVehicleByNumber(input);
     }),
 
   save: publicProcedure

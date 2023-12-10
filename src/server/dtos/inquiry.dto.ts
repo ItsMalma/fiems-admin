@@ -55,8 +55,8 @@ export type InquiryDetailForm = {
   shipping: string;
   vessel: string;
   voyage: string;
-  eta: string | Date;
   etd: string | Date;
+  eta: string | Date;
 };
 
 export type InquiryForm = {
@@ -92,8 +92,8 @@ export const defaultInquiryDetailForm: InquiryDetailForm = {
   shipping: "",
   vessel: "",
   voyage: "",
-  eta: new Date(),
   etd: new Date(),
+  eta: new Date(),
 };
 
 export const defaultInquiryForm: InquiryForm = {
@@ -127,10 +127,10 @@ export const inquiryValidationSchema = z.object({
         shipping: validateCode(validateShippingCode),
         vessel: validateText(),
         voyage: validateText(),
-        eta: validateDate(),
         etd: validateDate(),
+        eta: validateDate(),
       })
-      .superRefine(refineDateRange("eta", "etd"))
+      .superRefine(refineDateRange("etd", "eta"))
   ),
 });
 
@@ -165,6 +165,6 @@ export type InquiryTableRow = {
   shipping: string;
   vessel: string;
   voyage: string;
-  eta: Date;
   etd: Date;
+  eta: Date;
 };

@@ -69,7 +69,7 @@ export default function InquiryPage() {
           },
           {
             id: "createDate",
-            header: "Create Date",
+            header: "Inquiry Date",
             type: "date",
             isSortable: true,
           },
@@ -202,14 +202,14 @@ export default function InquiryPage() {
             type: "text",
           },
           {
-            id: "eta",
-            header: "ETA",
+            id: "etd",
+            header: "ETD",
             type: "date",
             isSortable: true,
           },
           {
-            id: "etd",
-            header: "ETD",
+            id: "eta",
+            header: "ETA",
             type: "date",
             isSortable: true,
           },
@@ -251,6 +251,20 @@ export default function InquiryPage() {
 
           // Tutup modal
           setModal(null);
+        }}
+        onConfirm={async () => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
+            return;
+          }
+
+          const inquiry = tableRowsQuery.data[selectedRowIndex];
+
+          // Redirect ke halaman save price vendor
+          router.push(`/operational/job_order/save?id=${inquiry.detailID}`);
         }}
       />
     </>

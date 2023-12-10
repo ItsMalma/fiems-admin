@@ -60,6 +60,37 @@ export async function findInquiryByNumber(inquiryNumber: string) {
   return inquiry;
 }
 
+export async function findInquiryDetailByID(id: string) {
+  const inquiryDetail = await prisma.inquiryDetail.findFirst({
+    where: { id },
+    include: {
+      inquiry: {
+        include: {
+          sales: true,
+          factory: { include: { group: true } },
+          purchase: { include: { group: true } },
+        },
+      },
+      factory: { include: { group: true } },
+      shipping: true,
+      vessel: true,
+      priceFactory: {
+        include: {
+          quotationDetail: { include: { route: true, quotation: true } },
+        },
+      },
+    },
+  });
+  if (!inquiryDetail) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Inquiry Detail with id ${id} not exists`,
+    });
+  }
+
+  return inquiryDetail;
+}
+
 export async function findAllInquiryDetails() {
   return await prisma.inquiryDetail.findMany({
     include: {

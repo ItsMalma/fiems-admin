@@ -3,15 +3,18 @@ import { TRPCError } from "@trpc/server";
 import { VehicleInput } from "../dtos/vehicle.dto";
 import prisma from "../prisma";
 
-export async function findAllVehicle() {
+export async function findAllVehicle(onlyActive: boolean = false) {
   return await prisma.vehicle.findMany({
     include: {
       vendor: true,
     },
+    where: {
+      status: onlyActive ? true : {},
+    },
   });
 }
 
-export async function findVehicleById(id: string) {
+export async function findVehicleByID(id: string) {
   const vehicle = await prisma.vehicle.findFirst({
     where: { id },
     include: {
@@ -28,7 +31,37 @@ export async function findVehicleById(id: string) {
   return vehicle;
 }
 
+export async function findVehicleByNumber(vehicleNumber: string) {
+  const vehicle = await prisma.vehicle.findFirst({
+    where: { truckNumber: vehicleNumber },
+    include: {
+      vendor: true,
+    },
+  });
+  if (!vehicle) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Vehicle with number ${vehicleNumber} not exists`,
+    });
+  }
+
+  return vehicle;
+}
+
+async function isVehicleDuplicate(input: VehicleInput): Promise<boolean> {
+  return !!(await prisma.vehicle.findFirst({
+    where: { truckNumber: input.truckNumber },
+  }));
+}
+
 export async function createVehicle(input: VehicleInput): Promise<Vehicle> {
+  if (await isVehicleDuplicate(input)) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "Vehicle with same truck number already exists",
+    });
+  }
+
   if (input.vendor === undefined) {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -57,6 +90,13 @@ export async function updateVehicle(
   id: string,
   input: VehicleInput
 ): Promise<Vehicle> {
+  if (await isVehicleDuplicate(input)) {
+    throw new TRPCError({
+      code: "CONFLICT",
+      message: "Vehicle with same truck number already exists",
+    });
+  }
+
   return await prisma.vehicle.update({
     where: {
       id,
