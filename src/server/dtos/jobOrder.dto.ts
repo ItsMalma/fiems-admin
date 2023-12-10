@@ -109,8 +109,8 @@ export const jobOrderValidationSchema = z.object({
   vehicle: validateText(),
   containerNumber1: validateText(),
   sealNumber1: validateText(),
-  containerNumber2: z.string().optional(),
-  sealNumber2: z.string().optional(),
+  containerNumber2: z.string().nullable(),
+  sealNumber2: z.string().nullable(),
 });
 export type JobOrderInput = z.infer<typeof jobOrderValidationSchema>;
 
