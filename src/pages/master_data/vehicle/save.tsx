@@ -11,7 +11,9 @@ import { trpc } from "@/libs/trpc";
 import { VehicleForm, vehicleInput } from "@/server/dtos/vehicle.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -28,6 +30,8 @@ export default function VehicleSavePage() {
     setTitle("Master Data | Vehicle");
     setActive(1, 4, 0);
   }, [setTitle, setActive]);
+
+  const { addToasts } = useToast();
 
   // Mendapatkan router
   const router = useRouter();
@@ -55,12 +59,19 @@ export default function VehicleSavePage() {
   const saveMutation = trpc.vehicles.save.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    await saveMutation.mutateAsync({
-      ...data,
-      id: queryId,
-    });
-
-    await router.push("/master_data/vehicle");
+    await saveMutation
+      .mutateAsync({
+        ...data,
+        id: queryId,
+      })
+      .then(async () => {
+        await router.push("/master_data/vehicle");
+      })
+      .catch((err) => {
+        if (err instanceof TRPCClientError) {
+          addToasts({ type: "error", message: err.message });
+        }
+      });
   });
 
   return (

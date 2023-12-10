@@ -119,13 +119,17 @@ export function validateSelectEnum(options: z.EnumLike) {
   });
 }
 
-export function validateText() {
+export function validateText(numeric: boolean = false) {
   return z
     .string({
       invalid_type_error: "Invalid value",
       required_error: "Must be filled",
     })
-    .min(1, "Must be filled");
+    .min(1, "Must be filled")
+    .refine(
+      (value) => !numeric || (numeric && !isNaN(Number(value))),
+      "Invalid value"
+    );
 }
 
 export function validatePassword() {

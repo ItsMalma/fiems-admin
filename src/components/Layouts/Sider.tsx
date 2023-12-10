@@ -4,6 +4,8 @@ import {
   BarChartFill,
   Database,
   DatabaseFill,
+  Gear,
+  GearFill,
   Grid1x2,
   Grid1x2Fill,
   InfoCircleFill,
@@ -112,6 +114,12 @@ export default function Sider() {
                 url: "/marketing/inquiry",
               },
             ],
+          },
+          {
+            name: "Operational",
+            icon: Gear,
+            activeIcon: GearFill,
+            childrens: [{ name: "Job Order", url: "/operational/job_order" }],
           },
           // {
           //   name: "Operational",

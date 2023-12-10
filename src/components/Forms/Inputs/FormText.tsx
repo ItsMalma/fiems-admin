@@ -9,6 +9,7 @@ type FormTextProps = {
   name: string;
   className?: string;
   readOnly?: boolean;
+  numeric?: boolean;
 };
 
 export function FormText(props: FormTextProps) {
@@ -23,7 +24,13 @@ export function FormText(props: FormTextProps) {
       id={props.id ?? field.name}
       name={field.name}
       value={field.value}
-      onChange={field.onChange}
+      onChange={(e) => {
+        if (props.numeric && !isNaN(Number(e.currentTarget.value))) {
+          field.onChange(e);
+        } else if (!props.numeric) {
+          field.onChange(e);
+        }
+      }}
       onBlur={field.onBlur}
       isError={!!fieldState.error}
       readOnly={props.readOnly}
