@@ -12,7 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   startContent?: React.ReactElement<Icon> | React.ReactNode;
   endContent?: React.ReactElement<Icon> | React.ReactNode;
   isIconOnly?: boolean;
-  color?: "primary";
+  color?: "primary" | "secondary";
   href?: string;
 }
 

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 import { Search } from "react-bootstrap-icons";
 import { twMerge } from "tailwind-merge";
@@ -17,13 +18,29 @@ interface InputProps
 const Input = ({
   startIcon,
   endIcon,
+  label,
   inputType = "default",
   className,
   ...props
 }: InputProps) => {
   return (
-    <div className={twMerge("w-full", className?.container)}>
-      <div className="relative max-w-[400px]">
+    <div
+      className={twMerge(
+        "w-full grid grid-cols-5 items-center",
+        className?.container
+      )}
+    >
+      {label && (
+        <div className="col-span-2 font-semibold text-gray-700">
+          <label htmlFor={props.id}>{label}</label>
+        </div>
+      )}
+      <div
+        className={clsx(
+          "relative max-w-[400px]",
+          label ? "col-span-3" : "col-span-5"
+        )}
+      >
         <div className="absolute top-1/2 left-[16px] -translate-y-1/2 text-gray-400">
           {inputType === "search" ? (
             <Search className="w-[16px] h-[16px]" />

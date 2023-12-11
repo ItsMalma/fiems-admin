@@ -65,3 +65,40 @@ export const timeIn: {
     isLate: true,
   },
 ];
+
+export const employeeData: IEmployee[] = [
+  {
+    fullName: "John Doe",
+    divisi: "Engineering",
+    position: "Software Engineer",
+    employeeID: 12345,
+    joiningDate: new Date("2022-01-01"),
+    endDate: null, // Assuming the employee is still active
+    nikKTP: 123456789,
+    npwp: 987654321,
+    placeOfBirth: "Jakarta",
+    sex: "Male",
+    bloodType: "A",
+    religion: "Islam",
+    latestEducation: "S1",
+    yearOfGraduation: 2015,
+
+    phoneNumber: 1234567890,
+    email: "john.doe@example.com",
+    emergencyContact: 9876543210,
+    emergencyContactName: "Jane Doe",
+    address: "123 Main Street",
+    kelurahan: "Menteng",
+    kecamatan: "Central Jakarta",
+    city: "Jakarta",
+    province: "DKI Jakarta",
+    zipCode: 12345,
+
+    marritalStatus: "married",
+    spouse: "Jane Doe",
+    numberOfChildren: 2,
+    tanggungan: 3,
+
+    leavesRemaining: 20,
+  },
+];
