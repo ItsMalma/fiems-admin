@@ -5,12 +5,27 @@ import {
   createVessel,
   deleteVessel,
   findAllVessel,
-  findVesselById,
+  findVesselByID,
   updateVessel,
 } from "../stores/vessel.store";
 import { publicProcedure, router } from "../trpc";
 
 export const vesselsRouter = router({
+  getOptions: publicProcedure.query(async () => {
+    return (await findAllVessel(true)).map((vessel) => ({
+      label: vessel.name,
+      value: vessel.id,
+    }));
+  }),
+
+  getSingle: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input }) => {
+      if (!input) return;
+
+      return await findVesselByID(input);
+    }),
+
   getTableRows: publicProcedure.query<VesselTableRow[]>(async () => {
     return (await findAllVessel()).map((vessel) =>
       VesselTableRow.fromModel(vessel)
@@ -34,7 +49,7 @@ export const vesselsRouter = router({
 
       let value = VesselForm.initial;
       if (input.id) {
-        value = VesselForm.fromModel(await findVesselById(input.id));
+        value = VesselForm.fromModel(await findVesselByID(input.id));
       }
 
       return { value, shippings };

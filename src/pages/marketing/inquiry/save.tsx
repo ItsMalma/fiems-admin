@@ -30,6 +30,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 export default function InquiryPage() {
+  const queryNumber = useQuery("number");
+  const queryID = useQuery("id");
+
   // Gunakan store useHeader untuk mengset judul di header
   const { setTitle } = useHeader();
 
@@ -39,18 +42,14 @@ export default function InquiryPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, 0);
-  }, [setTitle, setActive]);
+    setActive(2, 2, queryID ? 1 : 0);
+  }, [setTitle, setActive, queryID]);
 
-  // Mendapatkan router
   const router = useRouter();
 
   const { setModal } = useModal();
 
   const { addToasts } = useToast();
-
-  const queryNumber = useQuery("number");
-  const queryID = useQuery("id");
 
   const [appendIndex, setAppendIndex] = React.useState(0);
 
@@ -97,7 +96,8 @@ export default function InquiryPage() {
 
   const salesOptionsQuery = trpc.sales.getOptions.useQuery();
 
-  const factoriesOptionsQuery = trpc.customers.getOptions.useQuery("Factory");
+  const inquiryFactoriesOptionsQuery =
+    trpc.inquiries.getFactoryOptions.useQuery();
 
   const factoryQuery = trpc.customers.getSingle.useQuery({
     code: values.factory,
@@ -114,6 +114,8 @@ export default function InquiryPage() {
     }
   }, [factoryQuery.data, setValue]);
 
+  const factoriesOptionsQuery = trpc.customers.getOptions.useQuery("Factory");
+
   const purchaseQuery = trpc.customers.getSingle.useQuery({
     code: values.purchase,
     type: "Factory",
@@ -125,20 +127,9 @@ export default function InquiryPage() {
     }
   }, [purchaseQuery.data, setValue]);
 
-  const detailFactoryQuery = trpc.customers.getSingle.useQuery({
-    code: detail?.factory,
-    type: "Factory",
+  const routesOptionsQuery = trpc.inquiries.getRouteOptions.useQuery({
+    factory: values.factory,
   });
-  React.useEffect(() => {
-    if (detailFactoryQuery.data) {
-      setValue(
-        `details.${appendIndex}.factoryCity`,
-        detailFactoryQuery.data.city
-      );
-    }
-  }, [appendIndex, detailFactoryQuery.data, setValue]);
-
-  const routesOptionsQuery = trpc.inquiries.getRouteOptions.useQuery();
   React.useEffect(() => {
     if (!routesOptionsQuery.data) return;
 
@@ -152,6 +143,7 @@ export default function InquiryPage() {
 
   const containerSizesOptionsQuery =
     trpc.inquiries.getContainerSizeOptions.useQuery({
+      factory: values.factory,
       route: detail?.route,
     });
   React.useEffect(() => {
@@ -181,6 +173,14 @@ export default function InquiryPage() {
       quotationDetailQuery.data.containerType
     );
     setValue(
+      `details.${appendIndex}.factory`,
+      `${quotationDetailQuery.data.factory.code} (${quotationDetailQuery.data.factory.name})`
+    );
+    setValue(
+      `details.${appendIndex}.factoryCity`,
+      quotationDetailQuery.data.factory.city
+    );
+    setValue(
       `details.${appendIndex}.ppn`,
       quotationDetailQuery.data.summaryDetail!.ppn
     );
@@ -203,11 +203,58 @@ export default function InquiryPage() {
     );
   }, [quotationDetailQuery.data, setValue, appendIndex]);
 
-  const shippingsOptionsQuery = trpc.customers.getOptions.useQuery("Shipping");
+  const shippingOptionsQuery = trpc.inquiries.getShippingOptions.useQuery();
+  React.useEffect(() => {
+    if (!shippingOptionsQuery.data) return;
 
-  const vesselsOptionsQuery = trpc.inquiries.getVesselsOptions.useQuery(
-    detail?.shipping
-  );
+    if (shippingOptionsQuery.data.length === 1) {
+      setValue(
+        `details.${appendIndex}.shipping`,
+        shippingOptionsQuery.data[0].value
+      );
+    }
+  }, [shippingOptionsQuery.data, setValue, appendIndex]);
+
+  const vesselOptionsQuery = trpc.inquiries.getVesselOptions.useQuery({
+    shipping: detail?.shipping,
+  });
+  React.useEffect(() => {
+    if (!vesselOptionsQuery.data) return;
+
+    if (vesselOptionsQuery.data.length === 1) {
+      setValue(
+        `details.${appendIndex}.vessel`,
+        vesselOptionsQuery.data[0].value
+      );
+    }
+  }, [vesselOptionsQuery.data, setValue, appendIndex]);
+
+  const voyageOptionsQuery = trpc.inquiries.getVoyageOptions.useQuery({
+    shipping: detail?.shipping,
+    vessel: detail?.vessel,
+  });
+  React.useEffect(() => {
+    if (!voyageOptionsQuery.data) return;
+
+    if (voyageOptionsQuery.data.length === 1) {
+      setValue(
+        `details.${appendIndex}.voyage`,
+        voyageOptionsQuery.data[0].value
+      );
+    }
+  }, [voyageOptionsQuery.data, setValue, appendIndex]);
+
+  const vesselScheduleQuery = trpc.inquiries.getVesselSchedule.useQuery({
+    shipping: detail?.shipping,
+    vessel: detail?.vessel,
+    voyage: detail?.voyage,
+  });
+  React.useEffect(() => {
+    if (!vesselScheduleQuery.data) return;
+
+    setValue(`details.${appendIndex}.etd`, vesselScheduleQuery.data.etd);
+    setValue(`details.${appendIndex}.eta`, vesselScheduleQuery.data.eta);
+  }, [vesselScheduleQuery.data, setValue, appendIndex]);
 
   const saveMutation = trpc.inquiries.save.useMutation();
 
@@ -218,7 +265,9 @@ export default function InquiryPage() {
         number: queryNumber,
       })
       .then(async () => {
-        await router.push("/marketing/inquiry");
+        await router.push(
+          queryID ? "/marketing/inquiry/reviced" : "/marketing/inquiry"
+        );
       })
       .catch((err) => {
         if (err instanceof TRPCClientError) {
@@ -270,7 +319,7 @@ export default function InquiryPage() {
                 input: (
                   <FormSelect
                     name="factory"
-                    options={factoriesOptionsQuery.data}
+                    options={inquiryFactoriesOptionsQuery.data}
                   />
                 ),
               },
@@ -357,23 +406,6 @@ export default function InquiryPage() {
               },
               {
                 type: "input",
-                id: "factory",
-                label: "Delivery To",
-                input: (
-                  <FormSelect
-                    name="factory"
-                    options={factoriesOptionsQuery.data}
-                  />
-                ),
-              },
-              {
-                type: "input",
-                id: "factoryCity",
-                label: "City",
-                input: <FormText name="factoryCity" readOnly />,
-              },
-              {
-                type: "input",
                 id: "route",
                 label: "Route",
                 input: (
@@ -413,6 +445,18 @@ export default function InquiryPage() {
                 id: "containerType",
                 label: "Container Type",
                 input: <FormText name="containerType" readOnly />,
+              },
+              {
+                type: "input",
+                id: "factory",
+                label: "Delivery To",
+                input: <FormText name="factory" readOnly />,
+              },
+              {
+                type: "input",
+                id: "factoryCity",
+                label: "City",
+                input: <FormText name="factoryCity" readOnly />,
               },
               {
                 type: "separator",
@@ -483,7 +527,11 @@ export default function InquiryPage() {
                 input: (
                   <FormSelect
                     name="shipping"
-                    options={shippingsOptionsQuery.data}
+                    options={shippingOptionsQuery.data}
+                    readOnly={
+                      !shippingOptionsQuery.data ||
+                      shippingOptionsQuery.data.length <= 1
+                    }
                   />
                 ),
               },
@@ -494,7 +542,11 @@ export default function InquiryPage() {
                 input: (
                   <FormSelect
                     name="vessel"
-                    options={vesselsOptionsQuery.data}
+                    options={vesselOptionsQuery.data}
+                    readOnly={
+                      !vesselOptionsQuery.data ||
+                      vesselOptionsQuery.data.length <= 1
+                    }
                   />
                 ),
               },
@@ -502,7 +554,16 @@ export default function InquiryPage() {
                 type: "input",
                 id: "voyage",
                 label: "Voyage",
-                input: <FormText name="voyage" />,
+                input: (
+                  <FormSelect
+                    name="voyage"
+                    options={voyageOptionsQuery.data}
+                    readOnly={
+                      !voyageOptionsQuery.data ||
+                      voyageOptionsQuery.data.length <= 1
+                    }
+                  />
+                ),
               },
               {
                 type: "blank",
@@ -511,13 +572,13 @@ export default function InquiryPage() {
                 type: "input",
                 id: "eta",
                 label: "ETA",
-                input: <FormDate name="eta" />,
+                input: <FormDate name="eta" readOnly />,
               },
               {
                 type: "input",
                 id: "etd",
                 label: "ETD",
-                input: <FormDate name="etd" />,
+                input: <FormDate name="etd" readOnly />,
               },
             ],
             isAppend: true,
@@ -525,6 +586,7 @@ export default function InquiryPage() {
             fieldName: "details",
             onChangeItem: (index) => setAppendIndex(index),
             defaultValue: defaultInquiryDetailForm,
+            hideItems: !!queryID,
           },
         ]}
       />

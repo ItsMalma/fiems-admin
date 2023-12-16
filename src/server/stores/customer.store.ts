@@ -36,6 +36,7 @@ export async function findUniqueVendorAtPrice() {
 
 export async function findAllShipping(onlyActive: boolean = false) {
   return await prisma.shipping.findMany({
+    include: { vessels: true },
     where: {
       status: onlyActive ? true : {},
     },
@@ -49,7 +50,6 @@ export async function findFactoryByCode(code: string) {
       group: true,
       quotations: true,
       quotationDetails: true,
-      factoryInquiries: true,
       purchaseInquiries: true,
       inquiryDetails: {
         include: {
@@ -333,11 +333,6 @@ export async function deleteCustomer(
         throw new TRPCError({
           code: "CONFLICT",
           message: `Factory ${factory.code} is used in Quotation ${factory.quotationDetails[0].quotationNumber}`,
-        });
-      if (factory.factoryInquiries.length > 0)
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `Factory ${factory.code} is used in Inquiry ${factory.factoryInquiries[0].number}`,
         });
       if (factory.purchaseInquiries.length > 0)
         throw new TRPCError({

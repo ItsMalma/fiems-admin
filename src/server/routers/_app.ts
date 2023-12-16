@@ -14,6 +14,7 @@ import { routesRouter } from "./routes.router";
 import { salesRouter } from "./sales.router";
 import { uangJalanRouter } from "./uangJalan.router";
 import { vehiclesRouter } from "./vehicles.router";
+import { vesselSchedulesRouter } from "./vesselSchedules.router";
 import { vesselsRouter } from "./vessels.router";
 
 export const appRouter = router({
@@ -32,6 +33,7 @@ export const appRouter = router({
   coas: coasRouter,
   quotations: quotationsRouter,
   inquiries: inquiriesRouter,
+  vesselSchedules: vesselSchedulesRouter,
   jobOrders: jobOrdersRouter,
 });
 

@@ -456,7 +456,7 @@ export const quotationsRouter = router({
     }),
 
   getOptions: publicProcedure.query(async () => {
-    return (await findAllQuotations()).map((quotation) => ({
+    return (await findAllQuotations(true)).map((quotation) => ({
       label: `${quotation.number} (${quotation.factory.name})`,
       value: quotation.number,
     }));

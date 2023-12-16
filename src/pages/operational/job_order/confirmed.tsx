@@ -1,11 +1,9 @@
 import { Button, Modal, Search, Table } from "@/components/Elements";
-import { Form, FormDate, FormSelect } from "@/components/Forms";
+import { Form, FormDate } from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
 import {
   JobOrderConfirmationForm,
-  JobOrderPindahKapalForm,
-  jobOrderConfirmationValidationSchema1,
-  jobOrderPindahKapalValidationSchema,
+  jobOrderConfirmationValidationSchema2,
 } from "@/server/dtos/jobOrder.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
@@ -19,23 +17,40 @@ import {
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
 
-function Confirm({ jobOrderNumber }: { jobOrderNumber: string }) {
+function Confirm({
+  jobOrderNumber,
+  td,
+  ta,
+  sandar,
+}: {
+  jobOrderNumber: string;
+  td: string | null;
+  ta: string | null;
+  sandar: string | null;
+}) {
   const { setModal } = useModal();
 
   const methods = useForm<JobOrderConfirmationForm>({
-    resolver: zodResolver(jobOrderConfirmationValidationSchema1),
+    resolver: zodResolver(jobOrderConfirmationValidationSchema2),
     defaultValues: {
       td: new Date(),
     },
   });
+  const { setValue } = methods;
   const values = methods.watch();
+
+  React.useEffect(() => {
+    if (td) setValue("td", td);
+    if (ta) setValue("ta", ta);
+    if (sandar) setValue("sandar", sandar);
+  }, [setValue, td, ta, sandar]);
 
   const confirmMutation = trpc.jobOrders.confirm.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     await confirmMutation.mutateAsync({
       number: jobOrderNumber,
-      td: data.td,
+      ...data,
     });
 
     setModal(null);
@@ -56,7 +71,19 @@ function Confirm({ jobOrderNumber }: { jobOrderNumber: string }) {
             type: "input",
             id: "td",
             label: "TD",
-            input: <FormDate name="td" />,
+            input: <FormDate name="td" readOnly={!!td} />,
+          },
+          {
+            type: "input",
+            id: "ta",
+            label: "TA",
+            input: <FormDate name="ta" readOnly={!!ta} />,
+          },
+          {
+            type: "input",
+            id: "sandar",
+            label: "Sandar",
+            input: <FormDate name="sandar" readOnly={!!sandar} />,
           },
         ]}
       />
@@ -64,156 +91,12 @@ function Confirm({ jobOrderNumber }: { jobOrderNumber: string }) {
   );
 }
 
-function PindahKapal({ jobOrderNumber }: { jobOrderNumber: string }) {
-  const { setModal } = useModal();
-
-  const methods = useForm<JobOrderPindahKapalForm>({
-    resolver: zodResolver(jobOrderPindahKapalValidationSchema),
-  });
-  const { setValue } = methods;
-  const values = methods.watch();
-
-  const pindahKapalMutation = trpc.jobOrders.pindahKapal.useMutation();
-
-  const onSubmit = methods.handleSubmit(async (data) => {
-    await pindahKapalMutation.mutateAsync({
-      number: jobOrderNumber,
-      ...data,
-    });
-
-    setModal(null);
-  });
-
-  const shippingOptionsQuery = trpc.inquiries.getShippingOptions.useQuery();
-  React.useEffect(() => {
-    if (!shippingOptionsQuery.data) return;
-
-    if (shippingOptionsQuery.data.length === 1) {
-      setValue("shipping", shippingOptionsQuery.data[0].value);
-    }
-  }, [shippingOptionsQuery.data, setValue]);
-
-  const vesselOptionsQuery = trpc.inquiries.getVesselOptions.useQuery({
-    shipping: values.shipping,
-  });
-  React.useEffect(() => {
-    if (!vesselOptionsQuery.data) return;
-
-    console.log(vesselOptionsQuery.data);
-
-    if (vesselOptionsQuery.data.length === 1) {
-      setValue("vessel", vesselOptionsQuery.data[0].value);
-    }
-  }, [vesselOptionsQuery.data, setValue]);
-
-  const voyageOptionsQuery = trpc.inquiries.getVoyageOptions.useQuery({
-    shipping: values.shipping,
-    vessel: values.vessel,
-  });
-  React.useEffect(() => {
-    if (!voyageOptionsQuery.data) return;
-
-    if (voyageOptionsQuery.data.length === 1) {
-      setValue("voyage", voyageOptionsQuery.data[0].value);
-    }
-  }, [voyageOptionsQuery.data, setValue]);
-
-  const vesselScheduleQuery = trpc.inquiries.getVesselSchedule.useQuery({
-    shipping: values.shipping,
-    vessel: values.vessel,
-    voyage: values.voyage,
-  });
-  React.useEffect(() => {
-    if (!vesselScheduleQuery.data) return;
-
-    setValue("etd", vesselScheduleQuery.data.etd);
-    setValue("eta", vesselScheduleQuery.data.eta);
-  }, [vesselScheduleQuery.data, setValue]);
-
-  return (
-    <Modal
-      title="Pindah Kapal Job Order"
-      type="save"
-      onDone={onSubmit}
-      isLoading={!values}
-      className="w-1/2"
-    >
-      <Form
-        methods={methods}
-        singleTab
-        controls={[
-          {
-            type: "input",
-            id: "shipping",
-            label: "Shipping",
-            input: (
-              <FormSelect
-                name="shipping"
-                options={shippingOptionsQuery.data}
-                readOnly={
-                  !shippingOptionsQuery.data ||
-                  shippingOptionsQuery.data.length <= 1
-                }
-              />
-            ),
-          },
-          {
-            type: "input",
-            id: "vessel",
-            label: "Vessel",
-            input: (
-              <FormSelect
-                name="vessel"
-                options={vesselOptionsQuery.data}
-                readOnly={
-                  !vesselOptionsQuery.data ||
-                  vesselOptionsQuery.data.length <= 1
-                }
-              />
-            ),
-          },
-          {
-            type: "input",
-            id: "voyage",
-            label: "Voyage",
-            input: (
-              <FormSelect
-                name="voyage"
-                options={voyageOptionsQuery.data}
-                readOnly={
-                  !voyageOptionsQuery.data ||
-                  voyageOptionsQuery.data.length <= 1
-                }
-              />
-            ),
-          },
-          {
-            type: "blank",
-          },
-          {
-            type: "input",
-            id: "etd",
-            label: "ETD",
-            input: <FormDate name="etd" readOnly />,
-          },
-          {
-            type: "input",
-            id: "eta",
-            label: "ETA",
-            input: <FormDate name="eta" readOnly />,
-          },
-        ]}
-      />
-    </Modal>
-  );
-}
-
-export default function InquiryPage() {
+export default function ConfirmedJobOrderPage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Job Order");
-    setActive(3, 1, 0);
+    setActive(3, 1, 1);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();
@@ -223,12 +106,12 @@ export default function InquiryPage() {
   const [search, setSearch] = React.useState("");
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.jobOrders.getTableRows.useQuery({});
+  const tableRowsQuery = trpc.jobOrders.getTableRows.useQuery({
+    isConfirmed: true,
+  });
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
-
-  const reviceMutation = trpc.jobOrders.revice.useMutation();
 
   return (
     <>
@@ -440,31 +323,29 @@ export default function InquiryPage() {
             header: "Seal Number 2",
             type: "text",
           },
+          {
+            id: "td",
+            header: "TD",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "ta",
+            header: "TA",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "sandar",
+            header: "Sandar",
+            type: "date",
+            isSortable: true,
+          },
         ]}
         search={search}
         dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
         onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
-        onRevice={async () => {
-          // Cek apakah tidak ada baris yang dipilih dari table
-          if (
-            selectedRowIndex === undefined ||
-            tableRowsQuery.data === undefined
-          ) {
-            return;
-          }
-
-          const jobOrder = tableRowsQuery.data[selectedRowIndex];
-
-          // Hapus price vendor yang dipilih di table
-          await reviceMutation.mutateAsync(jobOrder.number);
-
-          // Karena price vendor yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
-          setSelectedRowIndex(undefined);
-
-          // Tutup modal
-          setModal(null);
-        }}
         onConfirm={async () => {
           if (
             selectedRowIndex === undefined ||
@@ -475,19 +356,14 @@ export default function InquiryPage() {
 
           const jobOrder = tableRowsQuery.data[selectedRowIndex];
 
-          setModal(<Confirm jobOrderNumber={jobOrder.number} />);
-        }}
-        onPindahKapal={async () => {
-          if (
-            selectedRowIndex === undefined ||
-            tableRowsQuery.data === undefined
-          ) {
-            return;
-          }
-
-          const jobOrder = tableRowsQuery.data[selectedRowIndex];
-
-          setModal(<PindahKapal jobOrderNumber={jobOrder.number} />);
+          setModal(
+            <Confirm
+              jobOrderNumber={jobOrder.number}
+              td={jobOrder.td}
+              ta={jobOrder.ta}
+              sandar={jobOrder.sandar}
+            />
+          );
         }}
       />
     </>

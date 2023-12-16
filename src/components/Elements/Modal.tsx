@@ -1,7 +1,7 @@
 import useModal from "@/stores/modal";
 import clsx from "clsx";
 import React from "react";
-import { SaveFill, X } from "react-bootstrap-icons";
+import { ForwardFill, SaveFill, X } from "react-bootstrap-icons";
 import { Button, Loading } from ".";
 
 type ModalType = "info" | "save" | "import" | "confirm";
@@ -14,7 +14,14 @@ type ModalProps = {
   isLoading?: boolean;
   onDone: () => void | Promise<void>;
   onClose?: () => void | Promise<void>;
-};
+} & (
+  | { isProgress?: false }
+  | {
+      isProgress: true;
+      skippable?: boolean;
+      onNext: () => boolean | Promise<boolean>;
+    }
+);
 
 function getDoneText(modalType: ModalType): string {
   switch (modalType) {
@@ -30,6 +37,8 @@ function getDoneText(modalType: ModalType): string {
 
 export function Modal(props: ModalProps) {
   const { setModal } = useModal();
+
+  const [isProgress, setIsProgress] = React.useState(!!props.isProgress);
 
   let doneText = getDoneText(props.type);
 
@@ -67,19 +76,38 @@ export function Modal(props: ModalProps) {
       </div>
       {props.type !== "info" && (
         <div className="flex justify-end gap-3">
-          <Button
-            type="button"
-            variant="filled"
-            icon={props.type === "confirm" ? null : <SaveFill />}
-            text={doneText}
-            isLoading={isLoading}
-            onClick={async () => {
-              Promise.resolve(props.onDone()).finally(() => {
-                setIsLoading(false);
-              });
-              setIsLoading(true);
-            }}
-          />
+          {(!isProgress || (props.isProgress && props.skippable)) && (
+            <Button
+              type="button"
+              variant="filled"
+              icon={props.type === "confirm" ? null : <SaveFill />}
+              text={doneText}
+              isLoading={isLoading}
+              onClick={async () => {
+                Promise.resolve(props.onDone()).finally(() => {
+                  setIsLoading(false);
+                });
+                setIsLoading(true);
+              }}
+            />
+          )}
+          {isProgress && (
+            <Button
+              type="button"
+              variant="filled"
+              icon={<ForwardFill />}
+              text="Next"
+              isLoading={isLoading}
+              onClick={() => {
+                if (!(props.isProgress && isProgress)) return;
+                Promise.resolve(props.onNext())
+                  .then((res) => setIsProgress(res))
+                  .finally(() => {
+                    setIsLoading(false);
+                  });
+              }}
+            />
+          )}
           {props.type === "confirm" && (
             <Button
               variant="outlined"

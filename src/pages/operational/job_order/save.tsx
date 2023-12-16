@@ -30,7 +30,7 @@ export default function JobOrderSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Job Order");
-    setActive(3, 0, 0);
+    setActive(3, 1, 0);
   }, [setTitle, setActive]);
 
   const router = useRouter();
@@ -78,9 +78,15 @@ export default function JobOrderSavePage() {
     setValue("consigneeTelephone", vendorQuery.data.telephone);
   }, [vendorQuery.data, setValue]);
 
-  const routesOptionsQuery = trpc.routes.getOptions.useQuery();
+  const trackingsQuery = trpc.jobOrders.getTrackingOptions.useQuery();
 
-  const vehiclesOptionsQuery = trpc.vehicles.getOptions.useQuery();
+  const routesOptionsQuery = trpc.jobOrders.getRouteOptions.useQuery({
+    tracking: values.vendor,
+  });
+
+  const vehiclesOptionsQuery = trpc.jobOrders.getTruckOptions.useQuery({
+    tracking: values.vendor,
+  });
 
   const vehicleQuery = trpc.vehicles.getSingle.useQuery(values.vehicle);
   React.useEffect(() => {
@@ -315,10 +321,7 @@ export default function JobOrderSavePage() {
                 id: "vendor",
                 label: "Tracking",
                 input: (
-                  <FormSelect
-                    name="vendor"
-                    options={vendorsOptionsQuery.data}
-                  />
+                  <FormSelect name="vendor" options={trackingsQuery.data} />
                 ),
               },
               {
@@ -331,18 +334,6 @@ export default function JobOrderSavePage() {
                     options={routesOptionsQuery.data}
                   />
                 ),
-              },
-              {
-                type: "input",
-                id: "driverName",
-                label: "Driver Name",
-                input: <FormText name="driverName" />,
-              },
-              {
-                type: "input",
-                id: "driverPhoneNumber",
-                label: "Driver Phone Number",
-                input: <FormPhone name="driverPhoneNumber" />,
               },
               {
                 type: "input",
@@ -360,6 +351,18 @@ export default function JobOrderSavePage() {
                 id: "vehicleType",
                 label: "Truck Type",
                 input: <FormText name="vehicleType" readOnly />,
+              },
+              {
+                type: "input",
+                id: "driverName",
+                label: "Driver Name",
+                input: <FormText name="driverName" />,
+              },
+              {
+                type: "input",
+                id: "driverPhoneNumber",
+                label: "Driver Phone Number",
+                input: <FormPhone name="driverPhoneNumber" />,
               },
               {
                 type: "input",

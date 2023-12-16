@@ -1,4 +1,6 @@
+import { validateShippingCode } from "@/server/dtos/customer.dto";
 import {
+  refineDateRange,
   validateCode,
   validateDate,
   validatePhone,
@@ -98,6 +100,20 @@ export const defaultJobOrderForm: JobOrderForm = {
   sealNumber2: null,
 };
 
+export type JobOrderConfirmationForm = {
+  td: string | Date;
+  ta: string | Date;
+  sandar: string | Date;
+};
+
+export type JobOrderPindahKapalForm = {
+  shipping: string;
+  vessel: string;
+  voyage: string;
+  etd: string | Date;
+  eta: string | Date;
+};
+
 export const jobOrderValidationSchema = z.object({
   roNumber: validateText(true),
   consignee: validateCode(validateVendorCode),
@@ -113,6 +129,32 @@ export const jobOrderValidationSchema = z.object({
   sealNumber2: z.string().nullable(),
 });
 export type JobOrderInput = z.infer<typeof jobOrderValidationSchema>;
+
+export const jobOrderConfirmationValidationSchema1 = z
+  .object({
+    td: validateDate(),
+  })
+  .superRefine(refineDateRange("td", "ta"));
+export const jobOrderConfirmationValidationSchema2 = z
+  .object({
+    ta: validateDate(),
+    sandar: validateDate(),
+  })
+  .superRefine(refineDateRange("td", "ta"));
+export type JobOrderConfirmationInput =
+  | z.infer<typeof jobOrderConfirmationValidationSchema1>
+  | z.infer<typeof jobOrderConfirmationValidationSchema2>;
+
+export const jobOrderPindahKapalValidationSchema = z.object({
+  shipping: validateCode(validateShippingCode),
+  vessel: validateText(),
+  voyage: validateText(),
+  etd: validateDate(),
+  eta: validateDate(),
+});
+export type JobOrderPindahKapalInput = z.infer<
+  typeof jobOrderPindahKapalValidationSchema
+>;
 
 export type JobOrderTableRow = {
   number: string;
@@ -151,4 +193,13 @@ export type JobOrderTableRow = {
   sealNumber1: string;
   containerNumber2: string | null;
   sealNumber2: string | null;
+  td: Date | null;
+  ta: Date | null;
+  sandar: Date | null;
+};
+
+export type ConfirmedJobOrderTableRow = JobOrderTableRow & {
+  td: Date | null;
+  ta: Date | null;
+  sandar: Date | null;
 };

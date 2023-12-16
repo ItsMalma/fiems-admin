@@ -54,6 +54,15 @@ export function validateDate() {
   ]);
 }
 
+export function validateTime() {
+  return z
+    .string({
+      invalid_type_error: "Invalid value",
+      required_error: "Must be filled",
+    })
+    .refine((value) => moment(value, "HH:mm").isValid(), "Invalid value");
+}
+
 export function validateEmail() {
   return z
     .string({
@@ -157,8 +166,14 @@ export function validateAppend<T extends z.ZodTypeAny>(validations: T) {
 
 export function refineDateRange(start: string, end: string): z.Refinement<any> {
   return (data, ctx) => {
+    if (!data[start] || !data[end]) return;
     const startDate = moment(data[start]);
-    if (moment(data[end]).isBefore(startDate, "day")) {
+    const endDate = moment(data[end]);
+    if (
+      startDate.isValid() &&
+      endDate.isValid() &&
+      endDate.isBefore(startDate, "day")
+    ) {
       ctx.addIssue({
         code: "invalid_date",
         path: [end],

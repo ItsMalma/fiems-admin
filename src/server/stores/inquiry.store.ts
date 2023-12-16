@@ -25,11 +25,6 @@ export async function findInquiryByNumber(inquiryNumber: string) {
     },
     include: {
       sales: true,
-      factory: {
-        include: {
-          group: true,
-        },
-      },
       purchase: true,
       details: {
         include: {
@@ -37,14 +32,26 @@ export async function findInquiryByNumber(inquiryNumber: string) {
             include: {
               quotationDetail: {
                 include: {
-                  quotation: true,
+                  quotation: {
+                    include: {
+                      factory: {
+                        include: {
+                          group: true,
+                        },
+                      },
+                    },
+                  },
                   route: true,
                 },
               },
             },
           },
-          shipping: true,
-          vessel: true,
+          vesselSchedule: {
+            include: {
+              shipping: true,
+              vessel: true,
+            },
+          },
           factory: true,
         },
       },
@@ -67,16 +74,25 @@ export async function findInquiryDetailByID(id: string) {
       inquiry: {
         include: {
           sales: true,
-          factory: { include: { group: true } },
           purchase: { include: { group: true } },
         },
       },
       factory: { include: { group: true } },
-      shipping: true,
-      vessel: true,
+      vesselSchedule: {
+        include: {
+          shipping: true,
+          vessel: true,
+        },
+      },
       priceFactory: {
         include: {
-          quotationDetail: { include: { route: true, quotation: true } },
+          quotationDetail: {
+            include: {
+              route: true,
+              quotation: { include: { factory: true } },
+              factory: true,
+            },
+          },
         },
       },
     },
@@ -97,18 +113,27 @@ export async function findAllInquiryDetails() {
       inquiry: {
         include: {
           sales: true,
-          factory: { include: { group: true } },
           purchase: { include: { group: true } },
         },
       },
       factory: { include: { group: true } },
-      shipping: true,
-      vessel: true,
-      priceFactory: {
+      vesselSchedule: {
         include: {
-          quotationDetail: { include: { route: true, quotation: true } },
+          shipping: true,
+          vessel: true,
         },
       },
+      priceFactory: {
+        include: {
+          quotationDetail: {
+            include: {
+              route: true,
+              quotation: { include: { factory: { include: { group: true } } } },
+            },
+          },
+        },
+      },
+      confirmation: true,
     },
   });
 }
@@ -118,7 +143,6 @@ export async function createInquiry(input: InquiryInput) {
     data: {
       number: await findNextInquiryNumber(),
       sales: { connect: { code: input.sales } },
-      factory: { connect: { code: input.factory } },
       purchase: { connect: { code: input.purchase } },
       details: {
         create: await Promise.all(
@@ -126,6 +150,7 @@ export async function createInquiry(input: InquiryInput) {
             const priceFactory = await prisma.priceFactory.findFirst({
               where: {
                 quotationDetail: {
+                  quotation: { factory: { code: input.factory } },
                   route: { code: detail.route },
                   containerSize: detail.containerSize,
                 },
@@ -134,7 +159,21 @@ export async function createInquiry(input: InquiryInput) {
             if (!priceFactory) {
               throw new TRPCError({
                 code: "NOT_FOUND",
-                message: `There are no price factory with route ${detail.route} and container size ${detail.containerSize}`,
+                message: `There are no quotation with factory ${input.factory}, route ${detail.route} and container size ${detail.containerSize}`,
+              });
+            }
+
+            const vesselSchedule = await prisma.vesselSchedule.findFirst({
+              where: {
+                shipping: { code: detail.shipping },
+                vessel: { id: detail.vessel },
+                voyage: detail.voyage,
+              },
+            });
+            if (!vesselSchedule) {
+              throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `There are no vessel schedule with shipping ${detail.shipping}, vessel ${detail.vessel} and voyage ${detail.voyage}`,
               });
             }
 
@@ -142,17 +181,17 @@ export async function createInquiry(input: InquiryInput) {
               jobOrder: detail.jobOrder as JobOrder,
               typeOrder: detail.typeOrder as TypeOrder,
               loadDate: detail.loadDate,
-              factory: { connect: { code: detail.factory } },
+              factory: { connect: { code: input.factory } },
               priceFactory: {
                 connect: {
                   id: priceFactory.id,
                 },
               },
-              shipping: { connect: { code: detail.shipping } },
-              vessel: { connect: { id: detail.vessel } },
-              voyage: detail.voyage,
-              etd: detail.etd,
-              eta: detail.eta,
+              vesselSchedule: {
+                connect: {
+                  id: vesselSchedule.id,
+                },
+              },
             };
           })
         ),
@@ -174,9 +213,10 @@ export async function updateInquiry(
       const inputDetail = input.details.find((d) => d.id === inquiryDetail.id);
 
       if (inputDetail) {
-        const priceFactory = await tx.priceFactory.findFirst({
+        const priceFactory = await prisma.priceFactory.findFirst({
           where: {
             quotationDetail: {
+              quotation: { factory: { code: input.factory } },
               route: { code: inputDetail.route },
               containerSize: inputDetail.containerSize,
             },
@@ -185,7 +225,21 @@ export async function updateInquiry(
         if (!priceFactory) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: `There are no price factory with route ${inputDetail.route} and container size ${inputDetail.containerSize}`,
+            message: `There are no quotation with factory ${input.factory}, route ${inputDetail.route} and container size ${inputDetail.containerSize}`,
+          });
+        }
+
+        const vesselSchedule = await prisma.vesselSchedule.findFirst({
+          where: {
+            shipping: { code: inputDetail.shipping },
+            vessel: { id: inputDetail.vessel },
+            voyage: inputDetail.voyage,
+          },
+        });
+        if (!vesselSchedule) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `There are no vessel schedule with shipping ${inputDetail.shipping}, vessel ${inputDetail.vessel} and voyage ${inputDetail.voyage}`,
           });
         }
 
@@ -195,17 +249,18 @@ export async function updateInquiry(
             jobOrder: inputDetail.jobOrder as JobOrder,
             typeOrder: inputDetail.typeOrder as TypeOrder,
             loadDate: inputDetail.loadDate,
-            factory: { connect: { code: inputDetail.factory } },
+            factory: { connect: { code: input.factory } },
             priceFactory: {
               connect: {
                 id: priceFactory.id,
               },
             },
-            shipping: { connect: { code: inputDetail.shipping } },
-            vessel: { connect: { id: inputDetail.vessel } },
-            voyage: inputDetail.voyage,
-            etd: inputDetail.etd,
-            eta: inputDetail.eta,
+            vesselSchedule: {
+              connect: {
+                id: vesselSchedule.id,
+              },
+            },
+            isReviced: false,
           },
         });
       } else {
@@ -215,9 +270,10 @@ export async function updateInquiry(
 
     for (const inputDetail of input.details) {
       if (!inquiryDetails.find((d) => d.id === inputDetail.id)) {
-        const priceFactory = await tx.priceFactory.findFirst({
+        const priceFactory = await prisma.priceFactory.findFirst({
           where: {
             quotationDetail: {
+              quotation: { factory: { code: input.factory } },
               route: { code: inputDetail.route },
               containerSize: inputDetail.containerSize,
             },
@@ -226,7 +282,21 @@ export async function updateInquiry(
         if (!priceFactory) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: `There are no price factory with route ${inputDetail.route} and container size ${inputDetail.containerSize}`,
+            message: `There are no quotation with factory ${input.factory}, route ${inputDetail.route} and container size ${inputDetail.containerSize}`,
+          });
+        }
+
+        const vesselSchedule = await prisma.vesselSchedule.findFirst({
+          where: {
+            shipping: { code: inputDetail.shipping },
+            vessel: { id: inputDetail.vessel },
+            voyage: inputDetail.voyage,
+          },
+        });
+        if (!vesselSchedule) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `There are no vessel schedule with shipping ${inputDetail.shipping}, vessel ${inputDetail.vessel} and voyage ${inputDetail.voyage}`,
           });
         }
 
@@ -236,17 +306,17 @@ export async function updateInquiry(
             jobOrder: inputDetail.jobOrder as JobOrder,
             typeOrder: inputDetail.typeOrder as TypeOrder,
             loadDate: inputDetail.loadDate,
-            factory: { connect: { code: inputDetail.factory } },
+            factory: { connect: { code: input.factory } },
             priceFactory: {
               connect: {
                 id: priceFactory.id,
               },
             },
-            shipping: { connect: { code: inputDetail.shipping } },
-            vessel: { connect: { id: inputDetail.vessel } },
-            voyage: inputDetail.voyage,
-            etd: inputDetail.etd,
-            eta: inputDetail.eta,
+            vesselSchedule: {
+              connect: {
+                id: vesselSchedule.id,
+              },
+            },
           },
         });
       }
@@ -256,7 +326,6 @@ export async function updateInquiry(
       where: { number: inquiryNumber },
       data: {
         sales: { connect: { code: input.sales } },
-        factory: { connect: { code: input.factory } },
         purchase: { connect: { code: input.purchase } },
       },
     });

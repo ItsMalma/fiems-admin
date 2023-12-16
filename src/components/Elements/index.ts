@@ -4,6 +4,7 @@ export * from "./InputMoney";
 export * from "./InputNumber";
 export * from "./InputPassword";
 export * from "./InputText";
+export * from "./InputTime";
 export * from "./Label";
 export * from "./Loading";
 export * from "./Modal";

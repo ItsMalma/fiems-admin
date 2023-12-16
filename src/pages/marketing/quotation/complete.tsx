@@ -6,10 +6,8 @@ import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
 import React from "react";
 import {
-  CurrencyDollar,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
-  PersonFillAdd,
 } from "react-bootstrap-icons";
 
 export default function CompleteQuotationsPage() {
@@ -34,8 +32,6 @@ export default function CompleteQuotationsPage() {
   // Mendapatkan router
   const router = useRouter();
 
-  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
-
   const tableRowsQuery = trpc.quotations.getTableRows.useQuery({
     completed: true,
   });
@@ -46,12 +42,6 @@ export default function CompleteQuotationsPage() {
         <Search placeholder="Search Quotation" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Quotation"
-            icon={<CurrencyDollar />}
-            variant="filled"
-            onClick={() => router.push("/marketing/quotation/save")}
-          />
-          <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
@@ -60,13 +50,12 @@ export default function CompleteQuotationsPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
       <Table
         className="p-[18px] 2xl:p-6 bg-white rounded-2xl shadow-sm"
-        isSelectable
         columns={[
           {
             id: "number",
@@ -180,7 +169,6 @@ export default function CompleteQuotationsPage() {
         search={search}
         dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
-        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
       />
     </>
   );
