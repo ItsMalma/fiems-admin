@@ -14,7 +14,7 @@ import {
 } from "../dtos/price.dto";
 import prisma from "../prisma";
 
-export async function findAllPriceFactories() {
+export async function findAllPriceFactories(onlyActive: boolean = true) {
   return await prisma.priceFactory.findMany({
     include: {
       quotationDetail: {
@@ -34,6 +34,9 @@ export async function findAllPriceFactories() {
           },
         },
       },
+    },
+    where: {
+      status: onlyActive ? true : {},
     },
   });
 }

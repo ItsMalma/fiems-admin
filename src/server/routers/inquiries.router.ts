@@ -1,3 +1,4 @@
+import lodash from "lodash";
 import { z } from "zod";
 import {
   InquiryForm,
@@ -12,8 +13,9 @@ import {
   findNextInquiryNumber,
   updateInquiry,
 } from "../stores/inquiry.store";
+import { findAllPriceFactories } from "../stores/price.store";
 import { findAllQuotationDetails } from "../stores/quotation.store";
-import { findAllVessel } from "../stores/vessel.store";
+import { findAllVesselSchedule } from "../stores/vesselSchedule.store";
 import { publicProcedure, router } from "../trpc";
 
 export const inquiriesRouter = router({
@@ -32,10 +34,18 @@ export const inquiriesRouter = router({
         number: inquiry.number,
         createDate: inquiry.createDate,
         sales: inquiry.sales.code,
-        factory: inquiry.factory.code,
-        factoryGroup: inquiry.factory.group.code,
-        factoryAddress: inquiry.factory.address,
-        factoryCity: inquiry.factory.city,
+        factory:
+          inquiry.details[0].priceFactory.quotationDetail.quotation.factory
+            .code,
+        factoryGroup:
+          inquiry.details[0].priceFactory.quotationDetail.quotation.factory
+            .group.code,
+        factoryAddress:
+          inquiry.details[0].priceFactory.quotationDetail.quotation.factory
+            .address,
+        factoryCity:
+          inquiry.details[0].priceFactory.quotationDetail.quotation.factory
+            .city,
         purchase: inquiry.purchase.code,
         purchaseAddress: inquiry.purchase.address,
         purchaseCity: inquiry.purchase.city,
@@ -66,39 +76,85 @@ export const inquiriesRouter = router({
               ppftz: detail.priceFactory.quotationDetail.summaryDetail!.ppftz,
               nilaiPPFTZ:
                 detail.priceFactory.quotationDetail.summaryDetail!.nilaiPPFTZ,
-              shipping: detail.shippingCode,
-              vessel: detail.vessel.id,
-              voyage: detail.voyage,
-              eta: detail.eta,
-              etd: detail.etd,
+              shipping: detail.vesselSchedule.shipping.code,
+              vessel: detail.vesselSchedule.vessel.id,
+              voyage: detail.vesselSchedule.voyage,
+              eta: detail.vesselSchedule.eta,
+              etd: detail.vesselSchedule.etd,
             };
           })
         ),
       };
     }),
 
-  getRouteOptions: publicProcedure.query(async () => {
-    return (await findAllQuotationDetails(false, true)).map(({ route }) => ({
-      label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
-      value: route.code,
-    }));
+  getFactoryOptions: publicProcedure.query(async () => {
+    return lodash.uniqBy(
+      (await findAllPriceFactories(true)).map(
+        ({
+          quotationDetail: {
+            quotation: { factory },
+          },
+        }) => ({
+          label: `${factory.code} (${factory.name})`,
+          value: factory.code,
+        })
+      ),
+      (opt) => opt.value
+    );
   }),
+
+  getRouteOptions: publicProcedure
+    .input(
+      z.object({
+        factory: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.factory) return [];
+
+      return lodash.uniqBy(
+        (await findAllPriceFactories(true))
+          .filter(
+            ({
+              quotationDetail: {
+                quotation: { factory },
+              },
+            }) => factory.code === input.factory
+          )
+          .map(({ quotationDetail: { route } }) => ({
+            label: `${route.code} (${route.startDescription} - ${route.endDescription})`,
+            value: route.code,
+          })),
+        (opt) => opt.value
+      );
+    }),
 
   getContainerSizeOptions: publicProcedure
     .input(
       z.object({
+        factory: z.string().optional(),
         route: z.string().optional(),
       })
     )
     .query(async ({ input }) => {
-      if (!input.route) return [];
+      if (!input.factory || !input.route) return [];
 
-      return (await findAllQuotationDetails(false, true))
-        .filter((detail) => detail.route.code === input.route)
-        .map(({ containerSize }) => ({
-          label: containerSize,
-          value: containerSize,
-        }));
+      return lodash.uniqBy(
+        (await findAllPriceFactories(true))
+          .filter(
+            ({
+              quotationDetail: {
+                quotation: { factory },
+                route,
+              },
+            }) => factory.code === input.factory && route.code === input.route
+          )
+          .map(({ quotationDetail: { containerSize } }) => ({
+            label: containerSize,
+            value: containerSize,
+          })),
+        (opt) => opt.value
+      );
     }),
 
   getQuotationDetail: publicProcedure
@@ -117,6 +173,25 @@ export const inquiriesRouter = router({
       );
     }),
 
+  getVesselSchedule: publicProcedure
+    .input(
+      z.object({
+        shipping: z.string().optional(),
+        vessel: z.string().optional(),
+        voyage: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.shipping || !input.vessel || !input.voyage) return null;
+
+      return (await findAllVesselSchedule(true)).find(
+        ({ shipping, vessel, voyage }) =>
+          shipping.code === input.shipping &&
+          vessel.id === input.vessel &&
+          voyage === input.voyage
+      );
+    }),
+
   save: publicProcedure
     .input(inquiryValidationSchema)
     .input(z.object({ number: z.string().optional() }))
@@ -127,67 +202,132 @@ export const inquiriesRouter = router({
       return await createInquiry(input);
     }),
 
-  getVesselsOptions: publicProcedure
-    .input(z.string().optional())
+  getShippingOptions: publicProcedure.query(async () => {
+    return lodash.uniqBy(
+      (await findAllVesselSchedule(true)).map((vesselSchedule) => ({
+        label: `${vesselSchedule.shipping.code} (${vesselSchedule.shipping.name})`,
+        value: vesselSchedule.shipping.code,
+      })),
+      (opt) => opt.value
+    );
+  }),
+
+  getVesselOptions: publicProcedure
+    .input(
+      z.object({
+        shipping: z.string().optional(),
+      })
+    )
     .query(async ({ input }) => {
-      if (!input) return [];
-      return (await findAllVessel(true))
-        .filter((vessel) => vessel.shipping.code === input)
-        .map((vessel) => ({
-          label: `${vessel.name}`,
-          value: vessel.id,
-        }));
+      if (!input.shipping) return [];
+
+      return lodash.uniqBy(
+        (await findAllVesselSchedule(true))
+          .filter(
+            (vesselSchedule) => vesselSchedule.shipping.code === input.shipping
+          )
+          .map((vesselSchedule) => ({
+            label: vesselSchedule.vessel.name,
+            value: vesselSchedule.vessel.id,
+          })),
+        (opt) => opt.value
+      );
     }),
 
-  getTableRows: publicProcedure.query<InquiryTableRow[]>(async () => {
-    const rows: InquiryTableRow[] = [];
+  getVoyageOptions: publicProcedure
+    .input(
+      z.object({
+        shipping: z.string().optional(),
+        vessel: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.shipping || !input.vessel) return [];
 
-    for (const inquiryDetail of await findAllInquiryDetails()) {
-      const insuranceSum =
-        inquiryDetail.priceFactory.quotationDetail.summaryDetail!
-          .nilaiInsurance /
-          1000 +
-        inquiryDetail.priceFactory.quotationDetail.summaryDetail!.biayaAdmin;
+      return lodash.uniqBy(
+        (await findAllVesselSchedule(true))
+          .filter(
+            (vesselSchedule) =>
+              vesselSchedule.shipping.code === input.shipping &&
+              vesselSchedule.vessel.id === input.vessel
+          )
+          .map((vesselSchedule) => ({
+            label: vesselSchedule.voyage,
+            value: vesselSchedule.voyage,
+          })),
+        (opt) => opt.value
+      );
+    }),
 
-      rows.push({
-        number: inquiryDetail.inquiry.number,
-        detailID: inquiryDetail.id,
-        createDate: inquiryDetail.inquiry.createDate,
-        sales: `${inquiryDetail.inquiry.sales.code} (${inquiryDetail.inquiry.sales.name})`,
-        factory: `${inquiryDetail.inquiry.factory.code} (${inquiryDetail.inquiry.factory.name})`,
-        factoryGroup: `${inquiryDetail.inquiry.factory.group.code} (${inquiryDetail.inquiry.factory.group.name})`,
-        factoryAddress: inquiryDetail.inquiry.factory.address,
-        factoryCity: inquiryDetail.inquiry.factory.city,
-        purchase: `${inquiryDetail.inquiry.purchase.code} (${inquiryDetail.inquiry.purchase.name})`,
-        purchaseAddress: inquiryDetail.inquiry.purchase.address,
-        purchaseCity: inquiryDetail.inquiry.purchase.city,
-        jobOrder: inquiryDetail.jobOrder,
-        typeOrder: inquiryDetail.typeOrder,
-        loadDate: inquiryDetail.loadDate,
-        deliveryTo: `${inquiryDetail.factory.code} (${inquiryDetail.factory.name})`,
-        deliveryToCity: inquiryDetail.factory.city,
-        route: `${inquiryDetail.priceFactory.quotationDetail.route.code} (${inquiryDetail.priceFactory.quotationDetail.route.startDescription} - ${inquiryDetail.priceFactory.quotationDetail.route.endDescription})`,
-        containerSize: inquiryDetail.priceFactory.quotationDetail.containerSize,
-        containerType: inquiryDetail.priceFactory.quotationDetail.containerType,
-        serviceType:
-          inquiryDetail.priceFactory.quotationDetail.quotation.serviceType,
-        ppn: inquiryDetail.priceFactory.quotationDetail.summaryDetail!.ppn,
-        insurance:
-          inquiryDetail.priceFactory.quotationDetail.summaryDetail!.insurance,
-        nilaiInsurance: insuranceSum,
-        ppftz: inquiryDetail.priceFactory.quotationDetail.summaryDetail!.ppftz,
-        nilaiPPFTZ:
-          inquiryDetail.priceFactory.quotationDetail.summaryDetail!.nilaiPPFTZ,
-        shipping: `${inquiryDetail.shipping.code} (${inquiryDetail.shipping.name})`,
-        vessel: inquiryDetail.vessel.name,
-        voyage: inquiryDetail.voyage,
-        eta: inquiryDetail.eta,
-        etd: inquiryDetail.etd,
-      });
-    }
+  getTableRows: publicProcedure
+    .input(
+      z.object({
+        isReviced: z.boolean().default(false),
+        isConfirmed: z.boolean().default(false),
+      })
+    )
+    .query<InquiryTableRow[]>(async ({ input }) => {
+      const rows: InquiryTableRow[] = [];
 
-    return rows;
-  }),
+      for (const inquiryDetail of await findAllInquiryDetails()) {
+        if (
+          input.isReviced == !inquiryDetail.isReviced ||
+          input.isConfirmed == !inquiryDetail.confirmation
+        )
+          continue;
+
+        const insuranceSum =
+          inquiryDetail.priceFactory.quotationDetail.summaryDetail!
+            .nilaiInsurance /
+            1000 +
+          inquiryDetail.priceFactory.quotationDetail.summaryDetail!.biayaAdmin;
+
+        rows.push({
+          number: inquiryDetail.inquiry.number,
+          detailID: inquiryDetail.id,
+          createDate: inquiryDetail.inquiry.createDate,
+          sales: `${inquiryDetail.inquiry.sales.code} (${inquiryDetail.inquiry.sales.name})`,
+          factory: `${inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`,
+          factoryGroup: `${inquiryDetail.priceFactory.quotationDetail.quotation.factory.group.code} (${inquiryDetail.priceFactory.quotationDetail.quotation.factory.group.name})`,
+          factoryAddress:
+            inquiryDetail.priceFactory.quotationDetail.quotation.factory
+              .address,
+          factoryCity:
+            inquiryDetail.priceFactory.quotationDetail.quotation.factory.city,
+          purchase: `${inquiryDetail.inquiry.purchase.code} (${inquiryDetail.inquiry.purchase.name})`,
+          purchaseAddress: inquiryDetail.inquiry.purchase.address,
+          purchaseCity: inquiryDetail.inquiry.purchase.city,
+          jobOrder: inquiryDetail.jobOrder,
+          typeOrder: inquiryDetail.typeOrder,
+          loadDate: inquiryDetail.loadDate,
+          deliveryTo: `${inquiryDetail.factory.code} (${inquiryDetail.factory.name})`,
+          deliveryToCity: inquiryDetail.factory.city,
+          route: `${inquiryDetail.priceFactory.quotationDetail.route.code} (${inquiryDetail.priceFactory.quotationDetail.route.startDescription} - ${inquiryDetail.priceFactory.quotationDetail.route.endDescription})`,
+          containerSize:
+            inquiryDetail.priceFactory.quotationDetail.containerSize,
+          containerType:
+            inquiryDetail.priceFactory.quotationDetail.containerType,
+          serviceType:
+            inquiryDetail.priceFactory.quotationDetail.quotation.serviceType,
+          ppn: inquiryDetail.priceFactory.quotationDetail.summaryDetail!.ppn,
+          insurance:
+            inquiryDetail.priceFactory.quotationDetail.summaryDetail!.insurance,
+          nilaiInsurance: insuranceSum,
+          ppftz:
+            inquiryDetail.priceFactory.quotationDetail.summaryDetail!.ppftz,
+          nilaiPPFTZ:
+            inquiryDetail.priceFactory.quotationDetail.summaryDetail!
+              .nilaiPPFTZ,
+          shipping: `${inquiryDetail.vesselSchedule.shipping.code} (${inquiryDetail.vesselSchedule.shipping.name})`,
+          vessel: inquiryDetail.vesselSchedule.vessel.name,
+          voyage: inquiryDetail.vesselSchedule.voyage,
+          eta: inquiryDetail.vesselSchedule.eta,
+          etd: inquiryDetail.vesselSchedule.etd,
+        });
+      }
+
+      return rows;
+    }),
 
   delete: publicProcedure.input(z.string()).mutation(async ({ input }) => {
     await deleteInquiryDetailByID(input);

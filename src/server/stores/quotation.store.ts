@@ -240,7 +240,7 @@ export async function findQuotationShippingDetail(input: {
   return priceShippingDetail;
 }
 
-export async function findAllQuotations() {
+export async function findAllQuotations(onlyActive: boolean = false) {
   return await prisma.quotation.findMany({
     include: {
       factory: true,
@@ -262,6 +262,16 @@ export async function findAllQuotations() {
         },
       },
     },
+    where: onlyActive
+      ? {
+          effectiveStartDate: {
+            lte: new Date(),
+          },
+          effectiveEndDate: {
+            gte: new Date(),
+          },
+        }
+      : {},
   });
 }
 

@@ -121,7 +121,6 @@ export const inquiryValidationSchema = z.object({
         jobOrder: validateSelect(inquiryJobOrderOptions),
         typeOrder: validateSelect(inquiryTypeOrderOptions),
         loadDate: validateDate(),
-        factory: validateCode(validateFactoryCode),
         route: validateCode(validateRouteCode),
         containerSize: validateSelect(ContainerSizes),
         shipping: validateCode(validateShippingCode),

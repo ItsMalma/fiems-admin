@@ -8,3 +8,4 @@ export * from "./FormPhone";
 export * from "./FormRadio";
 export * from "./FormSelect";
 export * from "./FormText";
+export * from "./FormTime";

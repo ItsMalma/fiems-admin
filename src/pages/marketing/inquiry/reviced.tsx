@@ -6,17 +6,16 @@ import useModal from "@/stores/modal";
 import { useRouter } from "next/router";
 import React from "react";
 import {
-  Box2,
   FileEarmarkArrowDownFill,
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 
-export default function InquiryPage() {
+export default function RevicedInquiryPage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, 0);
+    setActive(2, 2, 1);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();
@@ -24,8 +23,11 @@ export default function InquiryPage() {
   const router = useRouter();
 
   const [search, setSearch] = React.useState("");
+  const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.inquiries.getTableRows.useQuery({});
+  const tableRowsQuery = trpc.inquiries.getTableRows.useQuery({
+    isReviced: true,
+  });
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
@@ -35,12 +37,6 @@ export default function InquiryPage() {
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
         <Search placeholder="Search Inquiry" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
-          <Button
-            text="Add New Inquiry"
-            icon={<Box2 />}
-            variant="filled"
-            onClick={() => router.push("/marketing/inquiry/save")}
-          />
           <Button
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
@@ -214,6 +210,23 @@ export default function InquiryPage() {
         search={search}
         dateRangeColumn="createDate"
         rows={tableRowsQuery.data ?? []}
+        onSelect={(rowIndex) => setSelectedRowIndex(rowIndex)}
+        onEdit={() => {
+          // Cek apakah tidak ada baris yang dipilih dari table
+          if (
+            selectedRowIndex === undefined ||
+            tableRowsQuery.data === undefined
+          ) {
+            return;
+          }
+
+          const inquiry = tableRowsQuery.data[selectedRowIndex];
+
+          // Redirect ke halaman save price vendor
+          router.push(
+            `/marketing/inquiry/save?number=${inquiry.number}&id=${inquiry.detailID}`
+          );
+        }}
       />
     </>
   );

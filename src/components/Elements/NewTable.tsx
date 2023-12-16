@@ -4,6 +4,7 @@ import lodash from "lodash";
 import moment from "moment";
 import React from "react";
 import {
+  Backspace,
   Calendar,
   CheckSquare,
   ChevronLeft,
@@ -47,15 +48,15 @@ type TableColumn = {
   id: string;
   header: string;
 } & (
-    | {
+  | {
       type: ColumnType;
       isSortable?: boolean;
     }
-    | {
+  | {
       type: "group";
       columns: TableSubColumn[];
     }
-  );
+);
 
 type TableProps = {
   className?: string;
@@ -68,6 +69,8 @@ type TableProps = {
 
   onEdit?: (rowIndex: number) => void | Promise<void>;
   onDelete?: (rowIndex: number) => void | Promise<void>;
+  onRevice?: (rowIndex: number) => void | Promise<void>;
+  onPindahKapal?: (rowIndex: number) => void | Promise<void>;
   onConfirm?: (rowIndex: number) => void | Promise<void>;
 
   isLoading?: boolean;
@@ -213,7 +216,7 @@ function TableHead(props: TableHeadProps) {
         className={clsx(
           "flex gap-[7.5px] 2xl:gap-2.5 items-center",
           (props.isParent || props.isChildren || props.isStatus) &&
-          "justify-center"
+            "justify-center"
         )}
       >
         <p className="text-gray-400 font-semibold">{props.value}</p>
@@ -227,21 +230,21 @@ type TableCell = {};
 
 type TableCellProps = (
   | {
-    type: ColumnType;
-    value: string;
-  }
+      type: ColumnType;
+      value: string;
+    }
   | {
-    type: "date";
-    value: Date;
-  }
+      type: "date";
+      value: Date;
+    }
   | {
-    type: "status";
-    value: boolean;
-  }
+      type: "status";
+      value: boolean;
+    }
   | {
-    type: "money";
-    value: number;
-  }
+      type: "money";
+      value: number;
+    }
 ) & {
   isChildren?: boolean;
 };
@@ -327,11 +330,17 @@ function getCellRows(
     .filter((row) => {
       if (dateRangeColumn) {
         const dateRange = moment(lodash.get(row, dateRangeColumn));
-        if (dateRangeValue === 'today' && !dateRange.isSame(moment(), 'day')) {
+        if (dateRangeValue === "today" && !dateRange.isSame(moment(), "day")) {
           return null;
-        } else if (dateRangeValue === 'yesterday' && !dateRange.isSame(moment().subtract(1, 'days'), 'day')) {
+        } else if (
+          dateRangeValue === "yesterday" &&
+          !dateRange.isSame(moment().subtract(1, "days"), "day")
+        ) {
           return null;
-        } else if (dateRangeValue === 'weeksAgo' && !dateRange.isSame(moment().subtract(1, 'weeks'), 'week')) {
+        } else if (
+          dateRangeValue === "weeksAgo" &&
+          !dateRange.isSame(moment().subtract(1, "weeks"), "week")
+        ) {
           return null;
         }
       }
@@ -434,8 +443,25 @@ export function Table(props: TableProps) {
   }, [maxPage]);
 
   const cellRows = React.useMemo(
-    () => getCellRows(columns, rows, rowTotal, page, dateRangeValue, props.search, props.dateRangeColumn),
-    [columns, rows, rowTotal, page, dateRangeValue, props.search, props.dateRangeColumn]
+    () =>
+      getCellRows(
+        columns,
+        rows,
+        rowTotal,
+        page,
+        dateRangeValue,
+        props.search,
+        props.dateRangeColumn
+      ),
+    [
+      columns,
+      rows,
+      rowTotal,
+      page,
+      dateRangeValue,
+      props.search,
+      props.dateRangeColumn,
+    ]
   );
 
   // State untuk menyimpan row yang di-select (index dari row-nya)
@@ -529,9 +555,48 @@ export function Table(props: TableProps) {
                   />
                 </>
               )}
-              {props.onConfirm && (
+              {props.onRevice && (
                 <>
                   {(props.onEdit || props.onDelete) && <VerticalLine />}
+                  <Button
+                    text="Revice"
+                    icon={<Backspace />}
+                    iconPosition="left"
+                    variant="normal"
+                    className={clsx(
+                      rowSelected === undefined
+                        ? "!border-gray-300 !text-gray-300"
+                        : "!border-gray-700 !text-gray-700 cursor-pointer"
+                    )}
+                    onClick={() => {
+                      if (rowSelected !== undefined) {
+                        setModal(
+                          <Modal
+                            type="confirm"
+                            title="Revice"
+                            onDone={async () => {
+                              if (props.onRevice) {
+                                await Promise.resolve(
+                                  props.onRevice(rowSelected)
+                                );
+                              }
+                            }}
+                          >
+                            <p className="text-lg text-gray-700 font-medium">
+                              Are you sure want to revice this row?
+                            </p>
+                          </Modal>
+                        );
+                      }
+                    }}
+                  />
+                </>
+              )}
+              {props.onConfirm && (
+                <>
+                  {(props.onEdit || props.onDelete || props.onRevice) && (
+                    <VerticalLine />
+                  )}
                   <Button
                     text="Confirm"
                     icon={<CheckSquare />}
@@ -545,6 +610,30 @@ export function Table(props: TableProps) {
                     onClick={() => {
                       if (rowSelected !== undefined && props.onConfirm) {
                         props.onConfirm(rowSelected);
+                      }
+                    }}
+                  />
+                </>
+              )}
+              {props.onPindahKapal && (
+                <>
+                  {(props.onEdit ||
+                    props.onDelete ||
+                    props.onRevice ||
+                    props.onConfirm) && <VerticalLine />}
+                  <Button
+                    text="Pindah Kapal"
+                    icon={<Pencil />}
+                    iconPosition="left"
+                    variant="normal"
+                    className={clsx(
+                      rowSelected === undefined
+                        ? "!border-gray-300 !text-gray-300"
+                        : "!border-gray-700 !text-gray-700 cursor-pointer"
+                    )}
+                    onClick={() => {
+                      if (rowSelected !== undefined && props.onPindahKapal) {
+                        props.onPindahKapal(rowSelected);
                       }
                     }}
                   />

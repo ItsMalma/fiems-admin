@@ -111,7 +111,15 @@ export default function Sider() {
               },
               {
                 name: "Inquiry Container",
-                url: "/marketing/inquiry",
+                childrens: [
+                  { name: "Unconfirmed", url: "/marketing/inquiry" },
+                  { name: "Reviced", url: "/marketing/inquiry/reviced" },
+                  { name: "Confirmed", url: "/marketing/inquiry/confirmed" },
+                ],
+              },
+              {
+                name: "Vessel Schedule",
+                url: "/marketing/vessel_schedule",
               },
             ],
           },
@@ -119,7 +127,19 @@ export default function Sider() {
             name: "Operational",
             icon: Gear,
             activeIcon: GearFill,
-            childrens: [{ name: "Job Order", url: "/operational/job_order" }],
+            childrens: [
+              { name: "Inquiry Container", url: "/operational/inquiry" },
+              {
+                name: "Job Order",
+                childrens: [
+                  { name: "Unconfirmed", url: "/operational/job_order" },
+                  {
+                    name: "Confirmed",
+                    url: "/operational/job_order/confirmed",
+                  },
+                ],
+              },
+            ],
           },
           // {
           //   name: "Operational",

@@ -1,36 +1,30 @@
 import clsx from "clsx";
-import moment from "moment";
 import React from "react";
-import { Calendar as CalendarIcon } from "react-bootstrap-icons";
+import { Clock } from "react-bootstrap-icons";
 
-type DatePickerProps = Omit<
+type InputTimeProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "onChange" | "type" | "defaultValue" | "value"
 > & {
-  onChange: (newValue: Date | string) => void;
-  value: Date | string;
+  onChange: (newValue: string) => void;
+  value: string;
   isError?: boolean;
 };
 
-const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
+const InputTime = React.forwardRef<HTMLInputElement, InputTimeProps>(
   ({ className, onChange, value, isError, ...props }, ref) => {
-    const inputDateRef = React.useRef<HTMLInputElement>(null);
-    const [calendarVisibility, setCalendarVisibility] = React.useState(false);
+    const inputTimeRef = React.useRef<HTMLInputElement>(null);
+    const [timeVisibility, setTimeVisibility] = React.useState(false);
 
     React.useEffect(() => {
-      if (!inputDateRef.current || props.disabled || props.readOnly) {
+      if (!inputTimeRef.current || props.disabled || props.readOnly) {
         return;
       }
 
-      if (calendarVisibility) {
-        inputDateRef.current.showPicker();
+      if (timeVisibility) {
+        inputTimeRef.current.showPicker();
       }
-    }, [calendarVisibility, props.disabled, props.readOnly]);
-
-    const inputValue = React.useMemo(() => {
-      if (!value) return "";
-      return moment(value).format("DD/MM/YYYY");
-    }, [value]);
+    }, [timeVisibility, props.disabled, props.readOnly]);
 
     return (
       <>
@@ -41,27 +35,27 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             (props.disabled || props.readOnly) && "!bg-gray-100",
             className
           )}
-          onClick={() => setCalendarVisibility(!calendarVisibility)}
+          onClick={() => setTimeVisibility(!timeVisibility)}
         >
           <input
             ref={ref}
             type="text"
             className="cursor-default overflow-auto grow bg-inherit outline-none border-none"
-            value={inputValue}
+            value={value}
             onChange={() => {}}
             readOnly
             {...props}
           />
           <span className="ml-auto">
-            <CalendarIcon />
+            <Clock />
           </span>
           <input
-            ref={inputDateRef}
-            type="date"
+            ref={inputTimeRef}
+            type="time"
             className="invisible absolute"
             onChange={(e) => {
-              onChange(e.target.valueAsDate ?? new Date());
-              setCalendarVisibility(false);
+              onChange(e.target.value);
+              setTimeVisibility(false);
             }}
           />
         </div>
@@ -70,6 +64,6 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
   }
 );
 
-DatePicker.displayName = "DatePicker";
+InputTime.displayName = "InputTime";
 
-export { DatePicker };
+export { InputTime };
