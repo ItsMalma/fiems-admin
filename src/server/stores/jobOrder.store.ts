@@ -38,7 +38,6 @@ export async function findJobOrderByNumber(jobOrderNumber: string) {
               },
             },
           },
-          factory: true,
         },
       },
       consignee: true,
@@ -65,7 +64,7 @@ export async function findJobOrderByNumber(jobOrderNumber: string) {
   return jobOrder;
 }
 
-export async function findAllJobOrder() {
+export async function findAllJobOrder(onlyConfirmed = false) {
   return await prisma.jobOrderConfirmation.findMany({
     include: {
       inquiryDetail: {
@@ -82,7 +81,6 @@ export async function findAllJobOrder() {
               },
             },
           },
-          factory: true,
           vesselSchedule: {
             include: {
               shipping: true,
@@ -104,6 +102,13 @@ export async function findAllJobOrder() {
       },
       vehicle: true,
     },
+    where: onlyConfirmed
+      ? {
+          td: { not: null },
+          ta: { not: null },
+          sandar: { not: null },
+        }
+      : {},
   });
 }
 

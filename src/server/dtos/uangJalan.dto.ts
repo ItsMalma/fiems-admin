@@ -40,16 +40,24 @@ export class UangJalanTableRow {
   static fromModel(
     model: Prisma.UangJalanGetPayload<{
       include: {
-        vendor: true;
-        route: true;
+        priceVendorDetail: {
+          include: {
+            route: true;
+            priceVendor: {
+              include: {
+                vendor: true;
+              };
+            };
+          };
+        };
       };
     }>
   ): UangJalanTableRow {
     return new UangJalanTableRow(
       moment(model.createDate).toString(),
       model.id,
-      `${model.vendorCode} (${model.vendor.name})`,
-      `${model.route.startDescription} - ${model.route.endDescription}`,
+      `${model.priceVendorDetail.priceVendor.vendor.code} (${model.priceVendorDetail.priceVendor.vendor.name})`,
+      `${model.priceVendorDetail.route.code} (${model.priceVendorDetail.route.startDescription} - ${model.priceVendorDetail.route.endDescription})`,
       model.truckType,
       model.containerSize,
       model.bbm,
@@ -80,8 +88,16 @@ export class UangJalanForm {
   static fromModel(
     model: Prisma.UangJalanGetPayload<{
       include: {
-        vendor: true;
-        route: true;
+        priceVendorDetail: {
+          include: {
+            route: true;
+            priceVendor: {
+              include: {
+                vendor: true;
+              };
+            };
+          };
+        };
       };
     }>
   ): UangJalanForm {
@@ -95,8 +111,8 @@ export class UangJalanForm {
       model.meal,
       model.etc,
       model.total,
-      model.vendor.code,
-      model.route.code
+      model.priceVendorDetail.priceVendor.vendor.code,
+      model.priceVendorDetail.route.code
     );
   }
 

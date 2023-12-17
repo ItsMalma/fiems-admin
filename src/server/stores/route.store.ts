@@ -39,7 +39,6 @@ export async function findRouteByCode(code: string) {
           quotationDetail: true,
         },
       },
-      uangJalan: true,
     },
   });
   if (!route) {
@@ -134,11 +133,6 @@ export async function deleteRoute(code: string): Promise<Route> {
     throw new TRPCError({
       code: "CONFLICT",
       message: `Route ${route.code} is used in Quotation ${route.shippingDetails[0].quotationDetail.quotationNumber}`,
-    });
-  if (route.uangJalan.length > 0)
-    throw new TRPCError({
-      code: "CONFLICT",
-      message: `Route ${route.code} is used in Uang Jalan ${route.uangJalan[0]}`,
     });
 
   return await prisma.route.delete({ where: { code: route.code } });

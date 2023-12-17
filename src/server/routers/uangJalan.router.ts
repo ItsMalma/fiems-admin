@@ -1,3 +1,4 @@
+import lodash from "lodash";
 import { DeepPartial } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -22,6 +23,88 @@ export const uangJalanRouter = router({
     );
   }),
 
+  getVendorOptions: publicProcedure.query(async () => {
+    return lodash.uniqBy(
+      (await findAllPriceVendorDetails(true)).map((priceVendorDetail) => ({
+        label: `${priceVendorDetail.priceVendor.vendor.code} (${priceVendorDetail.priceVendor.vendor.name})`,
+        value: priceVendorDetail.priceVendor.vendor.code,
+      })),
+      (opt) => opt.value
+    );
+  }),
+
+  getRouteOptions: publicProcedure
+    .input(
+      z.object({
+        vendor: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.vendor) return [];
+
+      return lodash.uniqBy(
+        (await findAllPriceVendorDetails(true))
+          .filter(
+            (priceVendorDetail) =>
+              priceVendorDetail.priceVendor.vendor.code === input.vendor
+          )
+          .map((priceVendorDetail) => ({
+            label: `${priceVendorDetail.route.code} (${priceVendorDetail.route.startDescription} - ${priceVendorDetail.route.endDescription})`,
+            value: priceVendorDetail.route.code,
+          })),
+        (opt) => opt.value
+      );
+    }),
+
+  getContainerSizeOptions: publicProcedure
+    .input(
+      z.object({
+        vendor: z.string().optional(),
+        route: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.vendor || !input.route) return [];
+
+      return lodash.uniqBy(
+        (await findAllPriceVendorDetails(true))
+          .filter(
+            (priceVendorDetail) =>
+              priceVendorDetail.priceVendor.vendor.code === input.vendor &&
+              priceVendorDetail.route.code === input.route
+          )
+          .map((priceVendorDetail) => ({
+            label: priceVendorDetail.containerSize,
+            value: priceVendorDetail.containerSize,
+          })),
+        (opt) => opt.value
+      );
+    }),
+
+  getTruckTypeOptions: publicProcedure
+    .input(
+      z.object({
+        vendor: z.string().optional(),
+        route: z.string().optional(),
+        containerSize: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.vendor || !input.route || !input.containerSize) return [];
+
+      const ujMapped = (await findAllPriceVendorDetails(true)).find(
+        (priceVendorDetail) =>
+          priceVendorDetail.priceVendor.vendor.code === input.vendor &&
+          priceVendorDetail.route.code === input.route &&
+          priceVendorDetail.containerSize === input.containerSize
+      )?.uangJalan;
+      if (!ujMapped) return [];
+
+      return UangJalanForm.truckTypeOptions.filter(
+        ({ value }) => !ujMapped.find((uj) => uj.truckType === value)
+      );
+    }),
+
   getForm: publicProcedure
     .input(
       z.object({
@@ -39,54 +122,7 @@ export const uangJalanRouter = router({
     .query<{
       value: DeepPartial<UangJalanForm>;
       defaultValue?: UangJalanForm;
-      vendors: { label: string; value: string }[];
-      routes: { label: string; value: string }[];
-      containerSizes: { label: string; value: string }[];
     }>(async ({ input }) => {
-      const vendors: { label: string; value: string }[] = [];
-      const routes: { label: string; value: string }[] = [];
-      const containerSizes: { label: string; value: string }[] = [];
-
-      const priceVendorDetails = await findAllPriceVendorDetails();
-      for (const priceVendorDetail of priceVendorDetails) {
-        if (
-          !vendors.find(
-            (vendor) =>
-              vendor.value === priceVendorDetail.priceVendor.vendor.code
-          )
-        ) {
-          vendors.push({
-            label: `${priceVendorDetail.priceVendor.vendor.code} (${priceVendorDetail.priceVendor.vendor.name})`,
-            value: priceVendorDetail.priceVendor.vendor.code,
-          });
-        }
-
-        if (
-          !!input.vendor &&
-          priceVendorDetail.priceVendor.vendor.code === input.vendor &&
-          !routes.find((route) => route.value === priceVendorDetail.route.code)
-        ) {
-          routes.push({
-            label: `${priceVendorDetail.route.code} (${priceVendorDetail.route.startDescription} - ${priceVendorDetail.route.endDescription})`,
-            value: priceVendorDetail.route.code,
-          });
-
-          if (
-            !!input.route &&
-            priceVendorDetail.route.code === input.route &&
-            !containerSizes.find(
-              (containerSize) =>
-                containerSize.value === priceVendorDetail.containerSize
-            )
-          ) {
-            containerSizes.push({
-              label: priceVendorDetail.containerSize,
-              value: priceVendorDetail.containerSize,
-            });
-          }
-        }
-      }
-
       const value: DeepPartial<UangJalanForm> = {};
 
       let defaultValue: UangJalanForm | undefined = undefined;
@@ -99,7 +135,7 @@ export const uangJalanRouter = router({
       value.total =
         input.bbm + input.toll + input.labourCost + input.meal + input.etc;
 
-      return { value, defaultValue, vendors, routes, containerSizes };
+      return { value, defaultValue };
     }),
 
   save: publicProcedure

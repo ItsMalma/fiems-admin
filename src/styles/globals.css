@@ -4,12 +4,7 @@
 
 * {
   animation-duration: 0s !important;
-  scrollbar-width: none;
   box-sizing: border-box;
-}
-
-*::-webkit-scrollbar {
-  display: none;
 }
 
 html {
@@ -20,4 +15,22 @@ html {
   html {
     font-size: 16px;
   }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  background-color: inherit;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 6px;
+  background-color: inherit;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  @apply bg-slate-300 rounded;
 }

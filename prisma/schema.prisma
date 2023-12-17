@@ -54,7 +54,6 @@ model Factory {
   quotations        Quotation[]
   quotationDetails  QuotationDetail[]
   purchaseInquiries Inquiry[]         @relation("purchase")
-  inquiryDetails    InquiryDetail[]
 }
 
 model Vendor {
@@ -75,7 +74,6 @@ model Vendor {
   status             Boolean                         @default(true)
   priceVendors       PriceVendor[]
   vehicles           Vehicle[]
-  uangJalan          UangJalan[]
   trackingAsal       QuotationDetailTrackingAsal[]
   trackingTujuan     QuotationDetailTrackingTujuan[]
   consigneeJobOrders JobOrderConfirmation[]
@@ -114,7 +112,6 @@ model Route {
   createDate           DateTime                        @default(now())
   priceVendorDetails   PriceVendorDetail[]
   priceShippingDetails PriceShippingDetail[]
-  uangJalan            UangJalan[]
   quotationDetails     QuotationDetail[]
   trackingAsal         QuotationDetailTrackingAsal[]
   trackingTujuan       QuotationDetailTrackingTujuan[]
@@ -187,20 +184,19 @@ model Vessel {
 }
 
 model UangJalan {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  vendor        Vendor   @relation(fields: [vendorCode], references: [code], onDelete: Restrict)
-  vendorCode    String   @db.String
-  route         Route    @relation(fields: [routeCode], references: [code], onDelete: Restrict)
-  routeCode     String   @db.String
-  truckType     String
-  containerSize String
-  bbm           Int
-  toll          Int
-  labourCost    Int
-  meal          Int
-  etc           Int
-  total         Int
-  createDate    DateTime @default(now())
+  id                            String                         @id @default(auto()) @map("_id") @db.ObjectId
+  priceVendorDetail             PriceVendorDetail              @relation(fields: [priceVendorDetailID], references: [id], onDelete: Restrict)
+  priceVendorDetailID           String                         @db.ObjectId
+  truckType                     String
+  containerSize                 String
+  bbm                           Int
+  toll                          Int
+  labourCost                    Int
+  meal                          Int
+  etc                           Int
+  total                         Int
+  createDate                    DateTime                       @default(now())
+  suratPerintahMuatDanUangJalan SuratPerintahMuatDanUangJalan?
 }
 
 model PriceFactory {
@@ -232,6 +228,7 @@ model PriceVendorDetail {
   cleaning              Int
   materai               Int
   jobOrderConfirmations JobOrderConfirmation[]
+  uangJalan             UangJalan[]
 }
 
 model PriceVendor {
@@ -445,8 +442,6 @@ model InquiryDetail {
   jobOrder         JobOrder
   typeOrder        TypeOrder
   loadDate         DateTime
-  factory          Factory               @relation(fields: [factoryCode], references: [code], onDelete: Restrict)
-  factoryCode      String                @db.String
   priceFactory     PriceFactory          @relation(fields: [priceFactoryID], references: [id], onDelete: Restrict)
   priceFactoryID   String                @db.ObjectId
   vesselSchedule   VesselSchedule        @relation(fields: [vesselScheduleID], references: [id], onDelete: Restrict)
@@ -480,25 +475,35 @@ model VesselSchedule {
 }
 
 model JobOrderConfirmation {
-  number              String            @id @map("_id") @db.String
-  inquiryDetail       InquiryDetail     @relation(fields: [inquiryDetailID], references: [id], onDelete: Restrict)
-  inquiryDetailID     String            @unique @db.ObjectId
-  roNumber            String            @db.String
-  consignee           Vendor            @relation(fields: [consigneeCode], references: [code], onDelete: Restrict)
-  consigneeCode       String            @db.String
-  stuffingDate        DateTime
-  priceVendorDetail   PriceVendorDetail @relation(fields: [priceVendorDetailID], references: [id], onDelete: Restrict)
-  priceVendorDetailID String            @db.ObjectId
-  vehicle             Vehicle           @relation(fields: [vehicleID], references: [id], onDelete: Restrict)
-  vehicleID           String            @db.ObjectId
-  driverName          String
-  driverPhoneNumber   String
-  containerNumber1    String
-  sealNumber1         String
-  containerNumber2    String?
-  sealNumber2         String?
-  td                  DateTime?
-  ta                  DateTime?
-  sandar              DateTime?
-  createDate          DateTime          @default(now())
+  number                        String                         @id @map("_id") @db.String
+  inquiryDetail                 InquiryDetail                  @relation(fields: [inquiryDetailID], references: [id], onDelete: Restrict)
+  inquiryDetailID               String                         @unique @db.ObjectId
+  roNumber                      String                         @db.String
+  consignee                     Vendor                         @relation(fields: [consigneeCode], references: [code], onDelete: Restrict)
+  consigneeCode                 String                         @db.String
+  stuffingDate                  DateTime
+  priceVendorDetail             PriceVendorDetail              @relation(fields: [priceVendorDetailID], references: [id], onDelete: Restrict)
+  priceVendorDetailID           String                         @db.ObjectId
+  vehicle                       Vehicle                        @relation(fields: [vehicleID], references: [id], onDelete: Restrict)
+  vehicleID                     String                         @db.ObjectId
+  driverName                    String
+  driverPhoneNumber             String
+  containerNumber1              String
+  sealNumber1                   String
+  containerNumber2              String?
+  sealNumber2                   String?
+  td                            DateTime?
+  ta                            DateTime?
+  sandar                        DateTime?
+  createDate                    DateTime                       @default(now())
+  suratPerintahMuatDanUangJalan SuratPerintahMuatDanUangJalan?
+}
+
+model SuratPerintahMuatDanUangJalan {
+  number                     String               @id @map("_id") @db.String
+  jobOrderConfirmation       JobOrderConfirmation @relation(fields: [jobOrderConfirmationNumber], references: [number], onDelete: Restrict)
+  jobOrderConfirmationNumber String               @unique @db.String
+  uangJalan                  UangJalan            @relation(fields: [uangJalanID], references: [id], onDelete: Restrict)
+  uangJalanID                String               @unique @db.ObjectId
+  createDate                 DateTime             @default(now())
 }
