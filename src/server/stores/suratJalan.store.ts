@@ -24,7 +24,28 @@ export async function findSuratJalanByNumber(suratJalanNumber: string) {
   const spm = await prisma.suratJalan.findFirst({
     where: { number: suratJalanNumber },
     include: {
-      jobOrderConfirmation: true,
+      jobOrderConfirmation: {
+        include: {
+          inquiryDetail: {
+            include: {
+              priceFactory: {
+                include: {
+                  quotationDetail: {
+                    include: {
+                      factory: true,
+                      quotation: { include: { factory: true } },
+                    },
+                  },
+                },
+              },
+              vesselSchedule: { include: { shipping: true, vessel: true } },
+            },
+          },
+          priceVendorDetail: { include: { route: true, uangJalan: true } },
+          vehicle: true,
+          consignee: true,
+        },
+      },
       detailProducts: { include: { product: true } },
     },
   });
@@ -63,6 +84,7 @@ export async function findAllSuratJalan() {
         },
       },
       detailProducts: { include: { product: true } },
+      bast: true,
     },
   });
 }
@@ -77,7 +99,7 @@ export async function createSuratJalan(input: SuratJalanInput) {
       detailProducts: {
         create: input.details.map((d) => ({
           product: { connect: { skuCode: d.product } },
-          qty: d.quantity,
+          qty: d.qty,
           unit: d.unit,
         })),
       },

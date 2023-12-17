@@ -141,6 +141,7 @@ export default function Sider() {
               },
               { name: "SPM & UJ", url: "/operational/spm_uj" },
               { name: "Surat Jalan", url: "/operational/surat_jalan" },
+              { name: "BAST", url: "/operational/bast" },
             ],
           },
           // {

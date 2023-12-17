@@ -8,14 +8,11 @@ import {
 } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { trpc } from "@/libs/trpc";
-import { ProductForm } from "@/server/dtos/product.dto";
 import {
-  SuratJalanForm,
-  defaultSuratJalanDetailProductForm,
-  defaultSuratJalanForm,
-  suratJalanTypeProducts,
-  suratJalanValidationSchema,
-} from "@/server/dtos/suratJalan.dto";
+  BASTForm,
+  bastValidationSchema,
+  defaultBASTForm,
+} from "@/server/dtos/bast.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useToast from "@/stores/toast";
@@ -24,12 +21,12 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-export default function SuratJalanSavePage() {
+export default function BASTSavePage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
-    setTitle("Operational | Surat Jalan");
-    setActive(3, 3, 0);
+    setTitle("Operational | Berita Acara Serah Terima");
+    setActive(3, 4, 0);
   }, [setTitle, setActive]);
 
   const [appendIndex, setAppendIndex] = React.useState(0);
@@ -38,9 +35,9 @@ export default function SuratJalanSavePage() {
 
   const router = useRouter();
 
-  const methods = useForm<SuratJalanForm>({
-    defaultValues: defaultSuratJalanForm,
-    resolver: zodResolver(suratJalanValidationSchema),
+  const methods = useForm<BASTForm>({
+    defaultValues: defaultBASTForm,
+    resolver: zodResolver(bastValidationSchema),
   });
   const { reset, setValue } = methods;
   const values = methods.watch();
@@ -50,67 +47,81 @@ export default function SuratJalanSavePage() {
     [values.details, appendIndex]
   );
 
-  const nextNumberQuery = trpc.suratJalan.getNextNumber.useQuery();
+  const nextNumberQuery = trpc.bast.getNextNumber.useQuery();
   React.useEffect(() => {
     if (!nextNumberQuery.data) return;
 
     setValue("number", nextNumberQuery.data);
   }, [nextNumberQuery.data, setValue]);
 
-  const jobOrderOptionsQuery = trpc.suratJalan.getJobOrderOptions.useQuery();
+  const suratJalanOptionsQuery = trpc.bast.getSuratJalanOptions.useQuery();
 
-  const jobOrderQuery = trpc.jobOrders.getSingle.useQuery(values.jobOrder);
+  const suratJalanQuery = trpc.suratJalan.getSingle.useQuery(values.suratJalan);
   React.useEffect(() => {
-    if (!jobOrderQuery.data) return;
+    if (!suratJalanQuery.data) return;
 
-    const jo = jobOrderQuery.data;
+    const sj = suratJalanQuery.data;
+    setValue("shipmentOrDO", sj.shipmentOrDO);
+    setValue("jobOrder", sj.jobOrderConfirmation.number);
     setValue(
       "factory",
-      `${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`
+      `${sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`
     );
     setValue(
       "factoryAddress",
-      jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.address
+      sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail
+        .quotation.factory.address
     );
     setValue(
       "factoryCity",
-      jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.city
+      sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail
+        .quotation.factory.city
     );
-    setValue("consignee", `${jo.consignee.code} (${jo.consignee.name})`);
-    setValue("consigneeAddress", jo.consignee.address);
-    setValue("consigneeCity", jo.consignee.city);
-    setValue("vehicle", jo.vehicle.truckNumber);
-    setValue("containerNumber1", jo.containerNumber1);
-    setValue("sealNumber1", jo.sealNumber1);
-    setValue("containerNumber2", jo.containerNumber2 ?? "");
-    setValue("sealNumber2", jo.sealNumber2 ?? "");
-  }, [jobOrderQuery.data, setValue]);
+    setValue(
+      "consignee",
+      `${sj.jobOrderConfirmation.consignee.code} (${sj.jobOrderConfirmation.consignee.name})`
+    );
+    setValue("consigneeAddress", sj.jobOrderConfirmation.consignee.address);
+    setValue("consigneeCity", sj.jobOrderConfirmation.consignee.city);
+    setValue("vehicle", sj.jobOrderConfirmation.vehicle.truckNumber);
+    setValue(
+      "shipping",
+      `${sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.shipping.code} (${sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.shipping.name})`
+    );
+    setValue(
+      "vessel",
+      sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.vessel.name
+    );
+    setValue(
+      "voyage",
+      sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.voyage
+    );
+    setValue("containerNumber1", sj.jobOrderConfirmation.containerNumber1);
+    setValue("sealNumber1", sj.jobOrderConfirmation.sealNumber1);
+    setValue(
+      "containerNumber2",
+      sj.jobOrderConfirmation.containerNumber2 ?? ""
+    );
+    setValue("sealNumber2", sj.jobOrderConfirmation.sealNumber2 ?? "");
+    setValue(
+      "details",
+      sj.detailProducts.map((dp) => ({
+        product: `${dp.product.skuCode} (${dp.product.name})`,
+        qty: dp.qty,
+        unit: dp.unit,
+      }))
+    );
+  }, [suratJalanQuery.data, setValue]);
 
-  const productOptionsQuery = trpc.suratJalan.getProductOptions.useQuery();
-
-  const productQuery = trpc.products.getSingle.useQuery(detail.product);
-  const productUnitOptions = React.useMemo(() => {
-    if (!productQuery.data) return [];
-
-    switch (productQuery.data.type) {
-      case "Product":
-        return ProductForm.productUnitOptions;
-      case "Sparepart":
-        return ProductForm.sparepartUnitOptions;
-      case "ATK":
-        return ProductForm.atkUnitOptions;
-    }
-  }, [productQuery.data]);
-
-  const saveMutation = trpc.suratJalan.save.useMutation();
+  const saveMutation = trpc.bast.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync(data);
 
-    await router.push("/operational/surat_jalan");
+    await router.push("/operational/bast");
   });
 
   return (
-    <SaveLayout onSave={onSubmit} title="Input Surat Jalan" isLoading={!values}>
+    <SaveLayout onSave={onSubmit} title="Input BAST" isLoading={!values}>
       <Form
         methods={methods}
         tabs={[
@@ -121,7 +132,7 @@ export default function SuratJalanSavePage() {
               {
                 type: "input",
                 id: "number",
-                label: "Surat Jalan Number",
+                label: "BAST Number",
                 input: <FormCode name="number" readOnly />,
               },
               {
@@ -132,14 +143,26 @@ export default function SuratJalanSavePage() {
               },
               {
                 type: "input",
-                id: "jobOrder",
-                label: "Job Order",
+                id: "suratJalan",
+                label: "Surat Jalan",
                 input: (
                   <FormSelect
-                    name="jobOrder"
-                    options={jobOrderOptionsQuery.data}
+                    name="suratJalan"
+                    options={suratJalanOptionsQuery.data}
                   />
                 ),
+              },
+              {
+                type: "input",
+                id: "jobOrder",
+                label: "Job Order",
+                input: <FormText name="jobOrder" readOnly />,
+              },
+              {
+                type: "input",
+                id: "shipmentOrDO",
+                label: "Shipment / DO",
+                input: <FormCounter name="shipmentOrDO" min={0} readOnly />,
               },
               { type: "separator" },
               {
@@ -193,9 +216,21 @@ export default function SuratJalanSavePage() {
               },
               {
                 type: "input",
-                id: "shipmentOrDO",
-                label: "Shipment / DO",
-                input: <FormCounter name="shipmentOrDO" min={0} />,
+                id: "shipping",
+                label: "Shipping",
+                input: <FormText name="shipping" readOnly />,
+              },
+              {
+                type: "input",
+                id: "vessel",
+                label: "Vessel",
+                input: <FormText name="vessel" readOnly />,
+              },
+              {
+                type: "input",
+                id: "voyage",
+                label: "Voyage",
+                input: <FormText name="voyage" readOnly />,
               },
               {
                 type: "input",
@@ -221,18 +256,6 @@ export default function SuratJalanSavePage() {
                 label: "Seal Number",
                 input: <FormText name="sealNumber2" readOnly />,
               },
-              { type: "separator" },
-              {
-                type: "input",
-                id: "typeProduct",
-                label: "Type Product",
-                input: (
-                  <FormSelect
-                    name="typeProduct"
-                    options={suratJalanTypeProducts}
-                  />
-                ),
-              },
             ],
           },
           {
@@ -243,31 +266,26 @@ export default function SuratJalanSavePage() {
                 type: "input",
                 id: "product",
                 label: "Product",
-                input: (
-                  <FormSelect
-                    name="product"
-                    options={productOptionsQuery.data}
-                  />
-                ),
+                input: <FormText name="product" readOnly />,
               },
               {
                 type: "input",
                 id: "qty",
                 label: "Quantity",
-                input: <FormCounter name="qty" min={0} />,
+                input: <FormCounter name="qty" min={0} readOnly />,
               },
               {
                 type: "input",
                 id: "unit",
                 label: "Satuan",
-                input: <FormSelect name="unit" options={productUnitOptions} />,
+                input: <FormText name="unit" readOnly />,
               },
             ],
             isAppend: true,
             itemName: "Detail",
             fieldName: "details",
-            defaultValue: defaultSuratJalanDetailProductForm,
             onChangeItem: (index) => setAppendIndex(index),
+            readOnly: true,
           },
         ]}
       />

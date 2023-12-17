@@ -41,12 +41,12 @@ export const suratJalanTypeProducts: SelectOption[] = Object.values(
 
 export type SuratJalanDetailProductForm = {
   product: string;
-  quantity: number;
+  qty: number;
   unit: string;
 };
 export const defaultSuratJalanDetailProductForm: SuratJalanDetailProductForm = {
   product: "",
-  quantity: 0,
+  qty: 0,
   unit: "",
 };
 
@@ -96,7 +96,7 @@ export const suratJalanValidationSchema = z.object({
   details: validateAppend(
     z.object({
       product: validateCode(validateProductCode),
-      quantity: validateCounter(0),
+      qty: validateCounter(0),
       unit: validateText(),
     })
   ),

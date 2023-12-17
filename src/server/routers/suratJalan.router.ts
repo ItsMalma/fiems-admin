@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   SuratJalanTableRow,
   suratJalanValidationSchema,
@@ -8,6 +9,7 @@ import {
   createSuratJalan,
   findAllSuratJalan,
   findNextSuratJalanNumber,
+  findSuratJalanByNumber,
 } from "../stores/suratJalan.store";
 import { publicProcedure, router } from "../trpc";
 
@@ -15,6 +17,14 @@ export const suratJalanRouter = router({
   getNextNumber: publicProcedure.query(
     async () => await findNextSuratJalanNumber()
   ),
+
+  getSingle: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input }) => {
+      if (!input) return null;
+
+      return await findSuratJalanByNumber(input);
+    }),
 
   save: publicProcedure
     .input(suratJalanValidationSchema)

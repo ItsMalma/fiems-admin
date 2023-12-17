@@ -1,5 +1,6 @@
 import { router } from "../trpc";
 import { authRouter } from "./auth.router";
+import { bastRouter } from "./bast.router";
 import { coasRouter } from "./coas.router";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
@@ -39,6 +40,7 @@ export const appRouter = router({
   jobOrders: jobOrdersRouter,
   spm: spmRouter,
   suratJalan: suratJalanRouter,
+  bast: bastRouter,
 });
 
 export type AppRouter = typeof appRouter;
