@@ -473,6 +473,7 @@ model VesselSchedule {
   eta                 DateTime
   createDate          DateTime        @default(now())
   inquiryDetails      InquiryDetail[]
+  packingLists        PackingList[]
 }
 
 model JobOrderConfirmation {
@@ -499,6 +500,8 @@ model JobOrderConfirmation {
   createDate                    DateTime                       @default(now())
   suratPerintahMuatDanUangJalan SuratPerintahMuatDanUangJalan?
   suratJalan                    SuratJalan?
+  packingList                   PackingList?                   @relation(fields: [packingListNumber], references: [number])
+  packingListNumber             String?                        @db.String
 }
 
 model SuratPerintahMuatDanUangJalan {
@@ -542,4 +545,12 @@ model BeritaAcaraSerahTerima {
   suratJalan       SuratJalan @relation(fields: [suratJalanNumber], references: [number], onDelete: Restrict)
   suratJalanNumber String     @unique @db.String
   createDate       DateTime   @default(now())
+}
+
+model PackingList {
+  number             String                 @id @map("_id") @db.String
+  vesselSchedule     VesselSchedule         @relation(fields: [vesselScheduleID], references: [id], onDelete: Restrict)
+  vesselScheduleID   String                 @db.ObjectId
+  detailRealisations JobOrderConfirmation[]
+  createDate         DateTime               @default(now())
 }

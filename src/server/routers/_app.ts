@@ -6,6 +6,7 @@ import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
 import { inquiriesRouter } from "./inquiries.router";
 import { jobOrdersRouter } from "./jobOrders.router";
+import { packingListRouter } from "./packingList.router";
 import { portsRouter } from "./ports.router";
 import { pricesRouter } from "./price.router";
 import { productCategoriesRouter } from "./productCategories.router";
@@ -41,6 +42,7 @@ export const appRouter = router({
   spm: spmRouter,
   suratJalan: suratJalanRouter,
   bast: bastRouter,
+  packingList: packingListRouter,
 });
 
 export type AppRouter = typeof appRouter;
