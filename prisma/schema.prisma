@@ -291,13 +291,14 @@ enum ProductType {
 }
 
 model Product {
-  skuCode             String           @id @map("_id") @db.String
-  type                ProductType
-  productCategory     ProductCategory? @relation(fields: [productCategoryReff], references: [reff], onDelete: Restrict)
-  productCategoryReff String?          @db.String
-  name                String
-  unit                String
-  createDate          DateTime         @default(now())
+  skuCode                  String                    @id @map("_id") @db.String
+  type                     ProductType
+  productCategory          ProductCategory?          @relation(fields: [productCategoryReff], references: [reff], onDelete: Restrict)
+  productCategoryReff      String?                   @db.String
+  name                     String
+  unit                     String
+  createDate               DateTime                  @default(now())
+  suratJalanDetailProducts SuratJalanDetailProduct[]
 }
 
 model MainCOA {
@@ -497,6 +498,7 @@ model JobOrderConfirmation {
   sandar                        DateTime?
   createDate                    DateTime                       @default(now())
   suratPerintahMuatDanUangJalan SuratPerintahMuatDanUangJalan?
+  suratJalan                    SuratJalan?
 }
 
 model SuratPerintahMuatDanUangJalan {
@@ -506,4 +508,30 @@ model SuratPerintahMuatDanUangJalan {
   uangJalan                  UangJalan            @relation(fields: [uangJalanID], references: [id], onDelete: Restrict)
   uangJalanID                String               @unique @db.ObjectId
   createDate                 DateTime             @default(now())
+}
+
+enum SuratJalanTypeProduct {
+  Motor
+  ProductFMCG
+  RawMaterial
+}
+
+model SuratJalan {
+  number                     String                    @id @map("_id") @db.String
+  jobOrderConfirmation       JobOrderConfirmation      @relation(fields: [jobOrderConfirmationNumber], references: [number], onDelete: Restrict)
+  jobOrderConfirmationNumber String                    @unique @db.String
+  shipmentOrDO               Int
+  typeProduct                SuratJalanTypeProduct
+  detailProducts             SuratJalanDetailProduct[]
+  createDate                 DateTime                  @default(now())
+}
+
+model SuratJalanDetailProduct {
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  suratJalan       SuratJalan @relation(fields: [suratJalanNumber], references: [number], onDelete: Cascade)
+  suratJalanNumber String     @db.String
+  product          Product    @relation(fields: [productCode], references: [skuCode], onDelete: Restrict)
+  productCode      String     @db.String
+  qty              Int
+  unit             String
 }

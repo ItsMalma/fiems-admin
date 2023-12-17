@@ -1,7 +1,6 @@
-import { extractNumberInquiry } from "@/server/dtos/inquiry.dto";
 import prisma from "@/server/prisma";
 import { TRPCError } from "@trpc/server";
-import { SPMInput, createSPMNumber } from "../dtos/spm.dto";
+import { SPMInput, createSPMNumber, extractSPMNumber } from "../dtos/spm.dto";
 
 export async function findNextSPMNumber() {
   const lastSPM = await prisma.suratPerintahMuatDanUangJalan.findFirst({
@@ -11,7 +10,7 @@ export async function findNextSPMNumber() {
     return createSPMNumber(1);
   }
 
-  return createSPMNumber(extractNumberInquiry(lastSPM.number) + 1);
+  return createSPMNumber(extractSPMNumber(lastSPM.number) + 1);
 }
 
 export async function findSPMByNumber(spmNumber: string) {

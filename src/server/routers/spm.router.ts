@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { SPMTableRow, spmValidationSchema } from "../dtos/spm.dto";
+import { findAllJobOrder } from "../stores/jobOrder.store";
 import { createSPM, findAllSPM, findNextSPMNumber } from "../stores/spm.store";
 import { findAllUangJalan } from "../stores/uangJalan.store";
 import { publicProcedure, router } from "../trpc";
@@ -14,6 +15,15 @@ export const spmRouter = router({
     .mutation(async ({ input }) => {
       return await createSPM(input, input.uangJalan);
     }),
+
+  getJobOrderOptions: publicProcedure.query(async ({}) => {
+    return (await findAllJobOrder(true))
+      .filter((jo) => jo.suratPerintahMuatDanUangJalan === null)
+      .map((jo) => ({
+        label: jo.number,
+        value: jo.number,
+      }));
+  }),
 
   getUangJalan: publicProcedure
     .input(

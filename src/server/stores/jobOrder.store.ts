@@ -101,6 +101,8 @@ export async function findAllJobOrder(onlyConfirmed = false) {
         },
       },
       vehicle: true,
+      suratPerintahMuatDanUangJalan: true,
+      suratJalan: true,
     },
     where: onlyConfirmed
       ? {
