@@ -48,11 +48,13 @@ export async function createProduct(
     data: {
       skuCode,
       type: input.type as ProductType,
-      productCategory: {
-        connect: {
-          reff: input.category,
-        },
-      },
+      productCategory: input.category
+        ? {
+            connect: {
+              reff: input.category,
+            },
+          }
+        : {},
       name: input.name,
       unit: input.unit,
     },

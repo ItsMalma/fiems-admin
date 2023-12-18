@@ -145,6 +145,7 @@ export default function Sider() {
               { name: "Packing List", url: "/operational/packing_list" },
               { name: "Insurance", url: "/operational/insurance" },
               { name: "Vessel Schedule", url: "/operational/vessel_schedule" },
+              { name: "Request", url: "/operational/request" },
             ],
           },
           // {

@@ -13,6 +13,7 @@ import { pricesRouter } from "./price.router";
 import { productCategoriesRouter } from "./productCategories.router";
 import { productsRouter } from "./products.router";
 import { quotationsRouter } from "./quotations.router";
+import { requestRouter } from "./request.router";
 import { routesRouter } from "./routes.router";
 import { salesRouter } from "./sales.router";
 import { spmRouter } from "./spm.router";
@@ -43,8 +44,9 @@ export const appRouter = router({
   spm: spmRouter,
   suratJalan: suratJalanRouter,
   bast: bastRouter,
-  packingList: packingListRouter,
-  insurance: insuranceRouter,
+  packingLists: packingListRouter,
+  insurances: insuranceRouter,
+  requests: requestRouter,
 });
 
 export type AppRouter = typeof appRouter;

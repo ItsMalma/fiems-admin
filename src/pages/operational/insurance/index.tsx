@@ -26,7 +26,7 @@ export default function InsurancePage() {
   const [search, setSearch] = React.useState("");
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.insurance.getTableRows.useQuery();
+  const tableRowsQuery = trpc.insurances.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
