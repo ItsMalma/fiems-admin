@@ -11,12 +11,12 @@ import {
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 
-export default function BASTPage() {
+export default function InsurancePage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
-    setTitle("Operational | Berita Acara Serah Terima");
-    setActive(3, 4, 0);
+    setTitle("Operational | Insurance");
+    setActive(3, 6, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();
@@ -26,7 +26,7 @@ export default function BASTPage() {
   const [search, setSearch] = React.useState("");
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.bast.getTableRows.useQuery();
+  const tableRowsQuery = trpc.insurance.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
@@ -34,13 +34,13 @@ export default function BASTPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search BAST" onChange={setSearch} />
+        <Search placeholder="Search Insurance" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New BAST"
+            text="Add New Insurance"
             icon={<EnvelopePaperFill />}
             variant="filled"
-            onClick={() => router.push("/operational/bast/save")}
+            onClick={() => router.push("/operational/surat_jalan/save")}
           />
           <Button
             text="Import"
@@ -61,13 +61,37 @@ export default function BASTPage() {
         columns={[
           {
             id: "number",
-            header: "Surat Jalan Number",
+            header: "Insurance Number",
             type: "code",
             isSortable: true,
           },
           {
             id: "createDate",
             header: "Create Date",
+            type: "date",
+            isSortable: true,
+          },
+          {
+            id: "nilaiTertanggung",
+            header: "Nilai Tertanggung",
+            type: "money",
+            isSortable: true,
+          },
+          {
+            id: "premi",
+            header: "Premi",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "total",
+            header: "Total",
+            type: "money",
+            isSortable: true,
+          },
+          {
+            id: "td",
+            header: "TD",
             type: "date",
             isSortable: true,
           },

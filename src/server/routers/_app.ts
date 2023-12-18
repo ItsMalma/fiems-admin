@@ -5,6 +5,7 @@ import { coasRouter } from "./coas.router";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
 import { inquiriesRouter } from "./inquiries.router";
+import { insuranceRouter } from "./insurance.router";
 import { jobOrdersRouter } from "./jobOrders.router";
 import { packingListRouter } from "./packingList.router";
 import { portsRouter } from "./ports.router";
@@ -43,6 +44,7 @@ export const appRouter = router({
   suratJalan: suratJalanRouter,
   bast: bastRouter,
   packingList: packingListRouter,
+  insurance: insuranceRouter,
 });
 
 export type AppRouter = typeof appRouter;

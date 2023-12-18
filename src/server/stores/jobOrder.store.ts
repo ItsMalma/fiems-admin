@@ -38,6 +38,7 @@ export async function findJobOrderByNumber(jobOrderNumber: string) {
               },
             },
           },
+          vesselSchedule: { include: { shipping: true, vessel: true } },
         },
       },
       consignee: true,
@@ -103,6 +104,7 @@ export async function findAllJobOrder(onlyConfirmed = false) {
       vehicle: true,
       suratPerintahMuatDanUangJalan: true,
       suratJalan: true,
+      insurance: true,
     },
     where: onlyConfirmed
       ? {

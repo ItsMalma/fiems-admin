@@ -143,6 +143,8 @@ export default function Sider() {
               { name: "Surat Jalan", url: "/operational/surat_jalan" },
               { name: "BAST", url: "/operational/bast" },
               { name: "Packing List", url: "/operational/packing_list" },
+              { name: "Insurance", url: "/operational/insurance" },
+              { name: "Vessel Schedule", url: "/operational/vessel_schedule" },
             ],
           },
           // {

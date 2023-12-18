@@ -502,6 +502,7 @@ model JobOrderConfirmation {
   suratJalan                    SuratJalan?
   packingList                   PackingList?                   @relation(fields: [packingListNumber], references: [number])
   packingListNumber             String?                        @db.String
+  insurance                     Insurance?
 }
 
 model SuratPerintahMuatDanUangJalan {
@@ -553,4 +554,14 @@ model PackingList {
   vesselScheduleID   String                 @db.ObjectId
   detailRealisations JobOrderConfirmation[]
   createDate         DateTime               @default(now())
+}
+
+model Insurance {
+  number                     String               @id @map("_id") @db.String
+  jobOrderConfirmation       JobOrderConfirmation @relation(fields: [jobOrderConfirmationNumber], references: [number], onDelete: Restrict)
+  jobOrderConfirmationNumber String               @unique @db.String
+  nilaiTertanggung           Int
+  premi                      String
+  keterangan                 String
+  createDate                 DateTime             @default(now())
 }
