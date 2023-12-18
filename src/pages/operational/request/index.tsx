@@ -11,12 +11,12 @@ import {
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 
-export default function PackingListPage() {
+export default function RequestPage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
-    setTitle("Operational | Packing List");
-    setActive(3, 5, 0);
+    setTitle("Operational | Request");
+    setActive(3, 8, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();
@@ -26,7 +26,7 @@ export default function PackingListPage() {
   const [search, setSearch] = React.useState("");
   const [selectedRowIndex, setSelectedRowIndex] = React.useState<number>();
 
-  const tableRowsQuery = trpc.packingLists.getTableRows.useQuery();
+  const tableRowsQuery = trpc.requests.getTableRows.useQuery();
   React.useEffect(() => {
     tableRowsQuery.refetch();
   }, [current, tableRowsQuery]);
@@ -34,13 +34,13 @@ export default function PackingListPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white rounded-2xl shadow-sm">
-        <Search placeholder="Search Packing List" onChange={setSearch} />
+        <Search placeholder="Search Request" onChange={setSearch} />
         <div className="flex gap-3 2xl:gap-4">
           <Button
-            text="Add New Packing List"
+            text="Add New Request"
             icon={<EnvelopePaperFill />}
             variant="filled"
-            onClick={() => router.push("/operational/packing_list/save")}
+            onClick={() => router.push("/operational/request/save")}
           />
           <Button
             text="Import"
@@ -61,7 +61,7 @@ export default function PackingListPage() {
         columns={[
           {
             id: "number",
-            header: "Packing List Number",
+            header: "Request Number",
             type: "code",
             isSortable: true,
           },
@@ -72,8 +72,8 @@ export default function PackingListPage() {
             isSortable: true,
           },
           {
-            id: "vessel",
-            header: "Vessel",
+            id: "type",
+            header: "Type",
             type: "text",
             isSortable: true,
           },

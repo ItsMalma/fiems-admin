@@ -38,14 +38,14 @@ export default function InsuranceSavePage() {
   const { reset, setValue } = methods;
   const values = methods.watch();
 
-  const nextNumberQuery = trpc.insurance.getNextNumber.useQuery();
+  const nextNumberQuery = trpc.insurances.getNextNumber.useQuery();
   React.useEffect(() => {
     if (!nextNumberQuery.data) return;
 
     setValue("number", nextNumberQuery.data);
   }, [nextNumberQuery.data, setValue]);
 
-  const jobOrderOptionsQuery = trpc.insurance.getJobOrderOptions.useQuery();
+  const jobOrderOptionsQuery = trpc.insurances.getJobOrderOptions.useQuery();
 
   const jobOrderQuery = trpc.jobOrders.getSingle.useQuery(values.jobOrder);
   React.useEffect(() => {
@@ -90,7 +90,7 @@ export default function InsuranceSavePage() {
     );
   }, [setValue, values.nilaiTertanggung, values.premi]);
 
-  const saveMutation = trpc.insurance.save.useMutation();
+  const saveMutation = trpc.insurances.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync(data);
 

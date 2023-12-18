@@ -299,6 +299,7 @@ model Product {
   unit                     String
   createDate               DateTime                  @default(now())
   suratJalanDetailProducts SuratJalanDetailProduct[]
+  requestDetails           RequestDetail[]
 }
 
 model MainCOA {
@@ -564,4 +565,26 @@ model Insurance {
   premi                      String
   keterangan                 String
   createDate                 DateTime             @default(now())
+}
+
+enum TypeRequest {
+  Sparepart
+  ATK
+}
+
+model Request {
+  number      String          @id @map("_id") @db.String
+  typeRequest TypeRequest
+  details     RequestDetail[]
+  createDate  DateTime        @default(now())
+}
+
+model RequestDetail {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  request       Request @relation(fields: [requestNumber], references: [number], onDelete: Cascade)
+  requestNumber String  @db.String
+  product       Product @relation(fields: [productCode], references: [skuCode], onDelete: Restrict)
+  productCode   String  @db.String
+  qty           Int
+  remarks       String
 }

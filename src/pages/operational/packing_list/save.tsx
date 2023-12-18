@@ -54,7 +54,7 @@ export default function PackingListSavePage() {
     setValue("number", nextNumberQuery.data);
   }, [nextNumberQuery.data, setValue]);
 
-  const shippingOptionsQuery = trpc.packingList.getShippingOptions.useQuery();
+  const shippingOptionsQuery = trpc.packingLists.getShippingOptions.useQuery();
   React.useEffect(() => {
     if (!shippingOptionsQuery.data) return;
 
@@ -63,7 +63,7 @@ export default function PackingListSavePage() {
     }
   }, [shippingOptionsQuery.data, setValue, appendIndex]);
 
-  const vesselOptionsQuery = trpc.packingList.getVesselOptions.useQuery({
+  const vesselOptionsQuery = trpc.packingLists.getVesselOptions.useQuery({
     shipping: values.shipping,
   });
   React.useEffect(() => {
@@ -74,7 +74,7 @@ export default function PackingListSavePage() {
     }
   }, [vesselOptionsQuery.data, setValue, appendIndex]);
 
-  const voyageOptionsQuery = trpc.packingList.getVoyageOptions.useQuery({
+  const voyageOptionsQuery = trpc.packingLists.getVoyageOptions.useQuery({
     shipping: values.shipping,
     vessel: values.vessel,
   });
@@ -87,7 +87,7 @@ export default function PackingListSavePage() {
   }, [voyageOptionsQuery.data, setValue, appendIndex]);
 
   const detailRealisationsQuery =
-    trpc.packingList.getDetailRealisations.useQuery({
+    trpc.packingLists.getDetailRealisations.useQuery({
       shipping: values.shipping,
       vessel: values.vessel,
       voyage: values.voyage,
@@ -98,7 +98,7 @@ export default function PackingListSavePage() {
     setValue("details", detailRealisationsQuery.data);
   }, [detailRealisationsQuery.data, setValue]);
 
-  const saveMutation = trpc.packingList.save.useMutation();
+  const saveMutation = trpc.packingLists.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync(data);
 
