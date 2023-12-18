@@ -35,12 +35,11 @@ export default function UangJalanSavePage() {
     resolver: zodResolver(uangJalanInput),
   });
   const { setValue, reset } = methods;
-
-  const value = methods.watch();
+  const values = methods.watch();
 
   const [isDefault, setIsDefault] = React.useState(true);
   const formQuery = trpc.uangJalan.getForm.useQuery({
-    ...value,
+    ...values,
     id: queryID,
     isDefault,
   });
@@ -60,6 +59,24 @@ export default function UangJalanSavePage() {
     }
   }, [formQuery.data?.defaultValue, reset]);
 
+  const vendorOptionsQuery = trpc.uangJalan.getVendorOptions.useQuery();
+
+  const routeOptionsQuery = trpc.uangJalan.getRouteOptions.useQuery({
+    vendor: values.vendor,
+  });
+
+  const containerSizeOptionsQuery =
+    trpc.uangJalan.getContainerSizeOptions.useQuery({
+      vendor: values.vendor,
+      route: values.route,
+    });
+
+  const truckTypeOptionsQuery = trpc.uangJalan.getTruckTypeOptions.useQuery({
+    vendor: values.vendor,
+    route: values.route,
+    containerSize: values.containerSize,
+  });
+
   const saveMutation = trpc.uangJalan.save.useMutation();
 
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -72,7 +89,7 @@ export default function UangJalanSavePage() {
   });
 
   return (
-    <SaveLayout onSave={onSubmit} title="Input Uang Jalan" isLoading={!value}>
+    <SaveLayout onSave={onSubmit} title="Input Uang Jalan" isLoading={!values}>
       <Form
         methods={methods}
         tabs={[
@@ -94,10 +111,7 @@ export default function UangJalanSavePage() {
                 id: "vendor",
                 label: "Vendor",
                 input: (
-                  <FormSelect
-                    name="vendor"
-                    options={formQuery.data?.vendors ?? []}
-                  />
+                  <FormSelect name="vendor" options={vendorOptionsQuery.data} />
                 ),
               },
               {
@@ -107,8 +121,8 @@ export default function UangJalanSavePage() {
                 input: (
                   <FormSelect
                     name="route"
-                    options={formQuery.data?.routes ?? []}
-                    readOnly={!value.vendor}
+                    options={routeOptionsQuery.data}
+                    readOnly={!values.vendor}
                   />
                 ),
               },
@@ -119,8 +133,8 @@ export default function UangJalanSavePage() {
                 input: (
                   <FormSelect
                     name="containerSize"
-                    options={formQuery.data?.containerSizes ?? []}
-                    readOnly={!value.route}
+                    options={containerSizeOptionsQuery.data}
+                    readOnly={!values.route}
                   />
                 ),
               },
@@ -131,7 +145,7 @@ export default function UangJalanSavePage() {
                 input: (
                   <FormSelect
                     name="truckType"
-                    options={UangJalanForm.truckTypeOptions}
+                    options={truckTypeOptionsQuery.data}
                   />
                 ),
               },

@@ -6,8 +6,16 @@ import prisma from "../prisma";
 export async function findAllUangJalan() {
   return await prisma.uangJalan.findMany({
     include: {
-      vendor: true,
-      route: true,
+      priceVendorDetail: {
+        include: {
+          route: true,
+          priceVendor: {
+            include: {
+              vendor: true,
+            },
+          },
+        },
+      },
     },
   });
 }
@@ -16,8 +24,16 @@ export async function findUangJalanById(id: string) {
   const uangJalan = await prisma.uangJalan.findFirst({
     where: { id },
     include: {
-      vendor: true,
-      route: true,
+      priceVendorDetail: {
+        include: {
+          route: true,
+          priceVendor: {
+            include: {
+              vendor: true,
+            },
+          },
+        },
+      },
     },
   });
   if (!uangJalan) {
@@ -33,10 +49,22 @@ export async function findUangJalanById(id: string) {
 export async function createUangJalan(
   input: UangJalanInput
 ): Promise<UangJalan> {
+  const priceVendorDetail = await prisma.priceVendorDetail.findFirst({
+    where: {
+      priceVendor: { vendor: { code: input.vendor } },
+      route: { code: input.route },
+    },
+  });
+  if (!priceVendorDetail) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Price vendor with vendor ${input.vendor} and route ${input.route} not found`,
+    });
+  }
+
   return await prisma.uangJalan.create({
     data: {
-      vendor: { connect: { code: input.vendor } },
-      route: { connect: { code: input.route } },
+      priceVendorDetail: { connect: { id: priceVendorDetail.id } },
       truckType: input.truckType,
       containerSize: input.containerSize,
       bbm: input.bbm,
@@ -53,11 +81,25 @@ export async function updateUangJalan(
   id: string,
   input: UangJalanInput
 ): Promise<UangJalan> {
+  const priceVendorDetail = await prisma.priceVendorDetail.findFirst({
+    where: {
+      priceVendor: { vendor: { code: input.vendor } },
+      route: { code: input.route },
+    },
+  });
+  if (!priceVendorDetail) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Price vendor with vendor ${input.vendor} and route ${input.route} not found`,
+    });
+  }
+
   return await prisma.uangJalan.update({
     where: {
       id,
     },
     data: {
+      priceVendorDetail: { connect: { id: priceVendorDetail.id } },
       truckType: input.truckType,
       containerSize: input.containerSize,
       bbm: input.bbm,

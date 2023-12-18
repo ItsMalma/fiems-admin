@@ -51,11 +51,6 @@ export async function findFactoryByCode(code: string) {
       quotations: true,
       quotationDetails: true,
       purchaseInquiries: true,
-      inquiryDetails: {
-        include: {
-          inquiry: true,
-        },
-      },
     },
   });
   if (!factory) {
@@ -75,7 +70,6 @@ export async function findVendorByCode(code: string) {
       priceVendors: true,
       trackingAsal: { include: { quotationDetail: true } },
       trackingTujuan: { include: { quotationDetail: true } },
-      uangJalan: true,
       vehicles: true,
     },
   });
@@ -339,11 +333,6 @@ export async function deleteCustomer(
           code: "CONFLICT",
           message: `Factory ${factory.code} is used in Inquiry ${factory.purchaseInquiries[0].number}`,
         });
-      if (factory.inquiryDetails.length > 0)
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `Factory ${factory.code} is used in Inquiry ${factory.inquiryDetails[0].inquiry.number}`,
-        });
       return await prisma.factory.delete({ where: { code: factory.code } });
     case "Vendor":
       const vendor = await findVendorByCode(code);
@@ -366,11 +355,6 @@ export async function deleteCustomer(
         throw new TRPCError({
           code: "CONFLICT",
           message: `Vendor ${vendor.code} is used in Quotation ${vendor.trackingTujuan[0].quotationDetail.quotationNumber}`,
-        });
-      if (vendor.uangJalan.length > 0)
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: `Vendor ${vendor.code} is used in Uang Jalan ${vendor.uangJalan[0]}`,
         });
       return await prisma.vendor.delete({ where: { code: vendor.code } });
     case "Shipping":

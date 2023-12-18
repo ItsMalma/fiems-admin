@@ -20,6 +20,10 @@ export const productInput = z.object({
 });
 export type ProductInput = z.infer<typeof productInput>;
 
+export function validateProductCode(code: string): boolean {
+  return /^SKU\d{4}$/.test(code);
+}
+
 export const createProductSKUCode = (skuCodeNumber: number): string => {
   return "SKU" + skuCodeNumber.toString().padStart(4, "0");
 };

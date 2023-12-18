@@ -70,12 +70,18 @@ export async function findAllPriceVendors() {
   });
 }
 
-export async function findAllPriceVendorDetails() {
+export async function findAllPriceVendorDetails(onlyActive = false) {
   return await prisma.priceVendorDetail.findMany({
     include: {
       priceVendor: { include: { vendor: true } },
       route: true,
       port: true,
+      uangJalan: true,
+    },
+    where: {
+      priceVendor: {
+        status: true,
+      },
     },
   });
 }

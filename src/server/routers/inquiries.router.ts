@@ -62,8 +62,8 @@ export const inquiriesRouter = router({
               jobOrder: detail.jobOrder,
               typeOrder: detail.typeOrder,
               loadDate: detail.loadDate,
-              factory: detail.factory.code,
-              factoryCity: detail.factory.city,
+              factory: detail.priceFactory.quotationDetail.factory.code,
+              factoryCity: detail.priceFactory.quotationDetail.factory.city,
               route: detail.priceFactory.quotationDetail.route.code,
               containerSize: detail.priceFactory.quotationDetail.containerSize,
               serviceType:
@@ -300,8 +300,9 @@ export const inquiriesRouter = router({
           jobOrder: inquiryDetail.jobOrder,
           typeOrder: inquiryDetail.typeOrder,
           loadDate: inquiryDetail.loadDate,
-          deliveryTo: `${inquiryDetail.factory.code} (${inquiryDetail.factory.name})`,
-          deliveryToCity: inquiryDetail.factory.city,
+          deliveryTo: `${inquiryDetail.priceFactory.quotationDetail.factory.code} (${inquiryDetail.priceFactory.quotationDetail.factory.name})`,
+          deliveryToCity:
+            inquiryDetail.priceFactory.quotationDetail.factory.city,
           route: `${inquiryDetail.priceFactory.quotationDetail.route.code} (${inquiryDetail.priceFactory.quotationDetail.route.startDescription} - ${inquiryDetail.priceFactory.quotationDetail.route.endDescription})`,
           containerSize:
             inquiryDetail.priceFactory.quotationDetail.containerSize,

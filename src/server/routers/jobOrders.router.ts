@@ -15,6 +15,7 @@ import {
   confirmJobOrder,
   createJobOrder,
   findAllJobOrder,
+  findJobOrderByNumber,
   findNextJobOrderNumber,
   pindahKapalJobOrder,
   reviceJobOrder,
@@ -31,6 +32,20 @@ export const jobOrdersRouter = router({
   getNextNumber: publicProcedure.query(
     async () => await findNextJobOrderNumber()
   ),
+
+  getOptions: publicProcedure.query(async () => {
+    return (await findAllJobOrder(true)).map((jobOrder) => ({
+      label: jobOrder.number,
+      value: jobOrder.number,
+    }));
+  }),
+
+  getSingle: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input }) => {
+      if (!input) return;
+      return await findJobOrderByNumber(input);
+    }),
 
   getInquiryDetail: publicProcedure
     .input(z.string().optional())
@@ -51,11 +66,11 @@ export const jobOrdersRouter = router({
         eta: inquiryDetail.vesselSchedule.eta,
         loadDate: inquiryDetail.loadDate,
         route: `${inquiryDetail.priceFactory.quotationDetail.route.code} (${inquiryDetail.priceFactory.quotationDetail.route.startDescription} - ${inquiryDetail.priceFactory.quotationDetail.route.endDescription})`,
-        factory: `${inquiryDetail.priceFactory.quotationDetail.factory.code} (${inquiryDetail.priceFactory.quotationDetail.factory.name})`,
+        factory: `${inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`,
         factoryAddress:
-          inquiryDetail.priceFactory.quotationDetail.factory.address,
-        deliveryTo: `${inquiryDetail.factory.code} (${inquiryDetail.factory.name})`,
-        deliveryToCity: inquiryDetail.factory.city,
+          inquiryDetail.priceFactory.quotationDetail.quotation.factory.address,
+        deliveryTo: `${inquiryDetail.priceFactory.quotationDetail.factory.code} (${inquiryDetail.priceFactory.quotationDetail.factory.name})`,
+        deliveryToCity: inquiryDetail.priceFactory.quotationDetail.factory.city,
         containerSize: inquiryDetail.priceFactory.quotationDetail.containerSize,
         containerType: inquiryDetail.priceFactory.quotationDetail.containerType,
         typeOrder: inquiryDetail.typeOrder,
@@ -152,11 +167,13 @@ export const jobOrdersRouter = router({
           eta: jobOrder.inquiryDetail.vesselSchedule.eta,
           loadDate: jobOrder.inquiryDetail.loadDate,
           route: `${jobOrder.inquiryDetail.priceFactory.quotationDetail.route.code} (${jobOrder.inquiryDetail.priceFactory.quotationDetail.route.startDescription} - ${jobOrder.inquiryDetail.priceFactory.quotationDetail.route.endDescription})`,
-          factory: `${jobOrder.inquiryDetail.priceFactory.quotationDetail.factory.code} (${jobOrder.inquiryDetail.priceFactory.quotationDetail.factory.name})`,
+          factory: `${jobOrder.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${jobOrder.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`,
           factoryAddress:
-            jobOrder.inquiryDetail.priceFactory.quotationDetail.factory.address,
-          deliveryTo: `${jobOrder.inquiryDetail.factory.code} (${jobOrder.inquiryDetail.factory.name})`,
-          deliveryToCity: jobOrder.inquiryDetail.factory.city,
+            jobOrder.inquiryDetail.priceFactory.quotationDetail.quotation
+              .factory.address,
+          deliveryTo: `${jobOrder.inquiryDetail.priceFactory.quotationDetail.factory.code} (${jobOrder.inquiryDetail.priceFactory.quotationDetail.factory.name})`,
+          deliveryToCity:
+            jobOrder.inquiryDetail.priceFactory.quotationDetail.factory.city,
           containerSize:
             jobOrder.inquiryDetail.priceFactory.quotationDetail.containerSize,
           containerType:

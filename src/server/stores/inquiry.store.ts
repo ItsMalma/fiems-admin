@@ -41,6 +41,7 @@ export async function findInquiryByNumber(inquiryNumber: string) {
                       },
                     },
                   },
+                  factory: true,
                   route: true,
                 },
               },
@@ -52,7 +53,6 @@ export async function findInquiryByNumber(inquiryNumber: string) {
               vessel: true,
             },
           },
-          factory: true,
         },
       },
     },
@@ -77,7 +77,6 @@ export async function findInquiryDetailByID(id: string) {
           purchase: { include: { group: true } },
         },
       },
-      factory: { include: { group: true } },
       vesselSchedule: {
         include: {
           shipping: true,
@@ -116,7 +115,6 @@ export async function findAllInquiryDetails() {
           purchase: { include: { group: true } },
         },
       },
-      factory: { include: { group: true } },
       vesselSchedule: {
         include: {
           shipping: true,
@@ -127,6 +125,7 @@ export async function findAllInquiryDetails() {
         include: {
           quotationDetail: {
             include: {
+              factory: true,
               route: true,
               quotation: { include: { factory: { include: { group: true } } } },
             },
@@ -249,7 +248,6 @@ export async function updateInquiry(
             jobOrder: inputDetail.jobOrder as JobOrder,
             typeOrder: inputDetail.typeOrder as TypeOrder,
             loadDate: inputDetail.loadDate,
-            factory: { connect: { code: input.factory } },
             priceFactory: {
               connect: {
                 id: priceFactory.id,
@@ -306,7 +304,6 @@ export async function updateInquiry(
             jobOrder: inputDetail.jobOrder as JobOrder,
             typeOrder: inputDetail.typeOrder as TypeOrder,
             loadDate: inputDetail.loadDate,
-            factory: { connect: { code: input.factory } },
             priceFactory: {
               connect: {
                 id: priceFactory.id,
