@@ -120,12 +120,14 @@ function FormControls(props: FormControlsProps) {
 
       if (isFull(control)) rowIndex++;
 
+      const row = rows[rowIndex];
       if (i + 1 < props.controls.length) {
         const nextControl = props.controls[i + 1];
-        const row = rows[rowIndex];
         if (isFull(nextControl) && row && row.length < 2) {
           rows[rowIndex++].push({ type: "blank" });
         }
+      } else if (row && row.length < 2) {
+        rows[rowIndex++].push({ type: "blank" });
       }
     }
     return rows;
