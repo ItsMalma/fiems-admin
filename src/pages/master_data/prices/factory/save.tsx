@@ -27,7 +27,7 @@ export default function SavePriceFactoryPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Factory");
-    setActive(1, 6, 0);
+    setActive(0, 6, 0);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();

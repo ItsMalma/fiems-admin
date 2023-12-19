@@ -114,6 +114,9 @@ export async function createBAST(input: BASTInput) {
     data: {
       number: await findNextBASTNumber(),
       suratJalan: { connect: { number: input.suratJalan } },
+      detailProducts: {
+        connect: input.details.map((inputDetail) => ({ id: inputDetail.id })),
+      },
     },
   });
 }

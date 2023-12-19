@@ -262,7 +262,7 @@ export default function SaveQuotationPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Marketing | Price Calculation");
-    setActive(2, 0, 0);
+    setActive(1, 0, 0);
   }, [setTitle, setActive]);
 
   // Mendapatkan router

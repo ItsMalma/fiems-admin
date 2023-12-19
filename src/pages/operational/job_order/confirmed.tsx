@@ -96,7 +96,7 @@ export default function ConfirmedJobOrderPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Job Order");
-    setActive(3, 1, 1);
+    setActive(2, 1, 1);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

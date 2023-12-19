@@ -27,7 +27,7 @@ export default function COASave() {
 
   React.useEffect(() => {
     setTitle("Master Data | Account COA");
-    setActive(1, 10, 0);
+    setActive(0, 10, 0);
   }, [setTitle, setActive]);
 
   const router = useRouter();

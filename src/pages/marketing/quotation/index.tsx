@@ -24,7 +24,7 @@ export default function QuotationPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Marketing | Form Quotation");
-    setActive(2, 1, 0);
+    setActive(1, 1, 0);
   }, [setTitle, setActive]);
 
   // State untuk search

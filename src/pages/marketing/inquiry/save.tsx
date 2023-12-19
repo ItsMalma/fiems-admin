@@ -42,7 +42,7 @@ export default function InquiryPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, queryID ? 1 : 0);
+    setActive(1, 2, queryID ? 1 : 0);
   }, [setTitle, setActive, queryID]);
 
   const router = useRouter();

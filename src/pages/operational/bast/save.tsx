@@ -26,10 +26,8 @@ export default function BASTSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Berita Acara Serah Terima");
-    setActive(3, 4, 0);
+    setActive(2, 4, 0);
   }, [setTitle, setActive]);
-
-  const [appendIndex, setAppendIndex] = React.useState(0);
 
   const { addToasts } = useToast();
 
@@ -41,11 +39,6 @@ export default function BASTSavePage() {
   });
   const { reset, setValue } = methods;
   const values = methods.watch();
-
-  const detail = React.useMemo(
-    () => values.details[appendIndex],
-    [values.details, appendIndex]
-  );
 
   const nextNumberQuery = trpc.bast.getNextNumber.useQuery();
   React.useEffect(() => {
@@ -103,15 +96,18 @@ export default function BASTSavePage() {
       sj.jobOrderConfirmation.containerNumber2 ?? ""
     );
     setValue("sealNumber2", sj.jobOrderConfirmation.sealNumber2 ?? "");
-    setValue(
-      "details",
-      sj.detailProducts.map((dp) => ({
-        product: `${dp.product.skuCode} (${dp.product.name})`,
-        qty: dp.qty,
-        unit: dp.unit,
-      }))
-    );
+    console.log("S");
+    sj.detailProducts.forEach((dp, i) => {
+      setValue(`details.${i}.id`, dp.id);
+      setValue(
+        `details.${i}.product`,
+        `${dp.product.skuCode} (${dp.product.name})`
+      );
+      setValue(`details.${i}.qty`, dp.qty);
+      setValue(`details.${i}.unit`, dp.unit);
+    });
   }, [suratJalanQuery.data, setValue]);
+  console.log(values.details);
 
   const saveMutation = trpc.bast.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -256,36 +252,36 @@ export default function BASTSavePage() {
                 label: "Seal Number",
                 input: <FormText name="sealNumber2" readOnly />,
               },
+              {
+                type: "input",
+                id: "details.0.product",
+                label: "Seal Number",
+                input: <FormText name="details.0.product" readOnly />,
+              },
+              { type: "separator" },
+              {
+                type: "table",
+                id: "details",
+                columns: [
+                  {
+                    id: "product",
+                    label: "Product",
+                    input: <FormText name="product" readOnly />,
+                  },
+                  {
+                    id: "qty",
+                    label: "Quantity",
+                    input: <FormCounter name="qty" min={0} readOnly />,
+                  },
+                  {
+                    id: "unit",
+                    label: "Satuan",
+                    input: <FormText name="unit" readOnly />,
+                  },
+                ],
+                disableAdd: true,
+              },
             ],
-          },
-          {
-            id: "detailProduct",
-            name: "Detail Product",
-            controls: [
-              {
-                type: "input",
-                id: "product",
-                label: "Product",
-                input: <FormText name="product" readOnly />,
-              },
-              {
-                type: "input",
-                id: "qty",
-                label: "Quantity",
-                input: <FormCounter name="qty" min={0} readOnly />,
-              },
-              {
-                type: "input",
-                id: "unit",
-                label: "Satuan",
-                input: <FormText name="unit" readOnly />,
-              },
-            ],
-            isAppend: true,
-            itemName: "Detail",
-            fieldName: "details",
-            onChangeItem: (index) => setAppendIndex(index),
-            readOnly: true,
           },
         ]}
       />

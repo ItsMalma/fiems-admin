@@ -19,7 +19,7 @@ export async function findProductCategoryByReff(reff: string) {
   if (!productCategory) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: `Product category with reff ${reff} not exists`,
+      message: `Tidak ada product category dengan reff ${reff}`,
     });
   }
 
@@ -50,6 +50,7 @@ export async function createProductCategory(
     data: {
       reff,
       name: input.name,
+      apakahKendaraan: input.kendaraan,
     },
   });
 }
@@ -64,6 +65,7 @@ export async function updateProductCategory(
     },
     data: {
       name: input.name,
+      apakahKendaraan: input.kendaraan,
     },
   });
 }

@@ -25,11 +25,11 @@ export default function PriceVendorPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Vendor");
-    setActive(1, 6, 1);
+    setActive(0, 6, 1);
   }, [setTitle, setActive]);
 
   // State untuk search
-  const [search, setSearch] = React.useState<string>('');
+  const [search, setSearch] = React.useState<string>("");
 
   // Mendapatkan router
   const router = useRouter();
@@ -64,7 +64,7 @@ export default function PriceVendorPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -195,7 +195,9 @@ export default function PriceVendorPage() {
             return;
           }
 
-          const priceVendor = tableRowsQuery.data[selectedRowIndex] as PriceVendorTableRow;
+          const priceVendor = tableRowsQuery.data[
+            selectedRowIndex
+          ] as PriceVendorTableRow;
 
           // Hapus price vendor yang dipilih di table
           await deleteMutation.mutateAsync(priceVendor.detailId);

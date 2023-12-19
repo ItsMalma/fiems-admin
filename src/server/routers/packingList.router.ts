@@ -100,6 +100,7 @@ export const packingListRouter = router({
           input.voyage
         )
       ).map((jo) => ({
+        number: jo.number,
         factory: `${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`,
         factoryCity:
           jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.city,

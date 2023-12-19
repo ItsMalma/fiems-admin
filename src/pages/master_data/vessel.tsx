@@ -130,7 +130,7 @@ export default function MasterVessel() {
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Vessel");
-    setActive(1, 5, 0);
+    setActive(0, 5, 0);
   }, [setTitle, setActive]);
 
   // State untuk search

@@ -16,7 +16,7 @@ export default function BASTPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Berita Acara Serah Terima");
-    setActive(3, 4, 0);
+    setActive(2, 4, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

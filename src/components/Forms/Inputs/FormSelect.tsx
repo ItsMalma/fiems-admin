@@ -11,6 +11,7 @@ type FormSelectProps = {
   className?: string;
   options: SelectOption[] | undefined;
   isCreatable?: boolean;
+  disableAutoEmpty?: boolean;
 };
 
 export function FormSelect(props: FormSelectProps) {
@@ -24,7 +25,10 @@ export function FormSelect(props: FormSelectProps) {
   React.useEffect(() => {
     if (props.options === undefined) return;
 
-    if (!props.options.find((option) => option.value === value)) {
+    if (
+      !props.options.find((option) => option.value === value) &&
+      !props.disableAutoEmpty
+    ) {
       onChange("");
     }
   }, [props.options, value, onChange]);

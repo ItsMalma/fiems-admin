@@ -3,6 +3,8 @@ import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import {
@@ -10,8 +12,6 @@ import {
   FileEarmarkArrowUpFill,
   PersonFillAdd,
 } from "react-bootstrap-icons";
-import useToast from '@/stores/toast';
-import { TRPCClientError } from '@trpc/client';
 
 export default function SalesPage() {
   // Gunakan store useMenu untuk mengset menu yang aktif
@@ -28,7 +28,7 @@ export default function SalesPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Sales");
-    setActive(1, 3, 0);
+    setActive(0, 3, 0);
   }, [setTitle, setActive]);
 
   // State untuk search
@@ -67,7 +67,7 @@ export default function SalesPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -169,13 +169,15 @@ export default function SalesPage() {
           }
 
           // Hapus sales yang dipilih di table
-          await deleteMutation.mutateAsync({
-            code: tableRowsQuery.data[selectedRowIndex].code,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              code: tableRowsQuery.data[selectedRowIndex].code,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena sales yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);

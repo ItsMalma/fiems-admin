@@ -6,6 +6,7 @@ import {
   FormSelect,
   FormText,
 } from "@/components/Forms";
+import { ProductSatuan } from "@/libs/options";
 import { trpc } from "@/libs/trpc";
 import { ProductForm, productInput } from "@/server/dtos/product.dto";
 import useHeader from "@/stores/header";
@@ -115,10 +116,8 @@ export function Save({ skuCode }: { skuCode?: string }) {
           {
             type: "input",
             id: "unit",
-            label: "Unit",
-            input: (
-              <FormSelect name="unit" options={formQuery.data?.units ?? []} />
-            ),
+            label: "Satuan",
+            input: <FormSelect name="unit" options={ProductSatuan} />,
           },
         ]}
       />
@@ -136,7 +135,7 @@ export default function ProductPage() {
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Product");
-    setActive(1, 9, 0);
+    setActive(0, 9, 0);
   }, [setTitle, setActive]);
 
   // State untuk search
@@ -175,13 +174,13 @@ export default function ProductPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
           <Button
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -221,7 +220,7 @@ export default function ProductPage() {
           },
           {
             id: "unit",
-            header: "Unit",
+            header: "Satuan",
             type: "text",
             isSortable: true,
           },

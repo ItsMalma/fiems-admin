@@ -1,5 +1,11 @@
 import { Button, Modal, Search, Table } from "@/components/Elements";
-import { Form, FormCode, FormDate, FormText } from "@/components/Forms";
+import {
+  Form,
+  FormCheck,
+  FormCode,
+  FormDate,
+  FormText,
+} from "@/components/Forms";
 import { trpc } from "@/libs/trpc";
 import {
   ProductCategoryForm,
@@ -8,7 +14,9 @@ import {
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import React from "react";
 import {
   BookmarkPlusFill,
@@ -16,8 +24,6 @@ import {
   FileEarmarkArrowUpFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
-import { TRPCClientError } from '@trpc/client';
-import useToast from '@/stores/toast';
 
 export function Save({ reff }: { reff?: string }) {
   const { setModal } = useModal();
@@ -80,6 +86,12 @@ export function Save({ reff }: { reff?: string }) {
             label: "Name",
             input: <FormText name="name" />,
           },
+          {
+            type: "input",
+            id: "kendaraan",
+            label: "Kendaraan",
+            input: <FormCheck name="kendaraan" />,
+          },
         ]}
       />
     </Modal>
@@ -96,7 +108,7 @@ export default function ProductCategoryPage() {
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Product Category");
-    setActive(1, 8, 0);
+    setActive(0, 8, 0);
   }, [setTitle, setActive]);
 
   // State untuk search
@@ -137,13 +149,13 @@ export default function ProductCategoryPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
           <Button
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -166,6 +178,12 @@ export default function ProductCategoryPage() {
           {
             id: "name",
             header: "Name",
+            type: "text",
+            isSortable: true,
+          },
+          {
+            id: "kendaraan",
+            header: "Kendaraan",
             type: "text",
             isSortable: true,
           },
@@ -196,13 +214,15 @@ export default function ProductCategoryPage() {
           }
 
           // Hapus product category yang dipilih di table
-          await deleteMutation.mutateAsync({
-            reff: tableRowsQuery.data[selectedRowIndex].reff,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              reff: tableRowsQuery.data[selectedRowIndex].reff,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena product category yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

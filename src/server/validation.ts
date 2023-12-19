@@ -141,6 +141,13 @@ export function validateText(numeric: boolean = false) {
     );
 }
 
+export function validateCheck() {
+  return z.boolean({
+    invalid_type_error: "Invalid value",
+    required_error: "Must be filled",
+  });
+}
+
 export function validatePassword() {
   return z
     .string({

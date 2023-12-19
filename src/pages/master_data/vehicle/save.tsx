@@ -28,7 +28,7 @@ export default function VehicleSavePage() {
   // Effect untuk mengset judul header dan menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Vehicle");
-    setActive(1, 4, 0);
+    setActive(0, 4, 0);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();

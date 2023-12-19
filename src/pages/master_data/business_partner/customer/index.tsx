@@ -11,6 +11,8 @@ import { CustomerType } from "@/server/dtos/customer.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import {
@@ -18,12 +20,10 @@ import {
   FileEarmarkArrowUpFill,
   PersonFillAdd,
 } from "react-bootstrap-icons";
-import useToast from '@/stores/toast';
-import { TRPCClientError } from '@trpc/client';
 
 export function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => { }}>
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
@@ -31,7 +31,7 @@ export function Export() {
             placeholder="Choose city"
             options={[{ label: "Excel", value: "excel" }]}
             value="excel"
-            onChange={() => { }}
+            onChange={() => {}}
             className="basis-2/3"
           />
         </div>
@@ -55,7 +55,7 @@ export default function CustomersPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Customers");
-    setActive(1, 0, 1);
+    setActive(0, 0, 1);
   }, [setTitle, setActive]);
 
   const [search, setSearch] = React.useState("");
@@ -288,14 +288,16 @@ export default function CustomersPage() {
           const customer = tableRowsQuery.data[selectedRowIndex];
 
           // Hapus customer yang dipilih di table
-          await deleteMutation.mutateAsync({
-            type: customer.type as CustomerType,
-            code: customer.code,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              type: customer.type as CustomerType,
+              code: customer.code,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena customer yang dipilih telah dihapus, maka set ulang baris yang dipilih di table
           setSelectedRowIndex(undefined);

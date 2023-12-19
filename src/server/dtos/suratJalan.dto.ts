@@ -1,16 +1,14 @@
-import { SelectOption } from "@/components/Elements";
-import { SuratJalanTypeProduct } from "@prisma/client";
 import moment from "moment";
 import { z } from "zod";
 import {
   validateAppend,
   validateCode,
   validateCounter,
-  validateSelect,
   validateText,
 } from "../validation";
 import { validateJobOrderNumber } from "./jobOrder.dto";
 import { validateProductCode } from "./product.dto";
+import { validateProductCategoryReff } from "./productCategory.dto";
 
 export function createSuratJalanNumber(num: number) {
   const now = moment();
@@ -32,22 +30,25 @@ export function validateSuratJalanNumber(spmNumber: string) {
   return /^\d{4}\/SJ\/[A-z][a-z]+\/\d{4}$/.test(spmNumber);
 }
 
-export const suratJalanTypeProducts: SelectOption[] = Object.values(
-  SuratJalanTypeProduct
-).map((v) => ({
-  label: v,
-  value: v,
-}));
-
 export type SuratJalanDetailProductForm = {
   product: string;
   qty: number;
   unit: string;
+  kode: string | null;
+  warna: string | null;
+  frame: string | null;
+  engine: string | null;
+  spek: string | null;
 };
 export const defaultSuratJalanDetailProductForm: SuratJalanDetailProductForm = {
   product: "",
   qty: 0,
   unit: "",
+  kode: null,
+  warna: null,
+  frame: null,
+  engine: null,
+  spek: null,
 };
 
 export type SuratJalanForm = {
@@ -92,12 +93,17 @@ export const defaultSuratJalanForm: SuratJalanForm = {
 export const suratJalanValidationSchema = z.object({
   jobOrder: validateCode(validateJobOrderNumber),
   shipmentOrDO: validateCounter(0),
-  typeProduct: validateSelect(suratJalanTypeProducts),
+  typeProduct: validateCode(validateProductCategoryReff),
   details: validateAppend(
     z.object({
       product: validateCode(validateProductCode),
       qty: validateCounter(0),
       unit: validateText(),
+      kode: z.string().nullable().default(null),
+      warna: z.string().nullable().default(null),
+      frame: z.string().nullable().default(null),
+      engine: z.string().nullable().default(null),
+      spek: z.string().nullable().default(null),
     })
   ),
 });

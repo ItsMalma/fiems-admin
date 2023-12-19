@@ -29,7 +29,7 @@ export default function MasterVehicle() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Vehicle");
-    setActive(1, 4, 0);
+    setActive(0, 4, 0);
   }, [setTitle, setActive]);
 
   // State untuk search

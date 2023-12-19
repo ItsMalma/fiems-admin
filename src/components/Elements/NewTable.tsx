@@ -261,7 +261,9 @@ function TableCell(props: TableCellProps) {
       case "code":
         return <p className="text-primaryActive">{props.value}</p>;
       case "text":
-        return <p className="text-gray-700 font-medium">{props.value}</p>;
+        return (
+          <p className="text-gray-700 font-medium">{props.value || "-"}</p>
+        );
       case "status":
         return (
           <p
@@ -381,7 +383,10 @@ export function Table(props: TableProps) {
   const { setModal } = useModal();
 
   const [columns, setColumns] = React.useState(props.columns);
-  React.useEffect(() => setColumns(props.columns), [props.columns]);
+  React.useEffect(() => {
+    // temporary: remove status
+    setColumns(props.columns.filter((c) => c.type !== "status"));
+  }, [props.columns]);
 
   const [rows, setRows] = React.useState(props.rows);
   React.useEffect(() => setRows(props.rows), [props.rows]);

@@ -14,7 +14,7 @@ export default function ConfirmedInquiryPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, 2);
+    setActive(1, 2, 2);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

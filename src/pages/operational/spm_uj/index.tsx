@@ -16,7 +16,7 @@ export default function SPMPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Surat Perintah Muat & Uang Jalan");
-    setActive(3, 2, 0);
+    setActive(2, 2, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

@@ -20,7 +20,7 @@ import {
 
 export function Export() {
   return (
-    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => { }}>
+    <Modal className="w-2/5" title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
@@ -28,7 +28,7 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             value="excel"
-            onChange={() => { }}
+            onChange={() => {}}
             className="basis-2/3"
           />
         </div>
@@ -45,7 +45,7 @@ export default function MasterAccountCOA() {
 
   React.useEffect(() => {
     setTitle("Master Data | Account COA");
-    setActive(1, 10, 0);
+    setActive(0, 10, 0);
   }, [setTitle, setActive]);
 
   // State untuk search

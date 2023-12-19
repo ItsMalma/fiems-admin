@@ -9,7 +9,6 @@ import SaveLayout from "@/components/Layouts/SaveLayout";
 import { trpc } from "@/libs/trpc";
 import {
   PackingListForm,
-  defaultPackingListDetailRealisationForm,
   defaultPackingListForm,
   packingListValidationSchema,
 } from "@/server/dtos/packingList.dto";
@@ -26,7 +25,7 @@ export default function PackingListSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Packing List");
-    setActive(3, 5, 0);
+    setActive(2, 5, 0);
   }, [setTitle, setActive]);
 
   const [appendIndex, setAppendIndex] = React.useState(0);
@@ -175,109 +174,87 @@ export default function PackingListSavePage() {
                   />
                 ),
               },
-            ],
-          },
-          {
-            id: "detailRealisation",
-            name: "Detail Realisasi",
-            controls: [
               {
-                type: "input",
-                id: "factory",
-                label: "Customer",
-                input: <FormText name="factory" readOnly />,
+                type: "separator",
               },
               {
-                type: "input",
-                id: "factoryCity",
-                label: "City",
-                input: <FormText name="factoryCity" readOnly />,
-              },
-              {
-                type: "input",
-                id: "deliveryTo",
-                label: "Delivery To",
-                input: <FormText name="deliveryTo" readOnly />,
-              },
-              {
-                type: "input",
-                id: "deliveryToCity",
-                label: "City",
-                input: <FormText name="deliveryToCity" readOnly />,
-              },
-              {
-                type: "input",
-                id: "consignee",
-                label: "Consignee",
-                input: <FormText name="consignee" readOnly />,
-              },
-              {
-                type: "blank",
-              },
-              {
-                type: "input",
-                id: "portOrigin",
-                label: "Port Origin",
-                input: <FormText name="portOrigin" readOnly />,
-              },
-              {
-                type: "input",
-                id: "portDestination",
-                label: "Port Destination",
-                input: <FormText name="portDestination" readOnly />,
-              },
-              {
-                type: "input",
-                id: "serviceType",
-                label: "Service Type",
-                input: <FormText name="serviceType" readOnly />,
-              },
-              {
-                type: "blank",
-              },
-              {
-                type: "input",
-                id: "containerNumber1",
-                label: "Container Number",
-                input: <FormText name="containerNumber1" readOnly />,
-              },
-              {
-                type: "input",
-                id: "sealNumber1",
-                label: "Seal Number",
-                input: <FormText name="sealNumber1" readOnly />,
-              },
-              {
-                type: "input",
-                id: "containerNumber2",
-                label: "Container Number",
-                input: <FormText name="containerNumber2" readOnly />,
-              },
-              {
-                type: "input",
-                id: "sealNumber2",
-                label: "Seal Number",
-                input: <FormText name="sealNumber2" readOnly />,
-              },
-              {
-                type: "input",
-                id: "suratJalan",
-                label: "Surat Jalan",
-                input: <FormText name="suratJalan" readOnly />,
-              },
-              {
-                type: "input",
-                id: "bast",
-                label: "BAST",
-                input: <FormText name="bast" readOnly />,
+                type: "table",
+                id: "details",
+                columns: [
+                  {
+                    id: "factory",
+                    label: "Customer",
+                    input: <FormText name="factory" readOnly />,
+                  },
+                  {
+                    id: "factoryCity",
+                    label: "City",
+                    input: <FormText name="factoryCity" readOnly />,
+                  },
+                  {
+                    id: "deliveryTo",
+                    label: "Delivery To",
+                    input: <FormText name="deliveryTo" readOnly />,
+                  },
+                  {
+                    id: "deliveryToCity",
+                    label: "City",
+                    input: <FormText name="deliveryToCity" readOnly />,
+                  },
+                  {
+                    id: "consignee",
+                    label: "Consignee",
+                    input: <FormText name="consignee" readOnly />,
+                  },
+                  {
+                    id: "portOrigin",
+                    label: "Port Origin",
+                    input: <FormText name="portOrigin" readOnly />,
+                  },
+                  {
+                    id: "portDestination",
+                    label: "Port Destination",
+                    input: <FormText name="portDestination" readOnly />,
+                  },
+                  {
+                    id: "serviceType",
+                    label: "Service Type",
+                    input: <FormText name="serviceType" readOnly />,
+                  },
+                  {
+                    id: "containerNumber1",
+                    label: "Container Number",
+                    input: <FormText name="containerNumber1" readOnly />,
+                  },
+                  {
+                    id: "sealNumber1",
+                    label: "Seal Number",
+                    input: <FormText name="sealNumber1" readOnly />,
+                  },
+                  {
+                    id: "containerNumber2",
+                    label: "Container Number",
+                    input: <FormText name="containerNumber2" readOnly />,
+                  },
+                  {
+                    id: "sealNumber2",
+                    label: "Seal Number",
+                    input: <FormText name="sealNumber2" readOnly />,
+                  },
+                  {
+                    id: "suratJalan",
+                    label: "Surat Jalan",
+                    input: <FormText name="suratJalan" readOnly />,
+                  },
+                  {
+                    id: "bast",
+                    label: "BAST",
+                    input: <FormText name="bast" readOnly />,
+                  },
+                ],
+                disableAdd: true,
               },
             ],
-            isAppend: true,
-            itemName: "Detail",
-            fieldName: "details",
-            defaultValue: defaultPackingListDetailRealisationForm,
-            onChangeItem: (index) => setAppendIndex(index),
-            readOnly: true,
           },
         ]}
       />

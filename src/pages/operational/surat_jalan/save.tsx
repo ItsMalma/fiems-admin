@@ -8,12 +8,10 @@ import {
 } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { trpc } from "@/libs/trpc";
-import { ProductForm } from "@/server/dtos/product.dto";
 import {
   SuratJalanForm,
   defaultSuratJalanDetailProductForm,
   defaultSuratJalanForm,
-  suratJalanTypeProducts,
   suratJalanValidationSchema,
 } from "@/server/dtos/suratJalan.dto";
 import useHeader from "@/stores/header";
@@ -29,7 +27,7 @@ export default function SuratJalanSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Surat Jalan");
-    setActive(3, 3, 0);
+    setActive(2, 3, 0);
   }, [setTitle, setActive]);
 
   const [appendIndex, setAppendIndex] = React.useState(0);
@@ -86,21 +84,36 @@ export default function SuratJalanSavePage() {
     setValue("sealNumber2", jo.sealNumber2 ?? "");
   }, [jobOrderQuery.data, setValue]);
 
-  const productOptionsQuery = trpc.suratJalan.getProductOptions.useQuery();
+  const productCategoryOptionsQuery =
+    trpc.suratJalan.getProductCategoryOptions.useQuery();
 
-  const productQuery = trpc.products.getSingle.useQuery(detail.product);
-  const productUnitOptions = React.useMemo(() => {
-    if (!productQuery.data) return [];
+  const productCategoryQuery = trpc.productCategories.getSingle.useQuery(
+    values.typeProduct
+  );
 
-    switch (productQuery.data.type) {
-      case "Product":
-        return ProductForm.productUnitOptions;
-      case "Sparepart":
-        return ProductForm.sparepartUnitOptions;
-      case "ATK":
-        return ProductForm.atkUnitOptions;
+  const productOptionsQuery = trpc.suratJalan.getProductOptions.useQuery({
+    category: values.typeProduct,
+  });
+  const productOptions = React.useMemo(() => {
+    if (!productOptionsQuery.data) return;
+
+    return productOptionsQuery.data.filter(
+      (o) =>
+        !values.details.find(
+          (d, di) => d.product === o.value && di != appendIndex
+        )
+    );
+  }, [appendIndex, productOptionsQuery.data, values.details]);
+
+  const productQuery = trpc.products.getSingle.useQuery(detail?.product);
+  React.useEffect(() => {
+    if (!productQuery.data) {
+      setValue(`details.${appendIndex}.unit`, "");
+      return;
     }
-  }, [productQuery.data]);
+
+    setValue(`details.${appendIndex}.unit`, productQuery.data.unit);
+  }, [productQuery.data, setValue, appendIndex]);
 
   const saveMutation = trpc.suratJalan.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -229,45 +242,69 @@ export default function SuratJalanSavePage() {
                 input: (
                   <FormSelect
                     name="typeProduct"
-                    options={suratJalanTypeProducts}
-                  />
-                ),
-              },
-            ],
-          },
-          {
-            id: "detailProduct",
-            name: "Detail Product",
-            controls: [
-              {
-                type: "input",
-                id: "product",
-                label: "Product",
-                input: (
-                  <FormSelect
-                    name="product"
-                    options={productOptionsQuery.data}
+                    options={productCategoryOptionsQuery.data}
                   />
                 ),
               },
               {
-                type: "input",
-                id: "qty",
-                label: "Quantity",
-                input: <FormCounter name="qty" min={0} />,
-              },
-              {
-                type: "input",
-                id: "unit",
-                label: "Satuan",
-                input: <FormSelect name="unit" options={productUnitOptions} />,
+                type: "table",
+                id: "details",
+                columns: [
+                  {
+                    id: "product",
+                    label: "Product",
+                    input: (
+                      <FormSelect
+                        name="product"
+                        options={productOptions}
+                        disableAutoEmpty
+                      />
+                    ),
+                  },
+                  {
+                    id: "qty",
+                    label: "Quantity",
+                    input: <FormCounter name="qty" min={0} />,
+                  },
+                  {
+                    id: "unit",
+                    label: "Satuan",
+                    input: <FormText name="unit" readOnly />,
+                  },
+                  {
+                    id: "kode",
+                    label: "Kode",
+                    input: <FormText name="kode" />,
+                    isHidden: !productCategoryQuery.data?.apakahKendaraan,
+                  },
+                  {
+                    id: "warna",
+                    label: "Warna",
+                    input: <FormText name="warna" />,
+                    isHidden: !productCategoryQuery.data?.apakahKendaraan,
+                  },
+                  {
+                    id: "frame",
+                    label: "Frame",
+                    input: <FormText name="frame" />,
+                    isHidden: !productCategoryQuery.data?.apakahKendaraan,
+                  },
+                  {
+                    id: "engine",
+                    label: "Engine",
+                    input: <FormText name="engine" />,
+                    isHidden: !productCategoryQuery.data?.apakahKendaraan,
+                  },
+                  {
+                    id: "spek",
+                    label: "Spek",
+                    input: <FormText name="spek" />,
+                    isHidden: !productCategoryQuery.data?.apakahKendaraan,
+                  },
+                ],
+                defaultValue: defaultSuratJalanDetailProductForm,
               },
             ],
-            isAppend: true,
-            itemName: "Detail",
-            fieldName: "details",
-            defaultValue: defaultSuratJalanDetailProductForm,
-            onChangeItem: (index) => setAppendIndex(index),
           },
         ]}
       />

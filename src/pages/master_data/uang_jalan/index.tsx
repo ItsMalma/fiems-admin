@@ -24,7 +24,7 @@ export default function MasterUangJalan() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Master Uang Jalan");
-    setActive(1, 7, 0);
+    setActive(0, 7, 0);
   }, [setTitle, setActive]);
 
   // State untuk search
@@ -57,13 +57,13 @@ export default function MasterUangJalan() {
             text="Import"
             icon={<FileEarmarkArrowDownFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
           <Button
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>

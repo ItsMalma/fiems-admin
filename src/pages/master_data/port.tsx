@@ -20,6 +20,7 @@ import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
 import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import React from "react";
 import {
   FileEarmarkArrowDownFill,
@@ -27,7 +28,6 @@ import {
   GeoAltFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
-import { TRPCClientError } from '@trpc/client';
 
 export function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
@@ -134,14 +134,14 @@ export function Save({ code }: { code?: string }) {
 
 export function Export() {
   return (
-    <Modal title="Export Data" type="save" onDone={() => { }}>
+    <Modal title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
           <Select
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
-            onChange={() => { }}
+            onChange={() => {}}
             value={""}
             className="basis-2/3"
             isSearchable
@@ -167,7 +167,7 @@ export default function MasterPort() {
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Port");
-    setActive(1, 2, 0);
+    setActive(0, 2, 0);
   }, [setTitle, setActive]);
 
   const [search, setSearch] = React.useState("");
@@ -208,7 +208,7 @@ export default function MasterPort() {
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -273,13 +273,15 @@ export default function MasterPort() {
           }
 
           // Hapus port yang dipilih di table
-          await deleteMutation.mutateAsync({
-            code: tableRowsQuery.data[selectedRowIndex].code,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              code: tableRowsQuery.data[selectedRowIndex].code,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena port yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

@@ -25,7 +25,7 @@ export default function InsuranceSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Insurance");
-    setActive(3, 6, 0);
+    setActive(2, 6, 0);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();

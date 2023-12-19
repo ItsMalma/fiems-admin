@@ -16,7 +16,7 @@ export default function PackingListPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Packing List");
-    setActive(3, 5, 0);
+    setActive(2, 5, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

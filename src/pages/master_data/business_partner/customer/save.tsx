@@ -33,7 +33,7 @@ export default function CustomerSavePage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Customer");
-    setActive(1, 0, 1);
+    setActive(0, 0, 1);
   }, [setTitle, setActive]);
 
   // Mendapatkan router
