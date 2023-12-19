@@ -16,7 +16,7 @@ export default function InsurancePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Insurance");
-    setActive(3, 6, 0);
+    setActive(2, 6, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();
@@ -40,7 +40,7 @@ export default function InsurancePage() {
             text="Add New Insurance"
             icon={<EnvelopePaperFill />}
             variant="filled"
-            onClick={() => router.push("/operational/surat_jalan/save")}
+            onClick={() => router.push("/operational/insurance/save")}
           />
           <Button
             text="Import"

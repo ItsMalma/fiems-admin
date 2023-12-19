@@ -21,7 +21,7 @@ export default function UangJalanSavePage() {
   // Effect untuk mengset judul header dan menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Master Uang Jalan");
-    setActive(1, 7, 0);
+    setActive(0, 7, 0);
   }, [setTitle, setActive]);
 
   // Mendapatkan router

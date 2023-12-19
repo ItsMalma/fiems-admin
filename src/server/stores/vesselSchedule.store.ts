@@ -32,10 +32,10 @@ export async function findAllVesselSchedule(onlyActive = false) {
     },
     where: onlyActive
       ? {
-          etd: {
+          eta: {
             lte: new Date(),
           },
-          eta: {
+          etd: {
             gte: new Date(),
           },
         }

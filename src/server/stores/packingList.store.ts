@@ -187,14 +187,8 @@ export async function createPackingList(input: PackingListInput) {
       number: await findNextPackingListNumber(),
       vesselSchedule: { connect: { id: vesselSchedule.id } },
       detailRealisations: {
-        connect: (
-          await findAllPackingListDetails(
-            input.shipping,
-            input.vessel,
-            input.voyage
-          )
-        ).map((jo) => ({
-          number: jo.number,
+        connect: input.details.map((inputDetail) => ({
+          number: inputDetail.number,
         })),
       },
     },

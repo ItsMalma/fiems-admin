@@ -8,6 +8,7 @@ import {
   UseFormReturn,
   useFieldArray,
 } from "react-hook-form";
+import { FormTable } from ".";
 import { Button, Label } from "../Elements";
 import { ControlPrefix } from "./prefix.context";
 
@@ -29,6 +30,18 @@ type FormControl = {
       text: string;
       onClick: () => void | Promise<void>;
     }
+  | {
+      type: "table";
+      id: string;
+      columns: {
+        id: string;
+        label: string;
+        input: React.ReactNode;
+        isHidden?: boolean;
+      }[];
+      defaultValue?: any;
+      disableAdd?: boolean;
+    }
 );
 
 type FormTab = {
@@ -48,6 +61,7 @@ type FormTab = {
       readOnly?: boolean;
       hideItems?: boolean;
       defaultValue?: any;
+      canRemove?: boolean;
       onChangeItem?: (index: number) => void;
     }
 );
@@ -90,78 +104,122 @@ type FormControlsProps = {
 function FormControls(props: FormControlsProps) {
   const namePrefix = React.useContext(ControlPrefix);
 
+  const rows = React.useMemo(() => {
+    const isFull = (control: FormControl) =>
+      control.type === "separator" ||
+      control.type === "table" ||
+      (control.type === "input" && control.full);
+
+    const rows: FormControl[][] = [];
+    let rowIndex = 0;
+    for (let i = 0; i < props.controls.length; i++) {
+      const control = props.controls[i];
+
+      if (control.isHidden) continue;
+
+      if (rows.length <= rowIndex) rows.push([control]);
+      else rows[rowIndex++].push(props.controls[i]);
+
+      if (isFull(control)) rowIndex++;
+
+      const row = rows[rowIndex];
+      if (i + 1 < props.controls.length) {
+        const nextControl = props.controls[i + 1];
+        if (isFull(nextControl) && row && row.length < 2) {
+          rows[rowIndex++].push({ type: "blank" });
+        }
+      } else if (row && row.length < 2) {
+        rows[rowIndex++].push({ type: "blank" });
+      }
+    }
+    return rows;
+  }, [props.controls]);
+
   return (
     <div
       className={clsx(
-        "grow grid grid-cols-1 lg:grid-cols-2 gap-x-[18px] 2xl:gap-x-6 gap-y-3 2xl:gap-y-4 overflow-auto",
+        "grow flex flex-col gap-y-3 2xl:gap-y-4 overflow-auto",
         !props.active && "hidden"
       )}
     >
-      {props.controls
-        .filter((control) => !control.isHidden)
-        .map((control, controlIndex) => {
-          switch (control.type) {
-            case "input":
-              return (
-                <div
-                  key={control.id}
-                  className={clsx(
-                    "flex flex-col gap-1",
-                    control.full && "col-span-full"
-                  )}
-                >
-                  <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                    <Label name={control.label} className="basis-1/3" />
-                    {control.input}
-                  </div>
-                  {control.detail && (
-                    <div className="flex flex-row-reverse">
-                      <p
-                        className="text-sm text-gray-700 underline underline-offset-2 cursor-pointer"
-                        onClick={() => control.detail!()}
-                      >
-                        + Show Detail
-                      </p>
+      {rows.map((row, rowIndex) => (
+        <div key={rowIndex} className="flex gap-x-[18px] 2xl:gap-x-6">
+          {row.map((control, controlIndex) => {
+            switch (control.type) {
+              case "input":
+                const error = lodash
+                  .get(props.errors, namePrefix + control.id)
+                  ?.message?.toString();
+                return (
+                  <div
+                    key={control.id}
+                    className={clsx(
+                      "flex flex-col gap-1 basis-1/2",
+                      control.full && "col-span-full"
+                    )}
+                  >
+                    <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                      <Label name={control.label} className="basis-1/3" />
+                      {control.input}
                     </div>
-                  )}
-                  <div className="flex gap-[18px] 2xl:gap-6 items-center">
-                    <span className="basis-1/3"></span>
-                    <p className="basis-2/3 text-statusInactive">
-                      {lodash
-                        .get(props.errors, namePrefix + control.id)
-                        ?.message?.toString()}
-                    </p>
+                    {control.detail && (
+                      <div className="flex flex-row-reverse">
+                        <p
+                          className="text-sm text-gray-700 underline underline-offset-2 cursor-pointer"
+                          onClick={() => control.detail!()}
+                        >
+                          + Show Detail
+                        </p>
+                      </div>
+                    )}
+                    {!!error && (
+                      <div className="flex gap-[18px] 2xl:gap-6 items-center">
+                        <span className="basis-1/3"></span>
+                        <p className="basis-2/3 text-statusInactive">{error}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-              );
-            case "blank":
-              return <div key={controlIndex}></div>;
-            case "separator":
-              return (
-                <React.Fragment key={controlIndex}>
-                  <hr className="col-span-full" />
-                  {control.label && (
-                    <h1 className="text-xl text-gray-700 font-semibold col-span-full">
-                      {control.label}
-                    </h1>
-                  )}
-                </React.Fragment>
-              );
-            case "button":
-              return (
-                <div key={controlIndex} className="flex flex-col gap-1">
-                  <Button
-                    variant="filled"
-                    text={control.text}
-                    onClick={async () =>
-                      await Promise.resolve(control.onClick())
-                    }
+                );
+              case "blank":
+                return <div key={controlIndex} className="basis-1/2"></div>;
+              case "separator":
+                return (
+                  <React.Fragment key={controlIndex}>
+                    <hr className="w-full" />
+                    {control.label && (
+                      <h1 className="text-xl text-gray-700 font-semibold col-span-full">
+                        {control.label}
+                      </h1>
+                    )}
+                  </React.Fragment>
+                );
+              case "button":
+                return (
+                  <div key={controlIndex} className="flex flex-col gap-1">
+                    <Button
+                      variant="filled"
+                      text={control.text}
+                      onClick={async () =>
+                        await Promise.resolve(control.onClick())
+                      }
+                    />
+                    <div className="flex gap-[18px] 2xl:gap-6 items-center"></div>
+                  </div>
+                );
+              case "table":
+                return (
+                  <FormTable
+                    key={controlIndex}
+                    id={control.id}
+                    columns={control.columns}
+                    defaultValue={control.defaultValue}
+                    disableAdd={control.disableAdd}
                   />
-                  <div className="flex gap-[18px] 2xl:gap-6 items-center"></div>
-                </div>
-              );
-          }
-        })}
+                );
+            }
+          })}
+        </div>
+      ))}
     </div>
   );
 }
@@ -175,6 +233,7 @@ type FormAppendProps = {
   readOnly?: boolean;
   hideItems?: boolean;
   defaultValue: any;
+  canRemove?: boolean;
   onChangeItem?: (index: number) => void;
 };
 
@@ -217,17 +276,19 @@ function FormAppend({ onChangeItem, ...props }: FormAppendProps) {
                 onClick={() => setActive(index)}
               >
                 <p>{`${props.name} ${index + 1}`}</p>
-                {index === active && fields.length > 1 && !props.readOnly && (
-                  <span
-                    className="ml-auto cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      remove(index);
-                    }}
-                  >
-                    <X size={16} />
-                  </span>
-                )}
+                {index === active &&
+                  ((fields.length > 1 && !props.readOnly) ||
+                    props.canRemove) && (
+                    <span
+                      className="ml-auto cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        remove(index);
+                      }}
+                    >
+                      <X size={16} />
+                    </span>
+                  )}
               </div>
             ))}
             {!props.readOnly && (
@@ -281,7 +342,7 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
         <form
           ref={ref}
           className={clsx(
-            "flex flex-col gap-[18px] 2xl:gap-6 relative",
+            "grow flex flex-col gap-[18px] 2xl:gap-6 relative",
             !props.singleTab ?? "pt-[9px] 2xl:pt-3"
           )}
         >
@@ -313,6 +374,7 @@ export const Form = React.forwardRef<HTMLFormElement, FormProps>(
                       hideItems={tab.hideItems}
                       defaultValue={tab.defaultValue}
                       onChangeItem={tab.onChangeItem}
+                      canRemove={tab.canRemove}
                     />
                   ) : (
                     <FormControls

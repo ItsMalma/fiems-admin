@@ -1,17 +1,16 @@
 import {
   Form,
-  FormCode,
+  FormCounter,
   FormDate,
-  FormMoney,
   FormSelect,
   FormText,
 } from "@/components/Forms";
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { trpc } from "@/libs/trpc";
 import {
-  InsuranceForm,
-  insuranceValidationSchema,
-} from "@/server/dtos/insurance.dto";
+  DooringForm,
+  dooringValidationSchema,
+} from "@/server/dtos/dooring.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useToast from "@/stores/toast";
@@ -20,39 +19,33 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-export default function InsuranceSavePage() {
+export default function DooringSavePage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
-    setTitle("Operational | Insurance");
-    setActive(2, 6, 0);
+    setTitle("Operational | Dooring");
+    setActive(2, 8, 0);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();
 
   const router = useRouter();
 
-  const methods = useForm<InsuranceForm>({
-    resolver: zodResolver(insuranceValidationSchema),
+  const methods = useForm<DooringForm>({
+    resolver: zodResolver(dooringValidationSchema),
   });
   const { reset, setValue } = methods;
   const values = methods.watch();
 
-  const nextNumberQuery = trpc.insurances.getNextNumber.useQuery();
-  React.useEffect(() => {
-    if (!nextNumberQuery.data) return;
-
-    setValue("number", nextNumberQuery.data);
-  }, [nextNumberQuery.data, setValue]);
-
-  const jobOrderOptionsQuery = trpc.insurances.getJobOrderOptions.useQuery();
+  const jobOrderOptionsQuery = trpc.doorings.getJobOrderOptions.useQuery();
 
   const jobOrderQuery = trpc.jobOrders.getSingle.useQuery(values.jobOrder);
   React.useEffect(() => {
     if (!jobOrderQuery.data) return;
 
     const jo = jobOrderQuery.data;
-    setValue("jobOrder", jo.number);
+    setValue("suratJalan", jo.suratJalan!.number);
+    setValue("shipmentOrDO", jo.suratJalan!.shipmentOrDO);
     setValue(
       "factory",
       `${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`
@@ -81,24 +74,17 @@ export default function InsuranceSavePage() {
     setValue("sealNumber2", jo.sealNumber2 ?? "");
   }, [jobOrderQuery.data, setValue]);
 
-  React.useEffect(() => {
-    const premi = Number(values.premi);
-
-    setValue(
-      "total",
-      isNaN(premi) ? 0 : values.nilaiTertanggung * Number(values.premi)
-    );
-  }, [setValue, values.nilaiTertanggung, values.premi]);
-
-  const saveMutation = trpc.insurances.save.useMutation();
+  const saveMutation = trpc.doorings.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
-    await saveMutation.mutateAsync(data);
+    await saveMutation.mutateAsync({
+      ...data,
+    });
 
-    await router.push("/operational/insurance");
+    await router.push("/operational/dooring");
   });
 
   return (
-    <SaveLayout onSave={onSubmit} title="Input Insurance" isLoading={!values}>
+    <SaveLayout onSave={onSubmit} title="Input Dooring" isLoading={!values}>
       <Form
         methods={methods}
         tabs={[
@@ -108,14 +94,8 @@ export default function InsuranceSavePage() {
             controls: [
               {
                 type: "input",
-                id: "number",
-                label: "Insurance Number",
-                input: <FormCode name="number" readOnly />,
-              },
-              {
-                type: "input",
                 id: "createDate",
-                label: "Confirm Date",
+                label: "Create Date",
                 input: <FormDate name="createDate" isDefault />,
               },
               {
@@ -128,6 +108,18 @@ export default function InsuranceSavePage() {
                     options={jobOrderOptionsQuery.data}
                   />
                 ),
+              },
+              {
+                type: "input",
+                id: "suratJalan",
+                label: "Surat Jalan",
+                input: <FormSelect name="suratJalan" options={[]} readOnly />,
+              },
+              {
+                type: "input",
+                id: "shipmentOrDO",
+                label: "Shipment / DO",
+                input: <FormCounter name="shipmentOrDO" min={0} readOnly />,
               },
               { type: "separator" },
               {
@@ -143,13 +135,13 @@ export default function InsuranceSavePage() {
                 input: <FormText name="factoryAddress" readOnly />,
               },
               {
+                type: "blank",
+              },
+              {
                 type: "input",
                 id: "factoryCity",
                 label: "City",
                 input: <FormText name="factoryCity" readOnly />,
-              },
-              {
-                type: "blank",
               },
               {
                 type: "input",
@@ -162,6 +154,9 @@ export default function InsuranceSavePage() {
                 id: "consigneeAddress",
                 label: "Address",
                 input: <FormText name="consigneeAddress" readOnly />,
+              },
+              {
+                type: "blank",
               },
               {
                 type: "input",
@@ -221,27 +216,15 @@ export default function InsuranceSavePage() {
               { type: "separator" },
               {
                 type: "input",
-                id: "nilaiTertanggung",
-                label: "Nilai Tertanggung",
-                input: <FormMoney name="nilaiTertanggung" />,
+                id: "bongkarKapal",
+                label: "Bongkar Kapal",
+                input: <FormDate name="bongkarKapal" />,
               },
               {
                 type: "input",
-                id: "premi",
-                label: "Premi",
-                input: <FormText name="premi" />,
-              },
-              {
-                type: "input",
-                id: "total",
-                label: "Total",
-                input: <FormMoney name="total" readOnly />,
-              },
-              {
-                type: "input",
-                id: "keterangan",
-                label: "Keterangan",
-                input: <FormText name="keterangan" />,
+                id: "estimate",
+                label: "Estimation",
+                input: <FormDate name="estimate" />,
               },
             ],
           },

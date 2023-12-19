@@ -16,7 +16,7 @@ export default function VesselSchedulePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Marketing | Vessel Schedule");
-    setActive(2, 3, 0);
+    setActive(1, 3, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

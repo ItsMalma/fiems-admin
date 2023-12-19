@@ -3,6 +3,8 @@ import { trpc } from "@/libs/trpc";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
+import { TRPCClientError } from "@trpc/client";
 import { useRouter } from "next/router";
 import React from "react";
 import {
@@ -10,8 +12,6 @@ import {
   FileEarmarkArrowUpFill,
   PersonFillAdd,
 } from "react-bootstrap-icons";
-import useToast from '@/stores/toast';
-import { TRPCClientError } from '@trpc/client';
 
 export default function PriceFactoryPage() {
   // Gunakan store useHeader untuk mengset judul di header
@@ -28,11 +28,11 @@ export default function PriceFactoryPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Factory");
-    setActive(1, 6, 0);
+    setActive(0, 6, 0);
   }, [setTitle, setActive]);
 
   // State untuk search
-  const [search, setSearch] = React.useState<string>('');
+  const [search, setSearch] = React.useState<string>("");
 
   // Mendapatkan router
   const router = useRouter();
@@ -67,7 +67,7 @@ export default function PriceFactoryPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>

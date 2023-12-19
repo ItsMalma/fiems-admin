@@ -42,7 +42,7 @@ export default function InquiryPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, queryID ? 1 : 0);
+    setActive(1, 2, queryID ? 1 : 0);
   }, [setTitle, setActive, queryID]);
 
   const router = useRouter();
@@ -570,15 +570,15 @@ export default function InquiryPage() {
               },
               {
                 type: "input",
-                id: "eta",
-                label: "ETA",
-                input: <FormDate name="eta" readOnly />,
-              },
-              {
-                type: "input",
                 id: "etd",
                 label: "ETD",
                 input: <FormDate name="etd" readOnly />,
+              },
+              {
+                type: "input",
+                id: "eta",
+                label: "ETA",
+                input: <FormDate name="eta" readOnly />,
               },
             ],
             isAppend: true,

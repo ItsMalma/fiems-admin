@@ -29,7 +29,7 @@ export default function JobOrderSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Marketing | Vessel Schedule");
-    setActive(2, 3, 0);
+    setActive(1, 3, 0);
   }, [setTitle, setActive]);
 
   const router = useRouter();
@@ -67,7 +67,6 @@ export default function JobOrderSavePage() {
 
   const vesselQuery = trpc.vessels.getSingle.useQuery(values.vessel);
   React.useEffect(() => {
-    console.log(vesselQuery.data);
     if (!vesselQuery.data) {
       setValue("vesselCapacity", 0);
     } else {
@@ -179,7 +178,7 @@ export default function JobOrderSavePage() {
                 type: "input",
                 id: "quota",
                 label: "Quota",
-                input: <FormText name="quota" />,
+                input: <FormText name="quota" numeric />,
               },
               {
                 type: "input",

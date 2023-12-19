@@ -8,7 +8,9 @@ import {
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import React from "react";
 import {
   FileEarmarkArrowDownFill,
@@ -16,8 +18,6 @@ import {
   PersonFillAdd,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
-import useToast from '@/stores/toast';
-import { TRPCClientError } from "@trpc/client";
 
 function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
@@ -111,7 +111,7 @@ export default function CustomerGroupPage() {
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Customer Group");
-    setActive(1, 0, 0);
+    setActive(0, 0, 0);
   }, [setTitle, setActive]);
 
   const [search, setSearch] = React.useState("");
@@ -129,9 +129,12 @@ export default function CustomerGroupPage() {
   return (
     <>
       <div className="px-[18px] py-[15px] 2xl:px-6 2xl:py-5 flex justify-between bg-white dark:bg-gray-700 rounded-2xl shadow-sm">
-        <Search placeholder="Search Customer Group" onChange={(content) => {
-          setSearch(content);
-        }} />
+        <Search
+          placeholder="Search Customer Group"
+          onChange={(content) => {
+            setSearch(content);
+          }}
+        />
         <div className="flex gap-3 2xl:gap-4">
           <Button
             text="Add New Group"
@@ -200,13 +203,13 @@ export default function CustomerGroupPage() {
           }
 
           // Hapus customer group yang dipilih di table
-          await deleteMutation.mutateAsync(
-            findQuery.data[selectedRowIndex].code,
-          ).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync(findQuery.data[selectedRowIndex].code)
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena customer group yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

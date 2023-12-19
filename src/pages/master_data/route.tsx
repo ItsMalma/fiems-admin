@@ -18,7 +18,9 @@ import { RouteForm, routeInput } from "@/server/dtos/route.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useModal from "@/stores/modal";
+import useToast from "@/stores/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCClientError } from "@trpc/client";
 import React from "react";
 import {
   FileEarmarkArrowDownFill,
@@ -26,8 +28,6 @@ import {
   GeoAltFill,
 } from "react-bootstrap-icons";
 import { useForm } from "react-hook-form";
-import useToast from '@/stores/toast';
-import { TRPCClientError } from '@trpc/client';
 
 export function Save({ code }: { code?: string }) {
   const { setModal } = useModal();
@@ -152,7 +152,7 @@ export function Save({ code }: { code?: string }) {
 
 export function Export() {
   return (
-    <Modal title="Export Data" type="save" onDone={() => { }}>
+    <Modal title="Export Data" type="save" onDone={() => {}}>
       <form>
         <div className="flex gap-6 items-center justify-between">
           <Label name="File Type" />
@@ -160,7 +160,7 @@ export function Export() {
             placeholder="Choose file type"
             options={[{ label: "Excel", value: "excel" }]}
             value={""}
-            onChange={() => { }}
+            onChange={() => {}}
             className="basis-2/3"
             isSearchable
           />
@@ -180,7 +180,7 @@ export default function MasterRoute() {
   // Effect untuk mengset judul header dan menu yang active
   React.useEffect(() => {
     setTitle("Master Data | Master Route");
-    setActive(1, 1, 0);
+    setActive(0, 1, 0);
   }, [setTitle, setActive]);
 
   const [search, setSearch] = React.useState("");
@@ -226,7 +226,7 @@ export default function MasterRoute() {
             text="Print"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -296,13 +296,15 @@ export default function MasterRoute() {
           }
 
           // Hapus route yang dipilih di table
-          await deleteMutation.mutateAsync({
-            code: tableRowsQuery.data[selectedRowIndex].code,
-          }).catch((err) => {
-            if (err instanceof TRPCClientError) {
-              addToasts({ type: "error", message: err.message });
-            }
-          });
+          await deleteMutation
+            .mutateAsync({
+              code: tableRowsQuery.data[selectedRowIndex].code,
+            })
+            .catch((err) => {
+              if (err instanceof TRPCClientError) {
+                addToasts({ type: "error", message: err.message });
+              }
+            });
 
           // Karena route yang dipilih telah dihapus, maka hapus pilihan sebelumnya
           setSelectedRowIndex(undefined);

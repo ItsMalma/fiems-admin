@@ -1,8 +1,9 @@
 import { validateShippingCode } from "@/server/dtos/customer.dto";
-import { validateText } from "@/server/validation";
+import { validateAppend, validateText } from "@/server/validation";
 import moment from "moment";
 import { z } from "zod";
 import { validateCode } from "../validation";
+import { validateJobOrderNumber } from "./jobOrder.dto";
 
 export function createPackingListNumber(num: number) {
   const now = moment();
@@ -25,6 +26,7 @@ export function validatePackingListNumber(spmNumber: string) {
 }
 
 export type PackingListDetailRealisationForm = {
+  number: string;
   factory: string;
   factoryCity: string;
   deliveryTo: string;
@@ -42,6 +44,7 @@ export type PackingListDetailRealisationForm = {
 };
 export const defaultPackingListDetailRealisationForm: PackingListDetailRealisationForm =
   {
+    number: "",
     factory: "",
     factoryCity: "",
     deliveryTo: "",
@@ -79,6 +82,11 @@ export const packingListValidationSchema = z.object({
   shipping: validateCode(validateShippingCode),
   vessel: validateCode(),
   voyage: validateText(),
+  details: validateAppend(
+    z.object({
+      number: validateCode(validateJobOrderNumber),
+    })
+  ),
 });
 export type PackingListInput = z.infer<typeof packingListValidationSchema>;
 

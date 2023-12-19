@@ -33,7 +33,7 @@ export default function LoginPage() {
       .then(async (token) => {
         setCookie("token", token);
 
-        await router.push("/");
+        await router.push("/master_data/business_partner/customer_group");
       })
       .catch((err) => {
         if (err instanceof TRPCClientError) {

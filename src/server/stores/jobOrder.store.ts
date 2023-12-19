@@ -53,6 +53,7 @@ export async function findJobOrderByNumber(jobOrderNumber: string) {
         },
       },
       vehicle: true,
+      suratJalan: true,
     },
   });
   if (!jobOrder) {

@@ -15,7 +15,7 @@ export default function RevicedInquiryPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Marketing | Inquiry Container");
-    setActive(2, 2, 1);
+    setActive(1, 2, 1);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

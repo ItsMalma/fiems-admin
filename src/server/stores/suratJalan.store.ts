@@ -1,5 +1,4 @@
 import prisma from "@/server/prisma";
-import { SuratJalanTypeProduct } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   SuratJalanInput,
@@ -95,12 +94,16 @@ export async function createSuratJalan(input: SuratJalanInput) {
       number: await findNextSuratJalanNumber(),
       jobOrderConfirmation: { connect: { number: input.jobOrder } },
       shipmentOrDO: input.shipmentOrDO,
-      typeProduct: input.typeProduct as SuratJalanTypeProduct,
       detailProducts: {
         create: input.details.map((d) => ({
           product: { connect: { skuCode: d.product } },
           qty: d.qty,
           unit: d.unit,
+          kode: d.kode,
+          warna: d.warna,
+          frame: d.frame,
+          engine: d.engine,
+          spek: d.spek,
         })),
       },
     },

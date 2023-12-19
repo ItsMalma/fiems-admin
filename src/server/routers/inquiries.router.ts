@@ -184,7 +184,7 @@ export const inquiriesRouter = router({
     .query(async ({ input }) => {
       if (!input.shipping || !input.vessel || !input.voyage) return null;
 
-      return (await findAllVesselSchedule(true)).find(
+      return (await findAllVesselSchedule()).find(
         ({ shipping, vessel, voyage }) =>
           shipping.code === input.shipping &&
           vessel.id === input.vessel &&
@@ -204,7 +204,7 @@ export const inquiriesRouter = router({
 
   getShippingOptions: publicProcedure.query(async () => {
     return lodash.uniqBy(
-      (await findAllVesselSchedule(true)).map((vesselSchedule) => ({
+      (await findAllVesselSchedule()).map((vesselSchedule) => ({
         label: `${vesselSchedule.shipping.code} (${vesselSchedule.shipping.name})`,
         value: vesselSchedule.shipping.code,
       })),
@@ -222,7 +222,7 @@ export const inquiriesRouter = router({
       if (!input.shipping) return [];
 
       return lodash.uniqBy(
-        (await findAllVesselSchedule(true))
+        (await findAllVesselSchedule())
           .filter(
             (vesselSchedule) => vesselSchedule.shipping.code === input.shipping
           )
@@ -245,7 +245,7 @@ export const inquiriesRouter = router({
       if (!input.shipping || !input.vessel) return [];
 
       return lodash.uniqBy(
-        (await findAllVesselSchedule(true))
+        (await findAllVesselSchedule())
           .filter(
             (vesselSchedule) =>
               vesselSchedule.shipping.code === input.shipping &&

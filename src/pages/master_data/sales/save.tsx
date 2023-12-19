@@ -21,7 +21,7 @@ export default function SalesSave() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Sales");
-    setActive(1, 3, 0);
+    setActive(0, 3, 0);
   }, [setTitle, setActive]);
 
   // Mendapatkan router

@@ -43,7 +43,7 @@ export const jobOrdersRouter = router({
   getSingle: publicProcedure
     .input(z.string().optional())
     .query(async ({ input }) => {
-      if (!input) return;
+      if (!input) return null;
       return await findJobOrderByNumber(input);
     }),
 

@@ -5,6 +5,7 @@ import {
 } from "../dtos/suratJalan.dto";
 import { findAllJobOrder } from "../stores/jobOrder.store";
 import { findAllProduct } from "../stores/product.store";
+import { findAllProductCategory } from "../stores/productCategory.store";
 import {
   createSuratJalan,
   findAllSuratJalan,
@@ -41,12 +42,29 @@ export const suratJalanRouter = router({
       }));
   }),
 
-  getProductOptions: publicProcedure.query(async () => {
-    return (await findAllProduct()).map((p) => ({
-      label: `${p.skuCode} (${p.name})`,
-      value: p.skuCode,
+  getProductCategoryOptions: publicProcedure.query(async () => {
+    return (await findAllProductCategory()).map((p) => ({
+      label: `${p.reff} (${p.name})`,
+      value: p.reff,
     }));
   }),
+
+  getProductOptions: publicProcedure
+    .input(
+      z.object({
+        category: z.string().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      if (!input.category) return [];
+
+      return (await findAllProduct())
+        .filter((p) => p.productCategory?.reff === input.category)
+        .map((p) => ({
+          label: `${p.skuCode} (${p.name})`,
+          value: p.skuCode,
+        }));
+    }),
 
   getTableRows: publicProcedure.query<SuratJalanTableRow[]>(async () => {
     return (await findAllSuratJalan()).map((suratJalan) => ({

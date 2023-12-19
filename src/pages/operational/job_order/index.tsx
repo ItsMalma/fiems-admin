@@ -99,8 +99,6 @@ function PindahKapal({ jobOrderNumber }: { jobOrderNumber: string }) {
   React.useEffect(() => {
     if (!vesselOptionsQuery.data) return;
 
-    console.log(vesselOptionsQuery.data);
-
     if (vesselOptionsQuery.data.length === 1) {
       setValue("vessel", vesselOptionsQuery.data[0].value);
     }
@@ -213,7 +211,7 @@ export default function InquiryPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Job Order");
-    setActive(3, 1, 0);
+    setActive(2, 1, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

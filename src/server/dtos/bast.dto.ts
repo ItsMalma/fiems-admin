@@ -1,6 +1,6 @@
 import moment from "moment";
 import { z } from "zod";
-import { validateCode } from "../validation";
+import { validateAppend, validateCode } from "../validation";
 import { validateSuratJalanNumber } from "./suratJalan.dto";
 
 export function createBASTNumber(num: number) {
@@ -24,11 +24,13 @@ export function validateBASTNumber(spmNumber: string) {
 }
 
 export type BASTDetailProductForm = {
+  id: string;
   product: string;
   qty: number;
   unit: string;
 };
 export const defaultBASTDetailProductForm: BASTDetailProductForm = {
+  id: "",
   product: "",
   qty: 0,
   unit: "",
@@ -78,11 +80,16 @@ export const defaultBASTForm: BASTForm = {
   containerNumber2: "",
   sealNumber2: "",
   typeProduct: "",
-  details: [defaultBASTDetailProductForm],
+  details: [],
 };
 
 export const bastValidationSchema = z.object({
   suratJalan: validateCode(validateSuratJalanNumber),
+  details: validateAppend(
+    z.object({
+      id: validateCode(),
+    })
+  ),
 });
 export type BASTInput = z.infer<typeof bastValidationSchema>;
 

@@ -1,4 +1,4 @@
-import { Modal } from "@/components/Elements";
+import { InputMoney, Modal } from "@/components/Elements";
 import {
   Form,
   FormCode,
@@ -56,6 +56,18 @@ function TrackingAsalDetail({
         controls={[
           {
             type: "input",
+            id: "containerSize",
+            label: "Container Size",
+            input: <FormText name="containerSize" readOnly />,
+          },
+          {
+            type: "input",
+            id: "containerType",
+            label: "Container Type",
+            input: <FormText name="containerType" readOnly />,
+          },
+          {
+            type: "input",
             id: "tracking",
             label: "Tracking",
             input: <FormMoney name="tracking" readOnly />,
@@ -95,6 +107,21 @@ function TrackingAsalDetail({
             id: "materai",
             label: "Materai",
             input: <FormMoney name="materai" readOnly />,
+          },
+          {
+            type: "input",
+            id: "total",
+            label: "Total",
+            input: (
+              <InputMoney
+                name="total"
+                readOnly
+                value={React.useMemo(
+                  () => calculateTrackingTotal(priceVendorDetail),
+                  [priceVendorDetail]
+                )}
+              />
+            ),
           },
         ]}
       />
@@ -119,6 +146,18 @@ function TrackingTujuanDetail({
         controls={[
           {
             type: "input",
+            id: "containerSize",
+            label: "Container Size",
+            input: <FormText name="containerSize" readOnly />,
+          },
+          {
+            type: "input",
+            id: "containerType",
+            label: "Container Type",
+            input: <FormText name="containerType" readOnly />,
+          },
+          {
+            type: "input",
             id: "tracking",
             label: "Tracking",
             input: <FormMoney name="tracking" readOnly />,
@@ -159,6 +198,21 @@ function TrackingTujuanDetail({
             label: "Materai",
             input: <FormMoney name="materai" readOnly />,
           },
+          {
+            type: "input",
+            id: "total",
+            label: "Total",
+            input: (
+              <InputMoney
+                name="total"
+                readOnly
+                value={React.useMemo(
+                  () => calculateTrackingTotal(priceVendorDetail),
+                  [priceVendorDetail]
+                )}
+              />
+            ),
+          },
         ]}
       />
     </Modal>
@@ -180,6 +234,18 @@ function ShippingDetail({
         methods={methods}
         singleTab={true}
         controls={[
+          {
+            type: "input",
+            id: "containerSize",
+            label: "Container Size",
+            input: <FormText name="containerSize" readOnly />,
+          },
+          {
+            type: "input",
+            id: "containerType",
+            label: "Container Type",
+            input: <FormText name="containerType" readOnly />,
+          },
           {
             type: "input",
             id: "freight",
@@ -246,6 +312,21 @@ function ShippingDetail({
             label: "LSS",
             input: <FormMoney name="lss" readOnly />,
           },
+          {
+            type: "input",
+            id: "total",
+            label: "Total",
+            input: (
+              <InputMoney
+                name="total"
+                readOnly
+                value={React.useMemo(
+                  () => calculateShippingTotal(priceShippingDetail),
+                  [priceShippingDetail]
+                )}
+              />
+            ),
+          },
         ]}
       />
     </Modal>
@@ -262,7 +343,7 @@ export default function SaveQuotationPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Marketing | Price Calculation");
-    setActive(2, 0, 0);
+    setActive(1, 0, 0);
   }, [setTitle, setActive]);
 
   // Mendapatkan router
@@ -353,20 +434,16 @@ export default function SaveQuotationPage() {
 
   const portsOptionsQuery = trpc.ports.getOptions.useQuery();
 
+  const vendorOptionsQuery = trpc.customers.getOptions.useQuery("Vendor");
+
   // Dari sini semuanya berkaitan dengan tracking asal
   // Kecuali untuk vendor yang dipakai juga di tracking tujuan
-  const trackingVendorOptionsQuery =
-    trpc.quotations.getTrackingVendorOptions.useQuery({
-      port: detail?.port,
-      containerSize: detail?.containerSize,
-      containerType: detail?.containerType,
-    });
   React.useEffect(() => {
-    if (!trackingVendorOptionsQuery.data) return;
+    if (!vendorOptionsQuery.data) return;
 
     if (
       detail?.trackingAsal.vendor &&
-      !trackingVendorOptionsQuery.data.find(
+      !vendorOptionsQuery.data.find(
         (option) => option.value === detail.trackingAsal.vendor
       )
     ) {
@@ -375,34 +452,33 @@ export default function SaveQuotationPage() {
     }
     if (
       detail?.trackingTujuan.vendor &&
-      !trackingVendorOptionsQuery.data.find(
+      !vendorOptionsQuery.data.find(
         (option) => option.value === detail.trackingTujuan.vendor
       )
     ) {
       setValue(`details.${appendIndex}.trackingTujuan.vendor`, "");
       setValue(`details.${appendIndex}.trackingTujuan.route`, "");
     }
-  }, [trackingVendorOptionsQuery.data, detail, setValue, appendIndex]);
+  }, [vendorOptionsQuery.data, detail, setValue, appendIndex]);
 
   const trackingAsalRouteOptionsQuery =
     trpc.quotations.getTrackingRouteOptions.useQuery({
       vendor: detail?.trackingAsal.vendor,
-      port: detail?.port,
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
-  React.useEffect(() => {
-    if (!trackingAsalRouteOptionsQuery.data) return;
+  // React.useEffect(() => {
+  //   if (!trackingAsalRouteOptionsQuery.data) return;
 
-    if (
-      detail?.trackingAsal.route &&
-      !trackingAsalRouteOptionsQuery.data.find(
-        (option) => option.value === detail.trackingAsal.route
-      )
-    ) {
-      setValue(`details.${appendIndex}.trackingAsal.route`, "");
-    }
-  }, [trackingAsalRouteOptionsQuery.data, detail, setValue, appendIndex]);
+  //   if (
+  //     detail?.trackingAsal.route &&
+  //     !trackingAsalRouteOptionsQuery.data.find(
+  //       (option) => option.value === detail.trackingAsal.route
+  //     )
+  //   ) {
+  //     setValue(`details.${appendIndex}.trackingAsal.route`, "");
+  //   }
+  // }, [trackingAsalRouteOptionsQuery.data, detail, setValue, appendIndex]);
 
   const trackingAsalDetailQuery = trpc.quotations.getTrackingDetail.useQuery({
     vendor: detail?.trackingAsal.vendor,
@@ -426,7 +502,6 @@ export default function SaveQuotationPage() {
   const trackingTujuanRouteOptionsQuery =
     trpc.quotations.getTrackingRouteOptions.useQuery({
       vendor: detail?.trackingTujuan.vendor,
-      port: detail?.port,
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
@@ -462,11 +537,12 @@ export default function SaveQuotationPage() {
   }, [trackingTujuanDetailQuery.data, setValue, appendIndex]);
 
   // Dari sini semuanya berkaitan dengan shipping detail
-  const shippingOptionsQuery = trpc.quotations.getShippingOptions.useQuery({
-    port: detail?.port,
-    containerSize: detail?.containerSize,
-    containerType: detail?.containerType,
-  });
+  const shippingOptionsQuery = trpc.customers.getOptions.useQuery("Shipping");
+  // const shippingOptionsQuery = trpc.quotations.getShippingOptions.useQuery({
+  //   port: detail?.port,
+  //   containerSize: detail?.containerSize,
+  //   containerType: detail?.containerType,
+  // });
   React.useEffect(() => {
     if (!shippingOptionsQuery.data) return;
 
@@ -484,7 +560,6 @@ export default function SaveQuotationPage() {
   const shippingRouteOptionsQuery =
     trpc.quotations.getShippingRouteOptions.useQuery({
       shipping: detail?.shippingDetail.shipping,
-      port: detail?.port,
       containerSize: detail?.containerSize,
       containerType: detail?.containerType,
     });
@@ -692,7 +767,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="sales"
-                    options={salesOptionsQuery.data ?? []}
+                    options={salesOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -723,7 +798,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="factory"
-                    options={factoriesOptionsQuery.data ?? []}
+                    options={factoriesOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -747,7 +822,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="route"
-                    options={routesOptionsQuery.data ?? []}
+                    options={routesOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -759,7 +834,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="factory"
-                    options={factoriesOptionsQuery.data ?? []}
+                    options={factoriesOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -785,11 +860,11 @@ export default function SaveQuotationPage() {
               {
                 type: "input",
                 id: "port",
-                label: "Port",
+                label: "Port Destination",
                 input: (
                   <FormSelect
                     name="port"
-                    options={portsOptionsQuery.data ?? []}
+                    options={portsOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -832,7 +907,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="trackingAsal.vendor"
-                    options={trackingVendorOptionsQuery.data ?? []}
+                    options={vendorOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -844,8 +919,9 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="trackingAsal.route"
-                    options={trackingAsalRouteOptionsQuery.data ?? []}
+                    options={trackingAsalRouteOptionsQuery.data}
                     readOnly={!!queryID}
+                    disableAutoEmpty
                   />
                 ),
               },
@@ -875,7 +951,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="trackingTujuan.vendor"
-                    options={trackingVendorOptionsQuery.data ?? []}
+                    options={vendorOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -887,8 +963,9 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="trackingTujuan.route"
-                    options={trackingTujuanRouteOptionsQuery.data ?? []}
+                    options={trackingTujuanRouteOptionsQuery.data}
                     readOnly={!!queryID}
+                    disableAutoEmpty
                   />
                 ),
               },
@@ -918,7 +995,7 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="shippingDetail.shipping"
-                    options={shippingOptionsQuery.data ?? []}
+                    options={shippingOptionsQuery.data}
                     readOnly={!!queryID}
                   />
                 ),
@@ -930,8 +1007,9 @@ export default function SaveQuotationPage() {
                 input: (
                   <FormSelect
                     name="shippingDetail.route"
-                    options={shippingRouteOptionsQuery.data ?? []}
+                    options={shippingRouteOptionsQuery.data}
                     readOnly={!!queryID}
+                    disableAutoEmpty
                   />
                 ),
               },

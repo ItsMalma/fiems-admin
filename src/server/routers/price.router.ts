@@ -1,3 +1,4 @@
+import lodash from "lodash";
 import moment from "moment";
 import { DeepPartial } from "react-hook-form";
 import { z } from "zod";
@@ -32,6 +33,7 @@ import {
   updatePriceVendor,
 } from "../stores/price.store";
 import {
+  findAllQuotationDetails,
   findQuotationByNumber,
   findQuotationDetailHPP,
 } from "../stores/quotation.store";
@@ -233,6 +235,21 @@ export const pricesRouter = router({
 
       return { value, defaultValue };
     }),
+
+  getFactoryQuotationOptions: publicProcedure.query(async () => {
+    return lodash.uniqBy(
+      (await findAllQuotationDetails())
+        .filter(
+          (quotationDetail) =>
+            quotationDetail.completed && !quotationDetail.priceFactories
+        )
+        .map(({ quotation }) => ({
+          label: quotation.number.toString(),
+          value: quotation.number.toString(),
+        })),
+      (opt) => opt.value
+    );
+  }),
 
   getFactoryRouteOptions: publicProcedure
     .input(

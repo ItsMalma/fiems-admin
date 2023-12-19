@@ -69,18 +69,12 @@ export const quotationsRouter = router({
     .input(
       z.object({
         vendor: z.string().optional(),
-        port: z.string().optional(),
         containerSize: z.string().optional(),
         containerType: z.string().optional(),
       })
     )
     .query(async ({ input }) => {
-      if (
-        input.vendor &&
-        input.port &&
-        input.containerSize &&
-        input.containerType
-      ) {
+      if (input.vendor && input.containerSize && input.containerType) {
         const priceVendor = await findPriceVendorByVendor(input.vendor);
         if (!priceVendor) {
           return [];
@@ -90,7 +84,6 @@ export const quotationsRouter = router({
           priceVendor.details
             .filter(
               (priceVendorDetail) =>
-                priceVendorDetail.port.code === input.port &&
                 priceVendorDetail.containerSize === input.containerSize &&
                 priceVendorDetail.containerType === input.containerType
             )
@@ -167,18 +160,12 @@ export const quotationsRouter = router({
     .input(
       z.object({
         shipping: z.string().optional(),
-        port: z.string().optional(),
         containerSize: z.string().optional(),
         containerType: z.string().optional(),
       })
     )
     .query(async ({ input }) => {
-      if (
-        input.shipping &&
-        input.port &&
-        input.containerSize &&
-        input.containerType
-      ) {
+      if (input.shipping && input.containerSize && input.containerType) {
         const priceShipping = await findPriceShippingByShipping(input.shipping);
         if (!priceShipping) {
           return [];
@@ -188,7 +175,6 @@ export const quotationsRouter = router({
           priceShipping.details
             .filter(
               (priceShippingDetail) =>
-                priceShippingDetail.port.code === input.port &&
                 priceShippingDetail.containerSize === input.containerSize &&
                 priceShippingDetail.containerType === input.containerType
             )
@@ -456,7 +442,7 @@ export const quotationsRouter = router({
     }),
 
   getOptions: publicProcedure.query(async () => {
-    return (await findAllQuotations(true)).map((quotation) => ({
+    return (await findAllQuotations()).map((quotation) => ({
       label: `${quotation.number} (${quotation.factory.name})`,
       value: quotation.number,
     }));

@@ -56,3 +56,14 @@ export const Months: SelectOption[] = [
   { label: "November", value: "November" },
   { label: "December", value: "December" },
 ];
+
+export const ProductSatuan: SelectOption[] = [
+  { label: "Carton", value: "Carton" },
+  { label: "Pack", value: "Pack" },
+  { label: "Kg", value: "Kg" },
+  { label: "Pcs", value: "Pcs" },
+  { label: "Box", value: "Box" },
+  { label: "Pail", value: "Pail" },
+  { label: "Unit", value: "Unit" },
+  { label: "Karung", value: "Karung" },
+];

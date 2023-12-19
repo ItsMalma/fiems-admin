@@ -30,7 +30,7 @@ export default function JobOrderSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Job Order");
-    setActive(3, 1, 0);
+    setActive(2, 1, 0);
   }, [setTitle, setActive]);
 
   const router = useRouter();

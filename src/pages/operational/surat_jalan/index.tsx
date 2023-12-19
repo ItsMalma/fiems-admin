@@ -16,7 +16,7 @@ export default function SuratJalanPage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Surat Jalan");
-    setActive(3, 3, 0);
+    setActive(2, 3, 0);
   }, [setTitle, setActive]);
 
   const { setModal, current } = useModal();

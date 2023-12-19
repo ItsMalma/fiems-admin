@@ -25,11 +25,11 @@ export default function PriceShippingPage() {
   // Effect untuk mengset judul header dan mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Shipping");
-    setActive(1, 6, 2);
+    setActive(0, 6, 2);
   }, [setTitle, setActive]);
 
   // State untuk search
-  const [search, setSearch] = React.useState<string>('');
+  const [search, setSearch] = React.useState<string>("");
 
   // Mendapatkan router
   const router = useRouter();
@@ -64,7 +64,7 @@ export default function PriceShippingPage() {
             text="Export"
             icon={<FileEarmarkArrowUpFill />}
             variant="outlined"
-            onClick={() => { }}
+            onClick={() => {}}
           />
         </div>
       </div>
@@ -221,7 +221,9 @@ export default function PriceShippingPage() {
             return;
           }
 
-          const priceShipping = tableRowsQuery.data[selectedRowIndex] as PriceShippingTableRow;
+          const priceShipping = tableRowsQuery.data[
+            selectedRowIndex
+          ] as PriceShippingTableRow;
 
           // Hapus price shipping yang dipilih di table
           await deleteMutation.mutateAsync(priceShipping.detailId);

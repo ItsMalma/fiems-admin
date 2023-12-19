@@ -23,6 +23,14 @@ export const productCategoriesRouter = router({
     );
   }),
 
+  getSingle: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ input }) => {
+      if (!input) return null;
+
+      return await findProductCategoryByReff(input);
+    }),
+
   getForm: publicProcedure
     .input(
       z.object({

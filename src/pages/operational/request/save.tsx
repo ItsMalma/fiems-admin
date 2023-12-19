@@ -28,7 +28,7 @@ export default function RequestSavePage() {
   const { setActive } = useMenu();
   React.useEffect(() => {
     setTitle("Operational | Request Jalan");
-    setActive(3, 8, 0);
+    setActive(2, 8, 0);
   }, [setTitle, setActive]);
 
   const [appendIndex, setAppendIndex] = React.useState(0);

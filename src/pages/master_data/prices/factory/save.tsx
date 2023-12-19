@@ -27,7 +27,7 @@ export default function SavePriceFactoryPage() {
   // Effect untuk mengset menu yang aktif
   React.useEffect(() => {
     setTitle("Master Data | Price Factory");
-    setActive(1, 6, 0);
+    setActive(0, 6, 0);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();
@@ -50,7 +50,8 @@ export default function SavePriceFactoryPage() {
     }
   }, [defaultForm.data, reset]);
 
-  const quotationQuery = trpc.quotations.getOptions.useQuery();
+  const quotationOptionsQuery =
+    trpc.prices.getFactoryQuotationOptions.useQuery();
 
   const routeQuery = trpc.prices.getFactoryRouteOptions.useQuery({
     quotation: values.quotation,
@@ -167,7 +168,7 @@ export default function SavePriceFactoryPage() {
                 input: (
                   <FormSelect
                     name="quotation"
-                    options={quotationQuery.data ?? []}
+                    options={quotationOptionsQuery.data}
                   />
                 ),
               },

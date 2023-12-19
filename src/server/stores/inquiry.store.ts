@@ -180,7 +180,6 @@ export async function createInquiry(input: InquiryInput) {
               jobOrder: detail.jobOrder as JobOrder,
               typeOrder: detail.typeOrder as TypeOrder,
               loadDate: detail.loadDate,
-              factory: { connect: { code: input.factory } },
               priceFactory: {
                 connect: {
                   id: priceFactory.id,

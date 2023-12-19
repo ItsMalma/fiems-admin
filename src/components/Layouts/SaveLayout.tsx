@@ -56,7 +56,7 @@ export default function SaveLayout(props: SaveLayoutProps) {
         {props.isLoading && <Loading size="lg" color="primary" />}
         <div
           className={clsx(
-            "h-full px-[18px] pb-[15px] 2xl:px-6 2xl:pb-5 border border-gray-300 rounded-2xl relative overflow-auto",
+            "flex flex-col h-full px-[18px] pb-[15px] 2xl:px-6 2xl:pb-5 border border-gray-300 rounded-2xl relative overflow-auto",
             props.isLoading && "hidden"
           )}
         >

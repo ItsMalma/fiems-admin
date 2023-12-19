@@ -1,3 +1,4 @@
+export * from "./FormCheck";
 export * from "./FormCode";
 export * from "./FormCounter";
 export * from "./FormDate";
@@ -7,5 +8,6 @@ export * from "./FormPassword";
 export * from "./FormPhone";
 export * from "./FormRadio";
 export * from "./FormSelect";
+export * from "./FormTable";
 export * from "./FormText";
 export * from "./FormTime";
