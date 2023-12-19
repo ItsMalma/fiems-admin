@@ -202,7 +202,7 @@ model UangJalan {
 model PriceFactory {
   id                String          @id @default(auto()) @map("_id") @db.ObjectId
   quotationDetail   QuotationDetail @relation(fields: [quotationDetailID], references: [id], onDelete: Cascade)
-  quotationDetailID String          @db.ObjectId
+  quotationDetailID String          @unique @db.ObjectId
   etcCost           Int
   createDate        DateTime        @default(now())
   status            Boolean         @default(true)
@@ -357,7 +357,7 @@ model QuotationDetail {
   otherExpanses   QuotationDetailOtherExpanses?
   summaryDetail   QuotationDetailSummaryDetail?
   completed       Boolean                        @default(false)
-  priceFactories  PriceFactory[]
+  priceFactories  PriceFactory?
 }
 
 model QuotationDetailTrackingAsal {
@@ -505,6 +505,7 @@ model JobOrderConfirmation {
   packingList                   PackingList?                   @relation(fields: [packingListNumber], references: [number])
   packingListNumber             String?                        @db.String
   insurance                     Insurance?
+  doorings                      Dooring[]
 }
 
 model SuratPerintahMuatDanUangJalan {
@@ -572,6 +573,16 @@ model Insurance {
 enum TypeRequest {
   Sparepart
   ATK
+}
+
+model Dooring {
+  id                         String               @id @default(auto()) @map("_id") @db.ObjectId
+  jobOrderConfirmation       JobOrderConfirmation @relation(fields: [jobOrderConfirmationNumber], references: [number], onDelete: Restrict)
+  jobOrderConfirmationNumber String               @unique @db.String
+  bongkarKapal               DateTime
+  estimate                   DateTime
+  actual                     DateTime?
+  createDate                 DateTime             @default(now())
 }
 
 model Request {

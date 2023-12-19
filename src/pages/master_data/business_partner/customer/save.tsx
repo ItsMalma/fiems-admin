@@ -46,6 +46,7 @@ export default function CustomerSavePage() {
     defaultValues: CustomerForm.initial(queryType),
     resolver: zodResolver(customerInput),
   });
+  const values = methods.watch();
   const { reset, setValue } = methods;
 
   const customerType = methods.watch("type");
@@ -69,7 +70,6 @@ export default function CustomerSavePage() {
   }, [formQuery.data?.defaultValue, reset]);
 
   const saveMutation = trpc.customers.save.useMutation();
-
   const onSubmit = methods.handleSubmit(async (data) => {
     await saveMutation.mutateAsync({
       ...data,
@@ -130,7 +130,7 @@ export default function CustomerSavePage() {
                     options={formQuery.data?.groups ?? []}
                   />
                 ),
-                isHidden: customerType !== "Factory",
+                isHidden: values.type !== "Factory",
               },
               {
                 type: "blank",

@@ -115,6 +115,8 @@ function FormControls(props: FormControlsProps) {
     for (let i = 0; i < props.controls.length; i++) {
       const control = props.controls[i];
 
+      if (control.isHidden) continue;
+
       if (rows.length <= rowIndex) rows.push([control]);
       else rows[rowIndex++].push(props.controls[i]);
 

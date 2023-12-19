@@ -23,7 +23,7 @@ export function FormSelect(props: FormSelectProps) {
   const { value, onChange } = field;
 
   React.useEffect(() => {
-    if (props.options === undefined) return;
+    if (props.options === undefined || value === "") return;
 
     if (
       !props.options.find((option) => option.value === value) &&
@@ -31,7 +31,7 @@ export function FormSelect(props: FormSelectProps) {
     ) {
       onChange("");
     }
-  }, [props.options, value, onChange, props.disableAutoEmpty]);
+  }, [onChange, props.disableAutoEmpty, value, props.options]);
 
   return (
     <NewSelect

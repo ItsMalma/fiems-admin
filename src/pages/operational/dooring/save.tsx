@@ -1,6 +1,5 @@
 import {
   Form,
-  FormCode,
   FormCounter,
   FormDate,
   FormSelect,
@@ -9,10 +8,9 @@ import {
 import SaveLayout from "@/components/Layouts/SaveLayout";
 import { trpc } from "@/libs/trpc";
 import {
-  BASTForm,
-  bastValidationSchema,
-  defaultBASTForm,
-} from "@/server/dtos/bast.dto";
+  DooringForm,
+  dooringValidationSchema,
+} from "@/server/dtos/dooring.dto";
 import useHeader from "@/stores/header";
 import useMenu from "@/stores/menu";
 import useToast from "@/stores/toast";
@@ -21,101 +19,72 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useForm } from "react-hook-form";
 
-export default function BASTSavePage() {
+export default function DooringSavePage() {
   const { setTitle } = useHeader();
   const { setActive } = useMenu();
   React.useEffect(() => {
-    setTitle("Operational | Berita Acara Serah Terima");
-    setActive(2, 4, 0);
+    setTitle("Operational | Dooring");
+    setActive(2, 8, 0);
   }, [setTitle, setActive]);
 
   const { addToasts } = useToast();
 
   const router = useRouter();
 
-  const methods = useForm<BASTForm>({
-    defaultValues: defaultBASTForm,
-    resolver: zodResolver(bastValidationSchema),
+  const methods = useForm<DooringForm>({
+    resolver: zodResolver(dooringValidationSchema),
   });
   const { reset, setValue } = methods;
   const values = methods.watch();
 
-  const nextNumberQuery = trpc.bast.getNextNumber.useQuery();
+  const jobOrderOptionsQuery = trpc.doorings.getJobOrderOptions.useQuery();
+
+  const jobOrderQuery = trpc.jobOrders.getSingle.useQuery(values.jobOrder);
   React.useEffect(() => {
-    if (!nextNumberQuery.data) return;
+    if (!jobOrderQuery.data) return;
 
-    setValue("number", nextNumberQuery.data);
-  }, [nextNumberQuery.data, setValue]);
-
-  const suratJalanOptionsQuery = trpc.bast.getSuratJalanOptions.useQuery();
-
-  const suratJalanQuery = trpc.suratJalan.getSingle.useQuery(values.suratJalan);
-  React.useEffect(() => {
-    if (!suratJalanQuery.data) return;
-
-    const sj = suratJalanQuery.data;
-    setValue("shipmentOrDO", sj.shipmentOrDO);
-    setValue("jobOrder", sj.jobOrderConfirmation.number);
+    const jo = jobOrderQuery.data;
+    setValue("suratJalan", jo.suratJalan!.number);
+    setValue("shipmentOrDO", jo.suratJalan!.shipmentOrDO);
     setValue(
       "factory",
-      `${sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`
+      `${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.code} (${jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.name})`
     );
     setValue(
       "factoryAddress",
-      sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail
-        .quotation.factory.address
+      jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.address
     );
     setValue(
       "factoryCity",
-      sj.jobOrderConfirmation.inquiryDetail.priceFactory.quotationDetail
-        .quotation.factory.city
+      jo.inquiryDetail.priceFactory.quotationDetail.quotation.factory.city
     );
-    setValue(
-      "consignee",
-      `${sj.jobOrderConfirmation.consignee.code} (${sj.jobOrderConfirmation.consignee.name})`
-    );
-    setValue("consigneeAddress", sj.jobOrderConfirmation.consignee.address);
-    setValue("consigneeCity", sj.jobOrderConfirmation.consignee.city);
-    setValue("vehicle", sj.jobOrderConfirmation.vehicle.truckNumber);
+    setValue("consignee", `${jo.consignee.code} (${jo.consignee.name})`);
+    setValue("consigneeAddress", jo.consignee.address);
+    setValue("consigneeCity", jo.consignee.city);
+    setValue("vehicle", jo.vehicle.truckNumber);
     setValue(
       "shipping",
-      `${sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.shipping.code} (${sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.shipping.name})`
+      `${jo.inquiryDetail.vesselSchedule.shipping.code} (${jo.inquiryDetail.vesselSchedule.shipping.name})`
     );
-    setValue(
-      "vessel",
-      sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.vessel.name
-    );
-    setValue(
-      "voyage",
-      sj.jobOrderConfirmation.inquiryDetail.vesselSchedule.voyage
-    );
-    setValue("containerNumber1", sj.jobOrderConfirmation.containerNumber1);
-    setValue("sealNumber1", sj.jobOrderConfirmation.sealNumber1);
-    setValue(
-      "containerNumber2",
-      sj.jobOrderConfirmation.containerNumber2 ?? ""
-    );
-    setValue("sealNumber2", sj.jobOrderConfirmation.sealNumber2 ?? "");
-    sj.detailProducts.forEach((dp, i) => {
-      setValue(`details.${i}.id`, dp.id);
-      setValue(
-        `details.${i}.product`,
-        `${dp.product.skuCode} (${dp.product.name})`
-      );
-      setValue(`details.${i}.qty`, dp.qty);
-      setValue(`details.${i}.unit`, dp.unit);
-    });
-  }, [suratJalanQuery.data, setValue]);
+    setValue("vessel", jo.inquiryDetail.vesselSchedule.vessel.name);
+    setValue("voyage", jo.inquiryDetail.vesselSchedule.voyage);
+    setValue("containerNumber1", jo.containerNumber1);
+    setValue("sealNumber1", jo.sealNumber1);
+    setValue("containerNumber2", jo.containerNumber2 ?? "");
+    setValue("sealNumber2", jo.sealNumber2 ?? "");
+  }, [jobOrderQuery.data, setValue]);
 
-  const saveMutation = trpc.bast.save.useMutation();
+  const saveMutation = trpc.doorings.save.useMutation();
   const onSubmit = methods.handleSubmit(async (data) => {
-    await saveMutation.mutateAsync(data);
+    await saveMutation.mutateAsync({
+      ...data,
+    });
 
-    await router.push("/operational/bast");
+    await router.push("/operational/dooring");
   });
 
   return (
-    <SaveLayout onSave={onSubmit} title="Input BAST" isLoading={!values}>
+    <SaveLayout onSave={onSubmit} title="Input Dooring" isLoading={!values}>
       <Form
         methods={methods}
         tabs={[
@@ -125,32 +94,26 @@ export default function BASTSavePage() {
             controls: [
               {
                 type: "input",
-                id: "number",
-                label: "BAST Number",
-                input: <FormCode name="number" readOnly />,
-              },
-              {
-                type: "input",
                 id: "createDate",
                 label: "Create Date",
                 input: <FormDate name="createDate" isDefault />,
               },
               {
                 type: "input",
-                id: "suratJalan",
-                label: "Surat Jalan",
+                id: "jobOrder",
+                label: "Job Order",
                 input: (
                   <FormSelect
-                    name="suratJalan"
-                    options={suratJalanOptionsQuery.data}
+                    name="jobOrder"
+                    options={jobOrderOptionsQuery.data}
                   />
                 ),
               },
               {
                 type: "input",
-                id: "jobOrder",
-                label: "Job Order",
-                input: <FormText name="jobOrder" readOnly />,
+                id: "suratJalan",
+                label: "Surat Jalan",
+                input: <FormSelect name="suratJalan" options={[]} readOnly />,
               },
               {
                 type: "input",
@@ -252,26 +215,16 @@ export default function BASTSavePage() {
               },
               { type: "separator" },
               {
-                type: "table",
-                id: "details",
-                columns: [
-                  {
-                    id: "product",
-                    label: "Product",
-                    input: <FormText name="product" readOnly />,
-                  },
-                  {
-                    id: "qty",
-                    label: "Quantity",
-                    input: <FormCounter name="qty" min={0} readOnly />,
-                  },
-                  {
-                    id: "unit",
-                    label: "Satuan",
-                    input: <FormText name="unit" readOnly />,
-                  },
-                ],
-                disableAdd: true,
+                type: "input",
+                id: "bongkarKapal",
+                label: "Bongkar Kapal",
+                input: <FormDate name="bongkarKapal" />,
+              },
+              {
+                type: "input",
+                id: "estimate",
+                label: "Estimation",
+                input: <FormDate name="estimate" />,
               },
             ],
           },

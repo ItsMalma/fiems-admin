@@ -23,7 +23,7 @@ export function FormText(props: FormTextProps) {
     <InputText
       id={props.id ?? field.name}
       name={field.name}
-      value={field.value}
+      value={field.value ?? ""}
       onChange={(e) => {
         if (props.numeric && !isNaN(Number(e.currentTarget.value))) {
           field.onChange(e);

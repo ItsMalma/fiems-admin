@@ -62,11 +62,15 @@ const NewSelect = React.forwardRef<HTMLInputElement, NewSelectProps>(
         if (!referenceElement) return;
 
         if (popperElement && popperElement.contains(e.target as Node)) return;
-        else if (referenceElement.contains(e.target as Node))
+        else if (
+          referenceElement.contains(e.target as Node) &&
+          !disabled &&
+          !readOnly
+        )
           setIsOpen(!isOpen);
         else setIsOpen(false);
       },
-      [isOpen, popperElement, referenceElement]
+      [disabled, isOpen, popperElement, readOnly, referenceElement]
     );
 
     React.useEffect(() => {

@@ -108,6 +108,7 @@ export async function findAllQuotationDetails(
           shipping: true,
         },
       },
+      priceFactories: true,
     },
     where: {
       quotation: onlyActive
@@ -207,7 +208,6 @@ export async function findQuotationTrackingDetail(input: {
   const priceVendorDetail = priceVendor.details.find(
     (priceVendorDetail) =>
       priceVendorDetail.route.code === input.route &&
-      priceVendorDetail.port.code === input.port &&
       priceVendorDetail.containerSize === input.containerSize &&
       priceVendorDetail.containerType === input.containerType
   );
@@ -231,7 +231,6 @@ export async function findQuotationShippingDetail(input: {
   const priceShippingDetail = priceShipping.details.find(
     (priceShippingDetail) =>
       priceShippingDetail.route.code === input.route &&
-      priceShippingDetail.port.code === input.port &&
       priceShippingDetail.containerSize === input.containerSize &&
       priceShippingDetail.containerType === input.containerType
   );
@@ -265,10 +264,10 @@ export async function findAllQuotations(onlyActive: boolean = false) {
     where: onlyActive
       ? {
           effectiveStartDate: {
-            lte: new Date(),
+            gte: new Date(),
           },
           effectiveEndDate: {
-            gte: new Date(),
+            lte: new Date(),
           },
         }
       : {},

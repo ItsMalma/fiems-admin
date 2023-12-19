@@ -99,8 +99,6 @@ function PindahKapal({ jobOrderNumber }: { jobOrderNumber: string }) {
   React.useEffect(() => {
     if (!vesselOptionsQuery.data) return;
 
-    console.log(vesselOptionsQuery.data);
-
     if (vesselOptionsQuery.data.length === 1) {
       setValue("vessel", vesselOptionsQuery.data[0].value);
     }

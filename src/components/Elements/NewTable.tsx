@@ -253,9 +253,10 @@ function TableCell(props: TableCellProps) {
   function TableCellText() {
     switch (props.type) {
       case "date":
+        const valueMoment = moment(props.value);
         return (
           <p className="text-gray-700">
-            {moment(props.value).format("DD/MM/YYYY")}
+            {valueMoment.isValid() ? valueMoment.format("DD/MM/YYYY") : "-"}
           </p>
         );
       case "code":
@@ -718,7 +719,7 @@ export function Table(props: TableProps) {
                             const realRowIndex =
                               cellRowIndex + (page - 1) * rowTotal;
                             if (realRowIndex == rowSelected) {
-                              setRowSelected(realRowIndex);
+                              setRowSelected(undefined);
                             } else {
                               setRowSelected(realRowIndex);
                             }

@@ -33,7 +33,7 @@ export function FormCounter(props: FormCounterProps) {
     <InputNumber
       id={props.id ?? field.name}
       name={field.name}
-      value={field.value}
+      value={field.value ?? 0}
       onChange={(e) => field.onChange(e.target.valueAsNumber)}
       onBlur={field.onBlur}
       isError={!!fieldState.error}

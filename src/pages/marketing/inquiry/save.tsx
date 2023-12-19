@@ -570,15 +570,15 @@ export default function InquiryPage() {
               },
               {
                 type: "input",
-                id: "eta",
-                label: "ETA",
-                input: <FormDate name="eta" readOnly />,
-              },
-              {
-                type: "input",
                 id: "etd",
                 label: "ETD",
                 input: <FormDate name="etd" readOnly />,
+              },
+              {
+                type: "input",
+                id: "eta",
+                label: "ETA",
+                input: <FormDate name="eta" readOnly />,
               },
             ],
             isAppend: true,

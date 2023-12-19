@@ -36,6 +36,8 @@ export function createQuotationNumber(number: number): string {
 }
 
 export type QuotationDetailTrackingPrices = {
+  containerSize: string;
+  containerType: string;
   tracking: number;
   buruh: number;
   thcOPT: number;
@@ -59,6 +61,8 @@ export function calculateTrackingTotal(
 }
 
 export type QuotationDetailShippingPrices = {
+  containerSize: string;
+  containerType: string;
   freight: number;
   thcOPT: number;
   thcOPP: number;

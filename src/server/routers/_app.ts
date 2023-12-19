@@ -4,6 +4,7 @@ import { bastRouter } from "./bast.router";
 import { coasRouter } from "./coas.router";
 import { customerGroupsRouter } from "./customerGroups.router";
 import { customersRouter } from "./customers.router";
+import { dooringRouter } from "./dooring.router";
 import { inquiriesRouter } from "./inquiries.router";
 import { insuranceRouter } from "./insurance.router";
 import { jobOrdersRouter } from "./jobOrders.router";
@@ -46,6 +47,7 @@ export const appRouter = router({
   bast: bastRouter,
   packingLists: packingListRouter,
   insurances: insuranceRouter,
+  doorings: dooringRouter,
   requests: requestRouter,
 });
 

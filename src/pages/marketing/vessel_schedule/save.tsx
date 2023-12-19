@@ -67,7 +67,6 @@ export default function JobOrderSavePage() {
 
   const vesselQuery = trpc.vessels.getSingle.useQuery(values.vessel);
   React.useEffect(() => {
-    console.log(vesselQuery.data);
     if (!vesselQuery.data) {
       setValue("vesselCapacity", 0);
     } else {
@@ -179,7 +178,7 @@ export default function JobOrderSavePage() {
                 type: "input",
                 id: "quota",
                 label: "Quota",
-                input: <FormText name="quota" />,
+                input: <FormText name="quota" numeric />,
               },
               {
                 type: "input",

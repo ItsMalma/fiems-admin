@@ -8,9 +8,6 @@ export async function middleware(req: NextRequest) {
   const record = await verify(token.value);
   if (!record) return NextResponse.redirect(new URL("/login", req.url));
 
-  console.log(req.nextUrl);
-  console.log(record);
-
   const url = req.nextUrl.clone();
   if (url.pathname === "/") {
     url.pathname = "/login";
